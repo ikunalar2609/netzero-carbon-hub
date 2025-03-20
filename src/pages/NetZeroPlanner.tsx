@@ -31,6 +31,7 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
+  Tooltip as RechartsTooltip,
 } from "recharts";
 
 const pathwayData = [
@@ -134,6 +135,22 @@ const comparePlanData = [
   { year: 2045, current: 0, aggressive: 0, moderate: 0 },
 ];
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-2 border border-gray-200 rounded-lg shadow-md">
+        <p className="font-medium text-sm">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={index} style={{ color: entry.color }}>
+            {`${entry.name}: ${entry.value} tCO₂e`}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 const NetZeroPlanner = () => {
   return (
     <div className="space-y-6 animate-slide-up">
@@ -232,29 +249,7 @@ const NetZeroPlanner = () => {
                       tickLine={false} 
                       tickFormatter={(value) => `${value}`}
                     />
-                    <Tooltip
-                      content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div style={{
-                              backgroundColor: "white",
-                              borderRadius: "8px",
-                              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                              border: "none",
-                              padding: "8px 12px"
-                            }}>
-                              <p className="font-medium text-sm">{label}</p>
-                              {payload.map((entry, index) => (
-                                <p key={index} style={{ color: entry.color }}>
-                                  {`${entry.name}: ${entry.value} tCO₂e`}
-                                </p>
-                              ))}
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
+                    <RechartsTooltip content={<CustomTooltip />} />
                     <Area
                       type="monotone"
                       dataKey="bau"
@@ -457,8 +452,7 @@ const NetZeroPlanner = () => {
                       tickLine={false} 
                       tickFormatter={(value) => `${value}%`}
                     />
-                    <Tooltip />
-                    <Legend />
+                    <RechartsTooltip content={<CustomTooltip />} />
                     <Line
                       type="monotone"
                       dataKey="current"
@@ -621,4 +615,3 @@ const NetZeroPlanner = () => {
 };
 
 export default NetZeroPlanner;
-
