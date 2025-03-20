@@ -1,4 +1,4 @@
-// Make sure to import Cell from recharts
+
 import {
   Cell,
   Legend,
