@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -234,12 +233,26 @@ const NetZeroPlanner = () => {
                       tickFormatter={(value) => `${value}`}
                     />
                     <Tooltip
-                      formatter={(value) => [`${value} tCO₂e`, ""]}
-                      contentStyle={{
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                        border: "none",
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div style={{
+                              backgroundColor: "white",
+                              borderRadius: "8px",
+                              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                              border: "none",
+                              padding: "8px 12px"
+                            }}>
+                              <p className="font-medium text-sm">{label}</p>
+                              {payload.map((entry, index) => (
+                                <p key={index} style={{ color: entry.color }}>
+                                  {`${entry.name}: ${entry.value} tCO₂e`}
+                                </p>
+                              ))}
+                            </div>
+                          );
+                        }
+                        return null;
                       }}
                     />
                     <Area
@@ -608,3 +621,4 @@ const NetZeroPlanner = () => {
 };
 
 export default NetZeroPlanner;
+
