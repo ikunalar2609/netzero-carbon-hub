@@ -8,10 +8,17 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { getStatusColor, getStatusIcon } from "./CategoryUtils";
-import { ImpactCategory } from "@/models/carbon-impact.model";
 
 interface CategoryProps {
-  category: ImpactCategory;
+  category: {
+    id: string;
+    name: string;
+    subcategories: {
+      name: string;
+      status: string;
+      info: string;
+    }[];
+  };
 }
 
 export const CategoryList = ({ category }: CategoryProps) => {
@@ -22,8 +29,8 @@ export const CategoryList = ({ category }: CategoryProps) => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {category.subcategories.map((subcat) => (
-            <div key={subcat.id} className="flex items-center justify-between p-3 border rounded-lg">
+          {category.subcategories.map((subcat, idx) => (
+            <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex items-center gap-2">
                 <span className="font-medium">{subcat.name}</span>
                 <HoverCard>

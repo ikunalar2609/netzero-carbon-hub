@@ -9,9 +9,29 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect } from "react";
-import { CategoryEmission } from "@/models/emissions.model";
-import { getCategoryEmissions } from "@/services/emissions.service";
+import { useState } from "react";
+
+const SCOPE1_DATA = [
+  { name: "Stationary Combustion", value: 35, color: "#09AB75" },
+  { name: "Mobile Combustion", value: 25, color: "#33BF8E" },
+  { name: "Process Emissions", value: 20, color: "#66CFAA" },
+  { name: "Fugitive Emissions", value: 20, color: "#99DFC7" },
+];
+
+const SCOPE2_DATA = [
+  { name: "Electricity", value: 50, color: "#FFC745" },
+  { name: "Steam", value: 20, color: "#FFD666" },
+  { name: "Heating", value: 15, color: "#FFE499" },
+  { name: "Cooling", value: 15, color: "#FFF1CC" },
+];
+
+const SCOPE3_DATA = [
+  { name: "Purchased Goods", value: 30, color: "#4A5B6B" },
+  { name: "Business Travel", value: 15, color: "#5F7787" },
+  { name: "Employee Commuting", value: 10, color: "#8799A5" },
+  { name: "Waste", value: 15, color: "#AFBBC3" },
+  { name: "Transportation", value: 30, color: "#D7DDE1" },
+];
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -42,34 +62,19 @@ const renderCustomizedLabel = ({
 };
 
 const EmissionsByCategory = () => {
-  const [scope, setScope] = useState<"scope1" | "scope2" | "scope3">("scope1");
-  const [data, setData] = useState<CategoryEmission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [scope, setScope] = useState("scope1");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const result = await getCategoryEmissions(scope);
-        setData(result);
-        setError(null);
-      } catch (err) {
-        setError("Failed to load category emissions");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [scope]);
+  const data = scope === "scope1" 
+    ? SCOPE1_DATA 
+    : scope === "scope2" 
+      ? SCOPE2_DATA 
+      : SCOPE3_DATA;
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">Emissions by Category</CardTitle>
-        <Tabs defaultValue="scope1" value={scope} onValueChange={(value) => setScope(value as "scope1" | "scope2" | "scope3")} className="h-8">
+        <Tabs defaultValue="scope1" value={scope} onValueChange={setScope} className="h-8">
           <TabsList className="grid w-full grid-cols-3 h-8">
             <TabsTrigger value="scope1" className="text-xs h-8">Scope 1</TabsTrigger>
             <TabsTrigger value="scope2" className="text-xs h-8">Scope 2</TabsTrigger>
@@ -78,53 +83,43 @@ const EmissionsByCategory = () => {
         </Tabs>
       </CardHeader>
       <CardContent>
-        {loading ? (
-          <div className="h-[280px] flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : error ? (
-          <div className="h-[280px] flex items-center justify-center">
-            <p className="text-red-500">{error}</p>
-          </div>
-        ) : (
-          <div className="h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) => [`${value}%`, ""]}
-                  contentStyle={{
-                    backgroundColor: "white",
-                    borderRadius: "8px",
-                    padding: "8px 12px",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                    border: "none",
-                  }}
-                />
-                <Legend 
-                  layout="horizontal" 
-                  verticalAlign="bottom" 
-                  align="center"
-                  wrapperStyle={{ paddingTop: "20px" }}
-                  formatter={(value) => <span className="text-xs">{value}</span>}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+        <div className="h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value) => [`${value}%`, ""]}
+                contentStyle={{
+                  backgroundColor: "white",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  border: "none",
+                }}
+              />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+                wrapperStyle={{ paddingTop: "20px" }}
+                formatter={(value) => <span className="text-xs">{value}</span>}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
