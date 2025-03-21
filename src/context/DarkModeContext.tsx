@@ -11,7 +11,7 @@ const DarkModeContext = createContext<DarkModeContextType>({
   toggleDarkMode: () => {},
 });
 
-export const DarkModeProvider = ({ children }: { children: React.ReactNode }) => {
+export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check if user previously set a preference
     const savedDarkMode = localStorage.getItem("darkMode");

@@ -22,31 +22,33 @@ import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <DarkModeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <AnimatePresence>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="emissions" element={<EmissionsTracker />} />
-                <Route path="supply-chain" element={<SupplyChain />} />
-                <Route path="net-zero-planner" element={<NetZeroPlanner />} />
-                <Route path="carbon-impact" element={<CarbonImpact />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </AnimatePresence>
-        </BrowserRouter>
-      </TooltipProvider>
-    </DarkModeProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <DarkModeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <AnimatePresence>
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="emissions" element={<EmissionsTracker />} />
+                  <Route path="supply-chain" element={<SupplyChain />} />
+                  <Route path="net-zero-planner" element={<NetZeroPlanner />} />
+                  <Route path="carbon-impact" element={<CarbonImpact />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+              </Routes>
+            </AnimatePresence>
+          </BrowserRouter>
+        </TooltipProvider>
+      </DarkModeProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
