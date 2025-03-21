@@ -1,17 +1,63 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-const qualityScoreData = [
-  { category: "Carbon Accounting", score: 92 },
-  { category: "Additionality", score: 88 },
-  { category: "Permanence", score: 85 },
-  { category: "Co-Benefits", score: 94 },
-  { category: "Verification", score: 90 },
-  { category: "Overall", score: 90 },
-];
+import { useEffect, useState } from "react";
+import { QualityScore } from "@/models/carbon-impact.model";
+import { getQualityScores } from "@/services/carbon-impact.service";
 
 export const QualityAssessment = () => {
+  const [qualityScores, setQualityScores] = useState<QualityScore[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchQualityScores = async () => {
+      try {
+        const data = await getQualityScores();
+        setQualityScores(data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load quality scores");
+        setLoading(false);
+      }
+    };
+
+    fetchQualityScores();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Quality Assessment</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center items-center h-48">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Quality Assessment</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-500">{error}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Find the overall score
+  const overallScore = qualityScores.find(score => score.category === "Overall")?.score || 0;
+
   return (
     <Card>
       <CardHeader>
@@ -19,7 +65,7 @@ export const QualityAssessment = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {qualityScoreData.map((item, index) => (
+          {qualityScores.map((item, index) => (
             <div key={index} className="space-y-2">
               <div className="flex justify-between">
                 <div className="flex items-center gap-2">

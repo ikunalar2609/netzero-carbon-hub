@@ -1,15 +1,57 @@
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CategoryList } from "./CategoryList";
-import { carbonImpactCategories } from "./CarbonImpactData";
+import { ImpactCategory } from "@/models/carbon-impact.model";
+import { getImpactCategories } from "@/services/carbon-impact.service";
 
 export const CategorySelector = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [categories, setCategories] = useState<ImpactCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getImpactCategories();
+        setCategories(data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load categories");
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const filteredCategories = selectedCategory === "all" 
-    ? carbonImpactCategories 
-    : carbonImpactCategories.filter(cat => cat.id === selectedCategory);
+    ? categories 
+    : categories.filter(cat => cat.id === selectedCategory);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-500">{error}</p>
+        <Button 
+          className="mt-2" 
+          variant="outline" 
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col space-y-2">
@@ -23,7 +65,7 @@ export const CategorySelector = () => {
           >
             All Categories
           </Button>
-          {carbonImpactCategories.map(category => (
+          {categories.map(category => (
             <Button 
               key={category.id}
               variant={selectedCategory === category.id ? "default" : "outline"} 
