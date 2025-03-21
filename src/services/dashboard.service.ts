@@ -1,5 +1,5 @@
 
-import { databases, DATABASE_ID } from '../lib/appwrite';
+import { databases, DATABASE_ID, GOALS_COLLECTION_ID } from '../lib/appwrite';
 import { Goal, ReductionStatus, SummaryCard } from '../models/dashboard.model';
 
 export const getSummaryCards = async (): Promise<SummaryCard[]> => {
