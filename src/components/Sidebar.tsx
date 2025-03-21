@@ -45,7 +45,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       <div className="flex items-center justify-between h-16 px-4 border-b border-brand-green-600">
         <Link to="/" className="flex items-center space-x-2 text-white" onClick={closeSidebar}>
           <Leaf className="h-6 w-6" />
-          <span className="text-xl font-semibold">NetZero</span>
+          <span className="text-xl font-semibold">FarmlyCarbon</span>
         </Link>
         {isMobile && (
           <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:bg-brand-green-600">
