@@ -13,9 +13,9 @@ import { toast } from "sonner";
 
 const emissionsSchema = z.object({
   year: z.string().min(4, "Year must be in YYYY format"),
-  scope1: z.coerce.number().min(0, "Must be a positive number"),
-  scope2: z.coerce.number().min(0, "Must be a positive number"),
-  scope3: z.coerce.number().min(0, "Must be a positive number"),
+  scope1: z.string().transform(val => Number(val)),
+  scope2: z.string().transform(val => Number(val)),
+  scope3: z.string().transform(val => Number(val)),
 });
 
 const Admin = () => {
