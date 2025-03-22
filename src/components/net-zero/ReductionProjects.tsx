@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +39,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const initialProjectsData = [
+type ProjectType = {
+  id: number;
+  name: string;
+  category: string;
+  impact: string;
+  reduction: number;
+  cost: string;
+  timeline: string;
+  status: string;
+  progress: number;
+  icon: React.ForwardRefExoticComponent<any>;
+  description: string;
+};
+
+const initialProjectsData: ProjectType[] = [
   {
     id: 1,
     name: "Renewable Energy Transition",
@@ -118,13 +131,13 @@ const categoryIcons = {
 };
 
 export const ReductionProjects = () => {
-  const [projectsData, setProjectsData] = useState(initialProjectsData);
+  const [projectsData, setProjectsData] = useState<ProjectType[]>(initialProjectsData);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<any>(null);
+  const [editingProject, setEditingProject] = useState<ProjectType | null>(null);
   const [deleteProjectId, setDeleteProjectId] = useState<number | null>(null);
 
   const handleAddProject = (values: ProjectFormValues) => {
-    const newProject = {
+    const newProject: ProjectType = {
       id: Date.now(),
       ...values,
       status: "Planning",

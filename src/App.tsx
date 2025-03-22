@@ -20,6 +20,7 @@ import SupplyChain from "@/pages/SupplyChain";
 import NetZeroPlanner from "@/pages/NetZeroPlanner";
 import CarbonImpact from "@/pages/CarbonImpact";
 import Settings from "@/pages/Settings";
+import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
@@ -53,6 +54,7 @@ function App() {
                       <Route path="net-zero-planner" element={<NetZeroPlanner />} />
                       <Route path="carbon-impact" element={<CarbonImpact />} />
                       <Route path="settings" element={<Settings />} />
+                      <Route path="profile" element={<Profile />} />
                       <Route path="*" element={<NotFound />} />
                     </Route>
                   </Route>

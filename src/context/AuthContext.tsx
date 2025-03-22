@@ -8,6 +8,13 @@ type User = {
   email: string;
   name: string;
   role: string;
+  phone?: string;
+};
+
+type ProfileUpdateData = {
+  name: string;
+  email: string;
+  phone?: string;
 };
 
 type AuthContextType = {
@@ -16,6 +23,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateUserProfile: (data: ProfileUpdateData) => Promise<void>;
   isAuthenticated: boolean;
 };
 
@@ -25,6 +33,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   signup: async () => {},
   logout: () => {},
+  updateUserProfile: async () => {},
   isAuthenticated: false,
 });
 
@@ -36,6 +45,7 @@ const mockUsers = [
     password: "password123",
     name: "Admin User",
     role: "admin",
+    phone: "+1 (555) 123-4567",
   },
   {
     id: "2",
@@ -43,6 +53,7 @@ const mockUsers = [
     password: "password123",
     name: "Demo User",
     role: "user",
+    phone: "",
   },
 ];
 
@@ -119,6 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         name,
         role: "user",
+        phone: "",
       };
 
       // Save to localStorage
@@ -133,6 +145,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateUserProfile = async (data: ProfileUpdateData) => {
+    if (!user) throw new Error("User not authenticated");
+    
+    try {
+      // In a real app, this would be an API call
+      const updatedUser = {
+        ...user,
+        ...data
+      };
+      
+      // Update localStorage
+      localStorage.setItem("farmlycarbon_user", JSON.stringify(updatedUser));
+      
+      // Update state
+      setUser(updatedUser);
+      return Promise.resolve();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Update failed";
+      toast.error(message);
+      throw error;
     }
   };
 
@@ -151,6 +186,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         signup,
         logout,
+        updateUserProfile,
         isAuthenticated: !!user,
       }}
     >
