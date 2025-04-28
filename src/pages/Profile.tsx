@@ -1,62 +1,65 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { ArrowLeft, User, Mail, Phone } from "lucide-react";
-import { Link } from "react-router-dom";
-import { toast } from "sonner";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
-} from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { toast } from "@/components/ui/use-toast";
+import { ArrowLeft, CheckCircle, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
-const profileFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z.string().optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+interface ProfileUpdateData {
+  name: string;
+  email: string;
+  phone: string;
+}
 
 const Profile = () => {
   const { user, updateUserProfile } = useAuth();
-  
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-    },
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<ProfileUpdateData>({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
   });
+  const navigate = useNavigate();
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
-  };
-
-  const onSubmit = async (values: ProfileFormValues) => {
-    try {
-      await updateUserProfile(values);
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      toast.error("Failed to update profile");
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
     }
+  }, [user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
-  
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Ensure name is always provided to match ProfileUpdateData requirements
+    const updatedProfile = {
+      name: formData.name || user?.name || '', // Ensure name is always provided
+      email: formData.email,
+      phone: formData.phone
+    };
+    
+    updateUserProfile(updatedProfile);
+    setIsEditing(false);
+    toast({
+      title: "Profile updated",
+      description: "Your profile information has been updated successfully."
+    });
+  };
+
   return (
     <div className="space-y-6 animate-slide-up">
       <div className="flex items-center gap-2">
@@ -65,86 +68,67 @@ const Profile = () => {
         </Link>
         <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
       </div>
-      <p className="text-muted-foreground">Manage your personal information</p>
+      <p className="text-muted-foreground">Manage your profile information to keep your account secure and up-to-date</p>
       
       <Card>
         <CardHeader>
-          <div className="flex flex-col items-center sm:flex-row sm:items-start sm:gap-4">
-            <Avatar className="h-20 w-20 mb-4 sm:mb-0">
-              <AvatarFallback className="text-xl">
-                {getInitials(form.watch("name"))}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-xl">Personal Information</CardTitle>
-              <CardDescription>
-                Update your personal details and contact information
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle className="text-xl">Personal Information</CardTitle>
+          <CardDescription>
+            Update your personal details
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
+        <CardContent className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input 
+                type="text" 
+                id="name" 
                 name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                        <Input className="pl-10" placeholder="Your full name" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                value={formData.name}
+                onChange={handleChange}
+                disabled={!isEditing}
+                required
               />
-              
-              <FormField
-                control={form.control}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                type="email" 
+                id="email" 
                 name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                        <Input className="pl-10" placeholder="Your email address" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                value={formData.email}
+                onChange={handleChange}
+                disabled={!isEditing}
+                required
               />
-              
-              <FormField
-                control={form.control}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input 
+                type="tel" 
+                id="phone" 
                 name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number (Optional)</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                        <Input className="pl-10" placeholder="Your phone number" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                value={formData.phone}
+                onChange={handleChange}
+                disabled={!isEditing}
               />
-              
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => form.reset()}>
-                  Cancel
+            </div>
+            {isEditing ? (
+              <div className="flex justify-end space-x-2">
+                <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+                <Button type="submit">
+                  Update Profile
+                  <CheckCircle className="w-4 h-4 ml-2" />
                 </Button>
-                <Button type="submit">Save Changes</Button>
               </div>
-            </form>
-          </Form>
+            ) : (
+              <Button onClick={() => setIsEditing(true)}>
+                Edit Profile
+                <User className="w-4 h-4 ml-2" />
+              </Button>
+            )}
+          </form>
         </CardContent>
       </Card>
     </div>

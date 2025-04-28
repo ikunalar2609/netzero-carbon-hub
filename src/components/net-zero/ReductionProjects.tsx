@@ -1,351 +1,410 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { 
-  Target, 
-  ArrowRight, 
-  Zap, 
-  Truck, 
-  Factory, 
-  ShoppingBag, 
-  Recycle,
-  Pencil,
-  Trash,
-  Plus
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Leaf,
+  Factory,
+  Wind,
+  Lightbulb,
+  BarChart3,
+  Cpu,
+  Plus,
+  Edit,
+  Save,
+  X,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ProjectForm, ProjectFormValues } from "./ProjectForm";
-import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
+// Define the structure for a project
 type ProjectType = {
   id: number;
   name: string;
-  category: string;
-  impact: string;
-  reduction: number;
-  cost: string;
-  timeline: string;
   status: string;
   progress: number;
-  icon: React.ForwardRefExoticComponent<any>;
+  icon: React.ComponentType;
   description: string;
-};
-
-const initialProjectsData: ProjectType[] = [
-  {
-    id: 1,
-    name: "Renewable Energy Transition",
-    category: "Energy",
-    impact: "High",
-    reduction: 34500,
-    cost: "$$",
-    timeline: "2024-2026",
-    status: "In Progress",
-    progress: 65,
-    icon: Zap,
-    description: "Transition to 100% renewable energy sources across all operations.",
-  },
-  {
-    id: 2,
-    name: "Fleet Electrification",
-    category: "Transportation",
-    impact: "High",
-    reduction: 21300,
-    cost: "$$$",
-    timeline: "2023-2027",
-    status: "In Progress",
-    progress: 50,
-    icon: Truck,
-    description: "Replace fossil-fuel vehicles with electric alternatives.",
-  },
-  {
-    id: 3,
-    name: "Factory Energy Efficiency",
-    category: "Operations",
-    impact: "Medium",
-    reduction: 15800,
-    cost: "$$",
-    timeline: "2024-2025",
-    status: "Planning",
-    progress: 25,
-    icon: Factory,
-    description: "Implement energy efficiency measures across manufacturing facilities.",
-  },
-  {
-    id: 4,
-    name: "Sustainable Procurement",
-    category: "Supply Chain",
-    impact: "High",
-    reduction: 42600,
-    cost: "$$",
-    timeline: "2024-2028",
-    status: "In Progress",
-    progress: 35,
-    icon: ShoppingBag,
-    description: "Source materials and services from low-carbon suppliers.",
-  },
-  {
-    id: 5,
-    name: "Circular Packaging Initiative",
-    category: "Waste",
-    impact: "Medium",
-    reduction: 12500,
-    cost: "$",
-    timeline: "2024-2026",
-    status: "Planning",
-    progress: 15,
-    icon: Recycle,
-    description: "Redesign packaging to be fully recyclable or compostable.",
-  },
-];
-
-// Map categories to icons
-const categoryIcons = {
-  "Energy": Zap,
-  "Transportation": Truck,
-  "Operations": Factory,
-  "Supply Chain": ShoppingBag,
-  "Waste": Recycle,
+  targetReduction: number;
+  startDate: string;
+  endDate: string;
+  team: string;
 };
 
 export const ReductionProjects = () => {
-  const [projectsData, setProjectsData] = useState<ProjectType[]>(initialProjectsData);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<ProjectType | null>(null);
-  const [deleteProjectId, setDeleteProjectId] = useState<number | null>(null);
+  const [projects, setProjects] = useState<ProjectType[]>([
+    {
+      id: 1,
+      name: 'Solar Panel Installation',
+      status: 'active',
+      progress: 75,
+      icon: Leaf,
+      description: 'Installing solar panels to reduce electricity emissions.',
+      targetReduction: 5000,
+      startDate: '2023-01-15',
+      endDate: '2023-12-31',
+      team: 'Sustainability Team',
+    },
+    {
+      id: 2,
+      name: 'Factory Equipment Upgrade',
+      status: 'completed',
+      progress: 100,
+      icon: Factory,
+      description: 'Upgrading factory equipment for better energy efficiency.',
+      targetReduction: 8000,
+      startDate: '2022-06-01',
+      endDate: '2023-05-31',
+      team: 'Engineering Team',
+    },
+    {
+      id: 3,
+      name: 'Wind Turbine Deployment',
+      status: 'planning',
+      progress: 20,
+      icon: Wind,
+      description: 'Deploying wind turbines to generate renewable energy.',
+      targetReduction: 12000,
+      startDate: '2024-03-01',
+      endDate: '2025-12-31',
+      team: 'Renewable Energy Division',
+    },
+  ]);
 
-  const handleAddProject = (values: ProjectFormValues) => {
-    const newProject: ProjectType = {
+  const [isAdding, setIsAdding] = useState(false);
+  const [newProject, setNewProject] = useState<Omit<ProjectType, 'id'>>({
+    name: '',
+    status: 'planning',
+    progress: 0,
+    icon: Leaf,
+    description: '',
+    targetReduction: 0,
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
+    team: '',
+  });
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
+  const [editedProject, setEditedProject] = useState<ProjectType | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof Omit<ProjectType, 'id'>) => {
+    setNewProject({ ...newProject, [field]: e.target.value });
+  };
+
+  const handleAddProject = (newProject: Omit<ProjectType, 'id'>) => {
+    const randomIcons = [Leaf, Factory, Wind, Lightbulb, BarChart3, Cpu];
+    const randomIcon = randomIcons[Math.floor(Math.random() * randomIcons.length)];
+    const newProjectWithId: ProjectType = {
       id: Date.now(),
-      ...values,
-      status: "Planning",
+      ...newProject,
+      icon: randomIcon,
+    };
+    setProjects([...projects, newProjectWithId]);
+    setIsAdding(false);
+    setNewProject({
+      name: '',
+      status: 'planning',
       progress: 0,
-      icon: categoryIcons[values.category as keyof typeof categoryIcons] || Target,
+      icon: Leaf,
+      description: '',
+      targetReduction: 0,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0],
+      team: '',
+    });
+  };
+
+  const handleAddRandomProject = () => {
+    const randomStatuses = ['active', 'planning', 'completed', 'on-hold'];
+    const randomStatus = randomStatuses[Math.floor(Math.random() * randomStatuses.length)];
+    const randomProgress = Math.floor(Math.random() * 100);
+    const randomIcons = [Leaf, Factory, Wind, Lightbulb, BarChart3, Cpu];
+    const randomIcon = randomIcons[Math.floor(Math.random() * randomIcons.length)];
+    
+    const newProject = {
+      id: Date.now(),
+      name: `New Project ${Date.now().toString().slice(-4)}`, // Add required name property
+      status: randomStatus,
+      progress: randomProgress,
+      icon: randomIcon,
+      description: 'A new project to reduce carbon emissions',
+      targetReduction: Math.floor(Math.random() * 10000) + 1000,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date(Date.now() + 1000*60*60*24*365).toISOString().split('T')[0],
+      team: 'Sustainability Team',
     };
     
-    setProjectsData((prev) => [...prev, newProject]);
-    setIsAddDialogOpen(false);
+    setProjects([...projects, newProject]);
   };
 
-  const handleEditProject = (values: ProjectFormValues) => {
-    if (!editingProject) return;
-    
-    setProjectsData((prev) => 
-      prev.map((project) => 
-        project.id === editingProject.id ? {
-          ...project,
-          ...values,
-          icon: categoryIcons[values.category as keyof typeof categoryIcons] || project.icon,
-        } : project
-      )
-    );
-    
-    setEditingProject(null);
+  const handleEditClick = (project: ProjectType) => {
+    setEditingProjectId(project.id);
+    setEditedProject(project);
   };
 
-  const handleDeleteProject = () => {
-    if (deleteProjectId === null) return;
-    
-    setProjectsData((prev) => 
-      prev.filter((project) => project.id !== deleteProjectId)
-    );
-    
-    setDeleteProjectId(null);
-    toast.success("Project deleted");
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof ProjectType) => {
+    if (editedProject) {
+      setEditedProject({ ...editedProject, [field]: e.target.value });
+    }
+  };
+
+  const handleSaveClick = () => {
+    if (editedProject) {
+      const updatedProjects = projects.map(project =>
+        project.id === editedProject.id ? editedProject : project
+      );
+      setProjects(updatedProjects);
+      setEditingProjectId(null);
+      setEditedProject(null);
+    }
+  };
+
+  const handleCancelClick = () => {
+    setEditingProjectId(null);
+    setEditedProject(null);
+  };
+
+  const handleRemoveProject = (projectId: number) => {
+    setProjects(projects.filter(project => project.id !== projectId));
   };
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {projectsData.map((project) => {
-        const Icon = project.icon;
-        return (
-          <Card key={project.id} className="transition-all hover:shadow-md">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-lg ${
-                    project.category === "Energy" ? "bg-amber-100" :
-                    project.category === "Transportation" ? "bg-blue-100" :
-                    project.category === "Operations" ? "bg-purple-100" :
-                    project.category === "Supply Chain" ? "bg-green-100" :
-                    "bg-red-100"
-                  }`}>
-                    <Icon className={`h-5 w-5 ${
-                      project.category === "Energy" ? "text-amber-500" :
-                      project.category === "Transportation" ? "text-blue-500" :
-                      project.category === "Operations" ? "text-purple-500" :
-                      project.category === "Supply Chain" ? "text-green-500" :
-                      "text-red-500"
-                    }`} />
-                  </div>
-                  <CardTitle className="text-base font-semibold">{project.name}</CardTitle>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Badge variant="outline" className={`${
-                    project.status === "In Progress" ? "bg-green-100 text-green-700" :
-                    project.status === "Planning" ? "bg-blue-100 text-blue-700" :
-                    "bg-gray-100 text-gray-700"
-                  }`}>
-                    {project.status}
-                  </Badge>
-                  
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
-                          <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                        </svg>
+    <Card className="col-span-2">
+      <CardHeader>
+        <CardTitle>Reduction Projects</CardTitle>
+        <CardDescription>
+          Track and manage your carbon reduction initiatives.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Project</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Progress</TableHead>
+              <TableHead>Target Reduction</TableHead>
+              <TableHead>Start Date</TableHead>
+              <TableHead>End Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {projects.map((project) => (
+              <TableRow key={project.id}>
+                <TableCell className="font-medium">
+                  {editingProjectId === project.id ? (
+                    <Input
+                      type="text"
+                      value={editedProject?.name || ''}
+                      onChange={(e) => handleEditInputChange(e, 'name')}
+                    />
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <Avatar className="h-5 w-5">
+                        <project.icon className="h-4 w-4" />
+                        <AvatarFallback>ICON</AvatarFallback>
+                      </Avatar>
+                      <span>{project.name}</span>
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingProjectId === project.id ? (
+                    <Input
+                      type="text"
+                      value={editedProject?.status || ''}
+                      onChange={(e) => handleEditInputChange(e, 'status')}
+                    />
+                  ) : (
+                    <Badge
+                      variant="secondary"
+                      className={cn(
+                        project.status === 'active' && 'bg-green-500 text-white',
+                        project.status === 'planning' && 'bg-blue-500 text-white',
+                        project.status === 'completed' && 'bg-gray-500 text-white',
+                        project.status === 'on-hold' && 'bg-yellow-500 text-white'
+                      )}
+                    >
+                      {project.status}
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingProjectId === project.id ? (
+                    <Input
+                      type="number"
+                      value={editedProject?.progress?.toString() || ''}
+                      onChange={(e) => handleEditInputChange(e, 'progress')}
+                    />
+                  ) : (
+                    <>
+                      <Progress value={project.progress} />
+                      <span className="text-xs">{project.progress}%</span>
+                    </>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingProjectId === project.id ? (
+                    <Input
+                      type="number"
+                      value={editedProject?.targetReduction?.toString() || ''}
+                      onChange={(e) => handleEditInputChange(e, 'targetReduction')}
+                    />
+                  ) : (
+                    `${project.targetReduction} tonnes CO₂e`
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingProjectId === project.id ? (
+                    <Input
+                      type="date"
+                      value={editedProject?.startDate || ''}
+                      onChange={(e) => handleEditInputChange(e, 'startDate')}
+                    />
+                  ) : (
+                    project.startDate
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingProjectId === project.id ? (
+                    <Input
+                      type="date"
+                      value={editedProject?.endDate || ''}
+                      onChange={(e) => handleEditInputChange(e, 'endDate')}
+                    />
+                  ) : (
+                    project.endDate
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  {editingProjectId === project.id ? (
+                    <div className="space-x-2">
+                      <Button variant="ghost" size="sm" onClick={handleSaveClick}>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => setEditingProject(project)}
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
+                      <Button variant="ghost" size="sm" onClick={handleCancelClick}>
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-x-2">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditClick(project)}>
+                        <Edit className="h-4 w-4 mr-2" />
                         Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer text-destructive focus:text-destructive"
-                        onClick={() => setDeleteProjectId(project.id)}
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Category</p>
-                    <p className="font-medium">{project.category}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Impact</p>
-                    <p className="font-medium">{project.impact}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Timeline</p>
-                    <p className="font-medium">{project.timeline}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Cost</p>
-                    <p className="font-medium">{project.cost}</p>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <p className="text-sm font-medium">Progress</p>
-                    <p className="text-sm font-medium">{project.progress}%</p>
-                  </div>
-                  <Progress value={project.progress} className="h-2" />
-                </div>
-                
-                <div className="bg-muted p-2 rounded-md text-center">
-                  <p className="text-xs text-muted-foreground">Expected Reduction</p>
-                  <p className="font-bold">{project.reduction.toLocaleString()} tCO₂e</p>
-                </div>
-                
-                <Button variant="outline" size="sm" className="w-full gap-1">
-                  <span>View Details</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-      
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogTrigger asChild>
-          <Card className="flex flex-col justify-center items-center p-6 border-dashed h-full cursor-pointer hover:bg-muted/50 transition-colors">
-            <Plus className="h-10 w-10 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-medium mb-2">Add New Project</h3>
-            <p className="text-sm text-muted-foreground text-center mb-4">
-              Define a new emissions reduction initiative or offset project
-            </p>
-            <Button>Add Project</Button>
-          </Card>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[600px] p-0">
-          <ProjectForm
-            onSubmit={handleAddProject}
-            onCancel={() => setIsAddDialogOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
-      
-      {/* Edit Project Dialog */}
-      <Dialog open={!!editingProject} onOpenChange={(open) => !open && setEditingProject(null)}>
-        <DialogContent className="sm:max-w-[600px] p-0">
-          {editingProject && (
-            <ProjectForm
-              onSubmit={handleEditProject}
-              onCancel={() => setEditingProject(null)}
-              defaultValues={{
-                name: editingProject.name,
-                category: editingProject.category,
-                impact: editingProject.impact,
-                reduction: editingProject.reduction,
-                cost: editingProject.cost,
-                timeline: editingProject.timeline,
-                description: editingProject.description || "",
-              }}
-              isEditing
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog 
-        open={deleteProjectId !== null} 
-        onOpenChange={(open) => !open && setDeleteProjectId(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              project and remove it from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteProject} className="bg-destructive text-destructive-foreground">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleRemoveProject(project.id)}>
+                        <X className="h-4 w-4 mr-2" />
+                        Remove
+                      </Button>
+                    </div>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Button variant="secondary" onClick={handleAddRandomProject}>Add Random Project</Button>
+        {!isAdding && (
+          <Button className="mt-4" onClick={() => setIsAdding(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Project
+          </Button>
+        )}
+        {isAdding && (
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="name">Project Name</Label>
+              <Input
+                type="text"
+                id="name"
+                value={newProject.name}
+                onChange={(e) => handleInputChange(e, 'name')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="status">Status</Label>
+              <Input
+                type="text"
+                id="status"
+                value={newProject.status}
+                onChange={(e) => handleInputChange(e, 'status')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="progress">Progress</Label>
+              <Input
+                type="number"
+                id="progress"
+                value={newProject.progress.toString()}
+                onChange={(e) => handleInputChange(e, 'progress')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="targetReduction">Target Reduction</Label>
+              <Input
+                type="number"
+                id="targetReduction"
+                value={newProject.targetReduction.toString()}
+                onChange={(e) => handleInputChange(e, 'targetReduction')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="startDate">Start Date</Label>
+              <Input
+                type="date"
+                id="startDate"
+                value={newProject.startDate}
+                onChange={(e) => handleInputChange(e, 'startDate')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="endDate">End Date</Label>
+              <Input
+                type="date"
+                id="endDate"
+                value={newProject.endDate}
+                onChange={(e) => handleInputChange(e, 'endDate')}
+              />
+            </div>
+            <div className="col-span-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={newProject.description}
+                onChange={(e) => handleInputChange(e, 'description')}
+              />
+            </div>
+            <div className="col-span-2 flex justify-end space-x-2">
+              <Button variant="ghost" onClick={() => setIsAdding(false)}>
+                Cancel
+              </Button>
+              <Button onClick={() => handleAddProject(newProject)}>Add Project</Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -91,6 +92,12 @@ export default {
         "fade-out": "fade-out 0.3s ease-out",
         "slide-up": "slide-up 0.4s ease-out",
         "pulse-gentle": "pulse-gentle 2s ease-in-out infinite",
+      },
+      boxShadow: {
+        'glass': '0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.05)',
+      },
+      backdropBlur: {
+        'xs': '2px',
       },
     },
   },
