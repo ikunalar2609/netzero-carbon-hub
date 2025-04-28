@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +84,7 @@ export const StandardsCompliance = () => {
             </div>
           </div>
 
-          <Button className="w-full flex gap-1">
+          <Button className="w-full flex gap-1 text-white">
             <span>Generate Compliance Report</span>
             <ArrowRight className="h-4 w-4" />
           </Button>
