@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -8,143 +7,130 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 200 15% 15%;
+    --foreground: 0 0% 0%;
 
     --card: 0 0% 100%;
-    --card-foreground: 200 15% 15%;
+    --card-foreground: 0 0% 0%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 200 15% 15%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 158 90% 35%;
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 36%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 210 10% 96%;
-    --muted-foreground: 210 12% 45%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 160 84% 39%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 15% 90%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 158 90% 35%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 0%;
 
     --radius: 0.75rem;
-
-    --sidebar-background: 158 90% 35%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 158 90% 35%;
-    --sidebar-accent: 158 50% 25%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 158 50% 30%;
-    --sidebar-ring: 0 0% 100%;
   }
-  
+
   .dark {
-    --background: 200 15% 12%;
-    --foreground: 210 10% 98%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 200 15% 15%;
-    --card-foreground: 210 10% 98%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 200 15% 15%;
-    --popover-foreground: 210 10% 98%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 158 70% 35%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 210 20% 26%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 200 15% 20%;
-    --muted-foreground: 210 10% 70%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 160 64% 39%;
+    --accent: 0 0% 15%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 74% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 200 15% 25%;
-    --input: 200 15% 20%;
-    --ring: 158 70% 35%;
-
-    --sidebar-background: 158 70% 30%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 158 70% 30%;
-    --sidebar-accent: 158 50% 20%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 158 50% 25%;
-    --sidebar-ring: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 100%;
   }
-  
+}
+
+@layer base {
   * {
-    @apply border-border antialiased;
+    @apply border-border;
   }
   
   body {
-    @apply bg-background text-foreground font-sans;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground antialiased;
   }
   
-  /* Custom utility classes */
-  .glass-card {
-    @apply bg-white/30 backdrop-blur-glass border border-white/40 shadow-glass;
+  /* Hover styles */
+  .hover-dark-gray {
+    @apply hover:bg-gray-800/10 dark:hover:bg-gray-700/50 transition-colors;
   }
-  
-  .glass-card-dark {
-    @apply bg-gray-900/30 backdrop-blur-glass border border-gray-800/40 shadow-glass;
-  }
-  
-  /* Animation utility classes */
-  .animate-on-scroll {
-    @apply opacity-0 transition-all duration-700 ease-out;
-  }
-  
-  .animate-on-scroll.animated {
-    @apply opacity-100;
-  }
-  
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    @apply w-2;
-  }
+}
 
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
+/* Custom utility classes */
+.glass-card {
+  @apply bg-white/30 backdrop-blur-glass border border-white/40 shadow-glass;
+}
 
-  ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
-  }
+.glass-card-dark {
+  @apply bg-gray-900/30 backdrop-blur-glass border border-gray-800/40 shadow-glass;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
-  }
-  
-  /* Chart styling */
-  .recharts-tooltip-wrapper {
-    @apply !shadow-none;
-  }
-  
-  .recharts-default-tooltip {
-    @apply !bg-white/90 !backdrop-blur-sm !border-none !shadow-lg !rounded-lg !px-4 !py-2;
-  }
-  
-  /* Form element focus states */
-  input:focus, 
-  select:focus, 
-  textarea:focus, 
-  button:focus {
-    @apply outline-none ring-2 ring-primary/20 ring-offset-1;
-  }
+/* Animation utility classes */
+.animate-on-scroll {
+  @apply opacity-0 transition-all duration-700 ease-out;
+}
+
+.animate-on-scroll.animated {
+  @apply opacity-100;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Chart styling */
+.recharts-tooltip-wrapper {
+  @apply !shadow-none;
+}
+
+.recharts-default-tooltip {
+  @apply !bg-white/90 !backdrop-blur-sm !border-none !shadow-lg !rounded-lg !px-4 !py-2;
+}
+
+/* Form element focus states */
+input:focus, 
+select:focus, 
+textarea:focus, 
+button:focus {
+  @apply outline-none ring-2 ring-primary/20 ring-offset-1;
 }
