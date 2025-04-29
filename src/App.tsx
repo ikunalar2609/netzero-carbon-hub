@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnimatePresence } from "@/components/AnimatePresence";
 import { DarkModeProvider } from "@/context/DarkModeContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { AppwriteProvider } from "@/context/AppwriteContext";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 
 // Layout
@@ -34,34 +35,36 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-              <ScrollToTop />
-              <AnimatePresence>
-                <Routes>
-                  {/* Public routes */}
-                  <Route element={<PublicRoute />}>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                  </Route>
-                  
-                  {/* Protected routes */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<Layout />}>
-                      <Route index element={<Dashboard />} />
-                      <Route path="emissions" element={<EmissionsTracker />} />
-                      <Route path="supply-chain" element={<SupplyChain />} />
-                      <Route path="net-zero-planner" element={<NetZeroPlanner />} />
-                      <Route path="carbon-impact" element={<CarbonImpact />} />
-                      <Route path="settings" element={<Settings />} />
-                      <Route path="profile" element={<Profile />} />
-                      <Route path="*" element={<NotFound />} />
+          <AppwriteProvider>
+            <BrowserRouter>
+              <AuthProvider>
+                <ScrollToTop />
+                <AnimatePresence>
+                  <Routes>
+                    {/* Public routes */}
+                    <Route element={<PublicRoute />}>
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/signup" element={<Signup />} />
                     </Route>
-                  </Route>
-                </Routes>
-              </AnimatePresence>
-            </AuthProvider>
-          </BrowserRouter>
+                    
+                    {/* Protected routes */}
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/" element={<Layout />}>
+                        <Route index element={<Dashboard />} />
+                        <Route path="emissions" element={<EmissionsTracker />} />
+                        <Route path="supply-chain" element={<SupplyChain />} />
+                        <Route path="net-zero-planner" element={<NetZeroPlanner />} />
+                        <Route path="carbon-impact" element={<CarbonImpact />} />
+                        <Route path="settings" element={<Settings />} />
+                        <Route path="profile" element={<Profile />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Route>
+                  </Routes>
+                </AnimatePresence>
+              </AuthProvider>
+            </BrowserRouter>
+          </AppwriteProvider>
         </TooltipProvider>
       </DarkModeProvider>
     </QueryClientProvider>

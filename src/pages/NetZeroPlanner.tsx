@@ -16,6 +16,7 @@ import { MilestonesTimeline } from "@/components/net-zero/MilestonesTimeline";
 import { ReductionProjects } from "@/components/net-zero/ReductionProjects";
 import { ScenarioComparison } from "@/components/net-zero/ScenarioComparison";
 import { ScenarioCards } from "@/components/net-zero/ScenarioCards";
+import { StandardsCompliance } from "@/components/net-zero/StandardsCompliance";
 
 const NetZeroPlanner = () => {
   return (
@@ -43,6 +44,7 @@ const NetZeroPlanner = () => {
           <TabsTrigger value="pathway">Net Zero Pathway</TabsTrigger>
           <TabsTrigger value="projects">Reduction Projects</TabsTrigger>
           <TabsTrigger value="scenarios">Scenario Planning</TabsTrigger>
+          <TabsTrigger value="compliance">Compliance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pathway" className="space-y-4">
@@ -70,6 +72,10 @@ const NetZeroPlanner = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
+        </TabsContent>
+
+        <TabsContent value="compliance" className="space-y-4">
+          <StandardsCompliance />
         </TabsContent>
       </Tabs>
     </div>
