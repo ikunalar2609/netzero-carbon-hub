@@ -29,7 +29,7 @@ export const PublicRoute = () => {
 
   // If authenticated, redirect to dashboard
   if (isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/dashboard" />;
   }
 
   // If not authenticated, render children

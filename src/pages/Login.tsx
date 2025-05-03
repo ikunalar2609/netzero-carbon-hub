@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,7 @@ const formSchema = z.object({
 const Login = () => {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,6 +45,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(values.email, values.password);
+      navigate("/dashboard");
     } catch (error) {
       // Error is handled in useAuth
       console.error(error);

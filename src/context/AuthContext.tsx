@@ -105,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(userWithoutPassword);
       toast.success("Logged in successfully");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Login failed";
       toast.error(message);
@@ -138,7 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(newUser);
       toast.success("Account created successfully");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Signup failed";
       toast.error(message);
