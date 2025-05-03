@@ -15,6 +15,7 @@ import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import Layout from "@/components/Layout";
 
 // Pages
+import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import EmissionsTracker from "@/pages/EmissionsTracker";
 import SupplyChain from "@/pages/SupplyChain";
@@ -41,6 +42,9 @@ function App() {
                 <ScrollToTop />
                 <AnimatePresence>
                   <Routes>
+                    {/* Public landing page */}
+                    <Route path="/" element={<Index />} />
+                    
                     {/* Public routes */}
                     <Route element={<PublicRoute />}>
                       <Route path="/login" element={<Login />} />
@@ -49,7 +53,7 @@ function App() {
                     
                     {/* Protected routes */}
                     <Route element={<ProtectedRoute />}>
-                      <Route path="/" element={<Layout />}>
+                      <Route path="/dashboard" element={<Layout />}>
                         <Route index element={<Dashboard />} />
                         <Route path="emissions" element={<EmissionsTracker />} />
                         <Route path="supply-chain" element={<SupplyChain />} />

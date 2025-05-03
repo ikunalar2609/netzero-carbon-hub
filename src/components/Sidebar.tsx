@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,11 +23,11 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   const isMobile = window.innerWidth < 768;
 
   const navigationItems = [
-    { name: "Dashboard", href: "/", icon: BarChart3 },
-    { name: "Emissions Tracker", href: "/emissions", icon: LineChart },
-    { name: "Supply Chain", href: "/supply-chain", icon: GitBranch },
-    { name: "Net Zero Planner", href: "/net-zero-planner", icon: Target },
-    { name: "Carbon Impact", href: "/carbon-impact", icon: Leaf }
+    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    { name: "Emissions Tracker", href: "/dashboard/emissions", icon: LineChart },
+    { name: "Supply Chain", href: "/dashboard/supply-chain", icon: GitBranch },
+    { name: "Net Zero Planner", href: "/dashboard/net-zero-planner", icon: Target },
+    { name: "Carbon Impact", href: "/dashboard/carbon-impact", icon: Leaf }
   ];
 
   const closeSidebar = () => {
@@ -43,7 +44,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       )}
     >
       <div className="flex items-center justify-between h-16 px-4 border-b border-brand-green-600">
-        <Link to="/" className="flex items-center space-x-2 text-white" onClick={closeSidebar}>
+        <Link to="/dashboard" className="flex items-center space-x-2 text-white" onClick={closeSidebar}>
           <Leaf className="h-6 w-6" />
           <span className="text-xl font-semibold">FarmlyCarbon</span>
         </Link>
@@ -80,7 +81,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
 
       <div className="absolute bottom-0 w-full p-4">
         <Link
-          to="/settings"
+          to="/dashboard/settings"
           className="flex items-center px-3 py-3 text-base font-medium rounded-lg text-white hover:bg-brand-green-600 transition-all duration-200"
         >
           <Settings className="mr-3 h-5 w-5 flex-shrink-0" />

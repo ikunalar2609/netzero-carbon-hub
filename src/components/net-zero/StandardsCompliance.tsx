@@ -1,313 +1,211 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, BarChart3, Plus, AlertCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import { 
-  StandardCompliance,
-  getStandardsCompliance,
-  createStandardCompliance,
-  updateStandardCompliance,
-  deleteStandardCompliance 
-} from "@/services/appwrite";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { toast } from "sonner";
+import { CheckCircle, AlertTriangle, Clock } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createStandard, getStandards, deleteStandard } from "@/services/appwrite";
 
-const standardSchema = z.object({
+// Define the StandardCompliance type
+export interface StandardCompliance {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+}
+
+const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(3, "Description must be at least 3 characters"),
-  status: z.string().min(1, "Status is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  status: z.string(),
 });
 
-type StandardFormValues = z.infer<typeof standardSchema>;
-
 export const StandardsCompliance = () => {
-  const [standards, setStandards] = useState<StandardCompliance[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentStandard, setCurrentStandard] = useState<StandardCompliance | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const form = useForm<StandardFormValues>({
-    resolver: zodResolver(standardSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       description: "",
-      status: "",
+      status: "pending",
     },
   });
 
-  useEffect(() => {
-    fetchStandards();
-  }, []);
+  // Fetch standards
+  const { data: standards = [], isLoading } = useQuery({
+    queryKey: ['standards'],
+    queryFn: getStandards,
+  });
 
-  useEffect(() => {
-    if (currentStandard && isEditing) {
-      form.reset({
-        title: currentStandard.title,
-        description: currentStandard.description,
-        status: currentStandard.status,
-      });
-    } else {
-      form.reset({
-        title: "",
-        description: "",
-        status: "",
-      });
-    }
-  }, [currentStandard, isEditing, form]);
+  // Add standard mutation
+  const addStandardMutation = useMutation({
+    mutationFn: (standard: Omit<StandardCompliance, "id">) => createStandard(standard),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['standards'] });
+      setIsFormOpen(false);
+      form.reset();
+      toast.success("Standard added successfully");
+    },
+    onError: (error) => {
+      console.error("Error adding standard:", error);
+      toast.error("Failed to add standard");
+    },
+  });
 
-  const fetchStandards = async () => {
-    try {
-      setLoading(true);
-      const data = await getStandardsCompliance();
-      
-      // If no data exists in Appwrite yet, use sample data
-      if (data.length === 0) {
-        const sampleStandards = [
-          {
-            id: "1",
-            title: "GHG Protocol Alignment",
-            description: "Project follows the GHG Protocol Corporate Standard for emissions accounting.",
-            status: "Fully Compliant",
-          },
-          {
-            id: "2",
-            title: "ISO 14064 Compliance",
-            description: "Follows ISO 14064 standards for greenhouse gas accounting and verification.",
-            status: "Certified",
-          },
-          {
-            id: "3",
-            title: "Science Based Targets",
-            description: "Reduction targets aligned with Science Based Targets initiative (SBTi).",
-            status: "Validated",
-          },
-          {
-            id: "4",
-            title: "Gold Standard",
-            description: "Project meets Gold Standard certification requirements for carbon projects.",
-            status: "Pending Verification",
-          }
-        ];
-        setStandards(sampleStandards);
-      } else {
-        setStandards(data);
-      }
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching standards:", err);
-      setError("Failed to load standards. Please try again later.");
-      toast.error("Failed to load standards");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddStandard = () => {
-    setCurrentStandard(null);
-    setIsEditing(false);
-    setIsDialogOpen(true);
-  };
-
-  const handleEditStandard = (standard: StandardCompliance) => {
-    setCurrentStandard(standard);
-    setIsEditing(true);
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteStandard = async (id: string) => {
-    try {
-      await deleteStandardCompliance(id);
-      setStandards(standards.filter(standard => standard.id !== id));
+  // Delete standard mutation
+  const deleteStandardMutation = useMutation({
+    mutationFn: (id: string) => deleteStandard(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['standards'] });
       toast.success("Standard deleted successfully");
-    } catch (err) {
-      console.error("Error deleting standard:", err);
+    },
+    onError: (error) => {
+      console.error("Error deleting standard:", error);
       toast.error("Failed to delete standard");
+    },
+  });
+
+  const handleAddStandard = (data: z.infer<typeof formSchema>) => {
+    addStandardMutation.mutate(data);
+  };
+
+  const handleDeleteStandard = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this standard?")) {
+      deleteStandardMutation.mutate(id);
     }
   };
 
-  const onSubmit = async (values: StandardFormValues) => {
-    try {
-      if (isEditing && currentStandard) {
-        const updated = await updateStandardCompliance(currentStandard.id, values);
-        setStandards(standards.map(s => s.id === currentStandard.id ? { ...s, ...values } : s));
-        toast.success("Standard updated successfully");
-      } else {
-        const newStandard = await createStandardCompliance(values);
-        setStandards([...standards, newStandard as unknown as StandardCompliance]);
-        toast.success("Standard added successfully");
-      }
-      setIsDialogOpen(false);
-    } catch (err) {
-      console.error("Error saving standard:", err);
-      toast.error(isEditing ? "Failed to update standard" : "Failed to add standard");
-    }
-  };
-
-  const getStatusColor = (status: string) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
-      case "Fully Compliant":
-      case "Certified":
-      case "Validated":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "Pending Verification":
-      case "In Progress":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Not Compliant":
-      case "Failed":
-        return "bg-red-100 text-red-800 border-red-200";
+      case "compliant":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "non-compliant":
+        return <AlertTriangle className="h-5 w-5 text-red-500" />;
       default:
-        return "bg-blue-100 text-blue-800 border-blue-200";
+        return <Clock className="h-5 w-5 text-amber-500" />;
     }
   };
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Standards & Compliance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Standards & Compliance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 gap-4">
-            <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-red-500">{error}</p>
-            <Button onClick={fetchStandards}>Try Again</Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
-    <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Standards & Compliance</CardTitle>
-          <Button size="sm" onClick={handleAddStandard} className="gap-1">
-            <Plus className="h-4 w-4" />
-            <span>Add Standard</span>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-xl font-semibold">Standards & Compliance</h3>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setIsFormOpen(true)}>
+            Add Standard
           </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {standards.map((standard) => (
-                <div key={standard.id} className="border rounded-lg p-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <BarChart3 className="h-5 w-5 text-green-600" />
-                    <h3 className="font-semibold">{standard.title}</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {standard.description}
-                  </p>
-                  <Badge className={getStatusColor(standard.status)}>{standard.status}</Badge>
-                  
-                  <div className="flex justify-end mt-3 pt-2 border-t">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-sm text-black hover:text-gray-600"
-                      onClick={() => handleEditStandard(standard)}
-                    >
-                      Edit
-                    </Button>
-                  </div>
+          <Button className="text-white">
+            Generate Compliance Report
+          </Button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="text-center py-8">Loading standards...</div>
+      ) : standards.length === 0 ? (
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center py-6">
+              <p className="text-muted-foreground mb-4">No compliance standards added yet</p>
+              <Button onClick={() => setIsFormOpen(true)}>Add Your First Standard</Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {standards.map((standard) => (
+            <Card key={standard.id}>
+              <CardHeader className="flex flex-row justify-between items-start space-y-0">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    {getStatusIcon(standard.status)}
+                    {standard.title}
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    {standard.status === "compliant"
+                      ? "Fully compliant"
+                      : standard.status === "non-compliant"
+                      ? "Action required"
+                      : "Under review"}
+                  </CardDescription>
                 </div>
-              ))}
-            </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive"
+                  onClick={() => handleDeleteStandard(standard.id)}
+                >
+                  Delete
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">{standard.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-semibold mb-3">UN Sustainable Development Goals</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 7: Affordable Clean Energy
-                </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 9: Industry & Infrastructure
-                </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 11: Sustainable Cities
-                </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 12: Responsible Consumption
-                </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 13: Climate Action
-                </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 15: Life on Land
-                </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 justify-start">
-                  SDG 17: Partnerships for Goals
-                </Badge>
-              </div>
-            </div>
-
-            <Button className="w-full flex gap-1 text-white">
-              <span>Generate Compliance Report</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Edit Standard" : "Add New Standard"}</DialogTitle>
+            <DialogTitle>Add Compliance Standard</DialogTitle>
             <DialogDescription>
-              {isEditing ? "Update compliance standard details" : "Add a new compliance standard to track"}
+              Add a new standard or regulation that applies to your organization.
             </DialogDescription>
           </DialogHeader>
-          
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleAddStandard)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Standard Title</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. ISO 14001 Compliance" {...field} />
+                      <Input {...field} placeholder="e.g. GHG Protocol Scope 3" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="description"
@@ -315,59 +213,57 @@ export const StandardsCompliance = () => {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Brief description of the standard" 
-                        className="resize-none"
-                        {...field} 
+                      <Textarea
+                        {...field}
+                        placeholder="Describe the requirements of this standard"
+                        rows={3}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a status" />
+                          <SelectValue placeholder="Select status" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Fully Compliant">Fully Compliant</SelectItem>
-                        <SelectItem value="Certified">Certified</SelectItem>
-                        <SelectItem value="Validated">Validated</SelectItem>
-                        <SelectItem value="Pending Verification">Pending Verification</SelectItem>
-                        <SelectItem value="In Progress">In Progress</SelectItem>
-                        <SelectItem value="Not Compliant">Not Compliant</SelectItem>
+                        <SelectItem value="compliant">Compliant</SelectItem>
+                        <SelectItem value="non-compliant">Non-compliant</SelectItem>
+                        <SelectItem value="pending">Pending Review</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              <div className="flex justify-end gap-2 pt-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setIsDialogOpen(false)}
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsFormOpen(false)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
-                  {isEditing ? "Update" : "Add Standard"}
-                </Button>
+                <Button type="submit">Save Standard</Button>
               </div>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
