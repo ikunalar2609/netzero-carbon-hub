@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -156,15 +157,15 @@ const Index = () => {
       </section>
       
       {/* Contact Footer */}
-      <footer className="py-12 px-4 md:px-8 bg-gray-900 text-white">
+      <footer className="py-12 px-4 md:px-8 bg-white text-black">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <div className="flex items-center mb-6">
-                <Leaf className="h-8 w-8 mr-2" />
+                <Leaf className="h-8 w-8 mr-2 text-primary" />
                 <h2 className="text-2xl font-bold">FarmlyCarbon</h2>
               </div>
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-700 mb-6">
                 Your complete platform for agricultural carbon management, emissions tracking, and sustainability planning.
               </p>
             </div>
@@ -174,7 +175,7 @@ const Index = () => {
               <div className="space-y-4">
                 <a 
                   href="mailto:i.kunal.ar26@gmail.com" 
-                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
                 >
                   <Mail className="h-5 w-5 mr-3" />
                   <span>i.kunal.ar26@gmail.com</span>
@@ -184,7 +185,7 @@ const Index = () => {
                   href="https://www.instagram.com/i_kunal_ar26/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
                 >
                   <Instagram className="h-5 w-5 mr-3" />
                   <span>i_kunal_ar26</span>
@@ -194,7 +195,7 @@ const Index = () => {
                   href="https://x.com/i_kunal_ar26" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
                 >
                   <Twitter className="h-5 w-5 mr-3" />
                   <span>i_kunal_ar26</span>
@@ -204,7 +205,7 @@ const Index = () => {
                   href="https://www.linkedin.com/in/kunal-rahangdale-572a7215a/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
                 >
                   <Linkedin className="h-5 w-5 mr-3" />
                   <span>Kunal Rahangdale</span>
@@ -213,7 +214,7 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500">
+          <div className="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500">
             <p>&copy; {new Date().getFullYear()} FarmlyCarbon. All rights reserved.</p>
           </div>
         </div>
