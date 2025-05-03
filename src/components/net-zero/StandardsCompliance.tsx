@@ -38,7 +38,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createStandard, getStandards, deleteStandard } from "@/services/appwrite";
+import { createStandardCompliance, getStandardsCompliance, deleteStandardCompliance } from "@/services/appwrite";
 
 // Define the StandardCompliance type
 export interface StandardCompliance {
@@ -70,12 +70,12 @@ export const StandardsCompliance = () => {
   // Fetch standards
   const { data: standards = [], isLoading } = useQuery({
     queryKey: ['standards'],
-    queryFn: getStandards,
+    queryFn: getStandardsCompliance,
   });
 
   // Add standard mutation
   const addStandardMutation = useMutation({
-    mutationFn: (standard: Omit<StandardCompliance, "id">) => createStandard(standard),
+    mutationFn: (standard: z.infer<typeof formSchema>) => createStandardCompliance(standard as Omit<StandardCompliance, "id">),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['standards'] });
       setIsFormOpen(false);
@@ -90,7 +90,7 @@ export const StandardsCompliance = () => {
 
   // Delete standard mutation
   const deleteStandardMutation = useMutation({
-    mutationFn: (id: string) => deleteStandard(id),
+    mutationFn: (id: string) => deleteStandardCompliance(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['standards'] });
       toast.success("Standard deleted successfully");

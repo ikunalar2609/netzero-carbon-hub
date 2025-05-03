@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { ProjectForm } from "./ProjectForm";
 import { toast } from "sonner";
-import { createProject, deleteProject, getProjects } from "@/services/appwrite";
+import { createReductionProject, deleteReductionProject, getReductionProjects } from "@/services/appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Define the ReductionProject type
@@ -42,12 +42,12 @@ export const ReductionProjects = () => {
   // Fetch projects
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['reductionProjects'],
-    queryFn: getProjects,
+    queryFn: getReductionProjects,
   });
 
   // Add project mutation
   const addProjectMutation = useMutation({
-    mutationFn: (project: Omit<ReductionProject, "id">) => createProject(project),
+    mutationFn: (project: Omit<ReductionProject, "id">) => createReductionProject(project),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reductionProjects'] });
       setIsFormOpen(false);
@@ -61,7 +61,7 @@ export const ReductionProjects = () => {
 
   // Delete project mutation
   const deleteProjectMutation = useMutation({
-    mutationFn: (id: string) => deleteProject(id),
+    mutationFn: (id: string) => deleteReductionProject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reductionProjects'] });
       toast.success("Project deleted successfully");
