@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart } from "lucide-react";
+import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -155,6 +154,70 @@ const Index = () => {
           </Button>
         </motion.div>
       </section>
+      
+      {/* Contact Footer */}
+      <footer className="py-12 px-4 md:px-8 bg-gray-900 text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <div className="flex items-center mb-6">
+                <Leaf className="h-8 w-8 mr-2" />
+                <h2 className="text-2xl font-bold">FarmlyCarbon</h2>
+              </div>
+              <p className="text-gray-300 mb-6">
+                Your complete platform for agricultural carbon management, emissions tracking, and sustainability planning.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-semibold mb-6">Contact Us</h3>
+              <div className="space-y-4">
+                <a 
+                  href="mailto:i.kunal.ar26@gmail.com" 
+                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                >
+                  <Mail className="h-5 w-5 mr-3" />
+                  <span>i.kunal.ar26@gmail.com</span>
+                </a>
+                
+                <a 
+                  href="https://www.instagram.com/i_kunal_ar26/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                >
+                  <Instagram className="h-5 w-5 mr-3" />
+                  <span>i_kunal_ar26</span>
+                </a>
+                
+                <a 
+                  href="https://x.com/i_kunal_ar26" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                >
+                  <Twitter className="h-5 w-5 mr-3" />
+                  <span>i_kunal_ar26</span>
+                </a>
+                
+                <a 
+                  href="https://www.linkedin.com/in/kunal-rahangdale-572a7215a/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                >
+                  <Linkedin className="h-5 w-5 mr-3" />
+                  <span>Kunal Rahangdale</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500">
+            <p>&copy; {new Date().getFullYear()} FarmlyCarbon. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
