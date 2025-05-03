@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   return (
     <div
       className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-brand-green transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:z-auto overflow-y-auto",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-brand-green transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
