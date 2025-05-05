@@ -1,8 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import CarbonProjectsSection from "@/components/home/CarbonProjectsSection";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -102,6 +102,9 @@ const Index = () => {
           </div>
         </motion.div>
       </section>
+
+      {/* Carbon Projects Section */}
+      <CarbonProjectsSection />
 
       {/* How It Works Section */}
       <section className="py-20 px-4 md:px-8">
