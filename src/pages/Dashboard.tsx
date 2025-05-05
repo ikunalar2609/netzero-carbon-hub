@@ -13,7 +13,8 @@ import {
   Factory, 
   Leaf, 
   Globe,
-  ArrowRight
+  ArrowRight,
+  LineChart
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -66,13 +67,13 @@ const Dashboard = () => {
         <GoalsProgress />
       </div>
       
-      {/* Carbon Projects Section with API data */}
+      {/* Carbon Market Insights Section - API Data */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight">Carbon Market Insights</h2>
           <Link to="/dashboard/carbon-market">
             <Button variant="outline" size="sm" className="gap-1">
-              View Full Details
+              View Full Market Section
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>

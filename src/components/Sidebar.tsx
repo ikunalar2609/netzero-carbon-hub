@@ -9,7 +9,8 @@ import {
   Target, 
   Leaf, 
   X,
-  Settings
+  Settings,
+  LineChart as MarketIcon
 } from "lucide-react";
 import { ProfileMenu } from "@/components/ProfileMenu";
 
@@ -27,7 +28,8 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
     { name: "Emissions Tracker", href: "/dashboard/emissions", icon: LineChart },
     { name: "Supply Chain", href: "/dashboard/supply-chain", icon: GitBranch },
     { name: "Net Zero Planner", href: "/dashboard/net-zero-planner", icon: Target },
-    { name: "Carbon Impact", href: "/dashboard/carbon-impact", icon: Leaf }
+    { name: "Carbon Impact", href: "/dashboard/carbon-impact", icon: Leaf },
+    { name: "Carbon Market Insights", href: "/dashboard/carbon-market", icon: MarketIcon }
   ];
 
   const closeSidebar = () => {
