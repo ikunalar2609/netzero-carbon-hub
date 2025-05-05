@@ -6,11 +6,14 @@ import ScopeBreakdown from "@/components/dashboard/ScopeBreakdown";
 import ReductionStatus from "@/components/dashboard/ReductionStatus";
 import GoalsProgress from "@/components/dashboard/GoalsProgress";
 import CarbonProjectsSection from "@/components/dashboard/CarbonProjectsSection";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   TrendingDown, 
   Factory, 
   Leaf, 
-  Globe 
+  Globe,
+  ArrowRight
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -63,7 +66,21 @@ const Dashboard = () => {
         <GoalsProgress />
       </div>
       
-      {/* New Carbon Projects Section */}
+      {/* Carbon Projects Section with API data */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold tracking-tight">Carbon Market Insights</h2>
+          <Link to="/dashboard/carbon-market">
+            <Button variant="outline" size="sm" className="gap-1">
+              View Full Details
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Live data from Carbonmark API (https://v16.api.carbonmark.com)
+        </p>
+      </div>
       <CarbonProjectsSection />
     </div>
   );

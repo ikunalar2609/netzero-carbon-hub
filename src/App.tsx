@@ -21,6 +21,7 @@ import EmissionsTracker from "@/pages/EmissionsTracker";
 import SupplyChain from "@/pages/SupplyChain";
 import NetZeroPlanner from "@/pages/NetZeroPlanner";
 import CarbonImpact from "@/pages/CarbonImpact";
+import CarbonMarketInsights from "@/pages/CarbonMarketInsights";
 import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
@@ -59,6 +60,7 @@ function App() {
                         <Route path="supply-chain" element={<SupplyChain />} />
                         <Route path="net-zero-planner" element={<NetZeroPlanner />} />
                         <Route path="carbon-impact" element={<CarbonImpact />} />
+                        <Route path="carbon-market" element={<CarbonMarketInsights />} />
                         <Route path="settings" element={<Settings />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="*" element={<NotFound />} />
