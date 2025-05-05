@@ -5,6 +5,7 @@ import EmissionsByCategory from "@/components/dashboard/EmissionsByCategory";
 import ScopeBreakdown from "@/components/dashboard/ScopeBreakdown";
 import ReductionStatus from "@/components/dashboard/ReductionStatus";
 import GoalsProgress from "@/components/dashboard/GoalsProgress";
+import CarbonProjectsSection from "@/components/dashboard/CarbonProjectsSection";
 import { 
   TrendingDown, 
   Factory, 
@@ -61,6 +62,9 @@ const Dashboard = () => {
         <ReductionStatus />
         <GoalsProgress />
       </div>
+      
+      {/* New Carbon Projects Section */}
+      <CarbonProjectsSection />
     </div>
   );
 };
