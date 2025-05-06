@@ -9,26 +9,30 @@ interface SubstackArticle {
   description: string;
   date: string;
   url: string;
+  image: string;
 }
 
 const articles: SubstackArticle[] = [
   {
-    title: "The Journey Begins",
-    description: "Reflections on starting a writing practice and the power of daily habits.",
+    title: "What Kunal Think: Market for Correcting Mistakes",
+    description: "Human complexity is no less complex, capable of drying up lakes and making deserts bloom. But before jumping to environmental conclusions, take a closer look at the full story.",
     date: "May 1, 2023",
-    url: "https://idlerwritingeveryday.substack.com/p/the-journey-begins"
+    url: "https://idlerwritingeveryday.substack.com/p/what-kunal-think-market-for-correcting",
+    image: "/lovable-uploads/a7ee8375-2b69-4e51-840d-a877269d0037.png"
   },
   {
-    title: "Finding Your Voice",
-    description: "Exploring the process of developing a unique writing style and perspective.",
+    title: "JSW Steel's Climate Action Report: Balancing Economic Growth and Climate Responsibility",
+    description: "JSW Steel's Climate Action Report underscores critical junction of climate change and economic growth in India....",
     date: "May 5, 2023",
-    url: "https://idlerwritingeveryday.substack.com/p/finding-your-voice"
+    url: "https://idlerwritingeveryday.substack.com/p/jsw-steels-climate-action-report",
+    image: "/lovable-uploads/f5feef21-d5ea-4dfc-80ed-f9713d106f7c.png"
   },
   {
-    title: "The Art of Consistency",
-    description: "How showing up every day transforms your writing and creative practice.",
+    title: "Global Carbon Council (GCC) launched two tools : GCCTA001 and GCCTA008",
+    description: "Global Carbon Council (GCC) has launched two new tools aimed at improving the accuracy and standardization of GHG emissions and carbon stock estimations in Nature based Solutions (NbS) projects.",
     date: "May 10, 2023",
-    url: "https://idlerwritingeveryday.substack.com/p/the-art-of-consistency"
+    url: "https://idlerwritingeveryday.substack.com/p/global-carbon-council-gcc-launched",
+    image: "/lovable-uploads/f4f84a9a-0e26-4a8a-a438-50b4f12c14f0.png"
   }
 ];
 
@@ -71,6 +75,13 @@ const SubstackSection = () => {
               viewport={{ once: true }}
             >
               <Card className="h-full flex flex-col hover:shadow-md transition-shadow duration-200">
+                <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+                  <img 
+                    src={article.image} 
+                    alt={article.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <CardHeader>
                   <CardTitle className="text-xl">{article.title}</CardTitle>
                   <CardDescription className="text-sm">{article.date}</CardDescription>
