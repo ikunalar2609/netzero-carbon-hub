@@ -1,8 +1,10 @@
+
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin } from "lucide-react";
+import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CarbonProjectsSection from "@/components/home/CarbonProjectsSection";
+import SubstackSection from "@/components/home/SubstackSection";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -102,6 +104,9 @@ const Index = () => {
           </div>
         </motion.div>
       </section>
+
+      {/* Substack Blog Section */}
+      <SubstackSection />
 
       {/* Carbon Projects Section */}
       <CarbonProjectsSection />
