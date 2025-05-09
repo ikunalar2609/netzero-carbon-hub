@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowRight, Leaf, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin, BookOpen } from "lucide-react";
+import { ArrowDown, ArrowRight, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CarbonProjectsSection from "@/components/home/CarbonProjectsSection";
@@ -33,7 +32,11 @@ const Index = () => {
         >
           <motion.div variants={fadeInUp}>
             <div className="flex items-center justify-center mb-6">
-              <Leaf className="h-12 w-12 mr-2" />
+              <img 
+                src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
+                alt="FarmlyCarbon Logo" 
+                className="h-16 w-auto mr-2" 
+              />
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold">FarmlyCarbon</h1>
             </div>
           </motion.div>

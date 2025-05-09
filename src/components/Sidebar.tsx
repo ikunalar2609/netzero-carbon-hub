@@ -41,17 +41,21 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   return (
     <div
       className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-brand-green transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-white transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      <div className="flex items-center justify-between h-16 px-4 border-b border-brand-green-600">
-        <Link to="/dashboard" className="flex items-center space-x-2 text-white" onClick={closeSidebar}>
-          <Leaf className="h-6 w-6" />
-          <span className="text-xl font-semibold">FarmlyCarbon</span>
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+        <Link to="/dashboard" className="flex items-center space-x-2" onClick={closeSidebar}>
+          <img 
+            src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
+            alt="FarmlyCarbon Logo" 
+            className="h-10 w-auto" 
+          />
+          <span className="text-xl font-semibold text-gray-800">FarmlyCarbon</span>
         </Link>
         {isMobile && (
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:bg-brand-green-600">
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-gray-800 hover:bg-gray-100">
             <X className="h-5 w-5" />
           </Button>
         )}
@@ -70,11 +74,11 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
               className={cn(
                 "flex items-center px-3 py-3 text-base font-medium rounded-lg transition-all duration-200",
                 isActive
-                  ? "bg-white text-brand-green-600 shadow-sm"
-                  : "text-white hover:bg-brand-green-600"
+                  ? "bg-gray-100 text-green-700 shadow-sm"
+                  : "text-gray-700 hover:bg-gray-100"
               )}
             >
-              <Icon className={cn("mr-3 h-5 w-5 flex-shrink-0", isActive ? "text-brand-green" : "text-white")} />
+              <Icon className={cn("mr-3 h-5 w-5 flex-shrink-0", isActive ? "text-green-700" : "text-gray-600")} />
               <span>{item.name}</span>
             </Link>
           );
@@ -84,9 +88,9 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       <div className="absolute bottom-0 w-full p-4">
         <Link
           to="/dashboard/settings"
-          className="flex items-center px-3 py-3 text-base font-medium rounded-lg text-white hover:bg-brand-green-600 transition-all duration-200"
+          className="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200"
         >
-          <Settings className="mr-3 h-5 w-5 flex-shrink-0" />
+          <Settings className="mr-3 h-5 w-5 flex-shrink-0 text-gray-600" />
           <span>Settings</span>
         </Link>
       </div>

@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -35,6 +36,10 @@
     --ring: 0 0% 0%;
 
     --radius: 0.75rem;
+    
+    /* Brand colors */
+    --brand-green: 120 40% 30%;
+    --brand-green-foreground: 0 0% 100%;
   }
 
   .dark {
