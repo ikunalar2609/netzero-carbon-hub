@@ -48,9 +48,9 @@ const SubstackSection = () => {
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">From Our Blog</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">From My Blog Idler Writing Everyday</h2>
             <p className="text-muted-foreground max-w-2xl">
-              Thoughts and insights on writing, creativity, and the daily practice of showing up.
+               Idler Writing Everyday gives you access to in-depth analysis and expert insights into the world of carbon finance, carbon markets and environmental legislation, detailed reports from the UNFCCC, COP summits, Emissions Gap Report, World Economic Outlook and much more. Whether you're an industry professional, policymaker or climate enthusiast, Idler Writing Everyday ensures you stay informed about the latest trends, policies and developments shaping the global carbon landscape. Don't miss out on essential updates that influence climate action and sustainability efforts worldwide.
             </p>
           </div>
           
