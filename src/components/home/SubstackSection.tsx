@@ -42,19 +42,30 @@ const SubstackSection = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-100px" }}
         className="max-w-7xl mx-auto"
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold mb-3">From My Blog Idler Writing Everyday</h2>
             <p className="text-muted-foreground max-w-2xl">
                Idler Writing Everyday gives you access to in-depth analysis and expert insights into the world of carbon finance, carbon markets and environmental legislation, detailed reports from the UNFCCC, COP summits, Emissions Gap Report, World Economic Outlook and much more.
             </p>
-          </div>
+          </motion.div>
           
-          <a 
+          <motion.a 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             href="https://idlerwritingeveryday.substack.com/" 
             target="_blank" 
             rel="noopener noreferrer"
@@ -62,21 +73,26 @@ const SubstackSection = () => {
           >
             <BookOpen className="h-5 w-5 mr-2" />
             Idler Writing Everyday
-          </a>
+          </motion.a>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((article, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.2 }}
               viewport={{ once: true }}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="h-full"
             >
               <Card className="h-full flex flex-col hover:shadow-md transition-shadow duration-200">
                 <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
-                  <img 
+                  <motion.img 
+                    initial={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.4 }}
                     src={article.image} 
                     alt={article.title}
                     className="w-full h-full object-cover"
@@ -96,10 +112,20 @@ const SubstackSection = () => {
                     rel="noopener noreferrer"
                     className="w-full"
                   >
-                    <Button variant="outline" className="w-full flex justify-between">
-                      <span>Read Article</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button variant="outline" className="w-full flex justify-between">
+                        <span>Read Article</span>
+                        <motion.div
+                          whileHover={{ x: 3 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        >
+                          <ArrowRight className="h-4 w-4" />
+                        </motion.div>
+                      </Button>
+                    </motion.div>
                   </a>
                 </CardFooter>
               </Card>
@@ -107,18 +133,34 @@ const SubstackSection = () => {
           ))}
         </div>
         
-        <div className="mt-12 text-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="mt-12 text-center"
+        >
           <a 
             href="https://idlerwritingeveryday.substack.com/" 
             target="_blank" 
             rel="noopener noreferrer"
           >
-            <Button variant="outline" size="lg" className="gap-2">
-              View All Articles
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button variant="outline" size="lg" className="gap-2">
+                View All Articles
+                <motion.div
+                  whileHover={{ x: 3 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </motion.div>
+              </Button>
+            </motion.div>
           </a>
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );

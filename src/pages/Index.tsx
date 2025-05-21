@@ -11,6 +11,15 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0 }
 };
 
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
 const Index = () => {
   const navigate = useNavigate();
 
@@ -21,17 +30,13 @@ const Index = () => {
         <motion.div 
           initial="hidden"
           animate="visible"
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: 0.2
-              }
-            }
-          }}
+          variants={staggerContainer}
           className="max-w-4xl"
         >
-          <motion.div variants={fadeInUp}>
+          <motion.div 
+            variants={fadeInUp}
+            transition={{ duration: 0.6 }}
+          >
             <div className="flex items-center justify-center mb-6">
               <img 
                 src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
@@ -44,16 +49,34 @@ const Index = () => {
           
           <motion.h2 
             variants={fadeInUp}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl md:text-2xl text-muted-foreground mb-6"
           >
             Your complete platform for agricultural carbon management, emissions tracking, and sustainability planning
           </motion.h2>
           
-          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={() => navigate("/signup")}>
+          <motion.div 
+            variants={fadeInUp} 
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Button 
+              size="lg" 
+              onClick={() => navigate("/signup")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              as={motion.button}
+            >
               Get Started <ArrowRight className="ml-2" />
             </Button>
-            <Button variant="outline" size="lg" onClick={() => navigate("/login")}>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => navigate("/login")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              as={motion.button}
+            >
               Log In
             </Button>
           </motion.div>
@@ -62,7 +85,7 @@ const Index = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
           className="absolute bottom-8"
         >
           <Button 
@@ -83,27 +106,38 @@ const Index = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true, margin: "-100px" }}
           className="max-w-7xl mx-auto"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">Comprehensive Carbon Management</h2>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-center mb-16"
+          >
+            Comprehensive Carbon Management
+          </motion.h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard 
               icon={<BarChart3 className="h-8 w-8" />}
               title="Real-time Dashboard"
               description="Monitor your farm's carbon footprint with intuitive visualizations and actionable insights."
+              index={0}
             />
             <FeatureCard 
               icon={<LineChart className="h-8 w-8" />}
               title="Emissions Tracking"
               description="Track scope 1, 2, and 3 emissions across all farm operations with precision and accuracy."
+              index={1}
             />
             <FeatureCard 
               icon={<Target className="h-8 w-8" />}
               title="Net Zero Planning"
               description="Create and manage your path to net zero emissions with customizable reduction projects."
+              index={2}
             />
           </div>
         </motion.div>
@@ -120,27 +154,38 @@ const Index = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true, margin: "-100px" }}
           className="max-w-7xl mx-auto"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">How It Works</h2>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-center mb-16"
+          >
+            How It Works
+          </motion.h2>
           
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
             <WorksStep 
               number="01"
               title="Measure Your Emissions"
               description="Import or input your farm's data to establish a comprehensive baseline of carbon emissions."
+              index={0}
             />
             <WorksStep 
               number="02"
               title="Create Reduction Plans"
               description="Develop actionable strategies to reduce emissions based on your specific operation and goals."
+              index={1}
             />
             <WorksStep 
               number="03"
               title="Track Your Progress"
               description="Monitor improvements over time and stay compliant with relevant sustainability standards."
+              index={2}
             />
           </div>
         </motion.div>
@@ -151,20 +196,46 @@ const Index = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true, margin: "-100px" }}
           className="max-w-4xl mx-auto text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Start Your Sustainability Journey?</h2>
-          <p className="text-white/80 text-lg mb-8">Join thousands of agricultural operations already using FarmlyCarbon to manage their environmental impact.</p>
-          
-          <Button 
-            size="lg" 
-            className="bg-white text-primary hover:bg-white/90"
-            onClick={() => navigate("/signup")}
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
           >
-            Start Your Free Trial
-          </Button>
+            Ready to Start Your Sustainability Journey?
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-white/80 text-lg mb-8"
+          >
+            Join thousands of agricultural operations already using FarmlyCarbon to manage their environmental impact.
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <Button 
+              size="lg" 
+              className="bg-white text-primary hover:bg-white/90"
+              onClick={() => navigate("/signup")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              as={motion.button}
+            >
+              Start Your Free Trial
+            </Button>
+          </motion.div>
         </motion.div>
       </section>
       
@@ -173,56 +244,75 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <div className="flex items-center mb-6">
+              <motion.div 
+                className="flex items-center mb-6"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
                 <Leaf className="h-8 w-8 mr-2 text-primary" />
                 <h2 className="text-2xl font-bold">FarmlyCarbon</h2>
-              </div>
-              <p className="text-gray-700 mb-6">
+              </motion.div>
+              <motion.p 
+                className="text-gray-700 mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
                 Your complete platform for agricultural carbon management, emissions tracking, and sustainability planning.
-              </p>
+              </motion.p>
             </div>
             
             <div>
-              <h3 className="text-xl font-semibold mb-6">Contact Us</h3>
-              <div className="space-y-4">
-                <a 
+              <motion.h3 
+                className="text-xl font-semibold mb-6"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                Contact Us
+              </motion.h3>
+              <motion.div 
+                className="space-y-4"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                <ContactLink 
                   href="mailto:i.kunal.ar26@gmail.com" 
-                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
-                >
-                  <Mail className="h-5 w-5 mr-3" />
-                  <span>i.kunal.ar26@gmail.com</span>
-                </a>
+                  icon={<Mail className="h-5 w-5 mr-3" />}
+                  text="i.kunal.ar26@gmail.com"
+                />
                 
-                <a 
+                <ContactLink 
                   href="https://www.instagram.com/i_kunal_ar26/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
-                >
-                  <Instagram className="h-5 w-5 mr-3" />
-                  <span>i_kunal_ar26</span>
-                </a>
+                  icon={<Instagram className="h-5 w-5 mr-3" />}
+                  text="i_kunal_ar26"
+                />
                 
-                <a 
+                <ContactLink 
                   href="https://x.com/i_kunal_ar26" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
-                >
-                  <Twitter className="h-5 w-5 mr-3" />
-                  <span>i_kunal_ar26</span>
-                </a>
+                  icon={<Twitter className="h-5 w-5 mr-3" />}
+                  text="i_kunal_ar26"
+                />
                 
-                <a 
+                <ContactLink 
                   href="https://www.linkedin.com/in/kunal-rahangdale-572a7215a/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex items-center text-gray-700 hover:text-primary transition-colors"
-                >
-                  <Linkedin className="h-5 w-5 mr-3" />
-                  <span>Kunal Rahangdale</span>
-                </a>
-              </div>
+                  icon={<Linkedin className="h-5 w-5 mr-3" />}
+                  text="Kunal Rahangdale"
+                />
+              </motion.div>
             </div>
           </div>
           
@@ -236,9 +326,13 @@ const Index = () => {
 };
 
 // Feature Card Component
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
+const FeatureCard = ({ icon, title, description, index = 0 }: { icon: React.ReactNode, title: string, description: string, index?: number }) => (
   <motion.div 
-    whileHover={{ y: -5 }}
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: index * 0.2 }}
+    viewport={{ once: true }}
+    whileHover={{ y: -5, transition: { duration: 0.2 } }}
     className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
   >
     <div className="mb-4 text-primary">{icon}</div>
@@ -248,12 +342,43 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 );
 
 // How It Works Step Component
-const WorksStep = ({ number, title, description }: { number: string, title: string, description: string }) => (
-  <motion.div className="flex flex-col items-center text-center">
-    <div className="text-4xl font-bold text-primary/20 mb-4">{number}</div>
+const WorksStep = ({ number, title, description, index = 0 }: { number: string, title: string, description: string, index?: number }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: index * 0.2 }}
+    viewport={{ once: true }}
+    className="flex flex-col items-center text-center"
+  >
+    <motion.div 
+      whileHover={{ scale: 1.1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      className="text-4xl font-bold text-primary/20 mb-4"
+    >
+      {number}
+    </motion.div>
     <h3 className="text-xl font-semibold mb-2">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
   </motion.div>
+);
+
+// Contact Link Component
+const ContactLink = ({ href, icon, text }: { href: string, icon: React.ReactNode, text: string }) => (
+  <motion.a 
+    href={href} 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="flex items-center text-gray-700 hover:text-primary transition-colors"
+    variants={{
+      hidden: { opacity: 0, x: -10 },
+      visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+    }}
+    whileHover={{ x: 5 }}
+    whileTap={{ scale: 0.98 }}
+  >
+    {icon}
+    <span>{text}</span>
+  </motion.a>
 );
 
 export default Index;
