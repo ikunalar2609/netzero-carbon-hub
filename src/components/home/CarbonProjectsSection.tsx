@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { LineChart, Leaf, BarChart3 } from "lucide-react";
 import { getFeaturedProjects, getCarbonStats, type CarbonProject, type CarbonStats } from "@/services/carbonmark";
+import GridBackground from "./GridBackground";
+import GradientDot from "./GradientDot";
 
 const CarbonProjectsSection = () => {
   const [projects, setProjects] = useState<CarbonProject[]>([]);
@@ -76,13 +78,17 @@ const CarbonProjectsSection = () => {
   }, []);
 
   return (
-    <section className="py-20 px-4 md:px-8 bg-white text-black">
+    <section className="relative py-20 px-4 md:px-8 bg-gray-50/80 backdrop-blur-sm">
+      <GridBackground gridSize={20} opacity={0.03} />
+      <GradientDot x="5%" y="90%" size={300} color="rgba(0, 200, 0, 0.03)" />
+      <GradientDot x="95%" y="30%" size={350} color="rgba(0, 0, 0, 0.02)" />
+      
       <motion.div 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true }}
-        className="max-w-7xl mx-auto"
+        className="max-w-7xl mx-auto relative z-10"
       >
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">Carbon Credit Projects</h2>
         <p className="text-center text-muted-foreground mb-16 max-w-3xl mx-auto">
@@ -137,12 +143,15 @@ const StatsCard = ({ icon, title, value, description }: {
 }) => (
   <motion.div 
     whileHover={{ y: -5 }}
-    className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center"
+    className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center backdrop-blur-sm relative overflow-hidden"
   >
-    <div className="mb-4 text-primary flex justify-center">{icon}</div>
-    <h3 className="text-xl font-semibold mb-2">{title}</h3>
-    <p className="text-2xl font-bold mb-1">{value}</p>
-    <p className="text-muted-foreground text-sm">{description}</p>
+    <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-gray-50 opacity-90 z-0"></div>
+    <div className="relative z-10">
+      <div className="mb-4 text-primary flex justify-center">{icon}</div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-2xl font-bold mb-1">{value}</p>
+      <p className="text-muted-foreground text-sm">{description}</p>
+    </div>
   </motion.div>
 );
 
@@ -150,8 +159,9 @@ const StatsCard = ({ icon, title, value, description }: {
 const ProjectCard = ({ project }: { project: CarbonProject }) => (
   <motion.div 
     whileHover={{ y: -5 }}
-    className="bg-white p-0 rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+    className="bg-white p-0 rounded-xl shadow-sm border border-gray-100 overflow-hidden backdrop-blur-sm relative"
   >
+    <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/5 to-white/10 z-0"></div>
     <div className="h-48 overflow-hidden">
       {project.imageUrl && (
         <img 
@@ -161,7 +171,7 @@ const ProjectCard = ({ project }: { project: CarbonProject }) => (
         />
       )}
     </div>
-    <div className="p-6">
+    <div className="p-6 relative z-10">
       <div className="flex justify-between items-start mb-4">
         <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
           {project.category}

@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen } from "lucide-react";
+import GridBackground from "./GridBackground";
+import GradientDot from "./GradientDot";
 
 interface SubstackArticle {
   title: string;
@@ -38,13 +40,17 @@ const articles: SubstackArticle[] = [
 
 const SubstackSection = () => {
   return (
-    <section className="py-20 px-4 md:px-8 bg-white">
+    <section className="relative py-20 px-4 md:px-8 bg-white">
+      <GridBackground gridSize={20} opacity={0.03} />
+      <GradientDot x="20%" y="20%" size={350} color="rgba(0, 0, 0, 0.02)" />
+      <GradientDot x="75%" y="75%" size={250} color="rgba(0, 200, 0, 0.02)" />
+      
       <motion.div 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true, margin: "-100px" }}
-        className="max-w-7xl mx-auto"
+        className="max-w-7xl mx-auto relative z-10"
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <motion.div
@@ -87,7 +93,7 @@ const SubstackSection = () => {
               whileHover={{ y: -8, transition: { duration: 0.2 } }}
               className="h-full"
             >
-              <Card className="h-full flex flex-col hover:shadow-md transition-shadow duration-200">
+              <Card className="h-full flex flex-col hover:shadow-md transition-shadow duration-200 bg-white/80 backdrop-blur-sm">
                 <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
                   <motion.img 
                     initial={{ scale: 1.05 }}
@@ -149,7 +155,7 @@ const SubstackSection = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button variant="outline" size="lg" className="gap-2">
+              <Button variant="outline" size="lg" className="gap-2 shadow-sm">
                 View All Articles
                 <motion.div
                   whileHover={{ x: 3 }}
