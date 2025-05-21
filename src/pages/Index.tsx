@@ -60,25 +60,30 @@ const Index = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Button 
-              size="lg" 
-              onClick={() => navigate("/signup")}
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              as={motion.button}
             >
-              Get Started <ArrowRight className="ml-2" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              onClick={() => navigate("/login")}
+              <Button 
+                size="lg" 
+                onClick={() => navigate("/signup")}
+              >
+                Get Started <ArrowRight className="ml-2" />
+              </Button>
+            </motion.div>
+            
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              as={motion.button}
             >
-              Log In
-            </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                onClick={() => navigate("/login")}
+              >
+                Log In
+              </Button>
+            </motion.div>
           </motion.div>
         </motion.div>
         
@@ -224,14 +229,13 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Button 
               size="lg" 
               className="bg-white text-primary hover:bg-white/90"
               onClick={() => navigate("/signup")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              as={motion.button}
             >
               Start Your Free Trial
             </Button>
