@@ -40,7 +40,7 @@ export const MilestonesTimeline = () => {
                   }`}
                 >
                   {milestone.status === "completed" ? (
-                    <CheckCircle2 className="h-4 w-4" />
+                    <CheckCircle2 className="h-4 w-4 text-white" />
                   ) : (
                     <div className="w-3 h-3 rounded-full bg-current" />
                   )}

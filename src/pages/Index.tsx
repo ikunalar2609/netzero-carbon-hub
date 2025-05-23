@@ -7,6 +7,7 @@ import CarbonProjectsSection from "@/components/home/CarbonProjectsSection";
 import SubstackSection from "@/components/home/SubstackSection";
 import GridBackground from "@/components/home/GridBackground";
 import GradientDot from "@/components/home/GradientDot";
+import HomeHeader from "@/components/home/HomeHeader";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -27,6 +28,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <HomeHeader />
+      
       {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 md:px-8">
         <GridBackground 
@@ -41,7 +44,7 @@ const Index = () => {
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="max-w-4xl relative z-10"
+          className="max-w-4xl relative z-10 mt-16"
         >
           <motion.div 
             variants={fadeInUp}
