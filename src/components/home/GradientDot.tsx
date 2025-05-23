@@ -7,6 +7,7 @@ interface GradientDotProps {
   x: string;
   y: string;
   color?: string;
+  opacity?: number;
 }
 
 const GradientDot = ({
@@ -14,12 +15,13 @@ const GradientDot = ({
   size = 300,
   x,
   y,
-  color = "rgba(0, 0, 0, 0.03)"
+  color = "rgba(0, 0, 0, 0.03)",
+  opacity = 1
 }: GradientDotProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      animate={{ opacity }}
       transition={{ duration: 2 }}
       className={`absolute rounded-full pointer-events-none ${className}`}
       style={{

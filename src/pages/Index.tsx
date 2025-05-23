@@ -29,9 +29,13 @@ const Index = () => {
     <div className="min-h-screen relative overflow-hidden">
       {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 md:px-8">
-        <GridBackground gridSize={30} opacity={0.05} />
-        <GradientDot x="10%" y="30%" size={400} color="rgba(0, 200, 0, 0.03)" />
-        <GradientDot x="80%" y="60%" size={300} color="rgba(0, 0, 0, 0.025)" />
+        <GridBackground 
+          gridSize={30} 
+          opacity={0.05} 
+          backgroundImage="/lovable-uploads/dd603b0b-7384-4900-9033-40bfe0763533.png" 
+        />
+        <GradientDot x="10%" y="30%" size={400} color="rgba(0, 200, 0, 0.03)" opacity={0.7} />
+        <GradientDot x="80%" y="60%" size={300} color="rgba(255, 255, 255, 0.05)" opacity={0.5} />
         
         <motion.div 
           initial="hidden"
@@ -49,14 +53,14 @@ const Index = () => {
                 alt="FarmlyCarbon Logo" 
                 className="h-16 w-auto mr-2" 
               />
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold">FarmlyCarbon</h1>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white">FarmlyCarbon</h1>
             </div>
           </motion.div>
           
           <motion.h2 
             variants={fadeInUp}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-6"
+            className="text-xl md:text-2xl text-white/80 mb-6"
           >
             Your complete platform for agricultural carbon management, emissions tracking, and sustainability planning
           </motion.h2>
@@ -73,7 +77,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate("/signup")}
-                className="shadow-md"
+                className="shadow-md bg-white text-black hover:bg-white/90"
               >
                 Get Started <ArrowRight className="ml-2" />
               </Button>
@@ -87,7 +91,7 @@ const Index = () => {
                 variant="outline" 
                 size="lg" 
                 onClick={() => navigate("/login")}
-                className="backdrop-blur-sm bg-white/50 border-gray-300"
+                className="backdrop-blur-sm bg-white/10 border-white/30 text-white hover:bg-white/20"
               >
                 Log In
               </Button>
@@ -104,7 +108,7 @@ const Index = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="animate-bounce rounded-full bg-white/50 backdrop-blur-sm shadow-sm"
+            className="animate-bounce rounded-full bg-white/20 backdrop-blur-sm shadow-sm text-white hover:bg-white/30"
             onClick={() => {
               document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
             }}

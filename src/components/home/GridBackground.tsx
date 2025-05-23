@@ -6,13 +6,15 @@ interface GridBackgroundProps {
   gridSize?: number;
   opacity?: number;
   color?: string;
+  backgroundImage?: string;
 }
 
 const GridBackground = ({
   className = "",
   gridSize = 40,
   opacity = 0.08,
-  color = "#000"
+  color = "#000",
+  backgroundImage
 }: GridBackgroundProps) => {
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
@@ -22,11 +24,14 @@ const GridBackground = ({
         transition={{ duration: 1.5 }}
         className="w-full h-full"
         style={{
-          backgroundImage: `
-            linear-gradient(to right, ${color} ${opacity}%, transparent ${opacity}%),
-            linear-gradient(to bottom, ${color} ${opacity}%, transparent ${opacity}%)
-          `,
-          backgroundSize: `${gridSize}px ${gridSize}px`,
+          backgroundImage: backgroundImage 
+            ? `url(${backgroundImage}), 
+               linear-gradient(to right, ${color} ${opacity}%, transparent ${opacity}%),
+               linear-gradient(to bottom, ${color} ${opacity}%, transparent ${opacity}%)`
+            : `linear-gradient(to right, ${color} ${opacity}%, transparent ${opacity}%),
+               linear-gradient(to bottom, ${color} ${opacity}%, transparent ${opacity}%)`,
+          backgroundSize: `${backgroundImage ? 'cover, ' : ''}${gridSize}px ${gridSize}px`,
+          backgroundBlendMode: backgroundImage ? 'overlay, normal' : 'normal',
           zIndex: -1,
         }}
       />
