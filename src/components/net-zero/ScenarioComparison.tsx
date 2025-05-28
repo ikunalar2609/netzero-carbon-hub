@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
   Tooltip as RechartsTooltip,
+  Legend,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomTooltip } from "./CustomTooltip";
@@ -22,58 +23,90 @@ const comparePlanData = [
 
 export const ScenarioComparison = () => {
   return (
-    <Card>
+    <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50">
       <CardHeader>
-        <CardTitle>Net Zero Scenario Comparison</CardTitle>
-        <CardDescription>Compare different decarbonization strategies</CardDescription>
+        <CardTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+          Net Zero Scenario Comparison
+        </CardTitle>
+        <CardDescription className="text-gray-600">Compare different decarbonization strategies</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[350px]">
+        <div className="h-[400px] p-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={comparePlanData}
-              margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e7ff" />
+              <defs>
+                <linearGradient id="currentGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#1e40af" />
+                  <stop offset="100%" stopColor="#3b82f6" />
+                </linearGradient>
+                <linearGradient id="aggressiveGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#059669" />
+                  <stop offset="100%" stopColor="#10b981" />
+                </linearGradient>
+                <linearGradient id="moderateGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#d97706" />
+                  <stop offset="100%" stopColor="#f59e0b" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.6} />
               <XAxis 
                 dataKey="year" 
                 axisLine={false} 
                 tickLine={false}
-                tick={{ fill: '#6b7280' }}
+                tick={{ fill: '#475569', fontSize: 12, fontWeight: 500 }}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fill: '#6b7280' }}
+                tick={{ fill: '#475569', fontSize: 12, fontWeight: 500 }}
                 tickFormatter={(value) => `${value}%`}
+                domain={[0, 'dataMax + 10']}
               />
               <RechartsTooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
                 dataKey="current"
                 name="Current Plan"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                dot={{ r: 6, fill: "#3b82f6" }}
-                activeDot={{ r: 8, fill: "#3b82f6" }}
+                stroke="url(#currentGradient)"
+                strokeWidth={4}
+                dot={{ r: 8, fill: "#1e40af", strokeWidth: 3, stroke: "#ffffff" }}
+                activeDot={{ r: 10, fill: "#1e40af", strokeWidth: 3, stroke: "#ffffff" }}
+                animationDuration={1500}
               />
               <Line
                 type="monotone"
                 dataKey="aggressive"
                 name="Aggressive Plan"
-                stroke="#10b981"
-                strokeWidth={3}
-                dot={{ r: 6, fill: "#10b981" }}
-                activeDot={{ r: 8, fill: "#10b981" }}
+                stroke="url(#aggressiveGradient)"
+                strokeWidth={4}
+                dot={{ r: 8, fill: "#059669", strokeWidth: 3, stroke: "#ffffff" }}
+                activeDot={{ r: 10, fill: "#059669", strokeWidth: 3, stroke: "#ffffff" }}
+                animationDuration={1500}
+                animationDelay={200}
               />
               <Line
                 type="monotone"
                 dataKey="moderate"
                 name="Moderate Plan"
-                stroke="#f59e0b"
-                strokeWidth={3}
-                dot={{ r: 6, fill: "#f59e0b" }}
-                activeDot={{ r: 8, fill: "#f59e0b" }}
+                stroke="url(#moderateGradient)"
+                strokeWidth={4}
+                dot={{ r: 8, fill: "#d97706", strokeWidth: 3, stroke: "#ffffff" }}
+                activeDot={{ r: 10, fill: "#d97706", strokeWidth: 3, stroke: "#ffffff" }}
+                animationDuration={1500}
+                animationDelay={400}
+              />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                iconType="line"
+                wrapperStyle={{ 
+                  paddingTop: '20px',
+                  fontSize: '14px',
+                  fontWeight: 600
+                }}
               />
             </LineChart>
           </ResponsiveContainer>

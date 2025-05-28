@@ -11,7 +11,9 @@ import {
   Leaf, 
   X,
   Settings,
-  LineChart as MarketIcon
+  LineChart as MarketIcon,
+  BookOpen,
+  LogIn
 } from "lucide-react";
 import { ProfileMenu } from "@/components/ProfileMenu";
 
@@ -31,6 +33,11 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
     { name: "Net Zero Planner", href: "/dashboard/net-zero-planner", icon: Target },
     { name: "Carbon Impact", href: "/dashboard/carbon-impact", icon: Leaf },
     { name: "Carbon Market Insights", href: "/dashboard/carbon-market", icon: MarketIcon }
+  ];
+
+  const externalLinks = [
+    { name: "Blog", href: "https://idlerwritingeveryday.substack.com", icon: BookOpen },
+    { name: "Login/Signup", href: "/login", icon: LogIn }
   ];
 
   const closeSidebar = () => {
@@ -130,6 +137,58 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             </motion.div>
           );
         })}
+        
+        <div className="border-t border-gray-200 mt-4 pt-4">
+          <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            Quick Links
+          </h3>
+          {externalLinks.map((item, index) => {
+            const Icon = item.icon;
+            const isExternal = item.href.startsWith('http');
+            
+            return (
+              <motion.div
+                key={item.name}
+                variants={itemVariants}
+                custom={index + navigationItems.length}
+              >
+                {isExternal ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={closeSidebar}
+                    className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      className="mr-3"
+                    >
+                      <Icon className="h-4 w-4 flex-shrink-0 text-gray-600" />
+                    </motion.div>
+                    <span>{item.name}</span>
+                  </a>
+                ) : (
+                  <Link
+                    to={item.href}
+                    onClick={closeSidebar}
+                    className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      className="mr-3"
+                    >
+                      <Icon className="h-4 w-4 flex-shrink-0 text-gray-600" />
+                    </motion.div>
+                    <span>{item.name}</span>
+                  </Link>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
       </motion.nav>
 
       <motion.div 

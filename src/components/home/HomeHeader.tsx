@@ -13,17 +13,12 @@ const HomeHeader = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img 
-            src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
-            alt="FarmlyCarbon Logo" 
-            className="h-10 w-auto" 
-          />
           <span className="text-xl font-bold">FarmlyCarbon</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
           <Link 
-            to="https://blog.farmlycarbon.com" 
+            to="https://idlerwritingeveryday.substack.com" 
             className="font-bold hover:text-primary relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
             target="_blank" 
             rel="noopener noreferrer"

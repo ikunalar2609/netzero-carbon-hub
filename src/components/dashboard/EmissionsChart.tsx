@@ -9,6 +9,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  Legend,
 } from "recharts";
 
 const yearlyData = [
@@ -57,18 +58,18 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-        <p className="font-medium text-sm text-gray-600">{label}</p>
-        <div className="mt-2 space-y-1">
+      <div className="bg-white p-4 border border-gray-200 rounded-xl shadow-xl backdrop-blur-sm">
+        <p className="font-semibold text-sm text-gray-700 mb-2">{label}</p>
+        <div className="space-y-2">
           {payload.map((entry) => (
             entry.value !== null && (
               <div key={entry.name} className="flex items-center">
                 <div
-                  className="w-3 h-3 rounded-full mr-2"
+                  className="w-4 h-4 rounded-full mr-3 shadow-sm"
                   style={{ backgroundColor: entry.color }}
                 />
-                <p className="text-xs">
-                  {entry.name}: <span className="font-semibold">{entry.value}</span> tCO₂e
+                <p className="text-sm font-medium">
+                  {entry.name}: <span className="font-bold text-gray-900">{entry.value}</span> tCO₂e
                 </p>
               </div>
             )
@@ -97,49 +98,53 @@ const EmissionsChart = () => {
       : "month";
 
   return (
-    <Card>
+    <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Net Zero Tracker</CardTitle>
+        <CardTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+          Net Zero Tracker
+        </CardTitle>
         <Tabs defaultValue="yearly" value={period} onValueChange={setPeriod} className="h-8">
-          <TabsList className="grid grid-cols-3 h-8 w-auto">
-            <TabsTrigger value="monthly" className="text-xs h-8">Monthly</TabsTrigger>
-            <TabsTrigger value="quarterly" className="text-xs h-8">Quarterly</TabsTrigger>
-            <TabsTrigger value="yearly" className="text-xs h-8">Yearly</TabsTrigger>
+          <TabsList className="grid grid-cols-3 h-8 w-auto bg-gray-100">
+            <TabsTrigger value="monthly" className="text-xs h-8 font-medium">Monthly</TabsTrigger>
+            <TabsTrigger value="quarterly" className="text-xs h-8 font-medium">Quarterly</TabsTrigger>
+            <TabsTrigger value="yearly" className="text-xs h-8 font-medium">Yearly</TabsTrigger>
           </TabsList>
         </Tabs>
       </CardHeader>
       <CardContent className="pl-2">
-        <div className="h-[300px]">
+        <div className="h-[350px] p-4">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={data}
               margin={{
-                top: 5,
-                right: 20,
-                left: 0,
-                bottom: 5,
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 60,
               }}
             >
               <defs>
                 <linearGradient id="targetGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#d97706" stopOpacity={0.9} />
+                  <stop offset="50%" stopColor="#f59e0b" stopOpacity={0.6} />
+                  <stop offset="95%" stopColor="#fcd34d" stopOpacity={0.2} />
                 </linearGradient>
                 <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#1e40af" stopOpacity={0.9} />
+                  <stop offset="50%" stopColor="#3b82f6" stopOpacity={0.6} />
+                  <stop offset="95%" stopColor="#93c5fd" stopOpacity={0.2} />
                 </linearGradient>
               </defs>
               <XAxis 
                 dataKey={xKey} 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 12, fill: '#6b7280' }} 
+                tick={{ fontSize: 12, fill: '#475569', fontWeight: 500 }} 
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 12, fill: '#6b7280' }} 
+                tick={{ fontSize: 12, fill: '#475569', fontWeight: 500 }} 
                 domain={[0, 'dataMax + 20']}
                 tickFormatter={(value) => `${value}`}
               />
@@ -147,33 +152,35 @@ const EmissionsChart = () => {
               <Area
                 type="monotone"
                 dataKey="target"
-                stroke="#f59e0b"
-                strokeWidth={3}
+                stroke="#d97706"
+                strokeWidth={4}
                 fill="url(#targetGradient)"
                 name="Target"
-                activeDot={{ r: 6, strokeWidth: 0 }}
+                activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
+                animationDuration={1500}
               />
               <Area
                 type="monotone"
                 dataKey="actual"
-                stroke="#3b82f6"
-                strokeWidth={3}
+                stroke="#1e40af"
+                strokeWidth={4}
                 fill="url(#actualGradient)"
                 name="Actual"
-                activeDot={{ r: 6, strokeWidth: 0 }}
+                activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
+                animationDuration={1500}
+                animationDelay={300}
+              />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                wrapperStyle={{ 
+                  paddingTop: '20px',
+                  fontSize: '14px',
+                  fontWeight: 600
+                }}
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-        <div className="flex justify-center mt-3 space-x-6">
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-amber-500 mr-2" />
-            <span className="text-xs font-medium">Target with Projections</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-blue-500 mr-2" />
-            <span className="text-xs font-medium">Actual with Projections</span>
-          </div>
         </div>
       </CardContent>
     </Card>
