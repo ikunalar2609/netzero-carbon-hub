@@ -1,51 +1,101 @@
 
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Leaf } from "lucide-react";
+import { ExternalLink, BarChart3, LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const HomeHeader = () => {
   return (
     <motion.header 
-      className="fixed top-0 left-0 right-0 bg-white z-50 py-4 px-6 shadow-sm"
+      className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-50 py-4 px-6 border-b border-white/20 shadow-lg"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img 
-            src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
-            alt="FarmlyCarbon Logo" 
-            className="h-10 w-auto" 
-          />
-          <span className="text-xl font-bold">FarmlyCarbon</span>
-        </Link>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Link to="/" className="flex items-center gap-3 group">
+            <motion.div
+              whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+              transition={{ duration: 0.6 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-sm opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <img 
+                src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
+                alt="FarmlyCarbon Logo" 
+                className="h-12 w-auto relative z-10" 
+              />
+            </motion.div>
+            <motion.span 
+              className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              FarmlyCarbon
+            </motion.span>
+          </Link>
+        </motion.div>
         
-        <nav className="hidden md:flex items-center gap-8">
-          <Link 
-            to="https://idlerwritingeveryday.substack.com" 
-            className="font-bold hover:text-primary relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
-            target="_blank" 
-            rel="noopener noreferrer"
+        <motion.nav 
+          className="hidden md:flex items-center gap-8"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+            <Link 
+              to="https://idlerwritingeveryday.substack.com" 
+              className="flex items-center gap-2 font-semibold text-gray-700 hover:text-green-600 relative group transition-colors duration-300"
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <span>Blog</span>
+              <ExternalLink className="h-4 w-4 opacity-60" />
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-green-500 to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </Link>
+          </motion.div>
+          
+          <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+            <Link 
+              to="/dashboard" 
+              className="flex items-center gap-2 font-semibold text-gray-700 hover:text-green-600 relative group transition-colors duration-300"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Dashboard</span>
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-green-500 to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </Link>
+          </motion.div>
+          
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Blog
-          </Link>
-          <Link 
-            to="/dashboard" 
-            className="font-bold hover:text-primary relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
-          >
-            Dashboard
-          </Link>
-          <Link 
-            to="/login" 
-            className="font-bold hover:text-primary relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
-          >
-            Login
-          </Link>
+            <Button
+              asChild
+              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Link to="/login" className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                <span>Get Started</span>
+              </Link>
+            </Button>
+          </motion.div>
         </nav>
 
         <div className="flex md:hidden">
-          <Leaf className="h-6 w-6 text-primary" />
+          <motion.div
+            whileHover={{ rotate: 180 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Button variant="ghost" size="icon" className="text-gray-700">
+              <div className="h-6 w-6 bg-gradient-to-r from-green-600 to-blue-600 rounded"></div>
+            </Button>
+          </motion.div>
         </div>
       </div>
     </motion.header>

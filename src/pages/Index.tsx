@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowRight, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin, BookOpen, Leaf } from "lucide-react";
+import { ArrowDown, ArrowRight, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin, BookOpen, Leaf, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CarbonProjectsSection from "@/components/home/CarbonProjectsSection";
@@ -7,6 +8,7 @@ import SubstackSection from "@/components/home/SubstackSection";
 import GridBackground from "@/components/home/GridBackground";
 import GradientDot from "@/components/home/GradientDot";
 import HomeHeader from "@/components/home/HomeHeader";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -36,8 +38,8 @@ const Index = () => {
           opacity={0.05} 
           backgroundImage="/lovable-uploads/dd603b0b-7384-4900-9033-40bfe0763533.png" 
         />
-        {/* Dark overlay for better text visibility */}
-        <div className="absolute inset-0 bg-black/30 z-5" />
+        {/* Enhanced dark overlay for better text visibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 z-5" />
         <GradientDot x="10%" y="30%" size={400} color="rgba(0, 200, 0, 0.03)" opacity={0.7} />
         <GradientDot x="80%" y="60%" size={300} color="rgba(255, 255, 255, 0.05)" opacity={0.5} />
         
@@ -214,7 +216,7 @@ const Index = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="relative py-20 px-4 md:px-8 bg-primary">
+      <section className="relative py-20 px-4 md:px-8 bg-gradient-to-br from-green-600 via-blue-600 to-purple-700">
         <GridBackground gridSize={20} opacity={0.05} color="#fff" />
         <GradientDot x="75%" y="50%" size={300} color="rgba(255, 255, 255, 0.05)" />
         
@@ -254,7 +256,7 @@ const Index = () => {
           >
             <Button 
               size="lg" 
-              className="bg-white text-primary hover:bg-white/90 shadow-lg"
+              className="bg-white text-gray-800 hover:bg-white/90 shadow-2xl text-lg px-8 py-4 h-auto"
               onClick={() => navigate("/signup")}
             >
               Start Your Free Trial
@@ -263,13 +265,15 @@ const Index = () => {
         </motion.div>
       </section>
       
-      {/* Contact Footer */}
-      <footer className="relative py-12 px-4 md:px-8 bg-white text-black">
-        <GridBackground gridSize={15} opacity={0.02} />
+      {/* Enhanced Contact Footer */}
+      <footer className="relative py-16 px-4 md:px-8 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+        <GridBackground gridSize={15} opacity={0.03} color="#fff" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {/* Brand Section */}
+            <div className="space-y-6">
               <motion.div 
                 className="flex items-center mb-6"
                 initial={{ opacity: 0, x: -20 }}
@@ -277,29 +281,50 @@ const Index = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <Leaf className="h-8 w-8 mr-2 text-primary" />
-                <h2 className="text-2xl font-bold">FarmlyCarbon</h2>
+                <motion.div
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.6 }}
+                  className="mr-3"
+                >
+                  <Leaf className="h-10 w-10 text-green-400" />
+                </motion.div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">FarmlyCarbon</h2>
               </motion.div>
               <motion.p 
-                className="text-gray-700 mb-6"
+                className="text-gray-300 leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                Your complete platform for agricultural carbon management, emissions tracking, and sustainability planning.
+                Empowering agricultural operations with comprehensive carbon management tools for a sustainable future.
               </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                <Button
+                  variant="outline"
+                  className="border-green-400 text-green-400 hover:bg-green-400 hover:text-gray-900 transition-all duration-300"
+                  onClick={() => navigate("/signup")}
+                >
+                  Get Started Today
+                </Button>
+              </motion.div>
             </div>
             
-            <div>
+            {/* Quick Links */}
+            <div className="space-y-6">
               <motion.h3 
-                className="text-xl font-semibold mb-6"
+                className="text-xl font-bold text-white mb-6"
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                Contact Us
+                Quick Links
               </motion.h3>
               <motion.div 
                 className="space-y-4"
@@ -315,36 +340,118 @@ const Index = () => {
                   }
                 }}
               >
-                <ContactLink 
-                  href="mailto:i.kunal.ar26@gmail.com" 
-                  icon={<Mail className="h-5 w-5 mr-3" />}
-                  text="i.kunal.ar26@gmail.com"
+                <QuickLink 
+                  href="/dashboard" 
+                  icon={<BarChart3 className="h-5 w-5 mr-3" />}
+                  text="Dashboard"
                 />
-                
-                <ContactLink 
-                  href="https://www.instagram.com/i_kunal_ar26/" 
-                  icon={<Instagram className="h-5 w-5 mr-3" />}
-                  text="i_kunal_ar26"
+                <QuickLink 
+                  href="https://idlerwritingeveryday.substack.com" 
+                  icon={<BookOpen className="h-5 w-5 mr-3" />}
+                  text="Blog"
+                  external
                 />
-                
-                <ContactLink 
-                  href="https://x.com/i_kunal_ar26" 
-                  icon={<Twitter className="h-5 w-5 mr-3" />}
-                  text="i_kunal_ar26"
-                />
-                
-                <ContactLink 
-                  href="https://www.linkedin.com/in/kunal-rahangdale-572a7215a/" 
-                  icon={<Linkedin className="h-5 w-5 mr-3" />}
-                  text="Kunal Rahangdale"
+                <QuickLink 
+                  href="/login" 
+                  icon={<Leaf className="h-5 w-5 mr-3" />}
+                  text="Login / Signup"
                 />
               </motion.div>
             </div>
+            
+            {/* Enhanced Contact & Social Media */}
+            <div className="space-y-6">
+              <motion.h3 
+                className="text-xl font-bold text-white mb-6"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                Connect With Us
+              </motion.h3>
+              
+              <TooltipProvider>
+                <motion.div 
+                  className="space-y-4"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={{
+                    hidden: {},
+                    visible: {
+                      transition: {
+                        staggerChildren: 0.1
+                      }
+                    }
+                  }}
+                >
+                  <ContactLink 
+                    href="mailto:i.kunal.ar26@gmail.com" 
+                    icon={<Mail className="h-5 w-5" />}
+                    text="i.kunal.ar26@gmail.com"
+                    tooltip="Send us an email"
+                  />
+                </motion.div>
+                
+                <div className="pt-6">
+                  <motion.p 
+                    className="text-sm font-medium text-gray-300 mb-4"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    viewport={{ once: true }}
+                  >
+                    Follow us on social media
+                  </motion.p>
+                  <motion.div 
+                    className="flex space-x-4"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={{
+                      hidden: {},
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.1
+                        }
+                      }
+                    }}
+                  >
+                    <SocialIcon 
+                      href="https://www.instagram.com/i_kunal_ar26/" 
+                      icon={<Instagram className="h-6 w-6" />}
+                      label="Instagram"
+                      bgColor="from-purple-600 to-pink-600"
+                    />
+                    <SocialIcon 
+                      href="https://x.com/i_kunal_ar26" 
+                      icon={<Twitter className="h-6 w-6" />}
+                      label="Twitter"
+                      bgColor="from-blue-500 to-blue-600"
+                    />
+                    <SocialIcon 
+                      href="https://www.linkedin.com/in/kunal-rahangdale-572a7215a/" 
+                      icon={<Linkedin className="h-6 w-6" />}
+                      label="LinkedIn"
+                      bgColor="from-blue-700 to-blue-800"
+                    />
+                  </motion.div>
+                </div>
+              </TooltipProvider>
+            </div>
           </div>
           
-          <div className="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500">
-            <p>&copy; {new Date().getFullYear()} FarmlyCarbon. All rights reserved.</p>
-          </div>
+          <motion.div 
+            className="mt-16 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} FarmlyCarbon. All rights reserved.</p>
+            <p className="text-gray-500 text-xs mt-2 md:mt-0">Building a sustainable future, one farm at a time.</p>
+          </motion.div>
         </div>
       </footer>
     </div>
@@ -391,23 +498,91 @@ const WorksStep = ({ number, title, description, index = 0 }: { number: string, 
   </motion.div>
 );
 
-// Contact Link Component
-const ContactLink = ({ href, icon, text }: { href: string, icon: React.ReactNode, text: string }) => (
-  <motion.a 
-    href={href} 
-    target="_blank" 
-    rel="noopener noreferrer" 
-    className="flex items-center text-gray-700 hover:text-primary transition-colors"
+// Enhanced Contact Link Component
+const ContactLink = ({ href, icon, text, tooltip }: { href: string, icon: React.ReactNode, text: string, tooltip: string }) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <motion.a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="flex items-center text-gray-300 hover:text-green-400 transition-colors group"
+        variants={{
+          hidden: { opacity: 0, x: -10 },
+          visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+        }}
+        whileHover={{ x: 5 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div className="mr-3 p-2 rounded-lg bg-gray-800 group-hover:bg-green-500/20 transition-colors">
+          {icon}
+        </div>
+        <span className="font-medium">{text}</span>
+        <ExternalLink className="h-4 w-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+      </motion.a>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{tooltip}</p>
+    </TooltipContent>
+  </Tooltip>
+);
+
+// Quick Link Component
+const QuickLink = ({ href, icon, text, external = false }: { href: string, icon: React.ReactNode, text: string, external?: boolean }) => (
+  <motion.div
     variants={{
       hidden: { opacity: 0, x: -10 },
       visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
     }}
-    whileHover={{ x: 5 }}
-    whileTap={{ scale: 0.98 }}
   >
-    {icon}
-    <span>{text}</span>
-  </motion.a>
+    {external ? (
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="flex items-center text-gray-300 hover:text-green-400 transition-colors group"
+      >
+        {icon}
+        <span>{text}</span>
+        <ExternalLink className="h-4 w-4 ml-2 opacity-60" />
+      </a>
+    ) : (
+      <a 
+        href={href} 
+        className="flex items-center text-gray-300 hover:text-green-400 transition-colors"
+      >
+        {icon}
+        <span>{text}</span>
+      </a>
+    )}
+  </motion.div>
+);
+
+// Enhanced Social Icon Component
+const SocialIcon = ({ href, icon, label, bgColor }: { href: string, icon: React.ReactNode, label: string, bgColor: string }) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`p-3 rounded-full bg-gradient-to-br ${bgColor} text-white shadow-lg hover:shadow-xl transition-all duration-300 group`}
+        variants={{
+          hidden: { opacity: 0, scale: 0.8 },
+          visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
+        }}
+        whileHover={{ scale: 1.1, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <div className="group-hover:scale-110 transition-transform duration-200">
+          {icon}
+        </div>
+      </motion.a>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Follow us on {label}</p>
+    </TooltipContent>
+  </Tooltip>
 );
 
 export default Index;

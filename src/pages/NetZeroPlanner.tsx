@@ -1,80 +1,79 @@
-
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, ArrowRight } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-// Import refactored components
-import { SummaryMetrics } from "@/components/net-zero/SummaryMetrics";
-import { EmissionsPathwayChart } from "@/components/net-zero/EmissionsPathwayChart";
-import { MilestonesTimeline } from "@/components/net-zero/MilestonesTimeline";
-import { ReductionProjects } from "@/components/net-zero/ReductionProjects";
-import { ScenarioComparison } from "@/components/net-zero/ScenarioComparison";
-import { ScenarioCards } from "@/components/net-zero/ScenarioCards";
-import { StandardsCompliance } from "@/components/net-zero/StandardsCompliance";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { CalendarDays, Target, TrendingDown, Zap, Leaf, Factory, Truck, Lightbulb } from "lucide-react";
+import { motion } from "framer-motion";
+import SummaryMetrics from "@/components/net-zero/SummaryMetrics";
+import MilestonesTimeline from "@/components/net-zero/MilestonesTimeline";
+import ReductionProjects from "@/components/net-zero/ReductionProjects";
+import EmissionsPathwayChart from "@/components/net-zero/EmissionsPathwayChart";
+import ScenarioCards from "@/components/net-zero/ScenarioCards";
+import StandardsCompliance from "@/components/net-zero/StandardsCompliance";
+import ScenarioComparison from "@/components/net-zero/ScenarioComparison";
 
 const NetZeroPlanner = () => {
+  const [selectedScenario, setSelectedScenario] = useState("moderate");
+  const [targetYear, setTargetYear] = useState(2050);
+
+  const scenarios = {
+    conservative: { name: "Conservative", reduction: 45, cost: "Low", timeline: "Extended" },
+    moderate: { name: "Moderate", reduction: 65, cost: "Medium", timeline: "Standard" },
+    aggressive: { name: "Aggressive", reduction: 85, cost: "High", timeline: "Accelerated" }
+  };
+
+  const currentProgress = 23;
+
   return (
-    <div className="space-y-6 animate-slide-up">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Net Zero Planner</h1>
-          <p className="text-muted-foreground">Plan and track your path to net zero emissions</p>
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Net Zero Planner</h1>
+            <p className="text-muted-foreground mt-2">
+              Create and manage your pathway to carbon neutrality
+            </p>
+          </div>
+          <Badge variant="outline" className="px-3 py-1">
+            <Target className="h-4 w-4 mr-2" />
+            Target: {targetYear}
+          </Badge>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-1">
-            <Calendar className="h-4 w-4" />
-            <span>Adjust Timeline</span>
-          </Button>
-          <Button size="sm">
-            Update Plan
-          </Button>
-        </div>
-      </div>
+      </motion.div>
 
       <SummaryMetrics />
 
-      <Tabs defaultValue="pathway" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="pathway">Net Zero Pathway</TabsTrigger>
-          <TabsTrigger value="projects">Reduction Projects</TabsTrigger>
-          <TabsTrigger value="scenarios">Scenario Planning</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
+          <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="compliance">Compliance</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pathway" className="space-y-4">
-          <EmissionsPathwayChart />
-          <MilestonesTimeline />
-        </TabsContent>
-
-        <TabsContent value="projects" className="space-y-4">
-          <ReductionProjects />
-        </TabsContent>
-
-        <TabsContent value="scenarios" className="space-y-4">
-          <ScenarioComparison />
-          <ScenarioCards />
-          
-          <div className="flex justify-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button className="w-full max-w-md">Create Custom Scenario</Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Define a custom decarbonization pathway with your own targets and strategies</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <EmissionsPathwayChart />
+            <MilestonesTimeline />
           </div>
         </TabsContent>
 
-        <TabsContent value="compliance" className="space-y-4">
+        <TabsContent value="scenarios" className="space-y-6">
+          <ScenarioCards />
+          <ScenarioComparison />
+        </TabsContent>
+
+        <TabsContent value="projects" className="space-y-6">
+          <ReductionProjects />
+        </TabsContent>
+
+        <TabsContent value="compliance" className="space-y-6">
           <StandardsCompliance />
         </TabsContent>
       </Tabs>
