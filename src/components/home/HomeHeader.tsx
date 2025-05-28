@@ -1,13 +1,13 @@
 
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ExternalLink, BarChart3, LogIn } from "lucide-react";
+import { ExternalLink, BarChart3, LogIn, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const HomeHeader = () => {
   return (
     <motion.header 
-      className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-50 py-4 px-6 border-b border-white/20 shadow-lg"
+      className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg z-50 py-4 px-6 border-b border-white/30 shadow-xl"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -20,7 +20,7 @@ const HomeHeader = () => {
         >
           <Link to="/" className="flex items-center gap-3 group">
             <motion.span 
-              className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
+              className="text-2xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
@@ -65,7 +65,7 @@ const HomeHeader = () => {
           >
             <Button
               asChild
-              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden"
             >
               <Link to="/login" className="flex items-center gap-2">
                 <LogIn className="h-4 w-4" />
@@ -80,8 +80,8 @@ const HomeHeader = () => {
             whileHover={{ rotate: 180 }}
             transition={{ duration: 0.3 }}
           >
-            <Button variant="ghost" size="icon" className="text-gray-700">
-              <div className="h-6 w-6 bg-gradient-to-r from-green-600 to-blue-600 rounded"></div>
+            <Button variant="ghost" size="icon" className="text-gray-700 hover:bg-gray-100">
+              <Menu className="h-6 w-6" />
             </Button>
           </motion.div>
         </div>

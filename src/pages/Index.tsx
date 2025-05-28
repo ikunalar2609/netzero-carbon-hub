@@ -266,13 +266,15 @@ const Index = () => {
       </section>
       
       {/* Enhanced Contact Footer */}
-      <footer className="relative py-16 px-4 md:px-8 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <footer className="relative py-20 px-4 md:px-8 bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden">
         <GridBackground gridSize={15} opacity={0.03} color="#fff" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <GradientDot x="20%" y="30%" size={400} color="rgba(0, 200, 0, 0.02)" />
+        <GradientDot x="80%" y="70%" size={300} color="rgba(59, 130, 246, 0.02)" />
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Brand Section */}
+            {/* Enhanced Brand Section */}
             <div className="space-y-6">
               <motion.div 
                 className="flex items-center mb-6"
@@ -282,22 +284,22 @@ const Index = () => {
                 viewport={{ once: true }}
               >
                 <motion.div
-                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                   transition={{ duration: 0.6 }}
-                  className="mr-3"
+                  className="mr-3 p-2 rounded-full bg-gradient-to-br from-green-400/20 to-blue-400/20 backdrop-blur-sm"
                 >
-                  <Leaf className="h-10 w-10 text-green-400" />
+                  <Leaf className="h-8 w-8 text-green-400" />
                 </motion.div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">FarmlyCarbon</h2>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">FarmlyCarbon</h2>
               </motion.div>
               <motion.p 
-                className="text-gray-300 leading-relaxed"
+                className="text-gray-300 leading-relaxed text-sm"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                Empowering agricultural operations with comprehensive carbon management tools for a sustainable future.
+                Empowering agricultural operations with comprehensive carbon management tools for a sustainable future. Join the movement towards net-zero emissions.
               </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -307,7 +309,7 @@ const Index = () => {
               >
                 <Button
                   variant="outline"
-                  className="border-green-400 text-green-400 hover:bg-green-400 hover:text-gray-900 transition-all duration-300"
+                  className="border-green-400 text-green-400 hover:bg-green-400 hover:text-gray-900 transition-all duration-300 bg-transparent backdrop-blur-sm"
                   onClick={() => navigate("/signup")}
                 >
                   Get Started Today
@@ -315,16 +317,17 @@ const Index = () => {
               </motion.div>
             </div>
             
-            {/* Quick Links */}
+            {/* Enhanced Quick Links */}
             <div className="space-y-6">
               <motion.h3 
-                className="text-xl font-bold text-white mb-6"
+                className="text-xl font-bold text-white mb-6 relative"
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
                 Quick Links
+                <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-gradient-to-r from-green-400 to-blue-400"></div>
               </motion.h3>
               <motion.div 
                 className="space-y-4"
@@ -359,16 +362,17 @@ const Index = () => {
               </motion.div>
             </div>
             
-            {/* Enhanced Contact & Social Media */}
+            {/* Enhanced Connect Section with Improved Social Media */}
             <div className="space-y-6">
               <motion.h3 
-                className="text-xl font-bold text-white mb-6"
+                className="text-xl font-bold text-white mb-6 relative"
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
                 Connect With Us
+                <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-gradient-to-r from-green-400 to-blue-400"></div>
               </motion.h3>
               
               <TooltipProvider>
@@ -386,7 +390,7 @@ const Index = () => {
                     }
                   }}
                 >
-                  <ContactLink 
+                  <EnhancedContactLink 
                     href="mailto:i.kunal.ar26@gmail.com" 
                     icon={<Mail className="h-5 w-5" />}
                     text="i.kunal.ar26@gmail.com"
@@ -396,7 +400,7 @@ const Index = () => {
                 
                 <div className="pt-6">
                   <motion.p 
-                    className="text-sm font-medium text-gray-300 mb-4"
+                    className="text-sm font-medium text-gray-300 mb-6"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
@@ -418,19 +422,19 @@ const Index = () => {
                       }
                     }}
                   >
-                    <SocialIcon 
+                    <EnhancedSocialIcon 
                       href="https://www.instagram.com/i_kunal_ar26/" 
                       icon={<Instagram className="h-6 w-6" />}
                       label="Instagram"
-                      bgColor="from-purple-600 to-pink-600"
+                      bgColor="from-purple-600 via-pink-600 to-orange-600"
                     />
-                    <SocialIcon 
+                    <EnhancedSocialIcon 
                       href="https://x.com/i_kunal_ar26" 
                       icon={<Twitter className="h-6 w-6" />}
                       label="Twitter"
                       bgColor="from-blue-500 to-blue-600"
                     />
-                    <SocialIcon 
+                    <EnhancedSocialIcon 
                       href="https://www.linkedin.com/in/kunal-rahangdale-572a7215a/" 
                       icon={<Linkedin className="h-6 w-6" />}
                       label="LinkedIn"
@@ -443,7 +447,7 @@ const Index = () => {
           </div>
           
           <motion.div 
-            className="mt-16 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center"
+            className="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -458,7 +462,7 @@ const Index = () => {
   );
 };
 
-// Feature Card Component
+// Enhanced Feature Card Component
 const FeatureCard = ({ icon, title, description, index = 0 }: { icon: React.ReactNode, title: string, description: string, index?: number }) => (
   <motion.div 
     initial={{ opacity: 0, y: 30 }}
@@ -466,47 +470,48 @@ const FeatureCard = ({ icon, title, description, index = 0 }: { icon: React.Reac
     transition={{ duration: 0.5, delay: index * 0.2 }}
     viewport={{ once: true }}
     whileHover={{ y: -5, transition: { duration: 0.2 } }}
-    className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 backdrop-blur-sm relative overflow-hidden"
+    className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-100 relative overflow-hidden group"
   >
     <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-gray-50 opacity-90 z-0"></div>
+    <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
     <div className="relative z-10">
-      <div className="mb-4 text-primary">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <div className="mb-4 text-primary group-hover:scale-110 transition-transform duration-300">{icon}</div>
+      <h3 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors">{title}</h3>
       <p className="text-muted-foreground">{description}</p>
     </div>
   </motion.div>
 );
 
-// How It Works Step Component
+// Enhanced How It Works Step Component
 const WorksStep = ({ number, title, description, index = 0 }: { number: string, title: string, description: string, index?: number }) => (
   <motion.div 
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: index * 0.2 }}
     viewport={{ once: true }}
-    className="flex flex-col items-center text-center"
+    className="flex flex-col items-center text-center group"
   >
     <motion.div 
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ scale: 1.1, rotate: 5 }}
       transition={{ type: "spring", stiffness: 400, damping: 10 }}
-      className="text-4xl font-bold text-primary/20 mb-4"
+      className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4 group-hover:from-green-500 group-hover:to-blue-500 transition-all duration-300"
     >
       {number}
     </motion.div>
-    <h3 className="text-xl font-semibold mb-2">{title}</h3>
+    <h3 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
   </motion.div>
 );
 
 // Enhanced Contact Link Component
-const ContactLink = ({ href, icon, text, tooltip }: { href: string, icon: React.ReactNode, text: string, tooltip: string }) => (
+const EnhancedContactLink = ({ href, icon, text, tooltip }: { href: string, icon: React.ReactNode, text: string, tooltip: string }) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <motion.a 
         href={href} 
         target="_blank" 
         rel="noopener noreferrer" 
-        className="flex items-center text-gray-300 hover:text-green-400 transition-colors group"
+        className="flex items-center text-gray-300 hover:text-green-400 transition-all duration-300 group"
         variants={{
           hidden: { opacity: 0, x: -10 },
           visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
@@ -514,72 +519,78 @@ const ContactLink = ({ href, icon, text, tooltip }: { href: string, icon: React.
         whileHover={{ x: 5 }}
         whileTap={{ scale: 0.98 }}
       >
-        <div className="mr-3 p-2 rounded-lg bg-gray-800 group-hover:bg-green-500/20 transition-colors">
+        <div className="mr-3 p-3 rounded-lg bg-gradient-to-br from-gray-800/50 to-gray-700/50 backdrop-blur-sm group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300 border border-gray-700/50 group-hover:border-green-400/30">
           {icon}
         </div>
         <span className="font-medium">{text}</span>
-        <ExternalLink className="h-4 w-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <ExternalLink className="h-4 w-4 ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
       </motion.a>
     </TooltipTrigger>
-    <TooltipContent>
+    <TooltipContent side="top" className="bg-gray-800 text-white border-gray-700">
       <p>{tooltip}</p>
     </TooltipContent>
   </Tooltip>
 );
 
-// Quick Link Component
+// Enhanced Quick Link Component
 const QuickLink = ({ href, icon, text, external = false }: { href: string, icon: React.ReactNode, text: string, external?: boolean }) => (
   <motion.div
     variants={{
       hidden: { opacity: 0, x: -10 },
       visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
     }}
+    whileHover={{ x: 5 }}
   >
     {external ? (
       <a 
         href={href} 
         target="_blank" 
         rel="noopener noreferrer" 
-        className="flex items-center text-gray-300 hover:text-green-400 transition-colors group"
+        className="flex items-center text-gray-300 hover:text-green-400 transition-all duration-300 group py-2"
       >
-        {icon}
-        <span>{text}</span>
-        <ExternalLink className="h-4 w-4 ml-2 opacity-60" />
+        <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/30 to-gray-700/30 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
+          {icon}
+        </div>
+        <span className="font-medium">{text}</span>
+        <ExternalLink className="h-4 w-4 ml-auto opacity-60 group-hover:opacity-100 transition-opacity" />
       </a>
     ) : (
       <a 
         href={href} 
-        className="flex items-center text-gray-300 hover:text-green-400 transition-colors"
+        className="flex items-center text-gray-300 hover:text-green-400 transition-all duration-300 group py-2"
       >
-        {icon}
-        <span>{text}</span>
+        <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/30 to-gray-700/30 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
+          {icon}
+        </div>
+        <span className="font-medium">{text}</span>
       </a>
     )}
   </motion.div>
 );
 
 // Enhanced Social Icon Component
-const SocialIcon = ({ href, icon, label, bgColor }: { href: string, icon: React.ReactNode, label: string, bgColor: string }) => (
+const EnhancedSocialIcon = ({ href, icon, label, bgColor }: { href: string, icon: React.ReactNode, label: string, bgColor: string }) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <motion.a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={`p-3 rounded-full bg-gradient-to-br ${bgColor} text-white shadow-lg hover:shadow-xl transition-all duration-300 group`}
+        className={`relative p-4 rounded-full bg-gradient-to-br ${bgColor} text-white shadow-lg hover:shadow-2xl transition-all duration-300 group overflow-hidden`}
         variants={{
           hidden: { opacity: 0, scale: 0.8 },
           visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
         }}
-        whileHover={{ scale: 1.1, y: -2 }}
+        whileHover={{ scale: 1.1, y: -3 }}
         whileTap={{ scale: 0.95 }}
       >
-        <div className="group-hover:scale-110 transition-transform duration-200">
+        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="relative z-10 group-hover:scale-110 transition-transform duration-200">
           {icon}
         </div>
       </motion.a>
     </TooltipTrigger>
-    <TooltipContent>
+    <TooltipContent side="top" className="bg-gray-800 text-white border-gray-700">
       <p>Follow us on {label}</p>
     </TooltipContent>
   </Tooltip>

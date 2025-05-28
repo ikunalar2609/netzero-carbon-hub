@@ -1,10 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { MenuIcon, Filter, Search } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Popover,
   PopoverContent,
@@ -47,39 +47,72 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
   };
 
   return (
-    <header className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-4 md:px-6">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="mr-4 md:hidden"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
+    <motion.header 
+      className="sticky top-0 z-10 bg-gradient-to-r from-white/90 to-gray-50/90 dark:from-gray-900/90 dark:to-gray-800/90 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 h-16 flex items-center px-4 md:px-6 shadow-lg"
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
-        <MenuIcon className="h-6 w-6" />
-        <span className="sr-only">Toggle sidebar</span>
-      </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-4 md:hidden hover:bg-gray-100 dark:hover:bg-gray-800"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <MenuIcon className="h-6 w-6" />
+          <span className="sr-only">Toggle sidebar</span>
+        </Button>
+      </motion.div>
       
-      <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mr-4">{title}</h1>
+      <motion.h1 
+        className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mr-4"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        {title}
+      </motion.h1>
       
-      <form onSubmit={handleSearch} className="hidden md:flex items-center relative flex-1 max-w-md mx-4">
+      <motion.form 
+        onSubmit={handleSearch} 
+        className="hidden md:flex items-center relative flex-1 max-w-md mx-4"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <Input
           type="search"
           placeholder="Search..."
-          className="pl-10 pr-4"
+          className="pl-10 pr-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200/50 dark:border-gray-700/50 focus:border-green-500 dark:focus:border-green-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
-      </form>
+      </motion.form>
       
-      <div className="flex items-center gap-3 ml-auto">
+      <motion.div 
+        className="flex items-center gap-3 ml-auto"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm" className="flex gap-1">
-              <Filter className="h-4 w-4" />
-              <span className="hidden sm:inline">Filter</span>
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button variant="outline" size="sm" className="flex gap-1 backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <Filter className="h-4 w-4" />
+                <span className="hidden sm:inline">Filter</span>
+              </Button>
+            </motion.div>
           </PopoverTrigger>
-          <PopoverContent className="w-80">
+          <PopoverContent className="w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-gray-200/50 dark:border-gray-800/50">
             <div className="space-y-4">
               <h4 className="font-medium">Filter Options</h4>
               <div className="space-y-2">
@@ -106,13 +139,18 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
           </PopoverContent>
         </Popover>
         
-        <Button variant="outline" size="sm">
-          Export Data
-        </Button>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Button variant="outline" size="sm" className="backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700">
+            Export Data
+          </Button>
+        </motion.div>
         
         <ProfileMenu />
-      </div>
-    </header>
+      </motion.div>
+    </motion.header>
   );
 };
 
