@@ -13,6 +13,11 @@ const HomeHeader = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
+          <img 
+            src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
+            alt="FarmlyCarbon Logo" 
+            className="h-10 w-auto" 
+          />
           <span className="text-xl font-bold">FarmlyCarbon</span>
         </Link>
         
