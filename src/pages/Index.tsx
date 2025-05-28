@@ -1,4 +1,4 @@
-/* import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowRight, BarChart3, Target, LineChart, Mail, Instagram, Twitter, Linkedin, BookOpen, Leaf } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
