@@ -19,18 +19,6 @@ const HomeHeader = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Link to="/" className="flex items-center gap-3 group">
-            <motion.div
-              whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-              transition={{ duration: 0.6 }}
-              className="relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-sm opacity-30 group-hover:opacity-50 transition-opacity"></div>
-              <img 
-                src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
-                alt="FarmlyCarbon Logo" 
-                className="h-12 w-auto relative z-10" 
-              />
-            </motion.div>
             <motion.span 
               className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
               whileHover={{ scale: 1.05 }}
@@ -85,7 +73,7 @@ const HomeHeader = () => {
               </Link>
             </Button>
           </motion.div>
-        </nav>
+        </motion.nav>
 
         <div className="flex md:hidden">
           <motion.div
