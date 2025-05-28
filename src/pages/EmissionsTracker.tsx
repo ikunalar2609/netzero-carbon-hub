@@ -173,29 +173,31 @@ const EmissionsTracker = () => {
                   >
                     <defs>
                       <linearGradient id="scope1" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#09AB75" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#09AB75" stopOpacity={0.1} />
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
                       </linearGradient>
                       <linearGradient id="scope2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#FFC745" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#FFC745" stopOpacity={0.1} />
+                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1} />
                       </linearGradient>
                       <linearGradient id="scope3" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#4A5B6B" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#4A5B6B" stopOpacity={0.1} />
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1} />
                       </linearGradient>
                     </defs>
                     <XAxis 
                       dataKey={timeframe === "yearly" ? "year" : "month"} 
                       axisLine={false} 
                       tickLine={false}
+                      tick={{ fill: '#6b7280' }}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
+                      tick={{ fill: '#6b7280' }}
                       tickFormatter={(value) => `${value}`}
                     />
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e7ff" />
                     <Tooltip 
                       formatter={(value) => [`${value} tCO₂e`, ""]}
                       contentStyle={{
@@ -209,7 +211,7 @@ const EmissionsTracker = () => {
                       type="monotone" 
                       dataKey="scope1" 
                       stackId="1"
-                      stroke="#09AB75" 
+                      stroke="#10b981" 
                       fill="url(#scope1)" 
                       name="Scope 1"
                     />
@@ -217,7 +219,7 @@ const EmissionsTracker = () => {
                       type="monotone" 
                       dataKey="scope2" 
                       stackId="1"
-                      stroke="#FFC745" 
+                      stroke="#f59e0b" 
                       fill="url(#scope2)" 
                       name="Scope 2"
                     />
@@ -225,7 +227,7 @@ const EmissionsTracker = () => {
                       type="monotone" 
                       dataKey="scope3" 
                       stackId="1"
-                      stroke="#4A5B6B" 
+                      stroke="#8b5cf6" 
                       fill="url(#scope3)" 
                       name="Scope 3"
                     />
@@ -251,30 +253,32 @@ const EmissionsTracker = () => {
                       data={comparisonData}
                       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     >
-                      <CartesianGrid stroke="#f5f5f5" vertical={false} />
+                      <CartesianGrid stroke="#e0e7ff" vertical={false} />
                       <XAxis 
                         dataKey="category" 
                         scale="band" 
                         axisLine={false}
                         tickLine={false}
+                        tick={{ fill: '#6b7280' }}
                       />
                       <YAxis 
                         axisLine={false} 
                         tickLine={false}
+                        tick={{ fill: '#6b7280' }}
                         tickFormatter={(value) => `${value}`}
                       />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="previous" name="Previous Period" fill="#AFBBC3" radius={[4, 4, 0, 0]} barSize={20} />
-                      <Bar dataKey="current" name="Current Period" fill="#09AB75" radius={[4, 4, 0, 0]} barSize={20} />
+                      <Bar dataKey="previous" name="Previous Period" fill="#94a3b8" radius={[4, 4, 0, 0]} barSize={20} />
+                      <Bar dataKey="current" name="Current Period" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
                       <Line
                         type="monotone"
                         dataKey="target"
                         name="Target"
-                        stroke="#FFC745"
-                        strokeWidth={2}
-                        dot={{ r: 5 }}
-                        activeDot={{ r: 8 }}
+                        stroke="#10b981"
+                        strokeWidth={3}
+                        dot={{ r: 5, fill: "#10b981" }}
+                        activeDot={{ r: 8, fill: "#10b981" }}
                       />
                     </ComposedChart>
                   </ResponsiveContainer>
@@ -296,16 +300,18 @@ const EmissionsTracker = () => {
                       data={intensityData}
                       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     >
-                      <CartesianGrid stroke="#f5f5f5" vertical={false} />
+                      <CartesianGrid stroke="#e0e7ff" vertical={false} />
                       <XAxis 
                         dataKey="year" 
                         axisLine={false}
                         tickLine={false}
+                        tick={{ fill: '#6b7280' }}
                       />
                       <YAxis 
                         yAxisId="left"
                         axisLine={false} 
                         tickLine={false}
+                        tick={{ fill: '#6b7280' }}
                         tickFormatter={(value) => `${value}`}
                       />
                       <YAxis 
@@ -313,6 +319,7 @@ const EmissionsTracker = () => {
                         orientation="right"
                         axisLine={false} 
                         tickLine={false}
+                        tick={{ fill: '#6b7280' }}
                         domain={[0, 2.5]}
                         tickFormatter={(value) => `${value}`}
                       />
@@ -322,7 +329,7 @@ const EmissionsTracker = () => {
                         yAxisId="left"
                         dataKey="emissions" 
                         name="Total Emissions (tCO₂e)" 
-                        fill="#09AB75" 
+                        fill="#3b82f6" 
                         radius={[4, 4, 0, 0]} 
                         barSize={30} 
                       />
@@ -331,10 +338,10 @@ const EmissionsTracker = () => {
                         type="monotone"
                         dataKey="intensity"
                         name="Carbon Intensity"
-                        stroke="#FFC745"
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                        stroke="#f59e0b"
+                        strokeWidth={3}
+                        dot={{ r: 4, fill: "#f59e0b" }}
+                        activeDot={{ r: 6, fill: "#f59e0b" }}
                       />
                     </ComposedChart>
                   </ResponsiveContainer>

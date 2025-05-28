@@ -34,15 +34,17 @@ export const ScenarioComparison = () => {
               data={comparePlanData}
               margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e7ff" />
               <XAxis 
                 dataKey="year" 
                 axisLine={false} 
                 tickLine={false}
+                tick={{ fill: '#6b7280' }}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
+                tick={{ fill: '#6b7280' }}
                 tickFormatter={(value) => `${value}%`}
               />
               <RechartsTooltip content={<CustomTooltip />} />
@@ -50,28 +52,28 @@ export const ScenarioComparison = () => {
                 type="monotone"
                 dataKey="current"
                 name="Current Plan"
-                stroke="#09AB75"
-                strokeWidth={2}
-                dot={{ r: 5 }}
-                activeDot={{ r: 8 }}
+                stroke="#3b82f6"
+                strokeWidth={3}
+                dot={{ r: 6, fill: "#3b82f6" }}
+                activeDot={{ r: 8, fill: "#3b82f6" }}
               />
               <Line
                 type="monotone"
                 dataKey="aggressive"
                 name="Aggressive Plan"
-                stroke="#FFC745"
-                strokeWidth={2}
-                dot={{ r: 5 }}
-                activeDot={{ r: 8 }}
+                stroke="#10b981"
+                strokeWidth={3}
+                dot={{ r: 6, fill: "#10b981" }}
+                activeDot={{ r: 8, fill: "#10b981" }}
               />
               <Line
                 type="monotone"
                 dataKey="moderate"
                 name="Moderate Plan"
-                stroke="#4A5B6B"
-                strokeWidth={2}
-                dot={{ r: 5 }}
-                activeDot={{ r: 8 }}
+                stroke="#f59e0b"
+                strokeWidth={3}
+                dot={{ r: 6, fill: "#f59e0b" }}
+                activeDot={{ r: 8, fill: "#f59e0b" }}
               />
             </LineChart>
           </ResponsiveContainer>

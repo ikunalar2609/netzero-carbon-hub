@@ -122,24 +122,24 @@ const EmissionsChart = () => {
             >
               <defs>
                 <linearGradient id="targetGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FCDF67" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#FCDF67" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1} />
                 </linearGradient>
                 <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#09AB75" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#09AB75" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <XAxis 
                 dataKey={xKey} 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 12 }} 
+                tick={{ fontSize: 12, fill: '#6b7280' }} 
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 12 }} 
+                tick={{ fontSize: 12, fill: '#6b7280' }} 
                 domain={[0, 'dataMax + 20']}
                 tickFormatter={(value) => `${value}`}
               />
@@ -147,8 +147,8 @@ const EmissionsChart = () => {
               <Area
                 type="monotone"
                 dataKey="target"
-                stroke="#FCDF67"
-                strokeWidth={2}
+                stroke="#f59e0b"
+                strokeWidth={3}
                 fill="url(#targetGradient)"
                 name="Target"
                 activeDot={{ r: 6, strokeWidth: 0 }}
@@ -156,8 +156,8 @@ const EmissionsChart = () => {
               <Area
                 type="monotone"
                 dataKey="actual"
-                stroke="#09AB75"
-                strokeWidth={2}
+                stroke="#3b82f6"
+                strokeWidth={3}
                 fill="url(#actualGradient)"
                 name="Actual"
                 activeDot={{ r: 6, strokeWidth: 0 }}
@@ -167,11 +167,11 @@ const EmissionsChart = () => {
         </div>
         <div className="flex justify-center mt-3 space-x-6">
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-brand-yellow mr-2" />
+            <div className="w-3 h-3 rounded-full bg-amber-500 mr-2" />
             <span className="text-xs font-medium">Target with Projections</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-brand-green mr-2" />
+            <div className="w-3 h-3 rounded-full bg-blue-500 mr-2" />
             <span className="text-xs font-medium">Actual with Projections</span>
           </div>
         </div>

@@ -38,23 +38,25 @@ export const EmissionsPathwayChart = () => {
         >
           <defs>
             <linearGradient id="colorEmissions" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#09AB75" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#09AB75" stopOpacity={0.1} />
+              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
             </linearGradient>
             <linearGradient id="colorBAU" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#EA384C" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#EA384C" stopOpacity={0.1} />
+              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e7ff" />
           <XAxis 
             dataKey="year" 
             axisLine={false} 
             tickLine={false}
+            tick={{ fill: '#6b7280' }}
           />
           <YAxis 
             axisLine={false} 
             tickLine={false} 
+            tick={{ fill: '#6b7280' }}
             tickFormatter={(value) => `${value}`}
           />
           <RechartsTooltip content={<CustomTooltip />} />
@@ -62,7 +64,7 @@ export const EmissionsPathwayChart = () => {
             type="monotone"
             dataKey="bau"
             name="Business as Usual"
-            stroke="#EA384C"
+            stroke="#ef4444"
             fill="url(#colorBAU)"
             strokeDasharray="5 5"
             activeDot={false}
@@ -71,7 +73,7 @@ export const EmissionsPathwayChart = () => {
             type="monotone"
             dataKey="emissions"
             name="Actual Emissions"
-            stroke="#09AB75"
+            stroke="#3b82f6"
             fill="url(#colorEmissions)"
             activeDot={{ r: 8 }}
           />
@@ -79,8 +81,8 @@ export const EmissionsPathwayChart = () => {
             type="monotone"
             dataKey="target1"
             name="1.5°C Aligned Path"
-            stroke="#FFC745"
-            strokeWidth={2}
+            stroke="#10b981"
+            strokeWidth={3}
             dot={false}
             activeDot={false}
           />
@@ -88,8 +90,8 @@ export const EmissionsPathwayChart = () => {
             type="monotone"
             dataKey="target2"
             name="Accelerated Net Zero"
-            stroke="#4A5B6B"
-            strokeWidth={2}
+            stroke="#8b5cf6"
+            strokeWidth={3}
             dot={false}
             activeDot={false}
           />

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -12,25 +11,25 @@ import {
 import { useState } from "react";
 
 const SCOPE1_DATA = [
-  { name: "Stationary Combustion", value: 35, color: "#09AB75" },
-  { name: "Mobile Combustion", value: 25, color: "#33BF8E" },
-  { name: "Process Emissions", value: 20, color: "#66CFAA" },
-  { name: "Fugitive Emissions", value: 20, color: "#99DFC7" },
+  { name: "Stationary Combustion", value: 35, color: "#10b981" },
+  { name: "Mobile Combustion", value: 25, color: "#059669" },
+  { name: "Process Emissions", value: 20, color: "#047857" },
+  { name: "Fugitive Emissions", value: 20, color: "#065f46" },
 ];
 
 const SCOPE2_DATA = [
-  { name: "Electricity", value: 50, color: "#FFC745" },
-  { name: "Steam", value: 20, color: "#FFD666" },
-  { name: "Heating", value: 15, color: "#FFE499" },
-  { name: "Cooling", value: 15, color: "#FFF1CC" },
+  { name: "Electricity", value: 50, color: "#f59e0b" },
+  { name: "Steam", value: 20, color: "#d97706" },
+  { name: "Heating", value: 15, color: "#b45309" },
+  { name: "Cooling", value: 15, color: "#92400e" },
 ];
 
 const SCOPE3_DATA = [
-  { name: "Purchased Goods", value: 30, color: "#4A5B6B" },
-  { name: "Business Travel", value: 15, color: "#5F7787" },
-  { name: "Employee Commuting", value: 10, color: "#8799A5" },
-  { name: "Waste", value: 15, color: "#AFBBC3" },
-  { name: "Transportation", value: 30, color: "#D7DDE1" },
+  { name: "Purchased Goods", value: 30, color: "#8b5cf6" },
+  { name: "Business Travel", value: 15, color: "#7c3aed" },
+  { name: "Employee Commuting", value: 10, color: "#6d28d9" },
+  { name: "Waste", value: 15, color: "#5b21b6" },
+  { name: "Transportation", value: 30, color: "#4c1d95" },
 ];
 
 const RADIAN = Math.PI / 180;
