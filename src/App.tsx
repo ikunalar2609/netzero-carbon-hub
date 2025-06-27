@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +26,7 @@ import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import Climatiq from "@/pages/Climatiq";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +45,9 @@ function App() {
                   <Routes>
                     {/* Public landing page */}
                     <Route path="/" element={<Index />} />
+                    
+                    {/* New Climatiq page */}
+                    <Route path="/climatiq" element={<Climatiq />} />
                     
                     {/* Public routes */}
                     <Route element={<PublicRoute />}>
