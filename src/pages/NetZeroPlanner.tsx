@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,13 +7,13 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, Target, TrendingDown, Zap, Leaf, Factory, Truck, Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
-import SummaryMetrics from "@/components/net-zero/SummaryMetrics";
-import MilestonesTimeline from "@/components/net-zero/MilestonesTimeline";
-import ReductionProjects from "@/components/net-zero/ReductionProjects";
-import EmissionsPathwayChart from "@/components/net-zero/EmissionsPathwayChart";
-import ScenarioCards from "@/components/net-zero/ScenarioCards";
-import StandardsCompliance from "@/components/net-zero/StandardsCompliance";
-import ScenarioComparison from "@/components/net-zero/ScenarioComparison";
+import { SummaryMetrics } from "@/components/net-zero/SummaryMetrics";
+import { MilestonesTimeline } from "@/components/net-zero/MilestonesTimeline";
+import { ReductionProjects } from "@/components/net-zero/ReductionProjects";
+import { EmissionsPathwayChart } from "@/components/net-zero/EmissionsPathwayChart";
+import { ScenarioCards } from "@/components/net-zero/ScenarioCards";
+import { StandardsCompliance } from "@/components/net-zero/StandardsCompliance";
+import { ScenarioComparison } from "@/components/net-zero/ScenarioComparison";
 
 const NetZeroPlanner = () => {
   const [selectedScenario, setSelectedScenario] = useState("moderate");
