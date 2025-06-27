@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -168,7 +167,6 @@ const EmissionsChart = () => {
                 name="Actual"
                 activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
                 animationDuration={1500}
-                animationDelay={300}
               />
               <Legend 
                 verticalAlign="bottom" 

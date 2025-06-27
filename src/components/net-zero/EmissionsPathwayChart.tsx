@@ -1,4 +1,3 @@
-
 import {
   Area,
   AreaChart,
@@ -91,7 +90,6 @@ export const EmissionsPathwayChart = () => {
             fill="url(#colorEmissions)"
             activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
             animationDuration={1500}
-            animationDelay={300}
           />
           <Line
             type="monotone"
@@ -102,7 +100,6 @@ export const EmissionsPathwayChart = () => {
             dot={false}
             activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
             animationDuration={1500}
-            animationDelay={600}
           />
           <Line
             type="monotone"
@@ -113,7 +110,6 @@ export const EmissionsPathwayChart = () => {
             dot={false}
             activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
             animationDuration={1500}
-            animationDelay={900}
           />
           <Legend 
             verticalAlign="bottom" 

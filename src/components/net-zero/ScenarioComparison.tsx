@@ -1,4 +1,3 @@
-
 import {
   Line,
   LineChart,
@@ -85,7 +84,6 @@ export const ScenarioComparison = () => {
                 dot={{ r: 8, fill: "#059669", strokeWidth: 3, stroke: "#ffffff" }}
                 activeDot={{ r: 10, fill: "#059669", strokeWidth: 3, stroke: "#ffffff" }}
                 animationDuration={1500}
-                animationDelay={200}
               />
               <Line
                 type="monotone"
@@ -96,7 +94,6 @@ export const ScenarioComparison = () => {
                 dot={{ r: 8, fill: "#d97706", strokeWidth: 3, stroke: "#ffffff" }}
                 activeDot={{ r: 10, fill: "#d97706", strokeWidth: 3, stroke: "#ffffff" }}
                 animationDuration={1500}
-                animationDelay={400}
               />
               <Legend 
                 verticalAlign="bottom" 
