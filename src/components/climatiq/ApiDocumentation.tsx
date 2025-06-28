@@ -112,8 +112,8 @@ export const ApiDocumentation = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-3xl font-bold mb-4">API Documentation</h2>
-        <p className="text-muted-foreground mb-6">
+        <h2 className="text-3xl font-bold mb-4 text-gray-900">API Documentation</h2>
+        <p className="text-gray-700 mb-6">
           Comprehensive documentation for all Climatiq API endpoints with examples and code snippets.
         </p>
       </motion.div>
@@ -122,20 +122,31 @@ export const ApiDocumentation = () => {
         {/* Endpoint List */}
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-lg">Endpoints</CardTitle>
+            <CardTitle className="text-lg text-gray-900">Endpoints</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {Object.entries(endpoints).map(([key, endpoint]) => (
               <Button
                 key={key}
                 variant={selectedEndpoint === key ? "default" : "ghost"}
-                className="w-full justify-start"
+                className={`w-full justify-start ${
+                  selectedEndpoint === key 
+                    ? "bg-gray-900 text-white" 
+                    : "text-gray-900 hover:bg-gray-100"
+                }`}
                 onClick={() => setSelectedEndpoint(key)}
               >
-                <Badge variant="outline" className="mr-2 text-xs">
+                <Badge 
+                  variant="outline" 
+                  className={`mr-2 text-xs ${
+                    selectedEndpoint === key 
+                      ? "border-white text-white" 
+                      : "border-gray-400 text-gray-700"
+                  }`}
+                >
                   {endpoint.method}
                 </Badge>
-                {endpoint.name}
+                <span className="text-left">{endpoint.name}</span>
               </Button>
             ))}
           </CardContent>
@@ -146,40 +157,42 @@ export const ApiDocumentation = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Badge variant="outline">{currentEndpoint.method}</Badge>
+                <CardTitle className="flex items-center gap-2 text-gray-900">
+                  <Badge variant="outline" className="border-gray-400 text-gray-700">
+                    {currentEndpoint.method}
+                  </Badge>
                   {currentEndpoint.name}
                 </CardTitle>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" className="text-gray-900 border-gray-300">
                   <Play className="h-4 w-4 mr-2" />
                   Try it
                 </Button>
               </div>
-              <CardDescription>{currentEndpoint.description}</CardDescription>
-              <code className="bg-muted px-2 py-1 rounded text-sm">
+              <CardDescription className="text-gray-600">{currentEndpoint.description}</CardDescription>
+              <code className="bg-gray-100 px-2 py-1 rounded text-sm text-gray-900">
                 {currentEndpoint.url}
               </code>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="parameters" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="parameters">Parameters</TabsTrigger>
-                  <TabsTrigger value="example">Example</TabsTrigger>
-                  <TabsTrigger value="code">Code Snippets</TabsTrigger>
+                <TabsList className="bg-gray-100">
+                  <TabsTrigger value="parameters" className="text-gray-900">Parameters</TabsTrigger>
+                  <TabsTrigger value="example" className="text-gray-900">Example</TabsTrigger>
+                  <TabsTrigger value="code" className="text-gray-900">Code Snippets</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="parameters" className="space-y-4">
                   <div className="space-y-3">
                     {currentEndpoint.parameters.map((param, index) => (
-                      <div key={index} className="border rounded p-3">
+                      <div key={index} className="border border-gray-200 rounded p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <code className="font-mono font-semibold">{param.name}</code>
+                          <code className="font-mono font-semibold text-gray-900">{param.name}</code>
                           <Badge variant={param.required ? "destructive" : "secondary"}>
                             {param.required ? "Required" : "Optional"}
                           </Badge>
-                          <Badge variant="outline">{param.type}</Badge>
+                          <Badge variant="outline" className="border-gray-400 text-gray-700">{param.type}</Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{param.description}</p>
+                        <p className="text-sm text-gray-600">{param.description}</p>
                       </div>
                     ))}
                   </div>
@@ -189,31 +202,33 @@ export const ApiDocumentation = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">Request</h4>
+                        <h4 className="font-semibold text-gray-900">Request</h4>
                         <Button
                           size="sm"
                           variant="outline"
+                          className="text-gray-900 border-gray-300"
                           onClick={() => copyToClipboard(currentEndpoint.example.request)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
+                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
                         <code>{currentEndpoint.example.request}</code>
                       </pre>
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">Response</h4>
+                        <h4 className="font-semibold text-gray-900">Response</h4>
                         <Button
                           size="sm"
                           variant="outline"
+                          className="text-gray-900 border-gray-300"
                           onClick={() => copyToClipboard(currentEndpoint.example.response)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
+                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
                         <code>{currentEndpoint.example.response}</code>
                       </pre>
                     </div>
@@ -224,12 +239,12 @@ export const ApiDocumentation = () => {
                   <div className="space-y-4">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">Python</h4>
-                        <Button size="sm" variant="outline">
+                        <h4 className="font-semibold text-gray-900">Python</h4>
+                        <Button size="sm" variant="outline" className="text-gray-900 border-gray-300">
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
+                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
                         <code>{`import requests
 
 url = "https://api.climatiq.io${currentEndpoint.url}"
@@ -247,12 +262,12 @@ print(result)`}</code>
                     
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">JavaScript</h4>
-                        <Button size="sm" variant="outline">
+                        <h4 className="font-semibold text-gray-900">JavaScript</h4>
+                        <Button size="sm" variant="outline" className="text-gray-900 border-gray-300">
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
+                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
                         <code>{`const response = await fetch('https://api.climatiq.io${currentEndpoint.url}', {
   method: 'POST',
   headers: {
