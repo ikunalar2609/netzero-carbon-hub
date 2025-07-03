@@ -345,18 +345,18 @@ const Index = () => {
               >
                 <QuickLink 
                   href="/dashboard" 
-                  icon={<BarChart3 className="h-5 w-5 mr-3" />}
+                  icon={<BarChart3 className="h-5 w-5 mr-3 text-white" />}
                   text="Dashboard"
                 />
                 <QuickLink 
                   href="https://idlerwritingeveryday.substack.com" 
-                  icon={<BookOpen className="h-5 w-5 mr-3" />}
+                  icon={<BookOpen className="h-5 w-5 mr-3 text-white" />}
                   text="Blog"
                   external
                 />
                 <QuickLink 
                   href="/login" 
-                  icon={<Leaf className="h-5 w-5 mr-3" />}
+                  icon={<Leaf className="h-5 w-5 mr-3 text-white" />}
                   text="Login / Signup"
                 />
               </motion.div>
@@ -546,23 +546,23 @@ const QuickLink = ({ href, icon, text, external = false }: { href: string, icon:
         href={href} 
         target="_blank" 
         rel="noopener noreferrer" 
-        className="flex items-center text-gray-300 hover:text-green-400 transition-all duration-300 group py-2"
+        className="flex items-center text-white hover:text-green-400 transition-all duration-300 group py-2"
       >
-        <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/30 to-gray-700/30 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
+        <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/50 to-gray-700/50 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
           {icon}
         </div>
-        <span className="font-medium">{text}</span>
-        <ExternalLink className="h-4 w-4 ml-auto opacity-60 group-hover:opacity-100 transition-opacity" />
+        <span className="font-medium text-white">{text}</span>
+        <ExternalLink className="h-4 w-4 ml-auto opacity-60 group-hover:opacity-100 transition-opacity text-white" />
       </a>
     ) : (
       <a 
         href={href} 
-        className="flex items-center text-gray-300 hover:text-green-400 transition-all duration-300 group py-2"
+        className="flex items-center text-white hover:text-green-400 transition-all duration-300 group py-2"
       >
-        <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/30 to-gray-700/30 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
+        <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/50 to-gray-700/50 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
           {icon}
         </div>
-        <span className="font-medium">{text}</span>
+        <span className="font-medium text-white">{text}</span>
       </a>
     )}
   </motion.div>

@@ -112,8 +112,8 @@ export const ApiDocumentation = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-3xl font-bold mb-4 text-gray-900">API Documentation</h2>
-        <p className="text-gray-700 mb-6">
+        <h2 className="text-3xl font-bold mb-4 text-foreground">API Documentation</h2>
+        <p className="text-muted-foreground mb-6">
           Comprehensive documentation for all Climatiq API endpoints with examples and code snippets.
         </p>
       </motion.div>
@@ -122,27 +122,19 @@ export const ApiDocumentation = () => {
         {/* Endpoint List */}
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-lg text-gray-900">Endpoints</CardTitle>
+            <CardTitle className="text-lg text-foreground">Endpoints</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {Object.entries(endpoints).map(([key, endpoint]) => (
               <Button
                 key={key}
                 variant={selectedEndpoint === key ? "default" : "ghost"}
-                className={`w-full justify-start ${
-                  selectedEndpoint === key 
-                    ? "bg-gray-900 text-white" 
-                    : "text-gray-900 hover:bg-gray-100"
-                }`}
+                className="w-full justify-start"
                 onClick={() => setSelectedEndpoint(key)}
               >
                 <Badge 
                   variant="outline" 
-                  className={`mr-2 text-xs ${
-                    selectedEndpoint === key 
-                      ? "border-white text-white" 
-                      : "border-gray-400 text-gray-700"
-                  }`}
+                  className="mr-2 text-xs"
                 >
                   {endpoint.method}
                 </Badge>

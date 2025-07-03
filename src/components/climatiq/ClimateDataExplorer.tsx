@@ -90,8 +90,8 @@ export const ClimateDataExplorer = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-3xl font-bold mb-4 text-gray-900">Data Explorer</h2>
-        <p className="text-gray-700 mb-6">
+        <h2 className="text-3xl font-bold mb-4 text-foreground">Data Explorer</h2>
+        <p className="text-muted-foreground mb-6">
           Search and explore our comprehensive database of emission factors.
         </p>
       </motion.div>
@@ -99,7 +99,7 @@ export const ClimateDataExplorer = () => {
       {/* Search and Filters */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-gray-900">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <Search className="h-5 w-5" />
             Search & Filter
           </CardTitle>
@@ -111,28 +111,28 @@ export const ClimateDataExplorer = () => {
                 placeholder="Search emission factors..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-gray-900"
+                className="w-full"
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="text-gray-900">
+              <SelectTrigger>
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category} className="text-gray-900">
+                  <SelectItem key={category} value={category}>
                     {category === "all" ? "All Categories" : category}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Select value={regionFilter} onValueChange={setRegionFilter}>
-              <SelectTrigger className="text-gray-900">
+              <SelectTrigger>
                 <SelectValue placeholder="Region" />
               </SelectTrigger>
               <SelectContent>
                 {regions.map((region) => (
-                  <SelectItem key={region} value={region} className="text-gray-900">
+                  <SelectItem key={region} value={region}>
                     {region === "all" ? "All Regions" : region}
                   </SelectItem>
                 ))}
@@ -145,10 +145,10 @@ export const ClimateDataExplorer = () => {
       {/* Results */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-foreground">
             {filteredData.length} emission factors found
           </h3>
-          <Button variant="outline" size="sm" className="text-gray-900 border-gray-300">
+          <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
             Export Results
           </Button>
@@ -165,36 +165,36 @@ export const ClimateDataExplorer = () => {
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-semibold text-lg text-gray-900">{item.name}</h4>
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">{item.category}</Badge>
-                        <Badge variant="outline" className="border-gray-300 text-gray-700">{item.region}</Badge>
-                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-semibold text-lg text-foreground">{item.name}</h4>
+                          <Badge variant="secondary">{item.category}</Badge>
+                          <Badge variant="outline">{item.region}</Badge>
+                        </div>
                       
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-600 block">Emission Factor:</span>
-                          <div className="font-semibold text-green-600">
-                            {item.factor} {item.unit}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground block">Emission Factor:</span>
+                            <div className="font-semibold text-green-600">
+                              {item.factor} {item.unit}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground block">Methodology:</span>
+                            <div className="font-semibold text-foreground">{item.methodology}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground block">Source:</span>
+                            <div className="font-semibold text-foreground">{item.source}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground block">Last Updated:</span>
+                            <div className="font-semibold text-foreground">{item.lastUpdated}</div>
                           </div>
                         </div>
-                        <div>
-                          <span className="text-gray-600 block">Methodology:</span>
-                          <div className="font-semibold text-gray-900">{item.methodology}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600 block">Source:</span>
-                          <div className="font-semibold text-gray-900">{item.source}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600 block">Last Updated:</span>
-                          <div className="font-semibold text-gray-900">{item.lastUpdated}</div>
-                        </div>
-                      </div>
                     </div>
                     
-                    <Button variant="outline" size="sm" className="text-gray-900 border-gray-300">
+                    <Button variant="outline" size="sm">
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
