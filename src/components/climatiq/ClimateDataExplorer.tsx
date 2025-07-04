@@ -90,7 +90,7 @@ export const ClimateDataExplorer = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-3xl font-bold mb-4 text-foreground">Data Explorer</h2>
+        <h2 className="text-3xl font-bold mb-4 text-black dark:text-white">Data Explorer</h2>
         <p className="text-muted-foreground mb-6">
           Search and explore our comprehensive database of emission factors.
         </p>

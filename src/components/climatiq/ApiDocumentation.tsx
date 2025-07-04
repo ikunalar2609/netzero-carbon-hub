@@ -129,16 +129,25 @@ export const ApiDocumentation = () => {
               <Button
                 key={key}
                 variant={selectedEndpoint === key ? "default" : "ghost"}
-                className="w-full justify-start"
+                className={`w-full justify-start ${
+                  selectedEndpoint === key 
+                    ? "bg-black text-white hover:bg-gray-800" 
+                    : "text-black hover:text-gray-600"
+                }`}
                 onClick={() => setSelectedEndpoint(key)}
               >
                 <Badge 
                   variant="outline" 
-                  className="mr-2 text-xs"
+                  className={`mr-2 text-xs ${
+                    selectedEndpoint === key 
+                      ? "border-white text-white" 
+                      : "border-gray-400 text-gray-700"
+                  }`}
                 >
                   {endpoint.method}
                 </Badge>
-                <span className="text-left">{endpoint.name}</span>
+                <span className="text-left">{selectedEndpoint === key ? "text-white" : "text-black"}</span>
+                {endpoint.name}
               </Button>
             ))}
           </CardContent>

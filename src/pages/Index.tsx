@@ -511,7 +511,7 @@ const EnhancedContactLink = ({ href, icon, text, tooltip }: { href: string, icon
         href={href} 
         target="_blank" 
         rel="noopener noreferrer" 
-        className="flex items-center text-gray-300 hover:text-green-400 transition-all duration-300 group"
+        className="flex items-center text-white hover:text-green-400 transition-all duration-300 group"
         variants={{
           hidden: { opacity: 0, x: -10 },
           visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
@@ -520,10 +520,12 @@ const EnhancedContactLink = ({ href, icon, text, tooltip }: { href: string, icon
         whileTap={{ scale: 0.98 }}
       >
         <div className="mr-3 p-3 rounded-lg bg-gradient-to-br from-gray-800/50 to-gray-700/50 backdrop-blur-sm group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300 border border-gray-700/50 group-hover:border-green-400/30">
-          {icon}
+          <div className="text-white group-hover:text-green-400 transition-colors duration-300">
+            {icon}
+          </div>
         </div>
-        <span className="font-medium">{text}</span>
-        <ExternalLink className="h-4 w-4 ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+        <span className="font-medium text-white">{text}</span>
+        <ExternalLink className="h-4 w-4 ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-white" />
       </motion.a>
     </TooltipTrigger>
     <TooltipContent side="top" className="bg-gray-800 text-white border-gray-700">
@@ -549,10 +551,12 @@ const QuickLink = ({ href, icon, text, external = false }: { href: string, icon:
         className="flex items-center text-white hover:text-green-400 transition-all duration-300 group py-2"
       >
         <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/50 to-gray-700/50 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
-          {icon}
+          <div className="text-white group-hover:text-green-400 transition-colors duration-300">
+            {icon}
+          </div>
         </div>
         <span className="font-medium text-white">{text}</span>
-        <ExternalLink className="h-4 w-4 ml-auto opacity-60 group-hover:opacity-100 transition-opacity text-white" />
+        <ExternalLink className="h-4 w-4 ml-auto opacity-80 group-hover:opacity-100 transition-opacity text-white" />
       </a>
     ) : (
       <a 
@@ -560,7 +564,9 @@ const QuickLink = ({ href, icon, text, external = false }: { href: string, icon:
         className="flex items-center text-white hover:text-green-400 transition-all duration-300 group py-2"
       >
         <div className="p-2 rounded-lg bg-gradient-to-br from-gray-800/50 to-gray-700/50 mr-3 group-hover:from-green-500/20 group-hover:to-blue-500/20 transition-all duration-300">
-          {icon}
+          <div className="text-white group-hover:text-green-400 transition-colors duration-300">
+            {icon}
+          </div>
         </div>
         <span className="font-medium text-white">{text}</span>
       </a>
