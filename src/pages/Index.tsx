@@ -40,6 +40,21 @@ const Index = () => {
         />
         {/* Enhanced dark overlay for better text visibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 z-5" />
+        {/* Ambient spotlight effects for modern look */}
+        <div
+          className="absolute -top-24 left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] rounded-full blur-3xl opacity-50 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at center, hsl(var(--brand-green) / 0.35), transparent 60%)",
+          }}
+        />
+        <div
+          className="absolute -bottom-32 right-0 w-[40vw] h-[40vw] rounded-full blur-3xl opacity-30 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at center, rgba(255,255,255,0.25), transparent 60%)",
+          }}
+        />
         <GradientDot x="10%" y="30%" size={400} color="rgba(0, 200, 0, 0.03)" opacity={0.7} />
         <GradientDot x="80%" y="60%" size={300} color="rgba(255, 255, 255, 0.05)" opacity={0.5} />
         
@@ -81,7 +96,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate("/signup")}
-                className="shadow-2xl bg-white text-black hover:bg-white/90 font-semibold"
+                className="shadow-2xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white font-semibold ring-1 ring-white/10"
               >
                 Get Started <ArrowRight className="ml-2" />
               </Button>
@@ -95,11 +110,32 @@ const Index = () => {
                 variant="outline" 
                 size="lg" 
                 onClick={() => navigate("/login")}
-                className="backdrop-blur-sm bg-white/20 border-white/40 text-white hover:bg-white/30 shadow-xl font-semibold"
+                className="backdrop-blur-sm bg-white/15 border-white/50 text-white hover:bg-white/25 shadow-xl font-semibold"
               >
                 Log In
               </Button>
             </motion.div>
+          </motion.div>
+
+          {/* Trust signals */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-white/90"
+          >
+            <div className="flex items-center gap-3 rounded-lg bg-white/10 ring-1 ring-white/10 px-4 py-3 backdrop-blur">
+              <BarChart3 className="h-5 w-5" />
+              <span>1.2M+ tCO₂e tracked</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-white/10 ring-1 ring-white/10 px-4 py-3 backdrop-blur">
+              <Leaf className="h-5 w-5" />
+              <span>235+ verified projects</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-white/10 ring-1 ring-white/10 px-4 py-3 backdrop-blur">
+              <Target className="h-5 w-5" />
+              <span>Net‑zero planning tools</span>
+            </div>
           </motion.div>
         </motion.div>
         
@@ -112,6 +148,7 @@ const Index = () => {
           <Button 
             variant="ghost" 
             size="icon"
+            aria-label="Scroll to features"
             className="animate-bounce rounded-full bg-white/30 backdrop-blur-sm shadow-xl text-white hover:bg-white/40"
             onClick={() => {
               document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
