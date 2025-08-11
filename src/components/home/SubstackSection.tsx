@@ -101,6 +101,8 @@ const SubstackSection = () => {
                     transition={{ duration: 0.4 }}
                     src={article.image} 
                     alt={article.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                 </div>

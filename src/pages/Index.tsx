@@ -53,8 +53,11 @@ const Index = () => {
             variants={fadeInUp}
             transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center justify-center mb-6">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl">FarmlyCarbon</h1>
+            <div className="flex flex-col items-center justify-center mb-6">
+              <span className="mb-3 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white/90 ring-1 ring-white/20 backdrop-blur">
+                The agricultural carbon platform
+              </span>
+              <h1 className="font-playfair tracking-tight text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl">FarmlyCarbon</h1>
             </div>
           </motion.div>
           
