@@ -122,19 +122,19 @@ const Index = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-white/90"
+            className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4"
           >
-            <div className="flex items-center gap-3 rounded-lg bg-white/10 ring-1 ring-white/10 px-4 py-3 backdrop-blur">
-              <BarChart3 className="h-5 w-5" />
-              <span>1.2M+ tCO₂e tracked</span>
+            <div className="flex items-center gap-3 rounded-lg bg-white text-gray-800 shadow-xl px-4 py-3">
+              <BarChart3 className="h-5 w-5 text-green-600" />
+              <span className="font-medium">1.2M+ tCO₂e tracked</span>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-white/10 ring-1 ring-white/10 px-4 py-3 backdrop-blur">
-              <Leaf className="h-5 w-5" />
-              <span>235+ verified projects</span>
+            <div className="flex items-center gap-3 rounded-lg bg-white text-gray-800 shadow-xl px-4 py-3">
+              <Leaf className="h-5 w-5 text-green-600" />
+              <span className="font-medium">235+ verified projects</span>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-white/10 ring-1 ring-white/10 px-4 py-3 backdrop-blur">
-              <Target className="h-5 w-5" />
-              <span>Net‑zero planning tools</span>
+            <div className="flex items-center gap-3 rounded-lg bg-white text-gray-800 shadow-xl px-4 py-3">
+              <Target className="h-5 w-5 text-green-600" />
+              <span className="font-medium">Net‑zero planning tools</span>
             </div>
           </motion.div>
         </motion.div>
