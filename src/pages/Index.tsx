@@ -101,7 +101,7 @@ const Index = () => {
       </section>
 
       {/* Minimalist Features Section */}
-      <section className="py-32 px-4 md:px-8 bg-white">
+      <section className="py-32 px-4 md:px-8 bg-gray-50">
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
