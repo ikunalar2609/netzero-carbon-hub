@@ -83,52 +83,90 @@ const Climatiq = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <motion.section 
-        className="relative bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 text-white py-20 px-6"
+        className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20 bg-gradient-to-br from-green-50/30 to-blue-50/30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.h1 
-            className="text-5xl md:text-7xl font-bold mb-6"
+        <div className="max-w-5xl mx-auto space-y-8">
+          <motion.div 
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-6"
           >
-            Climatiq API
-          </motion.h1>
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600">
+              Carbon Emissions API Platform
+            </span>
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light text-gray-900 tracking-tight">
+              Climatiq<span className="text-green-600"> API</span>
+            </h1>
+          </motion.div>
+          
           <motion.p 
-            className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Simplify environmental footprint calculations with accurate CO2e estimates through our comprehensive API
+            Simplify environmental footprint calculations with accurate CO2e estimates through our comprehensive API platform
           </motion.p>
+          
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-8"
           >
-            <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100">
+            <Button 
+              size="lg" 
+              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg h-auto rounded-full"
+              onClick={() => setActiveTab("api-docs")}
+            >
               <Code className="mr-2 h-5 w-5" />
               API Documentation
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 text-lg h-auto rounded-full"
+              onClick={() => setActiveTab("explorer")}
+            >
               <Database className="mr-2 h-5 w-5" />
               Data Explorer
             </Button>
+          </motion.div>
+
+          {/* Trust Signals */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="pt-16 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-500"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>10M+ calculations processed</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span>500+ emission factors</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span>Real-time accuracy</span>
+            </div>
           </motion.div>
         </div>
       </motion.section>
 
       {/* Navigation Tabs */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <section className="py-16 px-4 md:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="api-docs">API Docs</TabsTrigger>
@@ -137,16 +175,31 @@ const Climatiq = () => {
             <TabsTrigger value="expansion">Project Expansion</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-8">
+          <TabsContent value="overview" className="space-y-16">
             {/* API Endpoints Grid */}
             <motion.section
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="py-8"
             >
-              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                API Endpoints
-              </h2>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="text-center mb-12"
+              >
+                <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+                  Comprehensive 
+                  <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent font-medium"> API Endpoints</span>
+                </h2>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                  Access powerful emission calculation endpoints for every aspect of your carbon footprint analysis
+                </p>
+              </motion.div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {apiEndpoints.map((endpoint, index) => {
                   const Icon = endpoint.icon;
@@ -154,22 +207,23 @@ const Climatiq = () => {
                     <motion.div
                       key={endpoint.name}
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                      className="group"
                     >
-                      <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer">
-                        <CardHeader className="text-center">
-                          <div className={`mx-auto w-16 h-16 rounded-full bg-gradient-to-r ${endpoint.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                      <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer h-full">
+                        <div className="text-center">
+                          <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-r ${endpoint.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                             <Icon className="h-8 w-8 text-white" />
                           </div>
-                          <CardTitle className="text-lg">{endpoint.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <CardDescription className="text-center">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-4">{endpoint.name}</h3>
+                          <p className="text-gray-600 leading-relaxed text-sm">
                             {endpoint.description}
-                          </CardDescription>
-                        </CardContent>
-                      </Card>
+                          </p>
+                        </div>
+                      </div>
                     </motion.div>
                   );
                 })}
@@ -178,61 +232,115 @@ const Climatiq = () => {
 
             {/* Features Section */}
             <motion.section
-              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="py-8"
             >
-              <Card className="col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-blue-600" />
-                    Comprehensive Guides
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• In-depth endpoint usage guides</li>
-                    <li>• CO2e calculation methods (AR4, AR5, AR6)</li>
-                    <li>• Private emission factors upload</li>
-                    <li>• Python integration snippets</li>
-                  </ul>
-                </CardContent>
-              </Card>
+              <div className="grid md:grid-cols-3 gap-8">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                  className="group"
+                >
+                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <FileText className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Comprehensive Guides</h3>
+                    <ul className="space-y-3 text-gray-600">
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        In-depth endpoint usage guides
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        CO2e calculation methods (AR4, AR5, AR6)
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Private emission factors upload
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Python integration snippets
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
 
-              <Card className="col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Database className="h-5 w-5 text-green-600" />
-                    Data Explorer
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Search emission factor database</li>
-                    <li>• Interactive visualization tools</li>
-                    <li>• Filter and sorting options</li>
-                    <li>• Demo applications</li>
-                  </ul>
-                </CardContent>
-              </Card>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                  className="group"
+                >
+                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Database className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Data Explorer</h3>
+                    <ul className="space-y-3 text-gray-600">
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Search emission factor database
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Interactive visualization tools
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Filter and sorting options
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Demo applications
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
 
-              <Card className="col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="h-5 w-5 text-purple-600" />
-                    Developer Tools
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• RESTful API architecture</li>
-                    <li>• Multi-language code snippets</li>
-                    <li>• Scalable and secure endpoints</li>
-                    <li>• Real-time emission calculations</li>
-                  </ul>
-                </CardContent>
-              </Card>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                  className="group"
+                >
+                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Code className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Developer Tools</h3>
+                    <ul className="space-y-3 text-gray-600">
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                        RESTful API architecture
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Multi-language code snippets
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Scalable and secure endpoints
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                        Real-time emission calculations
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
+              </div>
             </motion.section>
           </TabsContent>
 
@@ -526,7 +634,8 @@ const Climatiq = () => {
             </motion.div>
           </TabsContent>
         </Tabs>
-      </div>
+        </div>
+      </section>
     </div>
   );
 };
