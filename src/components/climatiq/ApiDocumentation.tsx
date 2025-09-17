@@ -40,6 +40,151 @@ export const ApiDocumentation = () => {
 }`
       }
     },
+    "flight-search": {
+      name: "Search Airports",
+      method: "GET",
+      url: "/api/airports",
+      description: "Search airports by IATA/ICAO code, name, or city",
+      parameters: [
+        { name: "query", type: "string", required: true, description: "Search term (IATA/ICAO code, name, or city)" },
+        { name: "limit", type: "number", required: false, description: "Maximum number of results (default: 10)" },
+        { name: "country", type: "string", required: false, description: "Filter by country code" }
+      ],
+      example: {
+        request: `GET /api/airports?query=JFK&limit=5`,
+        response: `{
+  "airports": [
+    {
+      "iata": "JFK",
+      "icao": "KJFK",
+      "name": "John F Kennedy International Airport",
+      "city": "New York",
+      "country": "United States",
+      "latitude": 40.6413,
+      "longitude": -73.7781
+    }
+  ],
+  "total": 1
+}`
+      }
+    },
+    "flight-distance": {
+      name: "Airport Distance",
+      method: "GET",
+      url: "/api/airports/distance",
+      description: "Calculate great-circle distance between two airports",
+      parameters: [
+        { name: "from", type: "string", required: true, description: "Origin airport IATA code" },
+        { name: "to", type: "string", required: true, description: "Destination airport IATA code" },
+        { name: "units", type: "string", required: false, description: "Distance units (km, miles) - default: km" }
+      ],
+      example: {
+        request: `GET /api/airports/distance?from=LAX&to=JFK&units=km`,
+        response: `{
+  "from": {
+    "iata": "LAX",
+    "name": "Los Angeles International Airport",
+    "city": "Los Angeles"
+  },
+  "to": {
+    "iata": "JFK", 
+    "name": "John F Kennedy International Airport",
+    "city": "New York"
+  },
+  "distance_km": 3944,
+  "distance_miles": 2451
+}`
+      }
+    },
+    "flight-emissions": {
+      name: "Flight Emissions",
+      method: "POST",
+      url: "/api/emissions/flight",
+      description: "Calculate CO₂ emissions for a specific flight",
+      parameters: [
+        { name: "from", type: "string", required: true, description: "Origin airport IATA code" },
+        { name: "to", type: "string", required: true, description: "Destination airport IATA code" },
+        { name: "passengers", type: "number", required: false, description: "Number of passengers (default: 1)" },
+        { name: "cabin_class", type: "string", required: false, description: "Cabin class (economy, business, first)" },
+        { name: "aircraft_type", type: "string", required: false, description: "Aircraft type (narrow-body, wide-body)" },
+        { name: "methodology", type: "string", required: false, description: "Calculation methodology (AR4, AR5, AR6)" }
+      ],
+      example: {
+        request: `{
+  "from": "LAX",
+  "to": "JFK",
+  "passengers": 1,
+  "cabin_class": "economy",
+  "aircraft_type": "narrow-body",
+  "methodology": "AR5"
+}`,
+        response: `{
+  "from": "LAX",
+  "to": "JFK",
+  "distance_km": 3944,
+  "passengers": 1,
+  "cabin_class": "economy",
+  "emissions_kgCO2e": 1058.4,
+  "emissions_per_passenger": 1058.4,
+  "methodology": "AR5",
+  "emission_factor": 0.268,
+  "class_multiplier": 1.0
+}`
+      }
+    },
+    "flight-batch": {
+      name: "Batch Flight Emissions",
+      method: "POST", 
+      url: "/api/emissions/flight/batch",
+      description: "Calculate emissions for multiple flights in one request",
+      parameters: [
+        { name: "flights", type: "array", required: true, description: "Array of flight objects" },
+        { name: "methodology", type: "string", required: false, description: "Default methodology for all flights" },
+        { name: "include_offset", type: "boolean", required: false, description: "Include carbon offset calculations" }
+      ],
+      example: {
+        request: `{
+  "flights": [
+    {
+      "from": "LAX",
+      "to": "JFK", 
+      "passengers": 2,
+      "cabin_class": "economy"
+    },
+    {
+      "from": "JFK",
+      "to": "LHR",
+      "passengers": 1,
+      "cabin_class": "business"
+    }
+  ],
+  "methodology": "AR5",
+  "include_offset": true
+}`,
+        response: `{
+  "flights": [
+    {
+      "from": "LAX",
+      "to": "JFK",
+      "emissions_kgCO2e": 2116.8,
+      "passengers": 2
+    },
+    {
+      "from": "JFK", 
+      "to": "LHR",
+      "emissions_kgCO2e": 1876.5,
+      "passengers": 1
+    }
+  ],
+  "total_emissions_kgCO2e": 3993.3,
+  "offset_required": {
+    "trees_to_plant": 181,
+    "carbon_credits_tonnes": 3.99,
+    "cost_usd": 79.87
+  }
+}`
+      }
+    },
     "freight": {
       name: "Intermodal Freight",
       method: "POST",

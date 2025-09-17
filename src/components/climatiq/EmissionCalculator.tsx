@@ -37,14 +37,17 @@ export const EmissionCalculator = () => {
       ]
     },
     flight: {
-      name: "Flight",
+      name: "Flight Emissions",
       icon: Plane,
       color: "from-purple-500 to-blue-500",
       fields: [
-        { name: "origin", label: "Origin", type: "text", placeholder: "LAX" },
-        { name: "destination", label: "Destination", type: "text", placeholder: "JFK" },
-        { name: "class", label: "Class", type: "select", options: ["economy", "business", "first"] },
-        { name: "trip_type", label: "Trip Type", type: "select", options: ["one_way", "round_trip"] }
+        { name: "origin", label: "Origin Airport", type: "text", placeholder: "LAX (Los Angeles)" },
+        { name: "destination", label: "Destination Airport", type: "text", placeholder: "JFK (New York)" },
+        { name: "passengers", label: "Number of Passengers", type: "number", placeholder: "1" },
+        { name: "cabin_class", label: "Cabin Class", type: "select", options: ["economy", "business", "first"] },
+        { name: "aircraft_type", label: "Aircraft Type", type: "select", options: ["narrow-body", "wide-body", "regional"] },
+        { name: "trip_type", label: "Trip Type", type: "select", options: ["one_way", "round_trip"] },
+        { name: "methodology", label: "Methodology", type: "select", options: ["AR4", "AR5", "AR6"] }
       ]
     },
     cloud: {
