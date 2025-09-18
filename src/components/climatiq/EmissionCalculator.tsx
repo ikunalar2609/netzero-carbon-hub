@@ -1,18 +1,27 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, Zap, Truck, Plane, Cloud, TreePine, Droplets, Factory, Home, Recycle, Wheat, Hammer } from "lucide-react";
+import { Calculator, Zap, Truck, Plane, Cloud, TreePine, Droplets, Factory, Home, Recycle, Wheat, Hammer, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { DarkModeToggle } from "./DarkModeToggle";
+import { ExportResults } from "./ExportResults";
+import { ComparisonView } from "./ComparisonView";
+import { CalculationHistory } from "./CalculationHistory";
+import { useRegionDetection } from "@/hooks/useRegionDetection";
 
 export const EmissionCalculator = () => {
   const [activeCalculator, setActiveCalculator] = useState("electricity");
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<any>({});
+  const [comparisons, setComparisons] = useState<any[]>([]);
+  const { region } = useRegionDetection();
 
   const calculators = {
     electricity: {
@@ -20,8 +29,8 @@ export const EmissionCalculator = () => {
       icon: Zap,
       color: "from-yellow-500 to-orange-500",
       fields: [
-        { name: "amount", label: "Amount (kWh)", type: "number", placeholder: "1000" },
-        { name: "region", label: "Region", type: "select", options: ["US", "EU", "UK", "AU", "Global"] },
+        { name: "amount", label: "Amount (kWh)", type: "number", placeholder: "1000", min: 0, max: 10000, step: 100, showSlider: true },
+        { name: "region", label: "Region", type: "select", options: ["US", "EU", "UK", "AU", "Global"], showSlider: false },
         { name: "energy_source", label: "Energy Source", type: "select", options: ["grid", "solar", "wind", "natural_gas", "coal"] }
       ]
     },
@@ -31,9 +40,9 @@ export const EmissionCalculator = () => {
       color: "from-blue-500 to-green-500",
       fields: [
         { name: "mode", label: "Transport Mode", type: "select", options: ["car", "truck", "bus", "train", "motorcycle", "bicycle"] },
-        { name: "distance", label: "Distance (km)", type: "number", placeholder: "100" },
+        { name: "distance", label: "Distance (km)", type: "number", placeholder: "100", min: 0, max: 5000, step: 10, showSlider: true },
         { name: "fuel_type", label: "Fuel Type", type: "select", options: ["gasoline", "diesel", "electric", "hybrid", "hydrogen"] },
-        { name: "passengers", label: "Passengers", type: "number", placeholder: "1" }
+        { name: "passengers", label: "Passengers", type: "number", placeholder: "1", min: 1, max: 10, step: 1, showSlider: true }
       ]
     },
     flight: {
@@ -140,7 +149,6 @@ export const EmissionCalculator = () => {
     }
   };
 
-  const [formData, setFormData] = useState<any>({});
 
   const handleCalculate = async () => {
     setLoading(true);
@@ -172,35 +180,83 @@ export const EmissionCalculator = () => {
       };
       
       setResults(mockResults);
+      
+      // Save to history
+      const calculationRecord = {
+        id: Date.now().toString(),
+        calculationType: currentCalculator.name,
+        results: mockResults,
+        formData: { ...formData },
+        timestamp: new Date()
+      };
+      
+      if ((window as any).saveCalculationToHistory) {
+        (window as any).saveCalculationToHistory(calculationRecord);
+      }
+      
       setLoading(false);
       toast.success("Calculation completed!");
     }, 1500);
   };
+
+  const handleAddToComparison = (item: any) => {
+    const newComparison = {
+      id: Date.now().toString(),
+      calculationType: activeCalculator,
+      results,
+      formData: { ...formData },
+      timestamp: new Date()
+    };
+    setComparisons([...comparisons, newComparison]);
+    toast.success("Added to comparison");
+  };
+
+  const handleLoadCalculation = (record: any) => {
+    setActiveCalculator(record.calculationType.toLowerCase().replace(/\s+/g, ''));
+    setFormData(record.formData);
+    setResults(record.results);
+    toast.success("Calculation loaded");
+  };
+
+  // Auto-detect region and set it in form data
+  useEffect(() => {
+    if (region && !formData.region) {
+      setFormData(prev => ({ ...prev, region: region.region }));
+    }
+  }, [region, formData.region]);
 
   const currentCalculator = calculators[activeCalculator as keyof typeof calculators];
   const Icon = currentCalculator.icon;
 
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center"
-      >
-        <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-          Advanced Emission 
-          <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent font-medium"> Calculator</span>
-        </h2>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          Calculate CO2e emissions across multiple industries and activities with our comprehensive calculation engine
-        </p>
-      </motion.div>
+      <div className="flex justify-between items-center mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-4xl md:text-5xl font-light text-foreground mb-4">
+            Advanced Emission 
+            <span className="bg-gradient-to-r from-brand-green to-blue-600 bg-clip-text text-transparent font-medium"> Calculator</span>
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
+            Calculate CO2e emissions across multiple industries and activities with our comprehensive calculation engine
+          </p>
+          {region && (
+            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              Detected region: {region.country} ({region.region})
+            </div>
+          )}
+        </motion.div>
+        <DarkModeToggle />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Calculator Types */}
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Calculation Categories</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Calculation Categories</h3>
           {Object.entries(calculators).map(([key, calc]) => {
             const CalcIcon = calc.icon;
             return (
@@ -213,8 +269,8 @@ export const EmissionCalculator = () => {
                   variant={activeCalculator === key ? "default" : "outline"}
                   className={`w-full justify-start h-auto p-4 rounded-2xl transition-all duration-300 ${
                     activeCalculator === key 
-                      ? 'bg-gray-900 text-white shadow-lg' 
-                      : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
+                      ? 'bg-primary text-primary-foreground shadow-lg' 
+                      : 'bg-card border-border hover:bg-accent hover:shadow-md'
                   }`}
                   onClick={() => {
                     setActiveCalculator(key);
@@ -227,7 +283,7 @@ export const EmissionCalculator = () => {
                   </div>
                   <div className="text-left">
                     <div className="font-medium">{calc.name}</div>
-                    <div className={`text-xs ${activeCalculator === key ? 'text-gray-300' : 'text-gray-500'}`}>
+                    <div className={`text-xs ${activeCalculator === key ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                       {calc.fields.length} parameters
                     </div>
                   </div>
@@ -245,15 +301,15 @@ export const EmissionCalculator = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+            <div className="bg-card rounded-3xl p-8 shadow-lg border border-border">
               <div className="mb-8">
                 <div className="flex items-center gap-4 mb-4">
                   <div className={`p-4 rounded-2xl bg-gradient-to-r ${currentCalculator.color} shadow-lg`}>
                     <Icon className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-semibold text-gray-900">{currentCalculator.name} Calculator</h3>
-                    <p className="text-gray-600">Enter the parameters below to calculate CO2e emissions</p>
+                    <h3 className="text-2xl font-semibold text-foreground">{currentCalculator.name} Calculator</h3>
+                    <p className="text-muted-foreground">Enter the parameters below to calculate CO2e emissions</p>
                   </div>
                 </div>
               </div>
@@ -267,12 +323,18 @@ export const EmissionCalculator = () => {
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="space-y-2"
                   >
-                    <Label htmlFor={field.name} className="text-sm font-medium text-gray-700">
+                    <Label htmlFor={field.name} className="text-sm font-medium text-foreground">
                       {field.label}
+                      {field.showSlider && formData[field.name] && (
+                        <span className="ml-2 text-xs text-muted-foreground">({formData[field.name]})</span>
+                      )}
                     </Label>
                     {field.type === "select" ? (
-                      <Select onValueChange={(value) => setFormData({...formData, [field.name]: value})}>
-                        <SelectTrigger className="rounded-xl border-gray-200 h-12">
+                      <Select 
+                        value={formData[field.name] || ""} 
+                        onValueChange={(value) => setFormData({...formData, [field.name]: value})}
+                      >
+                        <SelectTrigger className="rounded-xl border-border h-12">
                           <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
                         </SelectTrigger>
                         <SelectContent>
@@ -283,12 +345,32 @@ export const EmissionCalculator = () => {
                           ))}
                         </SelectContent>
                       </Select>
+                    ) : field.showSlider ? (
+                      <div className="space-y-3">
+                        <Slider
+                          value={[formData[field.name] || field.min || 0]}
+                          onValueChange={(value) => setFormData({...formData, [field.name]: value[0]})}
+                          max={field.max || 1000}
+                          min={field.min || 0}
+                          step={field.step || 1}
+                          className="w-full"
+                        />
+                        <Input
+                          id={field.name}
+                          type={field.type}
+                          placeholder={field.placeholder}
+                          value={formData[field.name] || ""}
+                          className="rounded-xl border-border h-12"
+                          onChange={(e) => setFormData({...formData, [field.name]: Number(e.target.value)})}
+                        />
+                      </div>
                     ) : (
                       <Input
                         id={field.name}
                         type={field.type}
                         placeholder={field.placeholder}
-                        className="rounded-xl border-gray-200 h-12"
+                        value={formData[field.name] || ""}
+                        className="rounded-xl border-border h-12"
                         onChange={(e) => setFormData({...formData, [field.name]: e.target.value})}
                       />
                     )}
@@ -320,23 +402,40 @@ export const EmissionCalculator = () => {
               className="space-y-6"
             >
               {/* Main Result Card */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Emission Results</h3>
+              <div className="bg-card rounded-3xl p-8 shadow-lg border border-border">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-foreground">Emission Results</h3>
+                  <div className="flex gap-2">
+                    <ExportResults 
+                      results={results}
+                      calculationType={currentCalculator.name}
+                      formData={formData}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleAddToComparison}
+                      className="rounded-xl"
+                    >
+                      Compare
+                    </Button>
+                  </div>
+                </div>
                 
                 <div className="text-center mb-8">
-                  <div className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-brand-green to-blue-600 bg-clip-text text-transparent">
                     {results.co2e_kg.toFixed(2)}
                   </div>
-                  <div className="text-lg text-gray-600 mt-2">kg CO2e</div>
+                  <div className="text-lg text-muted-foreground mt-2">kg CO2e</div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="text-center p-3 bg-gray-50 rounded-xl">
-                    <div className="text-sm text-gray-600">Methodology</div>
-                    <div className="font-semibold text-gray-900">{results.methodology}</div>
+                  <div className="text-center p-3 bg-muted rounded-xl">
+                    <div className="text-sm text-muted-foreground">Methodology</div>
+                    <div className="font-semibold text-foreground">{results.methodology}</div>
                   </div>
-                  <div className="text-center p-3 bg-gray-50 rounded-xl">
-                    <div className="text-sm text-gray-600">Confidence</div>
+                  <div className="text-center p-3 bg-muted rounded-xl">
+                    <div className="text-sm text-muted-foreground">Confidence</div>
                     <div className={`font-semibold capitalize ${
                       results.confidence === 'high' ? 'text-green-600' : 
                       results.confidence === 'medium' ? 'text-yellow-600' : 'text-red-600'
@@ -348,26 +447,26 @@ export const EmissionCalculator = () => {
                 
                 {/* Scope Breakdown */}
                 <div className="mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">Scope Breakdown</h4>
+                  <h4 className="font-semibold text-foreground mb-3">Scope Breakdown</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Scope 1 (Direct)</span>
-                      <span className="font-medium">{results.scope.scope1.toFixed(2)} kg</span>
+                      <span className="text-sm text-muted-foreground">Scope 1 (Direct)</span>
+                      <span className="font-medium text-foreground">{results.scope.scope1.toFixed(2)} kg</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Scope 2 (Electricity)</span>
-                      <span className="font-medium">{results.scope.scope2.toFixed(2)} kg</span>
+                      <span className="text-sm text-muted-foreground">Scope 2 (Electricity)</span>
+                      <span className="font-medium text-foreground">{results.scope.scope2.toFixed(2)} kg</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Scope 3 (Indirect)</span>
-                      <span className="font-medium">{results.scope.scope3.toFixed(2)} kg</span>
+                      <span className="text-sm text-muted-foreground">Scope 3 (Indirect)</span>
+                      <span className="font-medium text-foreground">{results.scope.scope3.toFixed(2)} kg</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Offset Suggestions */}
-              <div className="bg-green-50 rounded-3xl p-6 border border-green-100">
+              <div className="bg-green-50 dark:bg-green-950/20 rounded-3xl p-6 border border-green-200 dark:border-green-800">
                 <h4 className="font-semibold text-green-900 mb-4 flex items-center gap-2">
                   <TreePine className="h-5 w-5" />
                   Carbon Offset Suggestions
@@ -385,7 +484,7 @@ export const EmissionCalculator = () => {
               </div>
 
               {/* Comparisons */}
-              <div className="bg-blue-50 rounded-3xl p-6 border border-blue-100">
+              <div className="bg-blue-50 dark:bg-blue-950/20 rounded-3xl p-6 border border-blue-200 dark:border-blue-800">
                 <h4 className="font-semibold text-blue-900 mb-4">Equivalent Comparisons</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
@@ -400,8 +499,21 @@ export const EmissionCalculator = () => {
               </div>
             </motion.div>
           )}
+          
+          {/* Calculation History */}
+          <CalculationHistory 
+            onLoadCalculation={handleLoadCalculation}
+            onAddToComparison={(record) => setComparisons([...comparisons, record])}
+          />
         </div>
       </div>
+      
+      {/* Comparison View */}
+      <ComparisonView 
+        comparisons={comparisons}
+        onAddToComparison={handleAddToComparison}
+        onRemoveFromComparison={(id) => setComparisons(comparisons.filter(c => c.id !== id))}
+      />
     </div>
   );
 };
