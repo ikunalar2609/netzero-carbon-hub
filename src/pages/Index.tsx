@@ -102,8 +102,13 @@ const Index = () => {
       </section>
 
       {/* Modern Features Section */}
-      <section className="py-24 px-4 md:px-8 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-green-50/30 to-white"></div>
+      <section className="py-32 px-4 md:px-8 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+        {/* Subtle background patterns */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-green-500 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+        </div>
+        
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -118,72 +123,129 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 mb-6">
+              Platform Features
+            </span>
+            <h2 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight">
               Everything you need to
               <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent font-medium"> succeed</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
               Comprehensive carbon management platform designed for modern agriculture operations
             </p>
           </motion.div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+            {/* Track Emissions Card */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
               className="group relative"
             >
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <BarChart3 className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Track Emissions</h3>
-                <p className="text-gray-600 leading-relaxed text-center">Monitor your farm's carbon footprint with real-time data analytics and actionable insights for immediate impact.</p>
-                <div className="mt-6 flex justify-center">
-                  <span className="text-sm font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">Real-time monitoring</span>
+              {/* Glow effect on hover */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-[28px] opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500"></div>
+              
+              <div className="relative bg-white rounded-[26px] p-10 border border-gray-100 hover:border-green-200/50 shadow-sm hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 h-full flex flex-col">
+                {/* Icon container with enhanced gradient */}
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="relative w-20 h-20 mb-8"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 rounded-[20px] shadow-lg shadow-green-500/30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20 rounded-[20px]"></div>
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <BarChart3 className="h-9 w-9 text-white" strokeWidth={2.5} />
+                  </div>
+                </motion.div>
+                
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Track Emissions</h3>
+                <p className="text-gray-500 leading-relaxed mb-8 flex-grow">
+                  Monitor your farm's carbon footprint with real-time data analytics and actionable insights for immediate impact.
+                </p>
+                
+                <div className="pt-4 border-t border-gray-100">
+                  <span className="inline-flex items-center text-sm font-medium text-green-600 bg-green-50 px-4 py-2 rounded-full">
+                    Real-time monitoring
+                  </span>
                 </div>
               </div>
             </motion.div>
 
+            {/* Plan Reductions Card */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
               className="group relative"
             >
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Target className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Plan Reductions</h3>
-                <p className="text-gray-600 leading-relaxed text-center">Create science-based, actionable strategies to reach your net-zero goals with our intelligent planning tools.</p>
-                <div className="mt-6 flex justify-center">
-                  <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">AI-powered insights</span>
+              {/* Glow effect on hover */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-[28px] opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500"></div>
+              
+              <div className="relative bg-white rounded-[26px] p-10 border border-gray-100 hover:border-blue-200/50 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 h-full flex flex-col">
+                {/* Icon container with enhanced gradient */}
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="relative w-20 h-20 mb-8"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-600 rounded-[20px] shadow-lg shadow-blue-500/30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20 rounded-[20px]"></div>
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Target className="h-9 w-9 text-white" strokeWidth={2.5} />
+                  </div>
+                </motion.div>
+                
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Plan Reductions</h3>
+                <p className="text-gray-500 leading-relaxed mb-8 flex-grow">
+                  Create science-based, actionable strategies to reach your net-zero goals with our intelligent planning tools.
+                </p>
+                
+                <div className="pt-4 border-t border-gray-100">
+                  <span className="inline-flex items-center text-sm font-medium text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
+                    AI-powered insights
+                  </span>
                 </div>
               </div>
             </motion.div>
 
+            {/* Measure Progress Card */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
               className="group relative"
             >
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <LineChart className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Measure Progress</h3>
-                <p className="text-gray-600 leading-relaxed text-center">Track improvements and maintain compliance with global sustainability standards and reporting frameworks.</p>
-                <div className="mt-6 flex justify-center">
-                  <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Compliance ready</span>
+              {/* Glow effect on hover */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-[28px] opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500"></div>
+              
+              <div className="relative bg-white rounded-[26px] p-10 border border-gray-100 hover:border-purple-200/50 shadow-sm hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 h-full flex flex-col">
+                {/* Icon container with enhanced gradient */}
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="relative w-20 h-20 mb-8"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-pink-600 rounded-[20px] shadow-lg shadow-purple-500/30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20 rounded-[20px]"></div>
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <LineChart className="h-9 w-9 text-white" strokeWidth={2.5} />
+                  </div>
+                </motion.div>
+                
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Measure Progress</h3>
+                <p className="text-gray-500 leading-relaxed mb-8 flex-grow">
+                  Track improvements and maintain compliance with global sustainability standards and reporting frameworks.
+                </p>
+                
+                <div className="pt-4 border-t border-gray-100">
+                  <span className="inline-flex items-center text-sm font-medium text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
+                    Compliance ready
+                  </span>
                 </div>
               </div>
             </motion.div>
