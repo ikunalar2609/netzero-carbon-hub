@@ -17,61 +17,50 @@ const Climatiq = () => {
   const [activeTab, setActiveTab] = useState("calculator");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-climatiq-bg-subtle to-background">
-      {/* Modern Hero Section with Gradient Background */}
+    <div className="min-h-screen bg-white">
+      {/* Simple Hero Section */}
       <motion.section 
-        className="relative px-6 py-24 md:py-32 overflow-hidden"
+        className="relative px-6 py-24 md:py-32"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Animated background gradient orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-climatiq-primary/20 rounded-full blur-3xl animate-pulse-gentle" />
-          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-climatiq-accent/20 rounded-full blur-3xl animate-pulse-gentle" style={{ animationDelay: '1s' }} />
-        </div>
-
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-8"
           >
-            <motion.div 
-              className="inline-flex items-center gap-2 px-5 py-2 bg-climatiq-primary/10 border border-climatiq-primary/20 rounded-full text-sm font-medium text-climatiq-primary backdrop-blur-sm"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Zap className="h-4 w-4" />
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600">
               Carbon Emissions API
-            </motion.div>
+            </span>
             
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tight bg-gradient-to-br from-foreground via-climatiq-primary to-climatiq-accent bg-clip-text text-transparent">
+            <h1 className="text-6xl md:text-8xl font-light tracking-tight text-gray-900">
               Climatiq
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Enterprise-grade carbon emission calculations with precision, speed, and simplicity
+            <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Calculate carbon emissions with precision and simplicity
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
               <Button 
                 size="lg" 
-                className="group px-8 py-6 h-auto text-base font-semibold shadow-elevation-medium hover:shadow-glow-blue transition-all duration-300"
+                className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 h-auto rounded-full"
                 onClick={() => setActiveTab("calculator")}
               >
-                <Calculator className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
+                <Calculator className="mr-2 h-4 w-4" />
                 Start Calculating
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="px-8 py-6 h-auto text-base font-semibold border-2 hover:bg-accent/50 hover:border-climatiq-primary/50 transition-all duration-300"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 h-auto rounded-full"
                 onClick={() => setActiveTab("api-docs")}
               >
-                <Code className="mr-2 h-5 w-5" />
+                <Code className="mr-2 h-4 w-4" />
                 API Documentation
               </Button>
             </div>
@@ -79,60 +68,40 @@ const Climatiq = () => {
         </div>
       </motion.section>
 
-      {/* Modern Stats Section */}
+      {/* Simple Stats */}
       <motion.section
-        className="px-6 py-20 border-t border-border/50"
+        className="px-6 py-16 border-t border-gray-200"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div 
-              className="relative p-8 bg-gradient-to-br from-climatiq-primary/10 to-transparent border border-climatiq-primary/20 rounded-2xl group hover:shadow-glow-blue transition-all duration-300"
-              whileHover={{ y: -4 }}
-            >
-              <div className="text-5xl font-bold bg-gradient-to-br from-climatiq-primary to-climatiq-secondary bg-clip-text text-transparent mb-2">10M+</div>
-              <div className="text-base text-muted-foreground font-medium">Calculations processed</div>
-              <div className="absolute top-4 right-4 w-12 h-12 bg-climatiq-primary/10 rounded-full flex items-center justify-center">
-                <Database className="h-6 w-6 text-climatiq-primary" />
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="relative p-8 bg-gradient-to-br from-climatiq-accent/10 to-transparent border border-climatiq-accent/20 rounded-2xl group hover:shadow-glow-cyan transition-all duration-300"
-              whileHover={{ y: -4 }}
-            >
-              <div className="text-5xl font-bold bg-gradient-to-br from-climatiq-accent to-climatiq-primary bg-clip-text text-transparent mb-2">500+</div>
-              <div className="text-base text-muted-foreground font-medium">Emission factors</div>
-              <div className="absolute top-4 right-4 w-12 h-12 bg-climatiq-accent/10 rounded-full flex items-center justify-center">
-                <Zap className="h-6 w-6 text-climatiq-accent" />
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="relative p-8 bg-gradient-to-br from-climatiq-secondary/10 to-transparent border border-climatiq-secondary/20 rounded-2xl group hover:shadow-glow-purple transition-all duration-300"
-              whileHover={{ y: -4 }}
-            >
-              <div className="text-5xl font-bold bg-gradient-to-br from-climatiq-secondary to-climatiq-accent bg-clip-text text-transparent mb-2">99.9%</div>
-              <div className="text-base text-muted-foreground font-medium">Accuracy rate</div>
-              <div className="absolute top-4 right-4 w-12 h-12 bg-climatiq-secondary/10 rounded-full flex items-center justify-center">
-                <Calculator className="h-6 w-6 text-climatiq-secondary" />
-              </div>
-            </motion.div>
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="space-y-2">
+              <div className="text-4xl font-light text-gray-900">10M+</div>
+              <div className="text-sm text-gray-600">Calculations processed</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-light text-gray-900">500+</div>
+              <div className="text-sm text-gray-600">Emission factors</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-light text-gray-900">99.9%</div>
+              <div className="text-sm text-gray-600">Accuracy rate</div>
+            </div>
           </div>
         </div>
       </motion.section>
 
-      {/* Modern Tab Navigation */}
-      <section className="px-6 py-20">
-        <div className="max-w-7xl mx-auto">
+      {/* Simple Navigation */}
+      <section className="px-6 py-16">
+        <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 mb-16 h-14 p-1 bg-muted/50 backdrop-blur-sm border border-border/50 rounded-xl">
-              <TabsTrigger value="calculator" className="text-sm font-semibold data-[state=active]:bg-background data-[state=active]:shadow-elevation-medium rounded-lg transition-all duration-300">Calculator</TabsTrigger>
-              <TabsTrigger value="api-docs" className="text-sm font-semibold data-[state=active]:bg-background data-[state=active]:shadow-elevation-medium rounded-lg transition-all duration-300">API Docs</TabsTrigger>
-              <TabsTrigger value="explorer" className="text-sm font-semibold data-[state=active]:bg-background data-[state=active]:shadow-elevation-medium rounded-lg transition-all duration-300">Explorer</TabsTrigger>
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-gray-100">
+              <TabsTrigger value="calculator" className="text-sm">Calculator</TabsTrigger>
+              <TabsTrigger value="api-docs" className="text-sm">API Docs</TabsTrigger>
+              <TabsTrigger value="explorer" className="text-sm">Explorer</TabsTrigger>
             </TabsList>
 
             <TabsContent value="calculator" className="mt-0">
@@ -168,97 +137,54 @@ const Climatiq = () => {
         </div>
       </section>
 
-      {/* Modern Features Section */}
+      {/* Simple Features */}
       <motion.section 
-        className="px-6 py-24 border-t border-border/50 bg-gradient-to-b from-transparent via-climatiq-bg-subtle/50 to-transparent relative overflow-hidden"
+        className="px-6 py-16 border-t border-gray-200 bg-gray-50"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none" />
-        
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <motion.h2 
-              className="text-4xl md:text-5xl font-bold text-foreground mb-4"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-light text-gray-900 mb-4">
               Built for developers
-            </motion.h2>
-            <motion.p 
-              className="text-lg text-muted-foreground max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              Simple, powerful, and ready to integrate into your workflow
-            </motion.p>
+            </h2>
+            <p className="text-gray-600">
+              Simple, powerful, and ready to integrate
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div 
-              className="group relative p-8 bg-card border border-border/50 rounded-2xl hover:border-climatiq-primary/50 transition-all duration-300 hover:shadow-elevation-high"
-              whileHover={{ y: -8 }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-climatiq-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-climatiq-primary/20 to-climatiq-primary/5 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="h-8 w-8 text-climatiq-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 text-center">Fast & Reliable</h3>
-                <p className="text-muted-foreground text-center leading-relaxed">
-                  Sub-second response times with 99.9% uptime guarantee
-                </p>
+            <div className="text-center space-y-4">
+              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center mx-auto">
+                <Zap className="h-6 w-6 text-white" />
               </div>
-            </motion.div>
+              <h3 className="font-medium text-gray-900">Fast & Reliable</h3>
+              <p className="text-sm text-gray-600">
+                Sub-second response times with 99.9% uptime
+              </p>
+            </div>
             
-            <motion.div 
-              className="group relative p-8 bg-card border border-border/50 rounded-2xl hover:border-climatiq-accent/50 transition-all duration-300 hover:shadow-elevation-high"
-              whileHover={{ y: -8 }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-climatiq-accent/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-climatiq-accent/20 to-climatiq-accent/5 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Code className="h-8 w-8 text-climatiq-accent" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 text-center">RESTful API</h3>
-                <p className="text-muted-foreground text-center leading-relaxed">
-                  Clean, intuitive endpoints with comprehensive documentation
-                </p>
+            <div className="text-center space-y-4">
+              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center mx-auto">
+                <Code className="h-6 w-6 text-white" />
               </div>
-            </motion.div>
+              <h3 className="font-medium text-gray-900">RESTful API</h3>
+              <p className="text-sm text-gray-600">
+                Clean, intuitive endpoints with comprehensive docs
+              </p>
+            </div>
             
-            <motion.div 
-              className="group relative p-8 bg-card border border-border/50 rounded-2xl hover:border-climatiq-secondary/50 transition-all duration-300 hover:shadow-elevation-high"
-              whileHover={{ y: -8 }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-climatiq-secondary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-climatiq-secondary/20 to-climatiq-secondary/5 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Database className="h-8 w-8 text-climatiq-secondary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 text-center">Rich Data</h3>
-                <p className="text-muted-foreground text-center leading-relaxed">
-                  500+ emission factors from trusted scientific sources
-                </p>
+            <div className="text-center space-y-4">
+              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center mx-auto">
+                <Database className="h-6 w-6 text-white" />
               </div>
-            </motion.div>
+              <h3 className="font-medium text-gray-900">Rich Data</h3>
+              <p className="text-sm text-gray-600">
+                500+ emission factors from trusted sources
+              </p>
+            </div>
           </div>
         </div>
       </motion.section>
