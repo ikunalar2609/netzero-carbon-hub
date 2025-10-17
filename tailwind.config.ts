@@ -20,6 +20,7 @@ export default {
     extend: {
       fontFamily: {
         playfair: ["Playfair Display", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -60,6 +61,13 @@ export default {
           DEFAULT: "hsl(var(--brand-green))",
           foreground: "hsl(var(--brand-green-foreground))",
           600: "#2c5c2c",
+        },
+        // Climatiq theme colors
+        'climatiq': {
+          primary: "hsl(var(--climatiq-primary))",
+          secondary: "hsl(var(--climatiq-secondary))",
+          accent: "hsl(var(--climatiq-accent))",
+          'bg-subtle': "hsl(var(--climatiq-bg-subtle))",
         },
       },
       borderRadius: {
@@ -103,6 +111,13 @@ export default {
       },
       boxShadow: {
         'glass': '0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.05)',
+        'elevation-low': 'var(--shadow-elevation-low)',
+        'elevation-medium': 'var(--shadow-elevation-medium)',
+        'elevation-high': 'var(--shadow-elevation-high)',
+        'glow': 'var(--shadow-glow)',
+        'glow-blue': '0 0 30px -5px rgba(59, 130, 246, 0.5)',
+        'glow-purple': '0 0 30px -5px rgba(147, 51, 234, 0.5)',
+        'glow-cyan': '0 0 30px -5px rgba(6, 182, 212, 0.5)',
       },
       backdropBlur: {
         'xs': '2px',

@@ -8,68 +8,92 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --foreground: 220 15% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 220 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 220 15% 20%;
 
-    --primary: 0 0% 0%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 15% 20%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 0%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
     
     /* Brand colors */
     --brand-green: 120 40% 30%;
     --brand-green-foreground: 0 0% 100%;
+    
+    /* Climatiq theme colors */
+    --climatiq-primary: 217 91% 60%;
+    --climatiq-secondary: 269 91% 63%;
+    --climatiq-accent: 171 77% 64%;
+    --climatiq-bg-subtle: 220 14% 98%;
+    
+    /* Shadows and effects */
+    --shadow-elevation-low: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-elevation-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-elevation-high: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 20px -5px rgb(59 130 246 / 0.5);
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --background: 220 26% 8%;
+    --foreground: 220 15% 95%;
 
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
+    --card: 220 20% 12%;
+    --card-foreground: 220 15% 95%;
 
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 220 20% 12%;
+    --popover-foreground: 220 15% 95%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 26% 8%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 220 17% 20%;
+    --secondary-foreground: 220 15% 95%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 220 17% 20%;
+    --muted-foreground: 220 9% 65%;
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 220 26% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 220 15% 95%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 100%;
+    --border: 220 17% 20%;
+    --input: 220 17% 20%;
+    --ring: 217 91% 60%;
+    
+    /* Climatiq theme colors - dark mode */
+    --climatiq-primary: 217 91% 70%;
+    --climatiq-secondary: 269 91% 73%;
+    --climatiq-accent: 171 77% 74%;
+    --climatiq-bg-subtle: 220 20% 14%;
+    
+    /* Shadows and effects - dark mode */
+    --shadow-elevation-low: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-elevation-medium: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-elevation-high: 0 10px 15px -3px rgb(0 0 0 / 0.7), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+    --shadow-glow: 0 0 30px -5px rgb(96 165 250 / 0.7);
   }
 }
 
@@ -156,4 +180,25 @@ p, h1, h2, h3, h4, h5, h6, span, label {
     linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* Modern elevated card */
+.elevated-card {
+  @apply bg-card border border-border/50 rounded-xl transition-all duration-300;
+  box-shadow: var(--shadow-elevation-medium);
+}
+
+.elevated-card:hover {
+  box-shadow: var(--shadow-elevation-high);
+  transform: translateY(-2px);
+}
+
+/* Glow effect */
+.glow-effect {
+  box-shadow: var(--shadow-glow);
+}
+
+.glow-effect-hover:hover {
+  box-shadow: var(--shadow-glow);
+  transition: box-shadow 0.3s ease;
 }
