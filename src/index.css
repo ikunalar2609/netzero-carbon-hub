@@ -42,10 +42,15 @@
     --brand-green-foreground: 0 0% 100%;
     
     /* Climatiq theme colors */
-    --climatiq-primary: 217 91% 60%;
-    --climatiq-secondary: 269 91% 63%;
-    --climatiq-accent: 171 77% 64%;
-    --climatiq-bg-subtle: 220 14% 98%;
+    /* Calculator Theme Colors - Clean & Professional */
+    --calc-primary: 217 91% 60%;        /* #2563EB - Cool blue */
+    --calc-secondary: 158 64% 52%;      /* #10B981 - Eco green */
+    --calc-accent: 24 95% 53%;          /* #F97316 - Warm orange */
+    --calc-background: 210 20% 98%;     /* #F9FAFB - Soft white */
+    --calc-foreground: 215 28% 17%;     /* #1E293B - Dark slate */
+    --calc-muted: 215 14% 34%;          /* #475569 - Muted body */
+    --calc-card: 0 0% 100%;             /* Pure white for cards */
+    --calc-border: 220 13% 91%;         /* Subtle border */
     
     /* Shadows and effects */
     --shadow-elevation-low: 0 1px 2px 0 rgb(0 0 0 / 0.05);
