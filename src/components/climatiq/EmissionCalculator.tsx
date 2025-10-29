@@ -4,566 +4,495 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Calculator, Zap, Truck, Plane, Cloud, TreePine, Droplets, Factory, Home, Recycle, Wheat, Hammer, MapPin, Info, Loader2, TrendingDown, Leaf, Car, TreeDeciduous } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { ExportResults } from "./ExportResults";
-import { ComparisonView } from "./ComparisonView";
-import { CalculationHistory } from "./CalculationHistory";
 import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 
 export const EmissionCalculator = () => {
-  const [activeCalculator, setActiveCalculator] = useState("electricity");
-  const [results, setResults] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<any>({});
-  const [comparisons, setComparisons] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("transport");
+  const [transportData, setTransportData] = useState({ distance: 0, fuelType: "gasoline", vehicle: "car" });
+  const [energyData, setEnergyData] = useState({ electricity: 0, gas: 0, source: "grid" });
+  const [wasteData, setWasteData] = useState({ amount: 0, type: "mixed", disposal: "landfill" });
+  const [totalEmissions, setTotalEmissions] = useState(0);
+  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0 });
+  const [trendData, setTrendData] = useState<any[]>([]);
   const { region } = useRegionDetection();
 
-  const calculators = {
-    electricity: {
-      name: "Electricity",
-      icon: Zap,
-      color: "bg-[#2563EB]",
-      fields: [
-        { name: "amount", label: "Amount (kWh)", type: "number", placeholder: "1000", min: 0, max: 10000, step: 100, showSlider: true, tooltip: "Enter your electricity consumption in kilowatt-hours" },
-        { name: "region", label: "Region", type: "select", options: ["US", "EU", "UK", "AU", "Global"], showSlider: false, tooltip: "Select your geographic region" },
-        { name: "energy_source", label: "Energy Source", type: "select", options: ["grid", "solar", "wind", "natural_gas", "coal"], tooltip: "Choose your primary energy source" }
-      ]
-    },
-    transport: {
-      name: "Transportation",
-      icon: Truck,
-      color: "bg-[#10B981]",
-      fields: [
-        { name: "mode", label: "Transport Mode", type: "select", options: ["car", "truck", "bus", "train", "motorcycle", "bicycle"], tooltip: "Select your mode of transport" },
-        { name: "distance", label: "Distance (km)", type: "number", placeholder: "100", min: 0, max: 5000, step: 10, showSlider: true, tooltip: "Enter the distance traveled" },
-        { name: "fuel_type", label: "Fuel Type", type: "select", options: ["gasoline", "diesel", "electric", "hybrid", "hydrogen"], tooltip: "Choose your fuel type" },
-        { name: "passengers", label: "Passengers", type: "number", placeholder: "1", min: 1, max: 10, step: 1, showSlider: true, tooltip: "Number of passengers sharing the journey" }
-      ]
-    },
-    flight: {
-      name: "Flight",
-      icon: Plane,
-      color: "bg-[#F97316]",
-      fields: [
-        { name: "origin", label: "Origin Airport", type: "text", placeholder: "LAX", tooltip: "Enter departure airport code" },
-        { name: "destination", label: "Destination Airport", type: "text", placeholder: "JFK", tooltip: "Enter arrival airport code" },
-        { name: "passengers", label: "Passengers", type: "number", placeholder: "1", tooltip: "Number of passengers" },
-        { name: "cabin_class", label: "Cabin Class", type: "select", options: ["economy", "business", "first"], tooltip: "Select your travel class" },
-        { name: "trip_type", label: "Trip Type", type: "select", options: ["one_way", "round_trip"], tooltip: "Choose trip type" }
-      ]
-    },
-    cloud: {
-      name: "Cloud Computing",
-      icon: Cloud,
-      color: "bg-[#6366F1]",
-      fields: [
-        { name: "provider", label: "Provider", type: "select", options: ["AWS", "Azure", "GCP", "Other"], tooltip: "Select cloud provider" },
-        { name: "service", label: "Service Type", type: "select", options: ["compute", "storage", "network", "database"], tooltip: "Choose service type" },
-        { name: "usage_hours", label: "Usage Hours", type: "number", placeholder: "720", tooltip: "Monthly usage in hours" },
-        { name: "region", label: "Cloud Region", type: "select", options: ["us-east", "us-west", "eu-west", "asia-pacific"], tooltip: "Select data center region" }
-      ]
-    },
-    agriculture: {
-      name: "Agriculture",
-      icon: Wheat,
-      color: "bg-[#84CC16]",
-      fields: [
-        { name: "crop_type", label: "Crop Type", type: "select", options: ["wheat", "corn", "rice", "soybeans", "cotton"], tooltip: "Select crop type" },
-        { name: "area", label: "Area (hectares)", type: "number", placeholder: "100", tooltip: "Farm area in hectares" },
-        { name: "fertilizer_amount", label: "Fertilizer (kg)", type: "number", placeholder: "500", tooltip: "Fertilizer amount in kilograms" },
-        { name: "irrigation", label: "Irrigation Type", type: "select", options: ["none", "drip", "sprinkler", "flood"], tooltip: "Select irrigation method" }
-      ]
-    },
-    livestock: {
-      name: "Livestock",
-      icon: TreePine,
-      color: "bg-[#EF4444]",
-      fields: [
-        { name: "animal_type", label: "Animal Type", type: "select", options: ["cattle", "sheep", "pigs", "chickens", "goats"], tooltip: "Select animal type" },
-        { name: "count", label: "Number of Animals", type: "number", placeholder: "100", tooltip: "Total animal count" },
-        { name: "feed_type", label: "Feed Type", type: "select", options: ["grass", "grain", "mixed", "organic"], tooltip: "Select feed type" },
-        { name: "housing", label: "Housing Type", type: "select", options: ["pasture", "barn", "feedlot", "free_range"], tooltip: "Select housing type" }
-      ]
-    },
-    waste: {
-      name: "Waste",
-      icon: Recycle,
-      color: "bg-[#64748B]",
-      fields: [
-        { name: "waste_type", label: "Waste Type", type: "select", options: ["organic", "paper", "plastic", "glass", "metal"], tooltip: "Select waste material" },
-        { name: "amount", label: "Amount (kg)", type: "number", placeholder: "1000", tooltip: "Waste amount in kilograms" },
-        { name: "treatment", label: "Treatment Method", type: "select", options: ["landfill", "incineration", "recycling", "composting"], tooltip: "Select disposal method" }
-      ]
-    },
-    water: {
-      name: "Water",
-      icon: Droplets,
-      color: "bg-[#06B6D4]",
-      fields: [
-        { name: "volume", label: "Volume (liters)", type: "number", placeholder: "10000", tooltip: "Water volume in liters" },
-        { name: "source", label: "Water Source", type: "select", options: ["municipal", "well", "surface", "desalinated"], tooltip: "Select water source" },
-        { name: "treatment", label: "Treatment Level", type: "select", options: ["none", "basic", "advanced", "reverse_osmosis"], tooltip: "Select treatment level" }
-      ]
-    },
-    construction: {
-      name: "Construction",
-      icon: Hammer,
-      color: "bg-[#F59E0B]",
-      fields: [
-        { name: "material", label: "Material Type", type: "select", options: ["concrete", "steel", "wood", "aluminum", "brick"], tooltip: "Select construction material" },
-        { name: "quantity", label: "Quantity (tons)", type: "number", placeholder: "10", tooltip: "Material quantity in tons" },
-        { name: "transport_distance", label: "Transport Distance (km)", type: "number", placeholder: "50", tooltip: "Distance from supplier" }
-      ]
-    },
-    manufacturing: {
-      name: "Manufacturing",
-      icon: Factory,
-      color: "bg-[#475569]",
-      fields: [
-        { name: "product_type", label: "Product Type", type: "select", options: ["electronics", "textiles", "automotive", "food", "chemicals"], tooltip: "Select product category" },
-        { name: "units", label: "Units Produced", type: "number", placeholder: "1000", tooltip: "Number of units" },
-        { name: "energy_intensity", label: "Energy Intensity", type: "select", options: ["low", "medium", "high", "very_high"], tooltip: "Energy usage level" }
-      ]
-    },
-    residential: {
-      name: "Residential",
-      icon: Home,
-      color: "bg-[#EC4899]",
-      fields: [
-        { name: "home_size", label: "Home Size (sq ft)", type: "number", placeholder: "2000", tooltip: "Total home area" },
-        { name: "heating_type", label: "Heating Type", type: "select", options: ["natural_gas", "electric", "oil", "solar", "heat_pump"], tooltip: "Select heating system" },
-        { name: "occupants", label: "Occupants", type: "number", placeholder: "4", tooltip: "Number of residents" }
-      ]
-    }
-  };
-
-  const handleCalculate = async () => {
-    setLoading(true);
-    
-    setTimeout(() => {
-      const baseEmission = Math.random() * 500 + 50;
-      const mockResults = {
-        co2e_kg: baseEmission,
-        methodology: "AR6",
-        confidence: ["high", "medium", "low"][Math.floor(Math.random() * 3)],
-        scope: {
-          scope1: baseEmission * 0.4,
-          scope2: baseEmission * 0.35,
-          scope3: baseEmission * 0.25
-        },
-        breakdown: {
-          direct: Math.random() * 200 + 20,
-          indirect: Math.random() * 300 + 30
-        },
-        offsetSuggestion: {
-          trees: Math.ceil(baseEmission / 22),
-          cost_usd: (baseEmission * 0.02).toFixed(2)
-        },
-        comparison: {
-          car_km: (baseEmission / 0.12).toFixed(0),
-          home_days: (baseEmission / 16.4).toFixed(1)
-        }
-      };
-      
-      setResults(mockResults);
-      
-      const calculationRecord = {
-        id: Date.now().toString(),
-        calculationType: currentCalculator.name,
-        results: mockResults,
-        formData: { ...formData },
-        timestamp: new Date()
-      };
-      
-      if ((window as any).saveCalculationToHistory) {
-        (window as any).saveCalculationToHistory(calculationRecord);
-      }
-      
-      setLoading(false);
-      toast.success("Calculation completed!");
-    }, 1500);
-  };
-
-  const handleAddToComparison = (item: any) => {
-    const newComparison = {
-      id: Date.now().toString(),
-      calculationType: activeCalculator,
-      results,
-      formData: { ...formData },
-      timestamp: new Date()
-    };
-    setComparisons([...comparisons, newComparison]);
-    toast.success("Added to comparison");
-  };
-
-  const handleLoadCalculation = (record: any) => {
-    setActiveCalculator(record.calculationType.toLowerCase().replace(/\s+/g, ''));
-    setFormData(record.formData);
-    setResults(record.results);
-    toast.success("Calculation loaded");
-  };
-
+  // Real-time calculation effect
   useEffect(() => {
-    if (region && !formData.region) {
-      setFormData(prev => ({ ...prev, region: region.region }));
-    }
-  }, [region, formData.region]);
+    const calculateEmissions = () => {
+      // Transport calculations
+      const transportFactor = transportData.fuelType === "electric" ? 0.05 : transportData.fuelType === "diesel" ? 0.27 : 0.24;
+      const transportEmissions = transportData.distance * transportFactor;
+      
+      // Energy calculations
+      const energyEmissions = (energyData.electricity * 0.5) + (energyData.gas * 2.5);
+      
+      // Waste calculations
+      const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : 2.5;
+      const wasteEmissions = wasteData.amount * wasteFactor;
+      
+      const total = transportEmissions + energyEmissions + wasteEmissions;
+      setTotalEmissions(total);
+      setEmissionsBreakdown({
+        transport: transportEmissions,
+        energy: energyEmissions,
+        waste: wasteEmissions
+      });
+      
+      // Update trend data
+      if (total > 0) {
+        const now = new Date();
+        const timeLabel = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+        setTrendData(prev => {
+          const updated = [...prev, { time: timeLabel, emissions: total }];
+          return updated.slice(-7); // Keep last 7 data points
+        });
+      }
+    };
+    
+    calculateEmissions();
+  }, [transportData, energyData, wasteData]);
 
-  const currentCalculator = calculators[activeCalculator as keyof typeof calculators];
-  const Icon = currentCalculator.icon;
-  
-  const filledFields = currentCalculator.fields.filter(field => formData[field.name]).length;
-  const totalFields = currentCalculator.fields.length;
-  const progressPercentage = (filledFields / totalFields) * 100;
+  const pieData = [
+    { name: "Transport", value: emissionsBreakdown.transport, color: "#2563EB" },
+    { name: "Energy", value: emissionsBreakdown.energy, color: "#10B981" },
+    { name: "Waste", value: emissionsBreakdown.waste, color: "#F97316" }
+  ].filter(d => d.value > 0);
+
+  const getInsights = () => {
+    const insights = [];
+    if (emissionsBreakdown.transport > totalEmissions * 0.4) {
+      insights.push({ icon: Car, text: "Consider carpooling or public transport to reduce emissions by up to 30%", type: "warning" });
+    }
+    if (energyData.source === "grid") {
+      insights.push({ icon: Zap, text: "Switch to renewable energy sources to cut energy emissions by 50-70%", type: "tip" });
+    }
+    if (wasteData.disposal === "landfill") {
+      insights.push({ icon: Recycle, text: "Composting and recycling can reduce waste emissions by up to 90%", type: "tip" });
+    }
+    if (totalEmissions > 100) {
+      insights.push({ icon: Target, text: "Your emissions are above average. Small daily changes can make a big impact!", type: "info" });
+    } else if (totalEmissions > 0) {
+      insights.push({ icon: Leaf, text: "Great work! You're below the average carbon footprint.", type: "success" });
+    }
+    return insights;
+  };
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-[#F9FAFB] p-4 md:p-8">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#1E293B]">
-              Advanced Emission Calculator
-            </h1>
-            {region && (
-              <div className="hidden md:flex items-center gap-2 text-sm text-[#475569] bg-white rounded-full px-4 py-2 shadow-sm">
-                <MapPin className="h-4 w-4 text-[#2563EB]" />
-                {region.country} ({region.region})
-              </div>
-            )}
-          </div>
-          <p className="text-[#475569]">Calculate CO₂ emissions across multiple industries with precision</p>
-        </motion.div>
-
-        {/* Three-Panel Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1440px] mx-auto">
-          {/* Left Sidebar - Category Navigation */}
+      <div className="min-h-screen bg-gradient-to-br from-[#F9FAFB] via-white to-[#F0F9FF] p-4 md:p-8">
+        <div className="max-w-[1440px] mx-auto">
+          {/* Header */}
           <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-3"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
           >
-            <div className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] p-4 sticky top-4">
-              <h2 className="text-sm font-semibold text-[#1E293B] mb-4 px-2">Categories</h2>
-              <div className="space-y-2">
-                {Object.entries(calculators).map(([key, calc]) => {
-                  const CalcIcon = calc.icon;
-                  const isActive = activeCalculator === key;
-                  return (
-                    <motion.button
-                      key={key}
-                      onClick={() => {
-                        setActiveCalculator(key);
-                        setResults(null);
-                        setFormData({});
-                      }}
-                      className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
-                        isActive 
-                          ? 'bg-gradient-to-r from-[#2563EB]/10 to-[#10B981]/10 shadow-md ring-2 ring-[#2563EB]/20' 
-                          : 'hover:bg-gray-50'
-                      }`}
-                      whileHover={{ scale: 1.02, x: 4 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className={`p-2 rounded-xl ${calc.color} shadow-sm`}>
-                        <CalcIcon className="h-4 w-4 text-white" />
-                      </div>
-                      <span className={`text-sm font-medium ${isActive ? 'text-[#2563EB]' : 'text-[#475569]'}`}>
-                        {calc.name}
-                      </span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-[#1E293B] mb-2">
+              Emission Calculator Dashboard
+            </h1>
+            <p className="text-[#475569]">Track and optimize your carbon footprint in real-time</p>
           </motion.div>
 
-          {/* Center Panel - Active Calculator */}
+          {/* Summary Cards */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-6"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCalculator}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] overflow-hidden"
-              >
-                {/* Progress Bar */}
-                <div className="h-1 bg-gray-100">
-                  <motion.div 
-                    className="h-full bg-gradient-to-r from-[#2563EB] to-[#10B981]"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPercentage}%` }}
-                    transition={{ duration: 0.3 }}
-                  />
+            {/* Total Emissions Card */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 to-transparent" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#475569]">Total Emissions</span>
+                  <Calculator className="h-5 w-5 text-[#2563EB]" />
                 </div>
-
-                <div className="p-6 md:p-8">
-                  {/* Calculator Header */}
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className={`p-4 rounded-2xl ${currentCalculator.color} shadow-lg`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-[#1E293B]">{currentCalculator.name}</h2>
-                      <p className="text-sm text-[#475569]">
-                        {filledFields} of {totalFields} fields completed
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Form Fields */}
-                  <div className="space-y-6">
-                    {currentCalculator.fields.map((field) => (
-                      <motion.div 
-                        key={field.name}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-2"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor={field.name} className="text-sm font-medium text-[#1E293B]">
-                            {field.label}
-                          </Label>
-                          {field.tooltip && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Info className="h-4 w-4 text-[#475569] cursor-help" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">{field.tooltip}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-                        
-                        {field.type === "select" ? (
-                          <Select
-                            value={formData[field.name] || ""}
-                            onValueChange={(value) => setFormData({ ...formData, [field.name]: value })}
-                          >
-                            <SelectTrigger className="border-gray-200 focus:ring-[#2563EB] focus:border-[#2563EB] rounded-xl h-12 transition-all">
-                              <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {field.options?.map((option) => (
-                                <SelectItem key={option} value={option}>
-                                  {option}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : field.showSlider ? (
-                          <div className="space-y-3">
-                            <Input
-                              id={field.name}
-                              type="number"
-                              placeholder={field.placeholder}
-                              value={formData[field.name] || ""}
-                              onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                              className="border-gray-200 focus:ring-[#2563EB] focus:border-[#2563EB] rounded-xl h-12 transition-all"
-                              min={field.min}
-                              max={field.max}
-                              step={field.step}
-                            />
-                            <Slider
-                              value={[Number(formData[field.name]) || field.min || 0]}
-                              onValueChange={([value]) => setFormData({ ...formData, [field.name]: value.toString() })}
-                              min={field.min}
-                              max={field.max}
-                              step={field.step}
-                              className="py-2"
-                            />
-                          </div>
-                        ) : (
-                          <Input
-                            id={field.name}
-                            type={field.type}
-                            placeholder={field.placeholder}
-                            value={formData[field.name] || ""}
-                            onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                            className="border-gray-200 focus:ring-[#2563EB] focus:border-[#2563EB] rounded-xl h-12 transition-all"
-                          />
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  {/* CTA Button */}
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="mt-8"
-                  >
-                    <Button
-                      onClick={handleCalculate}
-                      disabled={loading || filledFields === 0}
-                      className="w-full h-14 bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Calculating...
-                        </>
-                      ) : (
-                        <>
-                          <Calculator className="mr-2 h-5 w-5" />
-                          Calculate CO₂ Emissions
-                        </>
-                      )}
-                    </Button>
-                  </motion.div>
+                <div className="text-3xl font-bold text-[#1E293B] mb-1">
+                  {totalEmissions.toFixed(2)}
+                  <span className="text-lg text-[#475569] ml-1">kg CO₂e</span>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+                <div className="flex items-center gap-1 text-xs">
+                  {totalEmissions > 50 ? (
+                    <>
+                      <TrendingUp className="h-3 w-3 text-orange-500" />
+                      <span className="text-orange-500">Above target</span>
+                    </>
+                  ) : (
+                    <>
+                      <TrendingDown className="h-3 w-3 text-[#10B981]" />
+                      <span className="text-[#10B981]">On track</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Transport Emissions Card */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 to-transparent" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#475569]">Transport</span>
+                  <Car className="h-5 w-5 text-[#10B981]" />
+                </div>
+                <div className="text-3xl font-bold text-[#1E293B] mb-1">
+                  {emissionsBreakdown.transport.toFixed(1)}
+                  <span className="text-lg text-[#475569] ml-1">kg</span>
+                </div>
+                <div className="text-xs text-[#475569]">
+                  {totalEmissions > 0 ? `${((emissionsBreakdown.transport / totalEmissions) * 100).toFixed(0)}% of total` : '0% of total'}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Energy + Waste Combined Card */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/5 to-transparent" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#475569]">Energy & Waste</span>
+                  <Factory className="h-5 w-5 text-[#F97316]" />
+                </div>
+                <div className="text-3xl font-bold text-[#1E293B] mb-1">
+                  {(emissionsBreakdown.energy + emissionsBreakdown.waste).toFixed(1)}
+                  <span className="text-lg text-[#475569] ml-1">kg</span>
+                </div>
+                <div className="text-xs text-[#475569]">
+                  Energy: {emissionsBreakdown.energy.toFixed(1)}kg | Waste: {emissionsBreakdown.waste.toFixed(1)}kg
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
 
-          {/* Right Panel - Results & History */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-3"
-          >
-            <div className="space-y-6 sticky top-4">
-              {/* Results Summary */}
-              <AnimatePresence mode="wait">
-                {results ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] p-6 space-y-6"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-[#1E293B]">Results</h3>
-                      <Badge className="bg-[#10B981]/10 text-[#10B981] border-0">
-                        {results.confidence}
-                      </Badge>
-                    </div>
+          {/* Main Dashboard Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Input Forms */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Input Forms Card */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 via-transparent to-[#10B981]/5" />
+                <div className="relative p-6">
+                  <h2 className="text-xl font-bold text-[#1E293B] mb-4">Calculate Emissions</h2>
+                  
+                  <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="grid w-full grid-cols-3 mb-6 bg-[#F9FAFB]/50 backdrop-blur-sm">
+                      <TabsTrigger value="transport" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+                        <Truck className="h-4 w-4 mr-2" />
+                        Transport
+                      </TabsTrigger>
+                      <TabsTrigger value="energy" className="data-[state=active]:bg-white data-[state=active]:text-[#10B981]">
+                        <Zap className="h-4 w-4 mr-2" />
+                        Energy
+                      </TabsTrigger>
+                      <TabsTrigger value="waste" className="data-[state=active]:bg-white data-[state=active]:text-[#F97316]">
+                        <Recycle className="h-4 w-4 mr-2" />
+                        Waste
+                      </TabsTrigger>
+                    </TabsList>
 
-                    {/* Total Emissions */}
-                    <div className="text-center py-6 bg-gradient-to-br from-[#2563EB]/5 to-[#10B981]/5 rounded-xl">
-                      <div className="text-4xl font-bold text-[#1E293B] mb-1">
-                        {results.co2e_kg.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-[#475569]">kg CO₂e</div>
-                    </div>
-
-                    {/* Scope Breakdown */}
-                    <div className="space-y-3">
-                      <div className="text-sm font-medium text-[#1E293B]">Emission Breakdown</div>
-                      {Object.entries(results.scope).map(([scope, value]: [string, any]) => (
-                        <div key={scope} className="space-y-1">
-                          <div className="flex justify-between text-xs text-[#475569]">
-                            <span className="capitalize">{scope}</span>
-                            <span>{value.toFixed(1)} kg</span>
-                          </div>
-                          <Progress 
-                            value={(value / results.co2e_kg) * 100} 
-                            className="h-2"
+                    {/* Transport Form */}
+                    <TabsContent value="transport" className="space-y-4 mt-0">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                            Distance (km)
+                            <Tooltip>
+                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                              <TooltipContent>Enter daily travel distance</TooltipContent>
+                            </Tooltip>
+                          </Label>
+                          <Input 
+                            type="number" 
+                            value={transportData.distance || ''}
+                            onChange={(e) => setTransportData({ ...transportData, distance: Number(e.target.value) })}
+                            placeholder="e.g., 50"
+                            className="rounded-xl border-[#E5E7EB] focus:border-[#2563EB] focus:ring-[#2563EB] transition-all"
                           />
                         </div>
-                      ))}
-                    </div>
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Vehicle Type</Label>
+                          <Select value={transportData.vehicle} onValueChange={(v) => setTransportData({ ...transportData, vehicle: v })}>
+                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="car">Car</SelectItem>
+                              <SelectItem value="motorcycle">Motorcycle</SelectItem>
+                              <SelectItem value="bus">Bus</SelectItem>
+                              <SelectItem value="train">Train</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
+                          <Select value={transportData.fuelType} onValueChange={(v) => setTransportData({ ...transportData, fuelType: v })}>
+                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="gasoline">Gasoline</SelectItem>
+                              <SelectItem value="diesel">Diesel</SelectItem>
+                              <SelectItem value="electric">Electric</SelectItem>
+                              <SelectItem value="hybrid">Hybrid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </motion.div>
+                    </TabsContent>
 
-                    {/* Offset Suggestions */}
-                    <div className="space-y-3 pt-4 border-t border-gray-100">
-                      <div className="text-sm font-medium text-[#1E293B]">Offset Suggestions</div>
-                      <div className="flex items-center gap-3 p-3 bg-[#10B981]/5 rounded-xl">
-                        <TreeDeciduous className="h-5 w-5 text-[#10B981]" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-[#1E293B]">
-                            {results.offsetSuggestion.trees} trees
-                          </div>
-                          <div className="text-xs text-[#475569]">Annual planting needed</div>
+                    {/* Energy Form */}
+                    <TabsContent value="energy" className="space-y-4 mt-0">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                            Electricity (kWh/month)
+                            <Tooltip>
+                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                              <TooltipContent>Average monthly consumption</TooltipContent>
+                            </Tooltip>
+                          </Label>
+                          <Input 
+                            type="number" 
+                            value={energyData.electricity || ''}
+                            onChange={(e) => setEnergyData({ ...energyData, electricity: Number(e.target.value) })}
+                            placeholder="e.g., 500"
+                            className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
+                          />
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-[#F97316]/5 rounded-xl">
-                        <TrendingDown className="h-5 w-5 text-[#F97316]" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-[#1E293B]">
-                            ${results.offsetSuggestion.cost_usd}
-                          </div>
-                          <div className="text-xs text-[#475569]">Carbon offset cost</div>
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                            Natural Gas (m³/month)
+                            <Tooltip>
+                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                              <TooltipContent>Heating and cooking gas</TooltipContent>
+                            </Tooltip>
+                          </Label>
+                          <Input 
+                            type="number" 
+                            value={energyData.gas || ''}
+                            onChange={(e) => setEnergyData({ ...energyData, gas: Number(e.target.value) })}
+                            placeholder="e.g., 50"
+                            className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
+                          />
                         </div>
-                      </div>
-                    </div>
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Energy Source</Label>
+                          <Select value={energyData.source} onValueChange={(v) => setEnergyData({ ...energyData, source: v })}>
+                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="grid">Grid (Mixed)</SelectItem>
+                              <SelectItem value="renewable">100% Renewable</SelectItem>
+                              <SelectItem value="coal">Coal-based</SelectItem>
+                              <SelectItem value="gas">Gas-based</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </motion.div>
+                    </TabsContent>
 
-                    {/* Comparisons */}
-                    <div className="space-y-3 pt-4 border-t border-gray-100">
-                      <div className="text-sm font-medium text-[#1E293B]">Real-world Impact</div>
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                        <Car className="h-5 w-5 text-[#475569]" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-[#1E293B]">
-                            {results.comparison.car_km} km
-                          </div>
-                          <div className="text-xs text-[#475569]">Average car travel</div>
+                    {/* Waste Form */}
+                    <TabsContent value="waste" className="space-y-4 mt-0">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                            Waste Amount (kg/month)
+                            <Tooltip>
+                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                              <TooltipContent>Monthly household waste</TooltipContent>
+                            </Tooltip>
+                          </Label>
+                          <Input 
+                            type="number" 
+                            value={wasteData.amount || ''}
+                            onChange={(e) => setWasteData({ ...wasteData, amount: Number(e.target.value) })}
+                            placeholder="e.g., 100"
+                            className="rounded-xl border-[#E5E7EB] focus:border-[#F97316] focus:ring-[#F97316] transition-all"
+                          />
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                        <Home className="h-5 w-5 text-[#475569]" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-[#1E293B]">
-                            {results.comparison.home_days} days
-                          </div>
-                          <div className="text-xs text-[#475569]">Home energy usage</div>
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Waste Type</Label>
+                          <Select value={wasteData.type} onValueChange={(v) => setWasteData({ ...wasteData, type: v })}>
+                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="mixed">Mixed Waste</SelectItem>
+                              <SelectItem value="organic">Organic</SelectItem>
+                              <SelectItem value="plastic">Plastic</SelectItem>
+                              <SelectItem value="paper">Paper</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
-                      </div>
-                    </div>
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Disposal Method</Label>
+                          <Select value={wasteData.disposal} onValueChange={(v) => setWasteData({ ...wasteData, disposal: v })}>
+                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="landfill">Landfill</SelectItem>
+                              <SelectItem value="recycling">Recycling</SelectItem>
+                              <SelectItem value="composting">Composting</SelectItem>
+                              <SelectItem value="incineration">Incineration</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </motion.div>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </motion.div>
 
-                    {/* Export Button */}
-                    <ExportResults results={results} calculationType={currentCalculator.name} formData={formData} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] p-8 text-center"
+              {/* Charts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Trend Chart */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 to-transparent" />
+                  <div className="relative">
+                    <h3 className="text-sm font-semibold text-[#1E293B] mb-4">Emission Trend</h3>
+                    {trendData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={180}>
+                        <LineChart data={trendData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                          <XAxis dataKey="time" tick={{ fontSize: 11, fill: "#475569" }} />
+                          <YAxis tick={{ fontSize: 11, fill: "#475569" }} />
+                          <Line type="monotone" dataKey="emissions" stroke="#2563EB" strokeWidth={2} dot={{ fill: "#2563EB", r: 3 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-[180px] flex items-center justify-center text-sm text-[#475569]">
+                        Start entering data to see trends
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+
+                {/* Breakdown Pie Chart */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 to-transparent" />
+                  <div className="relative">
+                    <h3 className="text-sm font-semibold text-[#1E293B] mb-4">Emissions Breakdown</h3>
+                    {totalEmissions > 0 ? (
+                      <ResponsiveContainer width="100%" height={180}>
+                        <PieChart>
+                          <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3}>
+                            {pieData.map((entry, index) => (
+                              <Cell key={index} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Legend wrapperStyle={{ fontSize: '11px' }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-[180px] flex items-center justify-center text-sm text-[#475569]">
+                        No data to display
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Right Column - Insights */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6 h-fit"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 via-transparent to-[#F97316]/5" />
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-4">
+                  <Lightbulb className="h-5 w-5 text-[#F97316]" />
+                  <h3 className="text-lg font-bold text-[#1E293B]">Sustainability Insights</h3>
+                </div>
+                
+                <div className="space-y-3">
+                  {getInsights().map((insight, idx) => {
+                    const InsightIcon = insight.icon;
+                    const colors = {
+                      warning: 'bg-orange-50 border-orange-200 text-orange-700',
+                      tip: 'bg-blue-50 border-blue-200 text-blue-700',
+                      info: 'bg-purple-50 border-purple-200 text-purple-700',
+                      success: 'bg-green-50 border-green-200 text-green-700'
+                    };
+                    return (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className={`p-4 rounded-xl border backdrop-blur-sm ${colors[insight.type as keyof typeof colors]}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <InsightIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                          <p className="text-sm leading-relaxed">{insight.text}</p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+
+                  {getInsights().length === 0 && (
+                    <div className="text-center py-8 text-sm text-[#475569]">
+                      <Leaf className="h-8 w-8 mx-auto mb-2 text-[#10B981]" />
+                      Enter your data to receive personalized sustainability insights
+                    </div>
+                  )}
+                </div>
+
+                {/* Offset Info */}
+                {totalEmissions > 10 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-6 p-4 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/5 border border-[#10B981]/20"
                   >
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Calculator className="h-8 w-8 text-[#475569]" />
+                    <div className="flex items-center gap-2 mb-2">
+                      <Leaf className="h-4 w-4 text-[#10B981]" />
+                      <span className="text-sm font-semibold text-[#1E293B]">Carbon Offset</span>
                     </div>
-                    <p className="text-sm text-[#475569]">
-                      Complete the form and calculate to see your emission results
+                    <p className="text-xs text-[#475569] mb-2">
+                      Plant <span className="font-bold text-[#10B981]">{Math.ceil(totalEmissions / 22)} trees</span> to offset your emissions
+                    </p>
+                    <p className="text-xs text-[#475569]">
+                      Estimated cost: <span className="font-bold">${(totalEmissions * 0.02).toFixed(2)}</span>
                     </p>
                   </motion.div>
                 )}
-              </AnimatePresence>
-
-              {/* Calculation History */}
-              <div className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] overflow-hidden">
-                <CalculationHistory onLoadCalculation={handleLoadCalculation} onAddToComparison={handleAddToComparison} />
               </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Comparison View */}
-        {comparisons.length > 0 && (
-          <div className="mt-8 max-w-[1440px] mx-auto">
-            <ComparisonView 
-              comparisons={comparisons} 
-              onAddToComparison={handleAddToComparison}
-              onRemoveFromComparison={(id) => setComparisons(comparisons.filter(c => c.id !== id))} 
-            />
+            </motion.div>
           </div>
-        )}
+        </div>
       </div>
     </TooltipProvider>
   );
