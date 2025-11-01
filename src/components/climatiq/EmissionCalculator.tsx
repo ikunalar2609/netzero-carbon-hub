@@ -37,6 +37,29 @@ const DISTANCE_EF = {
   'electric': 0.053
 };
 
+// Electricity Grid Emission Factors (Scope 2 - Location-Based) - kgCO₂e/kWh
+// Source: DEFRA 2024, IEA, EPA
+const GRID_EF = {
+  'grid-mixed': 0.25,      // Average global grid mix
+  'grid-uk': 0.193,        // UK grid 2024
+  'grid-us': 0.386,        // US average
+  'grid-eu': 0.295,        // EU average
+  'grid-china': 0.555,     // China grid
+  'grid-india': 0.708,     // India grid
+  'renewable': 0.0,        // 100% renewable/zero-emission
+  'coal-heavy': 0.82,      // Coal-dominated grid
+  'gas-heavy': 0.49        // Natural gas-dominated grid
+};
+
+// Stationary Fuel Combustion Factors (Scope 1) - DEFRA 2024 & IPCC
+const STATIONARY_FUEL_EF = {
+  'diesel': 2.68,          // kgCO₂/L
+  'lpg': 1.51,             // kgCO₂/L
+  'natural-gas': 0.202,    // kgCO₂/kWh (or 56.1 kgCO₂/GJ)
+  'fuel-oil': 3.18,        // kgCO₂/L
+  'coal': 94.6             // kgCO₂/GJ
+};
+
 interface TransportData {
   distance: number;
   fuelType: string;
@@ -45,6 +68,20 @@ interface TransportData {
   fuelUsed?: number;
   fuelEconomy?: number;
   includeWTW: boolean;
+}
+
+interface EnergyData {
+  // Electricity (Scope 2)
+  electricity: number;
+  electricityMethod: 'location' | 'market';
+  gridType: string;
+  supplierEF?: number;
+  hasRenewableCerts: boolean;
+  
+  // Stationary Fuel (Scope 1)
+  fuelType: string;
+  fuelAmount: number;
+  fuelUnit: 'L' | 'kWh' | 'GJ';
 }
 
 export const EmissionCalculator = () => {
@@ -57,13 +94,71 @@ export const EmissionCalculator = () => {
     fuelEconomy: 7.0,
     includeWTW: false
   });
-  const [energyData, setEnergyData] = useState({ electricity: 0, gas: 0, source: "grid" });
+  const [energyData, setEnergyData] = useState<EnergyData>({ 
+    electricity: 0,
+    electricityMethod: 'location',
+    gridType: 'grid-mixed',
+    hasRenewableCerts: false,
+    fuelType: 'natural-gas',
+    fuelAmount: 0,
+    fuelUnit: 'kWh'
+  });
   const [wasteData, setWasteData] = useState({ amount: 0, type: "mixed", disposal: "landfill" });
   const [totalEmissions, setTotalEmissions] = useState(0);
   const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0 });
   const [detailedTransport, setDetailedTransport] = useState({ total: 0, co2: 0, ch4: 0, n2o: 0, wtt: 0 });
+  const [detailedEnergy, setDetailedEnergy] = useState({ total: 0, scope2: 0, scope1: 0, method: 'location' as 'location' | 'market' });
   const [trendData, setTrendData] = useState<any[]>([]);
   const { region } = useRegionDetection();
+
+  // Calculate energy emissions with GHG Protocol Scope 1 & 2
+  const calculateEnergyEmissions = (data: EnergyData) => {
+    let scope2_emissions = 0; // Electricity (Scope 2)
+    let scope1_emissions = 0; // Stationary Fuel Combustion (Scope 1)
+    let method: 'location' | 'market' = 'location';
+
+    // 1️⃣ Electricity (Scope 2)
+    if (data.electricity > 0) {
+      // Determine method: Market-Based if supplier data or RECs exist, else Location-Based
+      if (data.electricityMethod === 'market' && (data.supplierEF !== undefined || data.hasRenewableCerts)) {
+        method = 'market';
+        if (data.hasRenewableCerts) {
+          scope2_emissions = 0; // Zero emissions with renewable certificates
+        } else if (data.supplierEF !== undefined) {
+          scope2_emissions = data.electricity * data.supplierEF;
+        }
+      } else {
+        method = 'location';
+        const gridEF = GRID_EF[data.gridType as keyof typeof GRID_EF] || GRID_EF['grid-mixed'];
+        scope2_emissions = data.electricity * gridEF;
+      }
+    }
+
+    // 2️⃣ Stationary Fuel Combustion (Scope 1)
+    if (data.fuelAmount > 0) {
+      const fuelEF = STATIONARY_FUEL_EF[data.fuelType as keyof typeof STATIONARY_FUEL_EF] || 0;
+      
+      if (data.fuelUnit === 'L') {
+        // Direct volume-based calculation
+        scope1_emissions = data.fuelAmount * fuelEF;
+      } else if (data.fuelUnit === 'kWh') {
+        // Energy content-based (for natural gas typically)
+        scope1_emissions = data.fuelAmount * fuelEF;
+      } else if (data.fuelUnit === 'GJ') {
+        // Convert GJ to emissions (mainly for coal)
+        scope1_emissions = data.fuelAmount * fuelEF;
+      }
+    }
+
+    const total = scope2_emissions + scope1_emissions;
+    
+    return {
+      total,
+      scope2: scope2_emissions,
+      scope1: scope1_emissions,
+      method
+    };
+  };
 
   // Calculate vehicle emissions with IPCC methodology
   const calculateVehicleEmissions = (data: TransportData) => {
@@ -135,8 +230,10 @@ export const EmissionCalculator = () => {
       const transportEmissions = transportResult.total;
       setDetailedTransport(transportResult);
       
-      // Energy calculations
-      const energyEmissions = (energyData.electricity * 0.5) + (energyData.gas * 2.5);
+      // Energy calculations with GHG Protocol Scope 1 & 2
+      const energyResult = calculateEnergyEmissions(energyData);
+      const energyEmissions = energyResult.total;
+      setDetailedEnergy(energyResult);
       
       // Waste calculations
       const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : 2.5;
@@ -175,8 +272,8 @@ export const EmissionCalculator = () => {
     if (emissionsBreakdown.transport > totalEmissions * 0.4) {
       insights.push({ icon: Car, text: "Consider carpooling or public transport to reduce emissions by up to 30%", type: "warning" });
     }
-    if (energyData.source === "grid") {
-      insights.push({ icon: Zap, text: "Switch to renewable energy sources to cut energy emissions by 50-70%", type: "tip" });
+    if (energyData.gridType !== 'renewable' && !energyData.hasRenewableCerts) {
+      insights.push({ icon: Zap, text: "Switch to renewable energy sources or obtain RECs to cut energy emissions by 50-100%", type: "tip" });
     }
     if (wasteData.disposal === "landfill") {
       insights.push({ icon: Recycle, text: "Composting and recycling can reduce waste emissions by up to 90%", type: "tip" });
@@ -463,53 +560,182 @@ export const EmissionCalculator = () => {
 
                     {/* Energy Form */}
                     <TabsContent value="energy" className="space-y-4 mt-0">
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                            Electricity (kWh/month)
-                            <Tooltip>
-                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Average monthly consumption</TooltipContent>
-                            </Tooltip>
-                          </Label>
-                          <Input 
-                            type="number" 
-                            value={energyData.electricity || ''}
-                            onChange={(e) => setEnergyData({ ...energyData, electricity: Number(e.target.value) })}
-                            placeholder="e.g., 500"
-                            className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
-                          />
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                        {/* Electricity Section (Scope 2) */}
+                        <div className="space-y-4 p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20">
+                          <h4 className="text-sm font-semibold text-[#1E293B] flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-[#10B981]" />
+                            Electricity (Scope 2)
+                          </h4>
+
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Electricity Consumption (kWh)
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>Total electricity consumed</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <Input 
+                              type="number" 
+                              value={energyData.electricity || ''}
+                              onChange={(e) => setEnergyData({ ...energyData, electricity: Number(e.target.value) })}
+                              placeholder="e.g., 5000"
+                              className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
+                            />
+                          </div>
+
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Calculation Method</Label>
+                            <Select 
+                              value={energyData.electricityMethod} 
+                              onValueChange={(v: 'location' | 'market') => setEnergyData({ ...energyData, electricityMethod: v })}
+                            >
+                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="location">Location-Based (Regional Grid)</SelectItem>
+                                <SelectItem value="market">Market-Based (Supplier/RECs)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {energyData.electricityMethod === 'location' ? (
+                            <div>
+                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Grid Type</Label>
+                              <Select value={energyData.gridType} onValueChange={(v) => setEnergyData({ ...energyData, gridType: v })}>
+                                <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="grid-mixed">Global Average (0.25 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="grid-uk">UK Grid (0.193 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="grid-us">US Grid (0.386 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="grid-eu">EU Grid (0.295 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="grid-china">China Grid (0.555 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="grid-india">India Grid (0.708 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="coal-heavy">Coal-Heavy Grid (0.82 kgCO₂e/kWh)</SelectItem>
+                                  <SelectItem value="gas-heavy">Gas-Heavy Grid (0.49 kgCO₂e/kWh)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  id="renewable-certs"
+                                  checked={energyData.hasRenewableCerts}
+                                  onChange={(e) => setEnergyData({ ...energyData, hasRenewableCerts: e.target.checked })}
+                                  className="rounded border-[#E5E7EB] text-[#10B981] focus:ring-[#10B981]"
+                                />
+                                <Label htmlFor="renewable-certs" className="text-sm font-medium text-[#1E293B] flex items-center gap-2">
+                                  Have Renewable Certificates (RECs/REGOs/GoOs)
+                                  <Tooltip>
+                                    <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                    <TooltipContent>Zero emissions with valid certificates</TooltipContent>
+                                  </Tooltip>
+                                </Label>
+                              </div>
+
+                              {!energyData.hasRenewableCerts && (
+                                <div>
+                                  <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                                    Supplier Emission Factor (kgCO₂e/kWh)
+                                    <Tooltip>
+                                      <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                      <TooltipContent>Optional: Your supplier's specific emission factor</TooltipContent>
+                                    </Tooltip>
+                                  </Label>
+                                  <Input 
+                                    type="number" 
+                                    step="0.001"
+                                    value={energyData.supplierEF || ''}
+                                    onChange={(e) => setEnergyData({ ...energyData, supplierEF: e.target.value ? Number(e.target.value) : undefined })}
+                                    placeholder="e.g., 0.15"
+                                    className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
+                                  />
+                                </div>
+                              )}
+                            </>
+                          )}
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                            Natural Gas (m³/month)
-                            <Tooltip>
-                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Heating and cooking gas</TooltipContent>
-                            </Tooltip>
-                          </Label>
-                          <Input 
-                            type="number" 
-                            value={energyData.gas || ''}
-                            onChange={(e) => setEnergyData({ ...energyData, gas: Number(e.target.value) })}
-                            placeholder="e.g., 50"
-                            className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
-                          />
+
+                        {/* Stationary Fuel Section (Scope 1) */}
+                        <div className="space-y-4 p-4 rounded-xl bg-gradient-to-br from-[#F97316]/5 to-transparent border border-[#F97316]/20">
+                          <h4 className="text-sm font-semibold text-[#1E293B] flex items-center gap-2">
+                            <Factory className="h-4 w-4 text-[#F97316]" />
+                            Stationary Fuel Combustion (Scope 1)
+                          </h4>
+
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
+                            <Select value={energyData.fuelType} onValueChange={(v) => setEnergyData({ ...energyData, fuelType: v })}>
+                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="diesel">Diesel (2.68 kgCO₂/L)</SelectItem>
+                                <SelectItem value="lpg">LPG (1.51 kgCO₂/L)</SelectItem>
+                                <SelectItem value="natural-gas">Natural Gas (0.202 kgCO₂/kWh)</SelectItem>
+                                <SelectItem value="fuel-oil">Fuel Oil (3.18 kgCO₂/L)</SelectItem>
+                                <SelectItem value="coal">Coal (94.6 kgCO₂/GJ)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="col-span-1">
+                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Amount</Label>
+                              <Input 
+                                type="number" 
+                                value={energyData.fuelAmount || ''}
+                                onChange={(e) => setEnergyData({ ...energyData, fuelAmount: Number(e.target.value) })}
+                                placeholder="e.g., 1000"
+                                className="rounded-xl border-[#E5E7EB] focus:border-[#F97316] focus:ring-[#F97316] transition-all"
+                              />
+                            </div>
+                            <div className="col-span-1">
+                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Unit</Label>
+                              <Select value={energyData.fuelUnit} onValueChange={(v: 'L' | 'kWh' | 'GJ') => setEnergyData({ ...energyData, fuelUnit: v })}>
+                                <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="L">Liters (L)</SelectItem>
+                                  <SelectItem value="kWh">Kilowatt-hours (kWh)</SelectItem>
+                                  <SelectItem value="GJ">Gigajoules (GJ)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Energy Source</Label>
-                          <Select value={energyData.source} onValueChange={(v) => setEnergyData({ ...energyData, source: v })}>
-                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="grid">Grid (Mixed)</SelectItem>
-                              <SelectItem value="renewable">100% Renewable</SelectItem>
-                              <SelectItem value="coal">Coal-based</SelectItem>
-                              <SelectItem value="gas">Gas-based</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+
+                        {/* Energy Emission Breakdown */}
+                        {detailedEnergy.total > 0 && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20"
+                          >
+                            <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Energy Emission Breakdown</h4>
+                            <div className="space-y-1 text-xs text-[#475569]">
+                              <div className="flex justify-between">
+                                <span>Scope 2 (Electricity - {detailedEnergy.method === 'location' ? 'Location-Based' : 'Market-Based'}):</span>
+                                <span className="font-mono">{detailedEnergy.scope2.toFixed(2)} kg CO₂e</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Scope 1 (Stationary Fuel):</span>
+                                <span className="font-mono">{detailedEnergy.scope1.toFixed(2)} kg CO₂</span>
+                              </div>
+                              <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
+                                <span>Total Energy Emissions:</span>
+                                <span className="font-mono">{detailedEnergy.total.toFixed(2)} kg CO₂e</span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
                       </motion.div>
                     </TabsContent>
 
