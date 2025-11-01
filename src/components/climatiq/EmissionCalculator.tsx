@@ -12,22 +12,128 @@ import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 
+// IPCC GWP values (AR6)
+const GWP_CH4 = 27.9;
+const GWP_N2O = 273;
+
+// Emission factors (DEFRA 2024 & IPCC)
+const FUEL_EF = {
+  petrol: { co2_per_L: 2.34, ch4_factor: 0.0005, n2o_factor: 0.0005, wtt_factor: 0.55 },
+  diesel: { co2_per_L: 2.68, ch4_factor: 0.0004, n2o_factor: 0.0006, wtt_factor: 0.62 },
+  cng: { co2_per_kg: 2.80, ch4_factor: 0.001, n2o_factor: 0.0001, wtt_factor: 0.48 }
+};
+
+// Distance-based emission factors (DEFRA 2024) - kgCO₂/km
+const DISTANCE_EF = {
+  'small-petrol': 0.180,
+  'medium-petrol': 0.220,
+  'large-petrol': 0.280,
+  'small-diesel': 0.165,
+  'medium-diesel': 0.220,
+  'large-diesel': 0.270,
+  'motorcycle': 0.080,
+  'bus-per-passenger': 0.105,
+  'train-per-passenger': 0.041,
+  'electric': 0.053
+};
+
+interface TransportData {
+  distance: number;
+  fuelType: string;
+  vehicle: string;
+  calculationMethod: 'fuel' | 'distance';
+  fuelUsed?: number;
+  fuelEconomy?: number;
+  includeWTW: boolean;
+}
+
 export const EmissionCalculator = () => {
   const [activeTab, setActiveTab] = useState("transport");
-  const [transportData, setTransportData] = useState({ distance: 0, fuelType: "gasoline", vehicle: "car" });
+  const [transportData, setTransportData] = useState<TransportData>({ 
+    distance: 0, 
+    fuelType: "petrol", 
+    vehicle: "medium-petrol",
+    calculationMethod: 'distance',
+    fuelEconomy: 7.0,
+    includeWTW: false
+  });
   const [energyData, setEnergyData] = useState({ electricity: 0, gas: 0, source: "grid" });
   const [wasteData, setWasteData] = useState({ amount: 0, type: "mixed", disposal: "landfill" });
   const [totalEmissions, setTotalEmissions] = useState(0);
   const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0 });
+  const [detailedTransport, setDetailedTransport] = useState({ total: 0, co2: 0, ch4: 0, n2o: 0, wtt: 0 });
   const [trendData, setTrendData] = useState<any[]>([]);
   const { region } = useRegionDetection();
+
+  // Calculate vehicle emissions with IPCC methodology
+  const calculateVehicleEmissions = (data: TransportData) => {
+    let co2_ttw = 0; // Tank-to-Wheel CO2
+    let ch4_ttw = 0;
+    let n2o_ttw = 0;
+    let wtt = 0; // Well-to-Tank
+
+    if (data.calculationMethod === 'fuel' && data.distance > 0) {
+      // 1️⃣ Fuel-Based Method (IPCC Tier 1 & 2)
+      let fuelUsed = data.fuelUsed || 0;
+      
+      // Calculate fuel used from distance and fuel economy if not provided
+      if (!data.fuelUsed && data.fuelEconomy && data.distance > 0) {
+        fuelUsed = (data.distance * data.fuelEconomy) / 100; // L
+      }
+
+      if (fuelUsed > 0) {
+        const ef = data.fuelType === 'diesel' ? FUEL_EF.diesel : 
+                    data.fuelType === 'cng' ? FUEL_EF.cng :
+                    FUEL_EF.petrol;
+        
+        // CO2 emissions
+        co2_ttw = fuelUsed * ('co2_per_L' in ef ? ef.co2_per_L : ef.co2_per_kg);
+        
+        // CH4 and N2O emissions (converted to CO2e using GWP)
+        ch4_ttw = (co2_ttw * ef.ch4_factor) * GWP_CH4;
+        n2o_ttw = (co2_ttw * ef.n2o_factor) * GWP_N2O;
+        
+        // Well-to-Tank emissions if enabled
+        if (data.includeWTW) {
+          wtt = co2_ttw * ef.wtt_factor;
+        }
+      }
+    } else if (data.calculationMethod === 'distance' && data.distance > 0) {
+      // 2️⃣ Distance-Based Method (Tier 2 approximation)
+      const efKey = data.vehicle as keyof typeof DISTANCE_EF;
+      const ef = DISTANCE_EF[efKey] || 0.22; // Default to medium car
+      
+      co2_ttw = data.distance * ef;
+      
+      // Estimate CH4 and N2O (0.5% total for distance-based)
+      const nonCO2 = co2_ttw * 0.005;
+      ch4_ttw = nonCO2 * 0.6 * GWP_CH4;
+      n2o_ttw = nonCO2 * 0.4 * GWP_N2O;
+      
+      // Well-to-Tank (approximate 20% for distance-based)
+      if (data.includeWTW) {
+        wtt = co2_ttw * 0.20;
+      }
+    }
+
+    const totalCO2e = co2_ttw + ch4_ttw + n2o_ttw + wtt;
+    
+    return {
+      total: totalCO2e,
+      co2: co2_ttw,
+      ch4: ch4_ttw,
+      n2o: n2o_ttw,
+      wtt: wtt
+    };
+  };
 
   // Real-time calculation effect
   useEffect(() => {
     const calculateEmissions = () => {
-      // Transport calculations
-      const transportFactor = transportData.fuelType === "electric" ? 0.05 : transportData.fuelType === "diesel" ? 0.27 : 0.24;
-      const transportEmissions = transportData.distance * transportFactor;
+      // Transport calculations with IPCC methodology
+      const transportResult = calculateVehicleEmissions(transportData);
+      const transportEmissions = transportResult.total;
+      setDetailedTransport(transportResult);
       
       // Energy calculations
       const energyEmissions = (energyData.electricity * 0.5) + (energyData.gas * 2.5);
@@ -213,49 +319,145 @@ export const EmissionCalculator = () => {
                     <TabsContent value="transport" className="space-y-4 mt-0">
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                         <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Calculation Method</Label>
+                          <Select 
+                            value={transportData.calculationMethod} 
+                            onValueChange={(v: 'fuel' | 'distance') => setTransportData({ ...transportData, calculationMethod: v })}
+                          >
+                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="fuel">Fuel-Based (IPCC Tier 1 & 2)</SelectItem>
+                              <SelectItem value="distance">Distance-Based (Tier 2)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
                           <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
                             Distance (km)
                             <Tooltip>
                               <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Enter daily travel distance</TooltipContent>
+                              <TooltipContent>Total distance traveled</TooltipContent>
                             </Tooltip>
                           </Label>
                           <Input 
                             type="number" 
                             value={transportData.distance || ''}
                             onChange={(e) => setTransportData({ ...transportData, distance: Number(e.target.value) })}
-                            placeholder="e.g., 50"
+                            placeholder="e.g., 1000"
                             className="rounded-xl border-[#E5E7EB] focus:border-[#2563EB] focus:ring-[#2563EB] transition-all"
                           />
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Vehicle Type</Label>
-                          <Select value={transportData.vehicle} onValueChange={(v) => setTransportData({ ...transportData, vehicle: v })}>
-                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="car">Car</SelectItem>
-                              <SelectItem value="motorcycle">Motorcycle</SelectItem>
-                              <SelectItem value="bus">Bus</SelectItem>
-                              <SelectItem value="train">Train</SelectItem>
-                            </SelectContent>
-                          </Select>
+
+                        {transportData.calculationMethod === 'fuel' ? (
+                          <>
+                            <div>
+                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
+                              <Select value={transportData.fuelType} onValueChange={(v) => setTransportData({ ...transportData, fuelType: v })}>
+                                <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="petrol">Petrol (2.34 kgCO₂/L)</SelectItem>
+                                  <SelectItem value="diesel">Diesel (2.68 kgCO₂/L)</SelectItem>
+                                  <SelectItem value="cng">CNG (2.80 kgCO₂/kg)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                                Fuel Economy (L/100km)
+                                <Tooltip>
+                                  <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                  <TooltipContent>Vehicle fuel consumption rate</TooltipContent>
+                                </Tooltip>
+                              </Label>
+                              <Input 
+                                type="number" 
+                                step="0.1"
+                                value={transportData.fuelEconomy || ''}
+                                onChange={(e) => setTransportData({ ...transportData, fuelEconomy: Number(e.target.value) })}
+                                placeholder="e.g., 7.0"
+                                className="rounded-xl border-[#E5E7EB] focus:border-[#2563EB] focus:ring-[#2563EB] transition-all"
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Vehicle Type</Label>
+                            <Select value={transportData.vehicle} onValueChange={(v) => setTransportData({ ...transportData, vehicle: v })}>
+                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="small-petrol">Small Petrol Car (0.180 kg/km)</SelectItem>
+                                <SelectItem value="medium-petrol">Medium Petrol Car (0.220 kg/km)</SelectItem>
+                                <SelectItem value="large-petrol">Large Petrol Car (0.280 kg/km)</SelectItem>
+                                <SelectItem value="small-diesel">Small Diesel Car (0.165 kg/km)</SelectItem>
+                                <SelectItem value="medium-diesel">Medium Diesel Car (0.220 kg/km)</SelectItem>
+                                <SelectItem value="large-diesel">Large Diesel Car (0.270 kg/km)</SelectItem>
+                                <SelectItem value="motorcycle">Motorcycle (0.080 kg/km)</SelectItem>
+                                <SelectItem value="bus-per-passenger">Bus (per passenger) (0.105 kg/km)</SelectItem>
+                                <SelectItem value="train-per-passenger">Train (per passenger) (0.041 kg/km)</SelectItem>
+                                <SelectItem value="electric">Electric Vehicle (0.053 kg/km)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        <div className="flex items-center space-x-2 pt-2">
+                          <input
+                            type="checkbox"
+                            id="wtw"
+                            checked={transportData.includeWTW}
+                            onChange={(e) => setTransportData({ ...transportData, includeWTW: e.target.checked })}
+                            className="rounded border-[#E5E7EB] text-[#2563EB] focus:ring-[#2563EB]"
+                          />
+                          <Label htmlFor="wtw" className="text-sm font-medium text-[#1E293B] flex items-center gap-2">
+                            Include Well-to-Wheel (WTW) emissions
+                            <Tooltip>
+                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                              <TooltipContent>Add upstream fuel production emissions</TooltipContent>
+                            </Tooltip>
+                          </Label>
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
-                          <Select value={transportData.fuelType} onValueChange={(v) => setTransportData({ ...transportData, fuelType: v })}>
-                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="gasoline">Gasoline</SelectItem>
-                              <SelectItem value="diesel">Diesel</SelectItem>
-                              <SelectItem value="electric">Electric</SelectItem>
-                              <SelectItem value="hybrid">Hybrid</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+
+                        {/* Emission breakdown display */}
+                        {detailedTransport.total > 0 && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-[#2563EB]/5 to-transparent border border-[#2563EB]/20"
+                          >
+                            <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Emission Breakdown</h4>
+                            <div className="space-y-1 text-xs text-[#475569]">
+                              <div className="flex justify-between">
+                                <span>CO₂ (Tank-to-Wheel):</span>
+                                <span className="font-mono">{detailedTransport.co2.toFixed(2)} kg</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>CH₄ (as CO₂e, GWP={GWP_CH4}):</span>
+                                <span className="font-mono">{detailedTransport.ch4.toFixed(2)} kg</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>N₂O (as CO₂e, GWP={GWP_N2O}):</span>
+                                <span className="font-mono">{detailedTransport.n2o.toFixed(2)} kg</span>
+                              </div>
+                              {transportData.includeWTW && (
+                                <div className="flex justify-between text-[#F97316]">
+                                  <span>Well-to-Tank (WTT):</span>
+                                  <span className="font-mono">{detailedTransport.wtt.toFixed(2)} kg</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
+                                <span>Total CO₂e {transportData.includeWTW ? '(WTW)' : '(TTW)'}:</span>
+                                <span className="font-mono">{detailedTransport.total.toFixed(2)} kg</span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
                       </motion.div>
                     </TabsContent>
 
