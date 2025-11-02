@@ -310,24 +310,15 @@ export const ApiDocumentation = () => {
               <Button
                 key={key}
                 variant={selectedEndpoint === key ? "default" : "ghost"}
-                className={`w-full justify-start ${
-                  selectedEndpoint === key 
-                    ? "bg-black text-white hover:bg-gray-800" 
-                    : "text-black hover:text-gray-600"
-                }`}
+                className="w-full justify-start"
                 onClick={() => setSelectedEndpoint(key)}
               >
                 <Badge 
                   variant="outline" 
-                  className={`mr-2 text-xs ${
-                    selectedEndpoint === key 
-                      ? "border-white text-white" 
-                      : "border-gray-400 text-gray-700"
-                  }`}
+                  className="mr-2 text-xs"
                 >
                   {endpoint.method}
                 </Badge>
-                <span className="text-left">{selectedEndpoint === key ? "text-white" : "text-black"}</span>
                 {endpoint.name}
               </Button>
             ))}
@@ -339,42 +330,42 @@ export const ApiDocumentation = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-gray-900">
-                  <Badge variant="outline" className="border-gray-400 text-gray-700">
+                <CardTitle className="flex items-center gap-2">
+                  <Badge variant="outline">
                     {currentEndpoint.method}
                   </Badge>
                   {currentEndpoint.name}
                 </CardTitle>
-                <Button size="sm" variant="outline" className="text-gray-900 border-gray-300">
+                <Button size="sm" variant="outline">
                   <Play className="h-4 w-4 mr-2" />
                   Try it
                 </Button>
               </div>
-              <CardDescription className="text-gray-600">{currentEndpoint.description}</CardDescription>
-              <code className="bg-gray-100 px-2 py-1 rounded text-sm text-gray-900">
+              <CardDescription>{currentEndpoint.description}</CardDescription>
+              <code className="bg-muted px-2 py-1 rounded text-sm">
                 {currentEndpoint.url}
               </code>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="parameters" className="w-full">
-                <TabsList className="bg-gray-100">
-                  <TabsTrigger value="parameters" className="text-gray-900">Parameters</TabsTrigger>
-                  <TabsTrigger value="example" className="text-gray-900">Example</TabsTrigger>
-                  <TabsTrigger value="code" className="text-gray-900">Code Snippets</TabsTrigger>
+                <TabsList>
+                  <TabsTrigger value="parameters">Parameters</TabsTrigger>
+                  <TabsTrigger value="example">Example</TabsTrigger>
+                  <TabsTrigger value="code">Code Snippets</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="parameters" className="space-y-4">
                   <div className="space-y-3">
                     {currentEndpoint.parameters.map((param, index) => (
-                      <div key={index} className="border border-gray-200 rounded p-3">
+                      <div key={index} className="border rounded p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <code className="font-mono font-semibold text-gray-900">{param.name}</code>
+                          <code className="font-mono font-semibold">{param.name}</code>
                           <Badge variant={param.required ? "destructive" : "secondary"}>
                             {param.required ? "Required" : "Optional"}
                           </Badge>
-                          <Badge variant="outline" className="border-gray-400 text-gray-700">{param.type}</Badge>
+                          <Badge variant="outline">{param.type}</Badge>
                         </div>
-                        <p className="text-sm text-gray-600">{param.description}</p>
+                        <p className="text-sm text-muted-foreground">{param.description}</p>
                       </div>
                     ))}
                   </div>
@@ -384,33 +375,31 @@ export const ApiDocumentation = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900">Request</h4>
+                        <h4 className="font-semibold">Request</h4>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-gray-900 border-gray-300"
                           onClick={() => copyToClipboard(currentEndpoint.example.request)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
+                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
                         <code>{currentEndpoint.example.request}</code>
                       </pre>
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900">Response</h4>
+                        <h4 className="font-semibold">Response</h4>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-gray-900 border-gray-300"
                           onClick={() => copyToClipboard(currentEndpoint.example.response)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
+                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
                         <code>{currentEndpoint.example.response}</code>
                       </pre>
                     </div>
@@ -421,12 +410,12 @@ export const ApiDocumentation = () => {
                   <div className="space-y-4">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900">Python</h4>
-                        <Button size="sm" variant="outline" className="text-gray-900 border-gray-300">
+                        <h4 className="font-semibold">Python</h4>
+                        <Button size="sm" variant="outline">
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
+                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
                         <code>{`import requests
 
 url = "https://api.farmly.io${currentEndpoint.url}"
@@ -444,12 +433,12 @@ print(result)`}</code>
                     
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900">JavaScript</h4>
-                        <Button size="sm" variant="outline" className="text-gray-900 border-gray-300">
+                        <h4 className="font-semibold">JavaScript</h4>
+                        <Button size="sm" variant="outline">
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
+                      <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
                         <code>{`const response = await fetch('https://api.farmly.io${currentEndpoint.url}', {
   method: 'POST',
   headers: {
