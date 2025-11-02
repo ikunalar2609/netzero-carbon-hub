@@ -1,0 +1,4 @@
+project_id = "iokkwxjkvzgstkkbwnoa"
+
+[functions.calculate-flight-emission]
+verify_jwt = false

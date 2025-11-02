@@ -9,9 +9,45 @@ import { Code, Copy, Play } from "lucide-react";
 import { toast } from "sonner";
 
 export const ApiDocumentation = () => {
-  const [selectedEndpoint, setSelectedEndpoint] = useState("basic-estimate");
+  const [selectedEndpoint, setSelectedEndpoint] = useState("flight-emission-tracker");
 
   const endpoints = {
+    "flight-emission-tracker": {
+      name: "Flight Emission Tracker",
+      method: "POST",
+      url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calculate-flight-emission`,
+      description: "Calculate CO₂e emissions for flights using IPCC 2006 Guidelines. Estimates fuel consumption based on aircraft type and applies radiative forcing multiplier (1.9) for non-CO₂ effects.",
+      parameters: [
+        { name: "aircraftType", type: "string", required: true, description: "Aircraft type code (A320, B737, B777, A350, E175)" },
+        { name: "distanceKm", type: "number", required: true, description: "Flight distance in kilometers" },
+        { name: "passengers", type: "number", required: true, description: "Number of passengers on the flight" },
+        { name: "cargoWeightKg", type: "number", required: false, description: "Cargo weight in kilograms (default: 0)" },
+        { name: "fuelUsedKg", type: "number", required: false, description: "Actual fuel consumed in kg (will be estimated if not provided)" }
+      ],
+      example: {
+        request: `{
+  "aircraftType": "A320",
+  "distanceKm": 1200,
+  "passengers": 150,
+  "cargoWeightKg": 2000,
+  "fuelUsedKg": null
+}`,
+        response: `{
+  "aircraftType": "A320",
+  "distanceKm": 1200,
+  "fuelConsumedKg": 3240,
+  "totalEmissionKgCO2e": 19481.76,
+  "emissionPerPassengerKgCO2e": 125.47,
+  "calculationDetails": {
+    "emissionFactor": 3.16,
+    "radiativeForcingMultiplier": 1.9,
+    "fuelBurnRateUsed": 2.7,
+    "passengers": 150,
+    "cargoWeightKg": 2000
+  }
+}`
+      }
+    },
     "basic-estimate": {
       name: "Basic Estimate",
       method: "POST",
