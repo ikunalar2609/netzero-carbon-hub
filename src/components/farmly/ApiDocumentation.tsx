@@ -295,7 +295,7 @@ export const ApiDocumentation = () => {
       >
         <h2 className="text-3xl font-bold mb-4 text-foreground">API Documentation</h2>
         <p className="text-muted-foreground mb-6">
-          Comprehensive documentation for all Climatiq API endpoints with examples and code snippets.
+          Comprehensive documentation for all Farmly API endpoints with examples and code snippets.
         </p>
       </motion.div>
 
@@ -429,7 +429,7 @@ export const ApiDocumentation = () => {
                       <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
                         <code>{`import requests
 
-url = "https://api.climatiq.io${currentEndpoint.url}"
+url = "https://api.farmly.io${currentEndpoint.url}"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
@@ -450,7 +450,7 @@ print(result)`}</code>
                         </Button>
                       </div>
                       <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto text-gray-900">
-                        <code>{`const response = await fetch('https://api.climatiq.io${currentEndpoint.url}', {
+                        <code>{`const response = await fetch('https://api.farmly.io${currentEndpoint.url}', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',

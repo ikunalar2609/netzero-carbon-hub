@@ -49,10 +49,10 @@ const HomeHeader = () => {
           
           <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
             <Link 
-              to="/climatiq" 
+              to="/farmly" 
               className="flex items-center gap-2 font-semibold text-gray-700 hover:text-green-600 relative group transition-colors duration-300"
             >
-              <span>Climatiq API</span>
+              <span>Farmly API</span>
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-green-500 to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
             </Link>
           </motion.div>

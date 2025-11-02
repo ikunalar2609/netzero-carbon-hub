@@ -26,7 +26,7 @@ import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
-import Climatiq from "@/pages/Climatiq";
+import Farmly from "@/pages/Farmly";
 
 const queryClient = new QueryClient();
 
@@ -46,8 +46,8 @@ function App() {
                     {/* Public landing page */}
                     <Route path="/" element={<Index />} />
                     
-                    {/* New Climatiq page */}
-                    <Route path="/climatiq" element={<Climatiq />} />
+                    {/* New Farmly page */}
+                    <Route path="/farmly" element={<Farmly />} />
                     
                     {/* Public routes */}
                     <Route element={<PublicRoute />}>

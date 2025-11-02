@@ -41,7 +41,7 @@
     --brand-green: 120 40% 30%;
     --brand-green-foreground: 0 0% 100%;
     
-    /* Climatiq theme colors */
+    /* Farmly theme colors */
     /* Calculator Theme Colors - Clean & Professional */
     --calc-primary: 217 91% 60%;        /* #2563EB - Cool blue */
     --calc-secondary: 158 64% 52%;      /* #10B981 - Eco green */
@@ -88,11 +88,11 @@
     --input: 220 17% 20%;
     --ring: 217 91% 60%;
     
-    /* Climatiq theme colors - dark mode */
-    --climatiq-primary: 217 91% 70%;
-    --climatiq-secondary: 269 91% 73%;
-    --climatiq-accent: 171 77% 74%;
-    --climatiq-bg-subtle: 220 20% 14%;
+    /* Farmly theme colors - dark mode */
+    --farmly-primary: 217 91% 70%;
+    --farmly-secondary: 269 91% 73%;
+    --farmly-accent: 171 77% 74%;
+    --farmly-bg-subtle: 220 20% 14%;
     
     /* Shadows and effects - dark mode */
     --shadow-elevation-low: 0 1px 2px 0 rgb(0 0 0 / 0.3);

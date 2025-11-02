@@ -28,7 +28,7 @@ export const CalculationHistory = ({ onLoadCalculation, onAddToComparison }: Cal
   }, []);
 
   const loadHistory = () => {
-    const saved = localStorage.getItem('climatiq-calculation-history');
+    const saved = localStorage.getItem('farmly-calculation-history');
     if (saved) {
       const parsed = JSON.parse(saved).map((item: any) => ({
         ...item,
@@ -43,12 +43,12 @@ export const CalculationHistory = ({ onLoadCalculation, onAddToComparison }: Cal
   const saveCalculation = (record: CalculationRecord) => {
     const newHistory = [record, ...history.slice(0, 49)]; // Keep last 50 calculations
     setHistory(newHistory);
-    localStorage.setItem('climatiq-calculation-history', JSON.stringify(newHistory));
+    localStorage.setItem('farmly-calculation-history', JSON.stringify(newHistory));
   };
 
   const clearHistory = () => {
     setHistory([]);
-    localStorage.removeItem('climatiq-calculation-history');
+    localStorage.removeItem('farmly-calculation-history');
     toast.success("History cleared");
   };
 

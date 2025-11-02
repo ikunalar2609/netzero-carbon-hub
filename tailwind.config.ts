@@ -62,12 +62,12 @@ export default {
           foreground: "hsl(var(--brand-green-foreground))",
           600: "#2c5c2c",
         },
-        // Climatiq theme colors
-        'climatiq': {
-          primary: "hsl(var(--climatiq-primary))",
-          secondary: "hsl(var(--climatiq-secondary))",
-          accent: "hsl(var(--climatiq-accent))",
-          'bg-subtle': "hsl(var(--climatiq-bg-subtle))",
+        // Farmly theme colors
+        'farmly': {
+          primary: "hsl(var(--farmly-primary))",
+          secondary: "hsl(var(--farmly-secondary))",
+          accent: "hsl(var(--farmly-accent))",
+          'bg-subtle': "hsl(var(--farmly-bg-subtle))",
         },
       },
       borderRadius: {

@@ -9,11 +9,11 @@ import {
   ArrowRight,
   Zap
 } from "lucide-react";
-import { ClimateDataExplorer } from "@/components/climatiq/ClimateDataExplorer";
-import { ApiDocumentation } from "@/components/climatiq/ApiDocumentation";
-import { EmissionCalculator } from "@/components/climatiq/EmissionCalculator";
+import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
+import { ApiDocumentation } from "@/components/farmly/ApiDocumentation";
+import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
 
-const Climatiq = () => {
+const Farmly = () => {
   const [activeTab, setActiveTab] = useState("calculator");
 
   return (
@@ -37,7 +37,7 @@ const Climatiq = () => {
             </span>
             
             <h1 className="text-6xl md:text-8xl font-light tracking-tight text-gray-900">
-              Climatiq
+              Farmly
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -192,4 +192,4 @@ const Climatiq = () => {
   );
 };
 
-export default Climatiq;
+export default Farmly;
