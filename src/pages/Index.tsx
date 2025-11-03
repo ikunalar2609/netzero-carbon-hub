@@ -6,7 +6,7 @@ import HomeHeader from "@/components/home/HomeHeader";
 import SubstackSection from "@/components/home/SubstackSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { ToolsShowcase } from "@/components/home/ToolsShowcase";
-import farmlyApiIllustration from "@/assets/farmly-api-illustration.jpg";
+import farmlyApiIllustration from "@/assets/farmly-api-illustration.png";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
 import noaaLogo from "@/assets/logos/noaa-logo.png";
