@@ -33,7 +33,7 @@ const Index = () => {
       <HomeHeader />
       
       {/* Minimalist Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20">
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20 bg-gradient-to-b from-white via-green-50/30 to-white">
         <motion.div 
           initial="hidden"
           animate="visible"
@@ -49,7 +49,7 @@ const Index = () => {
               Agricultural Carbon Platform
             </span>
             <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light text-gray-900 tracking-tight">
-              Farmly<span className="text-green-600">Carbon</span>
+              Farmly<span className="bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">Carbon</span>
             </h1>
           </motion.div>
           
@@ -69,7 +69,7 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate("/signup")}
-              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg h-auto rounded-full"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl hover:shadow-green-500/25 transition-all border-0"
             >
               Get Started
             </Button>
@@ -186,14 +186,14 @@ const Index = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
               >
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate("/farmly")}
-                  className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg h-auto rounded-full"
-                >
-                  Explore API Documentation
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+              <Button 
+                size="lg" 
+                onClick={() => navigate("/farmly")}
+                className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-0"
+              >
+                Explore API Documentation
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
               </motion.div>
             </motion.div>
 
@@ -205,7 +205,7 @@ const Index = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-[0_25px_50px_-12px_rgba(34,197,94,0.25)] transition-shadow duration-500">
                 <img 
                   src={farmlyApiIllustration} 
                   alt="Farmly API integration visualization showing connected farm data and analytics" 
@@ -213,8 +213,8 @@ const Index = () => {
                 />
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-green-200 rounded-full blur-3xl opacity-60"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-200 rounded-full blur-3xl opacity-60"></div>
+              <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-green-400/40 to-emerald-400/40 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-40 h-40 bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-3xl"></div>
             </motion.div>
           </div>
 
@@ -272,15 +272,22 @@ const Index = () => {
       <SubstackSection />
 
       {/* Modern CTA Section */}
-      <section className="py-24 px-4 md:px-8 bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
+      <section className="py-24 px-4 md:px-8 bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]"></div>
         <motion.div 
           initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 0.1 }}
+          whileInView={{ scale: 1, opacity: 0.15 }}
           transition={{ duration: 1.5 }}
           viewport={{ once: true }}
-          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full blur-3xl"
+          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full blur-3xl"
+        />
+        <motion.div 
+          initial={{ scale: 0, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 0.1 }}
+          transition={{ duration: 1.5, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full blur-3xl"
         />
         
         <motion.div 
@@ -321,7 +328,7 @@ const Index = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-10 py-4 text-lg h-auto rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 group border-0"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-10 py-4 text-lg h-auto rounded-full shadow-[0_20px_40px_-10px_rgba(34,197,94,0.5)] hover:shadow-[0_25px_50px_-12px_rgba(34,197,94,0.6)] transition-all duration-300 group border-0"
                 onClick={() => navigate("/signup")}
               >
                 Start Free Trial
@@ -373,9 +380,9 @@ const Index = () => {
               <p className="text-gray-400 leading-relaxed mb-8 max-w-md">
                 Empowering agricultural operations worldwide with comprehensive carbon management tools for a sustainable and profitable future.
               </p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-full px-6 py-3 border-0"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-full px-6 py-3 border-0 shadow-lg hover:shadow-xl hover:shadow-green-500/30 transition-all"
                   onClick={() => navigate("/signup")}
                 >
                   Get Started Today
