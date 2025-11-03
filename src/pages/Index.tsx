@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Leaf, Instagram, Twitter, Linkedin, ArrowRight } from "lucide-react";
+import { Leaf, Instagram, Twitter, Linkedin, ArrowRight, Code2, Database, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
 import SubstackSection from "@/components/home/SubstackSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
+import farmlyApiIllustration from "@/assets/farmly-api-illustration.jpg";
+import nasaLogo from "@/assets/logos/nasa-logo.svg";
+import ipccLogo from "@/assets/logos/ipcc-logo.png";
+import noaaLogo from "@/assets/logos/noaa-logo.png";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -104,6 +108,161 @@ const Index = () => {
 
       {/* Modern Features Section */}
       <FeaturesSection />
+
+      {/* Farmly API Section */}
+      <section className="py-24 px-4 md:px-8 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <span className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700 mb-4">
+                  Developer Tools
+                </span>
+                <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+                  Powerful <span className="font-medium text-green-600">Farmly API</span>
+                </h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Integrate accurate carbon calculations directly into your applications with our RESTful API
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="space-y-4"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Code2 className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Easy Integration</h3>
+                    <p className="text-gray-600">Simple REST endpoints with comprehensive documentation for quick implementation</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Database className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Rich Climate Data</h3>
+                    <p className="text-gray-600">Access verified data from leading scientific organizations worldwide</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Zap className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Fast & Reliable</h3>
+                    <p className="text-gray-600">99.9% uptime with lightning-fast response times for production workloads</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/farmly")}
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg h-auto rounded-full"
+                >
+                  Explore API Documentation
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
+            </motion.div>
+
+            {/* Right: Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={farmlyApiIllustration} 
+                  alt="Farmly API integration visualization showing connected farm data and analytics" 
+                  className="w-full h-auto"
+                />
+              </div>
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-green-200 rounded-full blur-3xl opacity-60"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-200 rounded-full blur-3xl opacity-60"></div>
+            </motion.div>
+          </div>
+
+          {/* Sources Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="mt-20 text-center"
+          >
+            <p className="text-sm font-medium text-gray-500 mb-8 uppercase tracking-wide">
+              Data Powered By
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-12 md:gap-16">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+                className="grayscale hover:grayscale-0 transition-all duration-300"
+              >
+                <img 
+                  src={nasaLogo} 
+                  alt="NASA - National Aeronautics and Space Administration" 
+                  className="h-16 w-auto object-contain"
+                />
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+                className="grayscale hover:grayscale-0 transition-all duration-300"
+              >
+                <img 
+                  src={ipccLogo} 
+                  alt="IPCC - Intergovernmental Panel on Climate Change" 
+                  className="h-16 w-auto object-contain"
+                />
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+                className="grayscale hover:grayscale-0 transition-all duration-300"
+              >
+                <img 
+                  src={noaaLogo} 
+                  alt="NOAA - National Oceanic and Atmospheric Administration" 
+                  className="h-16 w-auto object-contain"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Blog Section */}
       <SubstackSection />
