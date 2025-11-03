@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
 import SubstackSection from "@/components/home/SubstackSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { ToolsShowcase } from "@/components/home/ToolsShowcase";
 import farmlyApiIllustration from "@/assets/farmly-api-illustration.jpg";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
@@ -108,6 +109,9 @@ const Index = () => {
 
       {/* Modern Features Section */}
       <FeaturesSection />
+
+      {/* Tools Showcase - Dashboard & API */}
+      <ToolsShowcase />
 
       {/* Farmly API Section */}
       <section className="py-24 px-4 md:px-8 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
