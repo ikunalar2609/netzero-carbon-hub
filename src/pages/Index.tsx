@@ -33,7 +33,9 @@ const Index = () => {
       <HomeHeader />
       
       {/* Minimalist Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20 bg-gradient-to-b from-white via-green-50/30 to-white">
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20" style={{
+        background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--color-bg-subtle)) 50%, hsl(var(--background)) 100%)'
+      }}>
         <motion.div 
           initial="hidden"
           animate="visible"
@@ -45,11 +47,16 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600">
+            <span className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium" style={{
+              backgroundColor: 'hsl(var(--color-badge-success))',
+              color: 'hsl(var(--color-badge-success-text))'
+            }}>
               Agricultural Carbon Platform
             </span>
             <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light text-gray-900 tracking-tight">
-              Farmly<span className="bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">Carbon</span>
+              Farmly<span className="bg-clip-text text-transparent" style={{
+                backgroundImage: 'var(--gradient-hero-text)'
+              }}>Carbon</span>
             </h1>
           </motion.div>
           
@@ -69,7 +76,19 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate("/signup")}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl hover:shadow-green-500/25 transition-all border-0"
+              className="text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-0"
+              style={{
+                backgroundImage: 'var(--gradient-primary)',
+                boxShadow: '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundImage = 'var(--gradient-cta-hover)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundImage = 'var(--gradient-primary)';
+                e.currentTarget.style.boxShadow = '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)';
+              }}
             >
               Get Started
             </Button>
@@ -92,15 +111,15 @@ const Index = () => {
             className="pt-16 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-500"
           >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-green))' }}></div>
               <span>1.2M+ tCO₂e tracked</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-emerald))' }}></div>
               <span>235+ verified projects</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-teal))' }}></div>
               <span>Net‑zero planning</span>
             </div>
           </motion.div>
@@ -114,7 +133,9 @@ const Index = () => {
       <ToolsShowcase />
 
       {/* Farmly API Section */}
-      <section className="py-24 px-4 md:px-8 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      <section className="py-24 px-4 md:px-8 relative overflow-hidden" style={{
+        background: 'var(--gradient-subtle)'
+      }}>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text Content */}
@@ -131,11 +152,14 @@ const Index = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <span className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700 mb-4">
+                <span className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium mb-4" style={{
+                  backgroundColor: 'hsl(var(--color-badge-success))',
+                  color: 'hsl(var(--color-badge-success-text))'
+                }}>
                   Developer Tools
                 </span>
                 <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-                  Powerful <span className="font-medium text-green-600">Farmly API</span>
+                  Powerful <span className="font-medium" style={{ color: 'hsl(var(--brand-green))' }}>Farmly API</span>
                 </h2>
                 <p className="text-xl text-gray-600 leading-relaxed">
                   Integrate accurate carbon calculations directly into your applications with our RESTful API
@@ -150,8 +174,10 @@ const Index = () => {
                 className="space-y-4"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Code2 className="h-6 w-6 text-green-600" />
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
+                    backgroundColor: 'hsl(var(--color-badge-success))'
+                  }}>
+                    <Code2 className="h-6 w-6" style={{ color: 'hsl(var(--brand-green))' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Easy Integration</h3>
@@ -160,8 +186,10 @@ const Index = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Database className="h-6 w-6 text-blue-600" />
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
+                    backgroundColor: 'hsl(var(--color-badge-info))'
+                  }}>
+                    <Database className="h-6 w-6" style={{ color: 'hsl(var(--brand-emerald))' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Rich Climate Data</h3>
@@ -170,8 +198,10 @@ const Index = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <Zap className="h-6 w-6 text-purple-600" />
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
+                    backgroundColor: 'hsl(var(--color-badge-accent))'
+                  }}>
+                    <Zap className="h-6 w-6" style={{ color: 'hsl(var(--brand-teal))' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Fast & Reliable</h3>
@@ -189,7 +219,10 @@ const Index = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate("/farmly")}
-                className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-0"
+                className="text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-0"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(220 26% 14%) 0%, hsl(220 26% 10%) 100%)'
+                }}
               >
                 Explore API Documentation
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -205,7 +238,12 @@ const Index = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-[0_25px_50px_-12px_rgba(34,197,94,0.25)] transition-shadow duration-500">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-shadow duration-500" style={{
+                boxShadow: '0 20px 40px -12px rgba(0,0,0,0.15)'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)'}
+              onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 20px 40px -12px rgba(0,0,0,0.15)'}
+              >
                 <img 
                   src={farmlyApiIllustration} 
                   alt="Farmly API integration visualization showing connected farm data and analytics" 
@@ -213,8 +251,12 @@ const Index = () => {
                 />
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-green-400/40 to-emerald-400/40 rounded-full blur-3xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-40 h-40 bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-3xl"></div>
+              <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full blur-3xl" style={{
+                background: 'radial-gradient(circle, hsl(var(--glow-primary) / 0.4) 0%, transparent 70%)'
+              }}></div>
+              <div className="absolute -bottom-4 -left-4 w-40 h-40 rounded-full blur-3xl" style={{
+                background: 'radial-gradient(circle, hsl(var(--glow-emerald) / 0.35) 0%, transparent 70%)'
+              }}></div>
             </motion.div>
           </div>
 
@@ -272,7 +314,9 @@ const Index = () => {
       <SubstackSection />
 
       {/* Modern CTA Section */}
-      <section className="py-24 px-4 md:px-8 bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 relative overflow-hidden">
+      <section className="py-24 px-4 md:px-8 relative overflow-hidden" style={{
+        background: 'var(--gradient-dark)'
+      }}>
         {/* Background Elements */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]"></div>
         <motion.div 
@@ -280,14 +324,20 @@ const Index = () => {
           whileInView={{ scale: 1, opacity: 0.15 }}
           transition={{ duration: 1.5 }}
           viewport={{ once: true }}
-          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full blur-3xl"
+          className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, hsl(var(--glow-primary)) 0%, hsl(var(--glow-emerald)) 100%)'
+          }}
         />
         <motion.div 
           initial={{ scale: 0, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 0.1 }}
           transition={{ duration: 1.5, delay: 0.2 }}
           viewport={{ once: true }}
-          className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full blur-3xl"
+          className="absolute bottom-20 left-20 w-80 h-80 rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, hsl(var(--glow-emerald)) 0%, hsl(var(--glow-teal)) 100%)'
+          }}
         />
         
         <motion.div 
@@ -305,7 +355,9 @@ const Index = () => {
             className="text-4xl md:text-6xl font-light text-white mb-6"
           >
             Ready to transform your 
-            <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent font-medium"> carbon footprint?</span>
+            <span className="bg-clip-text text-transparent font-medium" style={{
+              backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-green-light)) 0%, hsl(var(--brand-emerald)) 100%)'
+            }}> carbon footprint?</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -328,8 +380,20 @@ const Index = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-10 py-4 text-lg h-auto rounded-full shadow-[0_20px_40px_-10px_rgba(34,197,94,0.5)] hover:shadow-[0_25px_50px_-12px_rgba(34,197,94,0.6)] transition-all duration-300 group border-0"
+                className="text-white px-10 py-4 text-lg h-auto rounded-full transition-all duration-300 group border-0"
                 onClick={() => navigate("/signup")}
+                style={{
+                  backgroundImage: 'var(--gradient-cta)',
+                  boxShadow: 'var(--shadow-glow-green)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundImage = 'var(--gradient-cta-hover)';
+                  e.currentTarget.style.boxShadow = '0 25px 50px -12px hsl(var(--glow-primary) / 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundImage = 'var(--gradient-cta)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                }}
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -374,7 +438,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="md:col-span-2">
               <div className="flex items-center mb-6">
-                <Leaf className="h-8 w-8 text-green-400 mr-3" />
+                <Leaf className="h-8 w-8 mr-3" style={{ color: 'hsl(var(--brand-green-light))' }} />
                 <span className="text-2xl font-semibold">FarmlyCarbon</span>
               </div>
               <p className="text-gray-400 leading-relaxed mb-8 max-w-md">
@@ -382,8 +446,18 @@ const Index = () => {
               </p>
                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-full px-6 py-3 border-0 shadow-lg hover:shadow-xl hover:shadow-green-500/30 transition-all"
+                  className="text-white rounded-full px-6 py-3 border-0 shadow-lg hover:shadow-xl transition-all"
                   onClick={() => navigate("/signup")}
+                  style={{
+                    backgroundImage: 'var(--gradient-primary)',
+                    boxShadow: '0 4px 14px 0 hsl(var(--glow-primary) / 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '0 4px 14px 0 hsl(var(--glow-primary) / 0.3)';
+                  }}
                 >
                   Get Started Today
                   <ArrowRight className="ml-2 h-4 w-4" />

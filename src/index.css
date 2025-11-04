@@ -37,18 +37,38 @@
 
     --radius: 0.75rem;
     
-    /* Brand colors - Enhanced green palette */
-    --brand-green: 142 71% 45%;           /* #22c55e - Vibrant green */
-    --brand-green-dark: 142 71% 35%;      /* Darker shade */
-    --brand-green-light: 142 71% 55%;     /* Lighter shade */
+    /* Brand colors - Cohesive green palette */
+    --brand-green: 142 71% 45%;           /* #22c55e - Primary green */
+    --brand-green-dark: 142 71% 35%;      /* Darker green */
+    --brand-green-light: 142 71% 55%;     /* Lighter green */
     --brand-green-foreground: 0 0% 100%;
-    --brand-green-glow: 142 71% 45%;      /* For glow effects */
+    --brand-emerald: 158 64% 52%;         /* Complementary emerald */
+    --brand-teal: 171 77% 45%;            /* Supporting teal */
     
-    /* Gradient tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(158 64% 52%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(142 71% 98%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(220 14% 98%) 0%, hsl(0 0% 100%) 100%);
+    /* Semantic color tokens */
+    --color-hero-gradient-from: 142 71% 48%;
+    --color-hero-gradient-to: 158 64% 52%;
+    --color-bg-subtle: 142 71% 98%;
+    --color-badge-success: 142 71% 95%;
+    --color-badge-success-text: 142 71% 35%;
+    --color-badge-info: 217 91% 95%;
+    --color-badge-info-text: 217 91% 35%;
+    --color-badge-accent: 269 91% 95%;
+    --color-badge-accent-text: 269 91% 40%;
+    
+    /* Gradient tokens - Harmonious green palette */
+    --gradient-primary: linear-gradient(135deg, hsl(142 71% 48%) 0%, hsl(158 64% 52%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(142 71% 98%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-hero-text: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(158 64% 52%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(142 20% 98%) 0%, hsl(0 0% 100%) 100%);
     --gradient-dark: linear-gradient(135deg, hsl(220 26% 8%) 0%, hsl(142 40% 12%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(142 71% 50%) 0%, hsl(158 64% 52%) 100%);
+    --gradient-cta-hover: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(158 64% 48%) 100%);
+    
+    /* Glow effects - Coordinated with palette */
+    --glow-primary: 142 71% 50%;
+    --glow-emerald: 158 64% 52%;
+    --glow-teal: 171 77% 50%;
     
     /* Farmly theme colors */
     /* Calculator Theme Colors - Clean & Professional */
@@ -65,8 +85,10 @@
     --shadow-elevation-low: 0 1px 3px 0 rgb(0 0 0 / 0.06);
     --shadow-elevation-medium: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 6px -2px rgb(0 0 0 / 0.04);
     --shadow-elevation-high: 0 12px 24px -4px rgb(0 0 0 / 0.12), 0 6px 12px -6px rgb(0 0 0 / 0.08);
-    --shadow-glow: 0 0 20px -5px rgb(59 130 246 / 0.5);
-    --shadow-glow-green: 0 0 40px -10px rgb(34 197 94 / 0.4);
+    --shadow-glow: 0 0 30px -5px hsl(var(--glow-primary) / 0.5);
+    --shadow-glow-green: 0 0 40px -10px hsl(var(--glow-primary) / 0.4);
+    --shadow-glow-emerald: 0 0 35px -8px hsl(var(--glow-emerald) / 0.45);
+    --shadow-glow-teal: 0 0 30px -7px hsl(var(--glow-teal) / 0.4);
     --shadow-card-hover: 0 20px 40px -8px rgb(0 0 0 / 0.15);
   }
 
