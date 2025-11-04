@@ -313,6 +313,50 @@ const Index = () => {
       {/* Blog Section */}
       <SubstackSection />
 
+      {/* Calendar Booking Section */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--brand-green))] via-[hsl(var(--brand-emerald))] to-[hsl(var(--brand-teal))] opacity-5" />
+        <div className="container mx-auto px-4 relative z-10 max-w-5xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[hsl(var(--brand-green))] via-[hsl(var(--brand-emerald))] to-[hsl(var(--brand-teal))] bg-clip-text text-transparent">
+              Let's Connect
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-2">
+              Got something exciting in mind? Whether it's about ideas, collaborations, or just a good conversation — I'd love to connect.
+            </p>
+            <p className="text-base text-muted-foreground">
+              Pick a time that works best for you below — it's quick, easy, and right here on the page.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--brand-green))] via-[hsl(var(--brand-emerald))] to-[hsl(var(--brand-teal))] opacity-10 blur-3xl rounded-3xl" />
+            <div className="relative bg-card/50 backdrop-blur-sm p-4 rounded-2xl border border-border/50 shadow-2xl">
+              <iframe 
+                src="https://cal.com/kunal-rahangdale-8dbab0/30min?overlayCalendar=true" 
+                width="100%" 
+                height="700" 
+                style={{ border: 'none', borderRadius: '16px' }}
+                allow="fullscreen"
+                title="Schedule a meeting"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Modern CTA Section */}
       <section className="py-24 px-4 md:px-8 relative overflow-hidden" style={{
         background: 'var(--gradient-dark)'
