@@ -47,8 +47,8 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <span className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium" style={{
-              backgroundColor: 'hsl(var(--color-badge-success))',
+            <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide shadow-sm" style={{
+              backgroundImage: 'var(--gradient-badge)',
               color: 'hsl(var(--color-badge-success-text))'
             }}>
               Agricultural Carbon Platform
@@ -76,18 +76,20 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate("/signup")}
-              className="text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-0"
+              className="text-white px-10 py-6 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0"
               style={{
-                backgroundImage: 'var(--gradient-primary)',
-                boxShadow: '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)'
+                backgroundImage: 'var(--gradient-cta)',
+                boxShadow: 'var(--shadow-glow-green)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundImage = 'var(--gradient-cta-hover)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                e.currentTarget.style.boxShadow = '0 12px 50px -10px hsl(var(--glow-primary) / 0.65)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundImage = 'var(--gradient-primary)';
-                e.currentTarget.style.boxShadow = '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)';
+                e.currentTarget.style.backgroundImage = 'var(--gradient-cta)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               Get Started
@@ -97,7 +99,18 @@ const Index = () => {
               variant="outline" 
               size="lg" 
               onClick={() => navigate("/login")}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 text-lg h-auto rounded-full"
+              className="border-2 text-gray-700 hover:bg-gray-50 px-10 py-6 text-lg h-auto rounded-full font-semibold transition-all duration-300"
+              style={{
+                borderColor: 'hsl(var(--brand-green) / 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'hsl(var(--brand-green) / 0.6)';
+                e.currentTarget.style.backgroundColor = 'hsl(var(--brand-green) / 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'hsl(var(--brand-green) / 0.3)';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
             >
               Sign In
             </Button>
@@ -152,8 +165,8 @@ const Index = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <span className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium mb-4" style={{
-                  backgroundColor: 'hsl(var(--color-badge-success))',
+                <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide mb-4 shadow-sm" style={{
+                  backgroundImage: 'var(--gradient-badge)',
                   color: 'hsl(var(--color-badge-success-text))'
                 }}>
                   Developer Tools
@@ -219,13 +232,22 @@ const Index = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate("/farmly")}
-                className="text-white px-8 py-4 text-lg h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-0"
+                className="text-white px-8 py-4 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 group"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(220 26% 14%) 0%, hsl(220 26% 10%) 100%)'
+                  backgroundImage: 'linear-gradient(135deg, hsl(220 26% 14%) 0%, hsl(142 45% 12%) 100%)',
+                  boxShadow: '0 8px 24px -8px hsl(220 26% 8% / 0.5)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 12px 32px -8px hsl(220 26% 8% / 0.7)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 8px 24px -8px hsl(220 26% 8% / 0.5)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 Explore API Documentation
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               </motion.div>
             </motion.div>
@@ -238,11 +260,17 @@ const Index = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-shadow duration-500" style={{
-                boxShadow: '0 20px 40px -12px rgba(0,0,0,0.15)'
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-all duration-500" style={{
+                boxShadow: 'var(--shadow-elevation-high)'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)'}
-              onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 20px 40px -12px rgba(0,0,0,0.15)'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'var(--shadow-elevation-high)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
               >
                 <img 
                   src={farmlyApiIllustration} 
@@ -251,11 +279,11 @@ const Index = () => {
                 />
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full blur-3xl" style={{
-                background: 'radial-gradient(circle, hsl(var(--glow-primary) / 0.4) 0%, transparent 70%)'
+              <div className="absolute -top-6 -right-6 w-40 h-40 rounded-full blur-3xl" style={{
+                background: 'radial-gradient(circle, hsl(var(--glow-primary) / 0.5) 0%, transparent 70%)'
               }}></div>
-              <div className="absolute -bottom-4 -left-4 w-40 h-40 rounded-full blur-3xl" style={{
-                background: 'radial-gradient(circle, hsl(var(--glow-emerald) / 0.35) 0%, transparent 70%)'
+              <div className="absolute -bottom-6 -left-6 w-48 h-48 rounded-full blur-3xl" style={{
+                background: 'radial-gradient(circle, hsl(var(--glow-emerald) / 0.45) 0%, transparent 70%)'
               }}></div>
             </motion.div>
           </div>
@@ -314,8 +342,12 @@ const Index = () => {
       <SubstackSection />
 
       {/* Calendar Booking Section */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--brand-green))] via-[hsl(var(--brand-emerald))] to-[hsl(var(--brand-teal))] opacity-5" />
+      <section className="relative py-24 overflow-hidden" style={{
+        background: 'var(--gradient-subtle)'
+      }}>
+        <div className="absolute inset-0 opacity-30" style={{
+          backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--glow-primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--glow-emerald) / 0.15) 0%, transparent 50%)'
+        }} />
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -324,7 +356,9 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[hsl(var(--brand-green))] via-[hsl(var(--brand-emerald))] to-[hsl(var(--brand-teal))] bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent" style={{
+              backgroundImage: 'var(--gradient-hero-text)'
+            }}>
               Let's Connect
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-2">
@@ -342,8 +376,13 @@ const Index = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--brand-green))] via-[hsl(var(--brand-emerald))] to-[hsl(var(--brand-teal))] opacity-10 blur-3xl rounded-3xl" />
-            <div className="relative bg-card/50 backdrop-blur-sm p-4 rounded-2xl border border-border/50 shadow-2xl">
+            <div className="absolute inset-0 blur-3xl rounded-3xl" style={{
+              backgroundImage: 'linear-gradient(135deg, hsl(var(--glow-primary) / 0.12) 0%, hsl(var(--glow-emerald) / 0.12) 100%)'
+            }} />
+            <div className="relative bg-card/60 backdrop-blur-sm p-4 rounded-2xl border shadow-2xl" style={{
+              borderColor: 'hsl(var(--brand-green) / 0.15)',
+              boxShadow: 'var(--shadow-elevation-high)'
+            }}>
               <iframe 
                 src="https://cal.com/kunal-rahangdale-8dbab0/30min?overlayCalendar=true" 
                 width="100%" 
@@ -396,11 +435,11 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-light text-white mb-6"
+            className="text-4xl md:text-6xl font-light text-white mb-6 leading-tight"
           >
             Ready to transform your 
-            <span className="bg-clip-text text-transparent font-medium" style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-green-light)) 0%, hsl(var(--brand-emerald)) 100%)'
+            <span className="bg-clip-text text-transparent font-semibold" style={{
+              backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-green-light)) 0%, hsl(var(--brand-teal) / 1.1) 100%)'
             }}> carbon footprint?</span>
           </motion.h2>
           <motion.p 
@@ -424,19 +463,19 @@ const Index = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button 
                 size="lg" 
-                className="text-white px-10 py-4 text-lg h-auto rounded-full transition-all duration-300 group border-0"
+                className="text-white px-10 py-6 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 group"
                 onClick={() => navigate("/signup")}
                 style={{
-                  backgroundImage: 'var(--gradient-cta)',
-                  boxShadow: 'var(--shadow-glow-green)'
+                  backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-green-light)) 0%, hsl(var(--brand-teal) / 1.1) 100%)',
+                  boxShadow: '0 8px 30px -8px hsl(var(--brand-green-light) / 0.5)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundImage = 'var(--gradient-cta-hover)';
-                  e.currentTarget.style.boxShadow = '0 25px 50px -12px hsl(var(--glow-primary) / 0.6)';
+                  e.currentTarget.style.boxShadow = '0 12px 40px -8px hsl(var(--brand-green-light) / 0.7)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundImage = 'var(--gradient-cta)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                  e.currentTarget.style.boxShadow = '0 8px 30px -8px hsl(var(--brand-green-light) / 0.5)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 Start Free Trial
