@@ -37,32 +37,39 @@
 
     --radius: 0.75rem;
     
-    /* Climate-tech color palette - Senken Atlas inspired */
-    --neon-lime: 73 100% 62%;             /* #D9FF00 - Primary accent */
-    --pale-mint: 85 25% 95%;              /* #F2F6ED - Soft background */
-    --olive-green: 80 10% 29%;            /* #404B3B - CTA block */
-    --dark-gray: 0 0% 20%;                /* #333333 - Typography */
-    --light-gray: 0 0% 96%;               /* #F5F5F5 - Card backgrounds */
+    /* Brand colors - Refined green palette */
+    --brand-green: 142 76% 42%;           /* Rich emerald green - primary */
+    --brand-green-dark: 142 76% 32%;      /* Deep forest green */
+    --brand-green-light: 142 76% 62%;     /* Fresh mint green */
+    --brand-green-foreground: 0 0% 100%;
+    --brand-emerald: 156 72% 47%;         /* Vibrant emerald */
+    --brand-teal: 168 84% 42%;            /* Ocean teal */
     
     /* Semantic color tokens */
-    --color-hero-gradient-from: 73 100% 62%;
-    --color-hero-gradient-to: 85 100% 70%;
-    --color-bg-subtle: 85 25% 95%;
-    --color-bg-pale-mint: 85 25% 95%;
-    --color-bg-olive: 80 10% 29%;
-    --color-accent-neon: 73 100% 62%;
-    --color-text-dark: 0 0% 20%;
-    --color-badge-success: 85 25% 95%;
-    --color-badge-success-text: 80 10% 29%;
+    --color-hero-gradient-from: 142 76% 42%;
+    --color-hero-gradient-to: 156 72% 47%;
+    --color-bg-subtle: 142 50% 97%;
+    --color-badge-success: 142 76% 96%;
+    --color-badge-success-text: 142 76% 32%;
+    --color-badge-info: 168 84% 96%;
+    --color-badge-info-text: 168 84% 32%;
+    --color-badge-accent: 156 72% 96%;
+    --color-badge-accent-text: 156 72% 35%;
     
-    /* Gradient tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(73 100% 62%) 0%, hsl(85 100% 70%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(85 25% 95%) 50%, hsl(0 0% 100%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(85 25% 95%) 0%, hsl(0 0% 100%) 100%);
+    /* Gradient tokens - Harmonious transitions */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(156 72% 47%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(142 50% 97%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-hero-text: linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(168 84% 42%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(142 30% 97%) 0%, hsl(0 0% 100%) 50%, hsl(156 30% 97%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(220 26% 8%) 0%, hsl(142 45% 10%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(168 84% 42%) 100%);
+    --gradient-cta-hover: linear-gradient(135deg, hsl(142 76% 38%) 0%, hsl(168 84% 38%) 100%);
+    --gradient-badge: linear-gradient(135deg, hsl(142 76% 96%) 0%, hsl(156 72% 96%) 100%);
     
-    /* Glow effects */
-    --glow-neon: 73 100% 62%;
-    --glow-lime: 85 100% 70%;
+    /* Glow effects - Enhanced luminosity */
+    --glow-primary: 142 76% 45%;
+    --glow-emerald: 156 72% 50%;
+    --glow-teal: 168 84% 45%;
     
     /* Farmly theme colors */
     /* Calculator Theme Colors - Clean & Professional */
@@ -75,12 +82,15 @@
     --calc-card: 0 0% 100%;             /* Pure white for cards */
     --calc-border: 220 13% 91%;         /* Subtle border */
     
-    /* Shadows and effects - Clean, minimal */
-    --shadow-elevation-low: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-    --shadow-elevation-medium: 0 2px 8px rgba(0 0 0 / 0.05);
-    --shadow-elevation-high: 0 4px 16px rgba(0 0 0 / 0.08);
-    --shadow-card: 0 2px 8px rgba(0 0 0 / 0.05);
-    --shadow-glow-neon: 0 0 20px hsl(var(--glow-neon) / 0.3);
+    /* Shadows and effects - Enhanced depth */
+    --shadow-elevation-low: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    --shadow-elevation-medium: 0 4px 14px -2px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.05);
+    --shadow-elevation-high: 0 12px 28px -4px rgb(0 0 0 / 0.12), 0 6px 14px -6px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 35px -8px hsl(var(--glow-primary) / 0.6);
+    --shadow-glow-green: 0 8px 45px -12px hsl(var(--glow-primary) / 0.5);
+    --shadow-glow-emerald: 0 8px 40px -10px hsl(var(--glow-emerald) / 0.5);
+    --shadow-glow-teal: 0 8px 35px -10px hsl(var(--glow-teal) / 0.45);
+    --shadow-card-hover: 0 20px 45px -8px rgb(0 0 0 / 0.18), 0 8px 20px -4px hsl(var(--glow-primary) / 0.1);
   }
 
   .dark {
