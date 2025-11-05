@@ -39,7 +39,7 @@ export const ToolsShowcase = () => {
               <div className="flex items-start gap-4">
                 <CheckCircle2 className="h-6 w-6 text-[hsl(236,70%,40%)] flex-shrink-0 mt-1" />
                 <p className="text-[hsl(236,70%,30%)] text-lg leading-relaxed">
-                  Quickly integrate Climatiq data into your existing workflows and spreadsheets
+                  Quickly integrate Farmly Data data into your existing workflows and spreadsheets
                 </p>
               </div>
               
