@@ -10,6 +10,11 @@ import farmlyApiIllustration from "@/assets/farmly-api-illustration.png";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
 import noaaLogo from "@/assets/logos/noaa-logo.png";
+import sbtiLogo from "@/assets/logos/sbti-logo.png";
+import oxfordLogo from "@/assets/logos/oxford-logo.png";
+import carbonIntegrityLogo from "@/assets/logos/carbon-integrity-logo.png";
+import wwfLogo from "@/assets/logos/wwf-logo.png";
+import goldStandardLogo from "@/assets/logos/gold-standard-logo.png";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -340,6 +345,143 @@ const Index = () => {
 
       {/* Blog Section */}
       <SubstackSection />
+
+      {/* Climate Standards Section */}
+      <section className="py-24 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <h2 className="text-4xl md:text-5xl font-light text-gray-900 leading-tight">
+                Invest in carbon credits backed by{" "}
+                <span className="font-medium" style={{ color: 'hsl(var(--brand-green))' }}>
+                  science, not intuition
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 leading-relaxed">
+                Base your climate strategy on credible science, not guesswork. Align your carbon offsetting with robust standards that fit your company's unique goals, budget, and marketing needs.
+              </p>
+            </motion.div>
+
+            {/* Right: Logo Grid */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-3 gap-8"
+            >
+              {/* IPCC */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+              >
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <img 
+                    src={ipccLogo} 
+                    alt="IPCC 1.5°C aligned" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--brand-emerald))' }}>
+                  IPCC 1.5°C
+                </span>
+              </motion.div>
+
+              {/* SBTi */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+              >
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <img 
+                    src={sbtiLogo} 
+                    alt="SBTi Net Zero" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-sm font-medium text-center text-gray-700">
+                  SBTi Net Zero
+                </span>
+              </motion.div>
+
+              {/* Oxford */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+              >
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <img 
+                    src={oxfordLogo} 
+                    alt="Oxford Principles" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-sm font-medium text-center text-gray-700">
+                  Oxford Principles
+                </span>
+              </motion.div>
+
+              {/* Carbon Integrity */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+              >
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <img 
+                    src={carbonIntegrityLogo} 
+                    alt="Carbon Integrity" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(45 93% 47%)' }}>
+                  Carbon Integrity
+                </span>
+              </motion.div>
+
+              {/* WWF */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+              >
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <img 
+                    src={wwfLogo} 
+                    alt="WWF" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-sm font-medium text-center text-gray-700">
+                  WWF
+                </span>
+              </motion.div>
+
+              {/* Gold Standard */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+              >
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <img 
+                    src={goldStandardLogo} 
+                    alt="Gold Standard" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-sm font-medium text-center text-gray-700">
+                  Gold Standard
+                </span>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* Calendar Booking Section */}
       <section className="relative py-24 overflow-hidden" style={{
