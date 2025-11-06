@@ -39,7 +39,7 @@ const Index = () => {
       
       {/* Minimalist Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20" style={{
-        background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--color-bg-subtle)) 50%, hsl(var(--background)) 100%)'
+        background: 'var(--gradient-hero)'
       }}>
         <motion.div 
           initial="hidden"
@@ -52,13 +52,16 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide shadow-sm" style={{
-              backgroundImage: 'var(--gradient-badge)',
-              color: 'hsl(var(--color-badge-success-text))'
+            <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide" style={{
+              background: 'hsl(var(--badge-bg))',
+              color: 'hsl(var(--badge-text))',
+              boxShadow: 'var(--shadow-sm)'
             }}>
               Agricultural Carbon Platform
             </span>
-            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light text-gray-900 tracking-tight">
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light tracking-tight" style={{
+              color: 'hsl(var(--text-primary))'
+            }}>
               Farmly<span className="bg-clip-text text-transparent" style={{
                 backgroundImage: 'var(--gradient-hero-text)'
               }}>Carbon</span>
@@ -68,7 +71,8 @@ const Index = () => {
           <motion.p 
             variants={fadeInUp}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed"
+            style={{ color: 'hsl(var(--text-secondary))' }}
           >
             Simple, powerful carbon management for sustainable agriculture
           </motion.p>
@@ -81,19 +85,19 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate("/signup")}
-              className="text-white px-10 py-6 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+              className="text-white px-10 py-6 text-lg h-auto rounded-full font-semibold transition-all duration-300 border-0"
               style={{
                 backgroundImage: 'var(--gradient-cta)',
-                boxShadow: 'var(--shadow-glow-green)'
+                boxShadow: 'var(--shadow-glow)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundImage = 'var(--gradient-cta-hover)';
-                e.currentTarget.style.boxShadow = '0 12px 50px -10px hsl(var(--glow-primary) / 0.65)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow-hover)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundImage = 'var(--gradient-cta)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
@@ -104,17 +108,18 @@ const Index = () => {
               variant="outline" 
               size="lg" 
               onClick={() => navigate("/login")}
-              className="border-2 text-gray-700 hover:bg-gray-50 px-10 py-6 text-lg h-auto rounded-full font-semibold transition-all duration-300"
+              className="border-2 px-10 py-6 text-lg h-auto rounded-full font-semibold transition-all duration-300 bg-white"
               style={{
-                borderColor: 'hsl(var(--brand-green) / 0.3)'
+                borderColor: 'hsl(var(--brand-primary) / 0.3)',
+                color: 'hsl(var(--text-primary))'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'hsl(var(--brand-green) / 0.6)';
-                e.currentTarget.style.backgroundColor = 'hsl(var(--brand-green) / 0.05)';
+                e.currentTarget.style.borderColor = 'hsl(var(--brand-primary))';
+                e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'hsl(var(--brand-green) / 0.3)';
-                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = 'hsl(var(--brand-primary) / 0.3)';
+                e.currentTarget.style.backgroundColor = 'white';
               }}
             >
               Sign In
@@ -126,18 +131,19 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="pt-16 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-500"
+            className="pt-16 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm"
+            style={{ color: 'hsl(var(--text-muted))' }}
           >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-green))' }}></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-primary))' }}></div>
               <span>1.2M+ tCO₂e tracked</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-emerald))' }}></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-secondary))' }}></div>
               <span>235+ verified projects</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-teal))' }}></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--brand-accent))' }}></div>
               <span>Net‑zero planning</span>
             </div>
           </motion.div>
@@ -170,16 +176,17 @@ const Index = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide mb-4 shadow-sm" style={{
-                  backgroundImage: 'var(--gradient-badge)',
-                  color: 'hsl(var(--color-badge-success-text))'
+                <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide mb-4" style={{
+                  background: 'hsl(var(--badge-secondary-bg))',
+                  color: 'hsl(var(--badge-secondary-text))',
+                  boxShadow: 'var(--shadow-sm)'
                 }}>
                   Developer Tools
                 </span>
-                <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-                  Powerful <span className="font-medium" style={{ color: 'hsl(var(--brand-green))' }}>Farmly API</span>
+                <h2 className="text-4xl md:text-5xl font-light mb-4" style={{ color: 'hsl(var(--text-primary))' }}>
+                  Powerful <span className="font-medium" style={{ color: 'hsl(var(--brand-primary))' }}>Farmly API</span>
                 </h2>
-                <p className="text-xl text-gray-600 leading-relaxed">
+                <p className="text-xl leading-relaxed" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Integrate accurate carbon calculations directly into your applications with our RESTful API
                 </p>
               </motion.div>
@@ -193,37 +200,37 @@ const Index = () => {
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--color-badge-success))'
+                    backgroundColor: 'hsl(var(--badge-bg))'
                   }}>
-                    <Code2 className="h-6 w-6" style={{ color: 'hsl(var(--brand-green))' }} />
+                    <Code2 className="h-6 w-6" style={{ color: 'hsl(var(--brand-primary))' }} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Easy Integration</h3>
-                    <p className="text-gray-600">Simple REST endpoints with comprehensive documentation for quick implementation</p>
+                    <h3 className="font-semibold mb-1" style={{ color: 'hsl(var(--text-primary))' }}>Easy Integration</h3>
+                    <p style={{ color: 'hsl(var(--text-secondary))' }}>Simple REST endpoints with comprehensive documentation for quick implementation</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--color-badge-info))'
+                    backgroundColor: 'hsl(var(--badge-secondary-bg))'
                   }}>
-                    <Database className="h-6 w-6" style={{ color: 'hsl(var(--brand-emerald))' }} />
+                    <Database className="h-6 w-6" style={{ color: 'hsl(var(--brand-secondary))' }} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Rich Climate Data</h3>
-                    <p className="text-gray-600">Access verified data from leading scientific organizations worldwide</p>
+                    <h3 className="font-semibold mb-1" style={{ color: 'hsl(var(--text-primary))' }}>Rich Climate Data</h3>
+                    <p style={{ color: 'hsl(var(--text-secondary))' }}>Access verified data from leading scientific organizations worldwide</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--color-badge-accent))'
+                    backgroundColor: 'hsl(var(--badge-accent-bg))'
                   }}>
-                    <Zap className="h-6 w-6" style={{ color: 'hsl(var(--brand-teal))' }} />
+                    <Zap className="h-6 w-6" style={{ color: 'hsl(var(--brand-accent))' }} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Fast & Reliable</h3>
-                    <p className="text-gray-600">99.9% uptime with lightning-fast response times for production workloads</p>
+                    <h3 className="font-semibold mb-1" style={{ color: 'hsl(var(--text-primary))' }}>Fast & Reliable</h3>
+                    <p style={{ color: 'hsl(var(--text-secondary))' }}>99.9% uptime with lightning-fast response times for production workloads</p>
                   </div>
                 </div>
               </motion.div>
@@ -237,17 +244,17 @@ const Index = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate("/farmly")}
-                className="text-white px-8 py-4 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 group"
+                className="text-white px-8 py-4 text-lg h-auto rounded-full font-semibold transition-all duration-300 border-0 group"
                 style={{
-                  backgroundImage: 'linear-gradient(135deg, hsl(220 26% 14%) 0%, hsl(142 45% 12%) 100%)',
-                  boxShadow: '0 8px 24px -8px hsl(220 26% 8% / 0.5)'
+                  backgroundImage: 'var(--gradient-dark)',
+                  boxShadow: 'var(--shadow-md)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 12px 32px -8px hsl(220 26% 8% / 0.7)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 8px 24px -8px hsl(220 26% 8% / 0.5)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
@@ -265,15 +272,15 @@ const Index = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-all duration-500" style={{
-                boxShadow: 'var(--shadow-elevation-high)'
+              <div className="relative rounded-2xl overflow-hidden transition-all duration-500" style={{
+                boxShadow: 'var(--shadow-lg)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-xl)';
                 e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'var(--shadow-elevation-high)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
               >
@@ -301,7 +308,7 @@ const Index = () => {
             viewport={{ once: true }}
             className="mt-20 text-center"
           >
-            <p className="text-sm font-medium text-gray-500 mb-8 uppercase tracking-wide">
+            <p className="text-sm font-medium mb-8 uppercase tracking-wide" style={{ color: 'hsl(var(--text-muted))' }}>
               Data Powered By
             </p>
             <div className="flex flex-wrap items-center justify-center gap-12 md:gap-16">
@@ -358,13 +365,13 @@ const Index = () => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <h2 className="text-4xl md:text-5xl font-light text-gray-900 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-light leading-tight" style={{ color: 'hsl(var(--text-primary))' }}>
                 Invest in carbon credits backed by{" "}
-                <span className="font-medium" style={{ color: 'hsl(var(--brand-green))' }}>
+                <span className="font-medium" style={{ color: 'hsl(var(--brand-primary))' }}>
                   science, not intuition
                 </span>
               </h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
+              <p className="text-xl leading-relaxed" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Base your climate strategy on credible science, not guesswork. Align your carbon offsetting with robust standards that fit your company's unique goals, budget, and marketing needs.
               </p>
             </motion.div>
@@ -380,7 +387,9 @@ const Index = () => {
               {/* IPCC */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                 className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
                   <img 
@@ -389,7 +398,7 @@ const Index = () => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--brand-emerald))' }}>
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--brand-primary))' }}>
                   IPCC 1.5°C
                 </span>
               </motion.div>
@@ -397,7 +406,9 @@ const Index = () => {
               {/* SBTi */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                 className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
                   <img 
@@ -406,7 +417,7 @@ const Index = () => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-sm font-medium text-center text-gray-700">
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--text-secondary))' }}>
                   SBTi Net Zero
                 </span>
               </motion.div>
@@ -414,7 +425,9 @@ const Index = () => {
               {/* Oxford */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                 className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
                   <img 
@@ -423,7 +436,7 @@ const Index = () => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-sm font-medium text-center text-gray-700">
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Oxford Principles
                 </span>
               </motion.div>
@@ -431,7 +444,9 @@ const Index = () => {
               {/* Carbon Integrity */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                 className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
                   <img 
@@ -440,7 +455,7 @@ const Index = () => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-sm font-medium text-center" style={{ color: 'hsl(45 93% 47%)' }}>
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--brand-accent))' }}>
                   Carbon Integrity
                 </span>
               </motion.div>
@@ -448,7 +463,9 @@ const Index = () => {
               {/* WWF */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                 className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
                   <img 
@@ -457,7 +474,7 @@ const Index = () => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-sm font-medium text-center text-gray-700">
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--text-secondary))' }}>
                   WWF
                 </span>
               </motion.div>
@@ -465,7 +482,9 @@ const Index = () => {
               {/* Gold Standard */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                 className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-300"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div className="w-20 h-20 flex items-center justify-center">
                   <img 
@@ -474,7 +493,7 @@ const Index = () => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-sm font-medium text-center text-gray-700">
+                <span className="text-sm font-medium text-center" style={{ color: 'hsl(var(--brand-secondary))' }}>
                   Gold Standard
                 </span>
               </motion.div>
@@ -488,7 +507,7 @@ const Index = () => {
         background: 'var(--gradient-subtle)'
       }}>
         <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--glow-primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--glow-emerald) / 0.15) 0%, transparent 50%)'
+          backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--glow-primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--glow-secondary) / 0.15) 0%, transparent 50%)'
         }} />
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <motion.div
@@ -519,11 +538,11 @@ const Index = () => {
             className="relative"
           >
             <div className="absolute inset-0 blur-3xl rounded-3xl" style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(var(--glow-primary) / 0.12) 0%, hsl(var(--glow-emerald) / 0.12) 100%)'
+              backgroundImage: 'linear-gradient(135deg, hsl(var(--glow-primary) / 0.12) 0%, hsl(var(--glow-secondary) / 0.12) 100%)'
             }} />
             <div className="relative bg-card/60 backdrop-blur-sm p-4 rounded-2xl border shadow-2xl" style={{
-              borderColor: 'hsl(var(--brand-green) / 0.15)',
-              boxShadow: 'var(--shadow-elevation-high)'
+              borderColor: 'hsl(var(--brand-primary) / 0.15)',
+              boxShadow: 'var(--shadow-lg)'
             }}>
               <iframe 
                 src="https://cal.com/kunal-rahangdale-8dbab0/30min?overlayCalendar=true" 
@@ -551,7 +570,7 @@ const Index = () => {
           viewport={{ once: true }}
           className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl"
           style={{
-            background: 'radial-gradient(circle, hsl(var(--glow-primary)) 0%, hsl(var(--glow-emerald)) 100%)'
+            background: 'radial-gradient(circle, hsl(var(--glow-primary)) 0%, hsl(var(--glow-secondary)) 100%)'
           }}
         />
         <motion.div 
@@ -561,7 +580,7 @@ const Index = () => {
           viewport={{ once: true }}
           className="absolute bottom-20 left-20 w-80 h-80 rounded-full blur-3xl"
           style={{
-            background: 'radial-gradient(circle, hsl(var(--glow-emerald)) 0%, hsl(var(--glow-teal)) 100%)'
+            background: 'radial-gradient(circle, hsl(var(--glow-secondary)) 0%, hsl(var(--brand-accent)) 100%)'
           }}
         />
         
@@ -581,7 +600,7 @@ const Index = () => {
           >
             Ready to transform your 
             <span className="bg-clip-text text-transparent font-semibold" style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-green-light)) 0%, hsl(var(--brand-teal) / 1.1) 100%)'
+              backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-secondary)) 100%)'
             }}> carbon footprint?</span>
           </motion.h2>
           <motion.p 

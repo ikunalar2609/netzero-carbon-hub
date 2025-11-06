@@ -37,39 +37,44 @@
 
     --radius: 0.75rem;
     
-    /* Brand colors - Refined green palette */
-    --brand-green: 142 76% 42%;           /* Rich emerald green - primary */
-    --brand-green-dark: 142 76% 32%;      /* Deep forest green */
-    --brand-green-light: 142 76% 62%;     /* Fresh mint green */
-    --brand-green-foreground: 0 0% 100%;
-    --brand-emerald: 156 72% 47%;         /* Vibrant emerald */
-    --brand-teal: 168 84% 42%;            /* Ocean teal */
+    /* Brand colors - Cohesive green palette */
+    --brand-primary: 158 64% 45%;         /* Fresh emerald - main brand */
+    --brand-primary-light: 158 64% 55%;   /* Light emerald */
+    --brand-primary-dark: 158 64% 35%;    /* Deep emerald */
+    --brand-secondary: 172 66% 48%;       /* Teal accent */
+    --brand-accent: 142 71% 45%;          /* Forest green */
     
-    /* Semantic color tokens */
-    --color-hero-gradient-from: 142 76% 42%;
-    --color-hero-gradient-to: 156 72% 47%;
-    --color-bg-subtle: 142 50% 97%;
-    --color-badge-success: 142 76% 96%;
-    --color-badge-success-text: 142 76% 32%;
-    --color-badge-info: 168 84% 96%;
-    --color-badge-info-text: 168 84% 32%;
-    --color-badge-accent: 156 72% 96%;
-    --color-badge-accent-text: 156 72% 35%;
+    /* Text colors */
+    --text-primary: 220 15% 20%;          /* Dark gray */
+    --text-secondary: 220 9% 46%;         /* Medium gray */
+    --text-muted: 220 9% 60%;             /* Light gray */
     
-    /* Gradient tokens - Harmonious transitions */
-    --gradient-primary: linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(156 72% 47%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(142 50% 97%) 50%, hsl(0 0% 100%) 100%);
-    --gradient-hero-text: linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(168 84% 42%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(142 30% 97%) 0%, hsl(0 0% 100%) 50%, hsl(156 30% 97%) 100%);
-    --gradient-dark: linear-gradient(135deg, hsl(220 26% 8%) 0%, hsl(142 45% 10%) 100%);
-    --gradient-cta: linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(168 84% 42%) 100%);
-    --gradient-cta-hover: linear-gradient(135deg, hsl(142 76% 38%) 0%, hsl(168 84% 38%) 100%);
-    --gradient-badge: linear-gradient(135deg, hsl(142 76% 96%) 0%, hsl(156 72% 96%) 100%);
+    /* Background colors */
+    --bg-subtle: 158 40% 98%;             /* Very pale mint */
+    --bg-soft: 158 35% 96%;               /* Soft mint */
+    --bg-card: 0 0% 100%;                 /* Pure white */
     
-    /* Glow effects - Enhanced luminosity */
-    --glow-primary: 142 76% 45%;
-    --glow-emerald: 156 72% 50%;
-    --glow-teal: 168 84% 45%;
+    /* Badge colors */
+    --badge-bg: 158 64% 96%;
+    --badge-text: 158 64% 30%;
+    --badge-secondary-bg: 172 66% 96%;
+    --badge-secondary-text: 172 66% 30%;
+    --badge-accent-bg: 142 71% 96%;
+    --badge-accent-text: 142 71% 30%;
+    
+    /* Gradient tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(172 66% 48%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(158 40% 98%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-hero-text: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(172 66% 48%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(158 35% 96%) 0%, hsl(0 0% 100%) 50%, hsl(158 35% 96%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(172 66% 48%) 100%);
+    --gradient-cta-hover: linear-gradient(135deg, hsl(158 64% 42%) 0%, hsl(172 66% 45%) 100%);
+    --gradient-badge: linear-gradient(135deg, hsl(158 64% 96%) 0%, hsl(172 66% 96%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(220 26% 14%) 0%, hsl(158 45% 12%) 100%);
+    
+    /* Glow effects */
+    --glow-primary: 158 64% 50%;
+    --glow-secondary: 172 66% 52%;
     
     /* Farmly theme colors */
     /* Calculator Theme Colors - Clean & Professional */
@@ -82,15 +87,13 @@
     --calc-card: 0 0% 100%;             /* Pure white for cards */
     --calc-border: 220 13% 91%;         /* Subtle border */
     
-    /* Shadows and effects - Enhanced depth */
-    --shadow-elevation-low: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-    --shadow-elevation-medium: 0 4px 14px -2px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.05);
-    --shadow-elevation-high: 0 12px 28px -4px rgb(0 0 0 / 0.12), 0 6px 14px -6px rgb(0 0 0 / 0.1);
-    --shadow-glow: 0 0 35px -8px hsl(var(--glow-primary) / 0.6);
-    --shadow-glow-green: 0 8px 45px -12px hsl(var(--glow-primary) / 0.5);
-    --shadow-glow-emerald: 0 8px 40px -10px hsl(var(--glow-emerald) / 0.5);
-    --shadow-glow-teal: 0 8px 35px -10px hsl(var(--glow-teal) / 0.45);
-    --shadow-card-hover: 0 20px 45px -8px rgb(0 0 0 / 0.18), 0 8px 20px -4px hsl(var(--glow-primary) / 0.1);
+    /* Shadows and effects */
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 14px -2px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 12px 28px -4px rgb(0 0 0 / 0.12), 0 6px 14px -6px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 40px -8px rgb(0 0 0 / 0.15), 0 8px 20px -4px hsl(var(--glow-primary) / 0.08);
+    --shadow-glow: 0 8px 32px -8px hsl(var(--glow-primary) / 0.4);
+    --shadow-glow-hover: 0 12px 40px -8px hsl(var(--glow-primary) / 0.5);
   }
 
   .dark {
