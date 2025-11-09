@@ -504,10 +504,10 @@ const Index = () => {
 
       {/* Calendar Booking Section */}
       <section className="relative py-24 overflow-hidden" style={{
-        background: 'var(--gradient-subtle)'
+        background: 'hsl(var(--bg-subtle))'
       }}>
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--glow-primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--glow-secondary) / 0.15) 0%, transparent 50%)'
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--glow-primary) / 0.12) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--glow-secondary) / 0.12) 0%, transparent 50%)'
         }} />
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <motion.div
@@ -517,8 +517,8 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent" style={{
-              backgroundImage: 'var(--gradient-hero-text)'
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{
+              color: 'hsl(var(--brand-primary))'
             }}>
               Let's Connect
             </h2>
@@ -538,7 +538,7 @@ const Index = () => {
             className="relative"
           >
             <div className="absolute inset-0 blur-3xl rounded-3xl" style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(var(--glow-primary) / 0.12) 0%, hsl(var(--glow-secondary) / 0.12) 100%)'
+              backgroundImage: 'linear-gradient(135deg, hsl(var(--glow-primary) / 0.08) 0%, hsl(var(--glow-secondary) / 0.08) 100%)'
             }} />
             <div className="relative bg-card/60 backdrop-blur-sm p-4 rounded-2xl border shadow-2xl" style={{
               borderColor: 'hsl(var(--brand-primary) / 0.15)',
@@ -559,28 +559,28 @@ const Index = () => {
 
       {/* Modern CTA Section */}
       <section className="py-24 px-4 md:px-8 relative overflow-hidden" style={{
-        background: 'var(--gradient-dark)'
+        backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-primary-light)) 100%)'
       }}>
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]"></div>
         <motion.div 
           initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 0.15 }}
+          whileInView={{ scale: 1, opacity: 0.1 }}
           transition={{ duration: 1.5 }}
           viewport={{ once: true }}
           className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl"
           style={{
-            background: 'radial-gradient(circle, hsl(var(--glow-primary)) 0%, hsl(var(--glow-secondary)) 100%)'
+            background: 'radial-gradient(circle, hsl(var(--brand-accent)) 0%, transparent 70%)'
           }}
         />
         <motion.div 
           initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 0.1 }}
+          whileInView={{ scale: 1, opacity: 0.08 }}
           transition={{ duration: 1.5, delay: 0.2 }}
           viewport={{ once: true }}
           className="absolute bottom-20 left-20 w-80 h-80 rounded-full blur-3xl"
           style={{
-            background: 'radial-gradient(circle, hsl(var(--glow-secondary)) 0%, hsl(var(--brand-accent)) 100%)'
+            background: 'radial-gradient(circle, hsl(var(--brand-secondary)) 0%, transparent 70%)'
           }}
         />
         
@@ -599,9 +599,7 @@ const Index = () => {
             className="text-4xl md:text-6xl font-light text-white mb-6 leading-tight"
           >
             Ready to transform your 
-            <span className="bg-clip-text text-transparent font-semibold" style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-secondary)) 100%)'
-            }}> carbon footprint?</span>
+            <span className="font-semibold text-white"> carbon footprint?</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -624,18 +622,21 @@ const Index = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button 
                 size="lg" 
-                className="text-white px-10 py-6 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 group"
+                className="px-10 py-6 text-lg h-auto rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 group"
                 onClick={() => navigate("/signup")}
                 style={{
-                  backgroundImage: 'linear-gradient(135deg, hsl(var(--brand-green-light)) 0%, hsl(var(--brand-teal) / 1.1) 100%)',
-                  boxShadow: '0 8px 30px -8px hsl(var(--brand-green-light) / 0.5)'
+                  backgroundColor: 'white',
+                  color: 'hsl(var(--brand-primary))',
+                  boxShadow: '0 8px 30px -8px rgba(255, 255, 255, 0.4)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 12px 40px -8px hsl(var(--brand-green-light) / 0.7)';
+                  e.currentTarget.style.backgroundColor = 'hsl(var(--bg-subtle))';
+                  e.currentTarget.style.boxShadow = '0 12px 40px -8px rgba(255, 255, 255, 0.6)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 8px 30px -8px hsl(var(--brand-green-light) / 0.5)';
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.boxShadow = '0 8px 30px -8px rgba(255, 255, 255, 0.4)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
@@ -665,13 +666,15 @@ const Index = () => {
       </section>
       
       {/* Modern Footer */}
-      <footer className="py-16 px-4 md:px-8 bg-gray-950 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-gray-950"></div>
+      <footer className="py-16 px-4 md:px-8 text-white relative overflow-hidden" style={{
+        backgroundColor: 'hsl(var(--text-primary))'
+      }}>
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="md:col-span-2">
-              <div className="flex items-center mb-6">
-                <Leaf className="h-8 w-8 mr-3" style={{ color: 'hsl(var(--brand-green-light))' }} />
+            <div className="flex items-center mb-6">
+                <Leaf className="h-8 w-8 mr-3" style={{ color: 'hsl(var(--brand-accent))' }} />
                 <span className="text-2xl font-semibold">FarmlyCarbon</span>
               </div>
               <p className="text-gray-400 leading-relaxed mb-8 max-w-md">
@@ -682,14 +685,16 @@ const Index = () => {
                   className="text-white rounded-full px-6 py-3 border-0 shadow-lg hover:shadow-xl transition-all"
                   onClick={() => navigate("/signup")}
                   style={{
-                    backgroundImage: 'var(--gradient-primary)',
-                    boxShadow: '0 4px 14px 0 hsl(var(--glow-primary) / 0.3)'
+                    backgroundColor: 'hsl(var(--brand-primary))',
+                    boxShadow: '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                    e.currentTarget.style.backgroundColor = 'hsl(var(--brand-primary-dark))';
+                    e.currentTarget.style.boxShadow = '0 6px 20px 0 hsl(var(--glow-primary) / 0.35)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '0 4px 14px 0 hsl(var(--glow-primary) / 0.3)';
+                    e.currentTarget.style.backgroundColor = 'hsl(var(--brand-primary))';
+                    e.currentTarget.style.boxShadow = '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)';
                   }}
                 >
                   Get Started Today
@@ -701,21 +706,21 @@ const Index = () => {
             <div>
               <h3 className="text-lg font-semibold mb-6 text-white">Platform</h3>
               <div className="space-y-4">
-                <a href="/dashboard" className="block text-gray-400 hover:text-green-400 transition-colors">Dashboard</a>
-                <a href="/carbon-impact" className="block text-gray-400 hover:text-green-400 transition-colors">Carbon Impact</a>
-                <a href="/net-zero-planner" className="block text-gray-400 hover:text-green-400 transition-colors">Net Zero Planner</a>
-                <a href="/supply-chain" className="block text-gray-400 hover:text-green-400 transition-colors">Supply Chain</a>
+                <a href="/dashboard" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Dashboard</a>
+                <a href="/carbon-impact" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Carbon Impact</a>
+                <a href="/net-zero-planner" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Net Zero Planner</a>
+                <a href="/supply-chain" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Supply Chain</a>
               </div>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold mb-6 text-white">Resources</h3>
               <div className="space-y-4">
-                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-green-400 transition-colors">
+                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">
                   Blog
                 </a>
-                <a href="/login" className="block text-gray-400 hover:text-green-400 transition-colors">Login</a>
-                <a href="/signup" className="block text-gray-400 hover:text-green-400 transition-colors">Sign Up</a>
+                <a href="/login" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Login</a>
+                <a href="/signup" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Sign Up</a>
               </div>
               
               <div className="mt-8">
@@ -747,9 +752,9 @@ const Index = () => {
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">© 2024 FarmlyCarbon. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-500 hover:text-green-400 text-sm transition-colors">Privacy Policy</a>
-              <a href="#" className="text-gray-500 hover:text-green-400 text-sm transition-colors">Terms of Service</a>
-              <a href="#" className="text-gray-500 hover:text-green-400 text-sm transition-colors">Cookie Policy</a>
+              <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Privacy Policy</a>
+              <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Terms of Service</a>
+              <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Cookie Policy</a>
             </div>
           </div>
         </div>

@@ -37,44 +37,44 @@
 
     --radius: 0.75rem;
     
-    /* Brand colors - Cohesive green palette */
-    --brand-primary: 158 64% 45%;         /* Fresh emerald - main brand */
-    --brand-primary-light: 158 64% 55%;   /* Light emerald */
-    --brand-primary-dark: 158 64% 35%;    /* Deep emerald */
-    --brand-secondary: 172 66% 48%;       /* Teal accent */
-    --brand-accent: 142 71% 45%;          /* Forest green */
+    /* Nature-inspired Blue Theme */
+    --brand-primary: 201 47% 45%;         /* Fresh river blue #3A7CA5 */
+    --brand-primary-light: 201 48% 62%;   /* Soft sky blue #70A9CF */
+    --brand-primary-dark: 201 47% 35%;    /* Deep river blue */
+    --brand-secondary: 201 48% 62%;       /* Sky blue */
+    --brand-accent: 151 36% 66%;          /* Leafy mint green #8BC6A8 */
     
     /* Text colors */
-    --text-primary: 220 15% 20%;          /* Dark gray */
-    --text-secondary: 220 9% 46%;         /* Medium gray */
-    --text-muted: 220 9% 60%;             /* Light gray */
+    --text-primary: 205 22% 15%;          /* Deep forest charcoal #1E2A30 */
+    --text-secondary: 205 22% 35%;        /* Medium charcoal */
+    --text-muted: 205 15% 55%;            /* Light gray */
     
     /* Background colors */
-    --bg-subtle: 158 40% 98%;             /* Very pale mint */
-    --bg-soft: 158 35% 96%;               /* Soft mint */
+    --bg-subtle: 201 40% 93%;             /* Morning fog white-blue #E6F2F7 */
+    --bg-soft: 201 40% 96%;               /* Lighter fog */
     --bg-card: 0 0% 100%;                 /* Pure white */
     
     /* Badge colors */
-    --badge-bg: 158 64% 96%;
-    --badge-text: 158 64% 30%;
-    --badge-secondary-bg: 172 66% 96%;
-    --badge-secondary-text: 172 66% 30%;
-    --badge-accent-bg: 142 71% 96%;
-    --badge-accent-text: 142 71% 30%;
+    --badge-bg: 201 48% 95%;
+    --badge-text: 201 47% 35%;
+    --badge-secondary-bg: 151 36% 95%;
+    --badge-secondary-text: 151 36% 35%;
+    --badge-accent-bg: 201 40% 93%;
+    --badge-accent-text: 201 47% 45%;
     
-    /* Gradient tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(172 66% 48%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(158 40% 98%) 50%, hsl(0 0% 100%) 100%);
-    --gradient-hero-text: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(172 66% 48%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(158 35% 96%) 0%, hsl(0 0% 100%) 50%, hsl(158 35% 96%) 100%);
-    --gradient-cta: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(172 66% 48%) 100%);
-    --gradient-cta-hover: linear-gradient(135deg, hsl(158 64% 42%) 0%, hsl(172 66% 45%) 100%);
-    --gradient-badge: linear-gradient(135deg, hsl(158 64% 96%) 0%, hsl(172 66% 96%) 100%);
-    --gradient-dark: linear-gradient(135deg, hsl(220 26% 14%) 0%, hsl(158 45% 12%) 100%);
+    /* Gradient tokens - soft and natural */
+    --gradient-primary: linear-gradient(135deg, hsl(201 47% 45%) 0%, hsl(201 48% 62%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(201 40% 93%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-hero-text: linear-gradient(135deg, hsl(201 47% 45%) 0%, hsl(151 36% 66%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(201 40% 96%) 0%, hsl(0 0% 100%) 50%, hsl(201 40% 96%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(201 47% 45%) 0%, hsl(201 48% 62%) 100%);
+    --gradient-cta-hover: linear-gradient(135deg, hsl(201 47% 42%) 0%, hsl(201 48% 58%) 100%);
+    --gradient-badge: linear-gradient(135deg, hsl(201 48% 95%) 0%, hsl(151 36% 95%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(205 22% 15%) 0%, hsl(201 47% 25%) 100%);
     
-    /* Glow effects */
-    --glow-primary: 158 64% 50%;
-    --glow-secondary: 172 66% 52%;
+    /* Glow effects - soft and calming */
+    --glow-primary: 201 47% 45%;
+    --glow-secondary: 151 36% 66%;
     
     /* Farmly theme colors */
     /* Calculator Theme Colors - Clean & Professional */
@@ -87,13 +87,13 @@
     --calc-card: 0 0% 100%;             /* Pure white for cards */
     --calc-border: 220 13% 91%;         /* Subtle border */
     
-    /* Shadows and effects */
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 14px -2px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.05);
-    --shadow-lg: 0 12px 28px -4px rgb(0 0 0 / 0.12), 0 6px 14px -6px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 40px -8px rgb(0 0 0 / 0.15), 0 8px 20px -4px hsl(var(--glow-primary) / 0.08);
-    --shadow-glow: 0 8px 32px -8px hsl(var(--glow-primary) / 0.4);
-    --shadow-glow-hover: 0 12px 40px -8px hsl(var(--glow-primary) / 0.5);
+    /* Shadows and effects - soft and natural */
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 14px -2px rgb(58 124 165 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.04);
+    --shadow-lg: 0 12px 28px -4px rgb(58 124 165 / 0.12), 0 6px 14px -6px rgb(0 0 0 / 0.08);
+    --shadow-xl: 0 20px 40px -8px rgb(58 124 165 / 0.15), 0 8px 20px -4px hsl(var(--glow-primary) / 0.06);
+    --shadow-glow: 0 8px 32px -8px hsl(var(--glow-primary) / 0.25);
+    --shadow-glow-hover: 0 12px 40px -8px hsl(var(--glow-primary) / 0.35);
   }
 
   .dark {
