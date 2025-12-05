@@ -3,7 +3,6 @@ import { Leaf, Instagram, Twitter, Linkedin, ArrowRight, Code2, Database, Zap } 
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
-import SubstackSection from "@/components/home/SubstackSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { ToolsShowcase } from "@/components/home/ToolsShowcase";
 import farmlyApiIllustration from "@/assets/farmly-api-illustration.png";
@@ -350,8 +349,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Blog Section */}
-      <SubstackSection />
 
       {/* Climate Standards Section */}
       <section className="py-24 px-4 md:px-8">
