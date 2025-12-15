@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { ToolsShowcase } from "@/components/home/ToolsShowcase";
-import farmlyApiIllustration from "@/assets/farmly-api-illustration.png";
+import farmlyApiVideo from "@/assets/farmly-api-video.webm";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
 import noaaLogo from "@/assets/logos/noaa-logo.png";
@@ -283,9 +283,12 @@ const Index = () => {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
               >
-                <img 
-                  src={farmlyApiIllustration} 
-                  alt="Farmly API integration visualization showing connected farm data and analytics" 
+                <video 
+                  src={farmlyApiVideo} 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
                   className="w-full h-auto"
                 />
               </div>
