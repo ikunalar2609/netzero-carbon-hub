@@ -44,8 +44,8 @@ const Index = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${farmHeroBg})` }}
         />
-        {/* Overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/75 to-white/90" />
+        {/* Lighter overlay for better background visibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/50 via-white/40 to-white/60" />
         <motion.div 
           initial="hidden"
           animate="visible"
@@ -85,24 +85,24 @@ const Index = () => {
           <motion.div 
             variants={fadeInUp} 
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center pt-8"
+            className="flex flex-col sm:flex-row gap-3 justify-center pt-6"
           >
             <Button 
-              size="lg" 
+              size="default" 
               onClick={() => navigate("/signup")}
-              className="text-white px-10 py-6 text-lg h-auto rounded-full font-semibold transition-all duration-300 border-0"
+              className="text-white px-6 py-2.5 text-sm h-auto rounded-full font-semibold transition-all duration-300 border-0"
               style={{
                 backgroundImage: 'var(--gradient-cta)',
-                boxShadow: 'var(--shadow-glow)'
+                boxShadow: 'var(--shadow-md)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundImage = 'var(--gradient-cta-hover)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-glow-hover)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundImage = 'var(--gradient-cta)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
@@ -111,11 +111,11 @@ const Index = () => {
             
             <Button 
               variant="outline" 
-              size="lg" 
+              size="default" 
               onClick={() => navigate("/login")}
-              className="border-2 px-10 py-6 text-lg h-auto rounded-full font-semibold transition-all duration-300 bg-white"
+              className="border px-6 py-2.5 text-sm h-auto rounded-full font-semibold transition-all duration-300 bg-white/90"
               style={{
-                borderColor: 'hsl(var(--brand-primary) / 0.3)',
+                borderColor: 'hsl(var(--text-primary) / 0.15)',
                 color: 'hsl(var(--text-primary))'
               }}
               onMouseEnter={(e) => {
