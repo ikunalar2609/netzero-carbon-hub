@@ -195,30 +195,24 @@ const Index = () => {
                 className="flex items-center gap-8 py-6"
               >
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--text-primary))'
-                  }}>
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center bg-green-700">
                     <Zap className="h-6 w-6 text-white" />
                   </div>
-                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>Fast</span>
+                  <span className="text-sm font-medium text-green-800">Fast</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--text-primary))'
-                  }}>
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center bg-green-700">
                     <Code2 className="h-6 w-6 text-white" />
                   </div>
-                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>RESTful</span>
+                  <span className="text-sm font-medium text-green-800">RESTful</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--text-primary))'
-                  }}>
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center bg-green-700">
                     <Database className="h-6 w-6 text-white" />
                   </div>
-                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>Rich Data</span>
+                  <span className="text-sm font-medium text-green-800">Rich Data</span>
                 </div>
               </motion.div>
 
@@ -654,10 +648,8 @@ const Index = () => {
       </section>
       
       {/* Modern Footer */}
-      <footer className="py-16 px-4 md:px-8 text-white relative overflow-hidden" style={{
-        backgroundColor: 'hsl(var(--text-primary))'
-      }}>
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent"></div>
+      <footer className="py-16 px-4 md:px-8 text-white relative overflow-hidden bg-green-900">
+        <div className="absolute inset-0 bg-gradient-to-t from-green-950/50 to-transparent"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="md:col-span-2">
@@ -715,17 +707,17 @@ const Index = () => {
                 <h4 className="text-sm font-semibold mb-4 text-white">Connect With Us</h4>
                 <div className="flex space-x-4">
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-pink-500/25 transition-all cursor-pointer">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-green-500/25 transition-all cursor-pointer">
                       <Instagram className="h-5 w-5" />
                     </div>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-blue-500/25 transition-all cursor-pointer">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-green-500/25 transition-all cursor-pointer">
                       <Twitter className="h-5 w-5" />
                     </div>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-blue-600/25 transition-all cursor-pointer">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-green-600/25 transition-all cursor-pointer">
                       <Linkedin className="h-5 w-5" />
                     </div>
                   </motion.div>
@@ -737,7 +729,7 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="border-t border-green-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">© 2024 FarmlyCarbon. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Privacy Policy</a>
