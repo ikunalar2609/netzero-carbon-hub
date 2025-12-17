@@ -44,8 +44,7 @@ const Index = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${farmHeroBg})` }}
         />
-        {/* Lighter overlay for better background visibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/50 via-white/40 to-white/60" />
+        {/* No overlay - full background visibility */}
         <motion.div 
           initial="hidden"
           animate="visible"
@@ -57,27 +56,18 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide" style={{
-              background: 'hsl(var(--badge-bg))',
-              color: 'hsl(var(--badge-text))',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
+            <span className="inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold tracking-wide bg-white/80 text-green-700 shadow-sm">
               Agricultural Carbon Platform
             </span>
-            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light tracking-tight" style={{
-              color: 'hsl(var(--text-primary))'
-            }}>
-              Farmly<span className="bg-clip-text text-transparent" style={{
-                backgroundImage: 'var(--gradient-hero-text)'
-              }}>Carbon</span>
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-gray-900">
+              Farmly<span className="text-green-600">Carbon</span>
             </h1>
           </motion.div>
           
           <motion.p 
             variants={fadeInUp}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed"
-            style={{ color: 'hsl(var(--text-secondary))' }}
+            className="text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed text-gray-700"
           >
             Simple, powerful carbon management for sustainable agriculture
           </motion.p>
