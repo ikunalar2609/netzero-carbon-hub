@@ -45,40 +45,6 @@ const Index = () => {
           style={{ backgroundImage: `url(${farmHeroBg})` }}
         />
         
-        {/* Floating Leaf Decorations */}
-        <motion.div
-          initial={{ opacity: 0, y: -20, rotate: -15 }}
-          animate={{ opacity: 0.6, y: 0, rotate: 0 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute top-32 left-10 md:left-20 text-green-500/40"
-        >
-          <Leaf className="w-12 h-12 md:w-16 md:h-16" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20, rotate: 15 }}
-          animate={{ opacity: 0.5, y: 0, rotate: -10 }}
-          transition={{ duration: 2.5, delay: 0.5, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute top-48 right-10 md:right-24 text-green-600/30"
-        >
-          <Sprout className="w-10 h-10 md:w-14 md:h-14" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, rotate: 10 }}
-          animate={{ opacity: 0.4, rotate: -5 }}
-          transition={{ duration: 3, delay: 1, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute bottom-40 left-16 md:left-32 text-green-500/30"
-        >
-          <TreeDeciduous className="w-14 h-14 md:w-20 md:h-20" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.5, scale: 1 }}
-          transition={{ duration: 2, delay: 0.3, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute bottom-32 right-20 md:right-40 text-green-400/30"
-        >
-          <Flower2 className="w-8 h-8 md:w-12 md:h-12" />
-        </motion.div>
-        
         {/* No overlay - full background visibility */}
         <motion.div 
           initial="hidden"
@@ -190,26 +156,6 @@ const Index = () => {
       <section className="py-24 px-4 md:px-8 relative overflow-hidden" style={{
         background: 'var(--gradient-subtle)'
       }}>
-        {/* Decorative Leaves */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.15 }}
-          transition={{ duration: 1 }}
-          viewport={{ once: true }}
-          className="absolute top-10 right-10 text-green-500"
-        >
-          <Leaf className="w-24 h-24 rotate-45" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.1 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="absolute bottom-10 left-10 text-green-600"
-        >
-          <Sprout className="w-20 h-20 -rotate-12" />
-        </motion.div>
-        
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text Content */}
@@ -392,14 +338,6 @@ const Index = () => {
 
       {/* Climate Standards Section */}
       <section className="py-24 px-4 md:px-8 relative overflow-hidden">
-        {/* Decorative Corner Leaves */}
-        <div className="absolute top-8 right-8 text-green-200/30">
-          <Leaf className="w-16 h-16 rotate-45" />
-        </div>
-        <div className="absolute bottom-8 left-8 text-green-300/20">
-          <Flower2 className="w-12 h-12 -rotate-12" />
-        </div>
-        
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text Content */}
@@ -609,36 +547,7 @@ const Index = () => {
         {/* Background Elements */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]"></div>
         
-        {/* Floating Leaf Accents */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 0.2, y: 0 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-          viewport={{ once: true }}
-          className="absolute top-16 left-16 text-white/20"
-        >
-          <Leaf className="w-16 h-16 rotate-12" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 0.15, y: 0 }}
-          transition={{ duration: 2.5, delay: 0.5, repeat: Infinity, repeatType: "reverse" }}
-          viewport={{ once: true }}
-          className="absolute bottom-16 right-16 text-white/15"
-        >
-          <TreeDeciduous className="w-20 h-20 -rotate-12" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.1 }}
-          transition={{ duration: 2, delay: 1, repeat: Infinity, repeatType: "reverse" }}
-          viewport={{ once: true }}
-          className="absolute top-1/2 right-32 text-white/10"
-        >
-          <Sprout className="w-12 h-12" />
-        </motion.div>
-        
-        <motion.div 
           initial={{ scale: 0, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 0.1 }}
           transition={{ duration: 1.5 }}
