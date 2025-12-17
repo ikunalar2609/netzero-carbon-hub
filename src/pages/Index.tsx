@@ -190,47 +190,39 @@ const Index = () => {
                 </p>
               </motion.div>
 
+              {/* Minimal Icon Row */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="space-y-4"
+                className="flex items-center gap-8 py-6"
               >
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--badge-bg))'
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
+                    backgroundColor: 'hsl(var(--text-primary))'
                   }}>
-                    <Code2 className="h-6 w-6" style={{ color: 'hsl(var(--brand-primary))' }} />
+                    <Zap className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-1" style={{ color: 'hsl(var(--text-primary))' }}>Easy Integration</h3>
-                    <p style={{ color: 'hsl(var(--text-secondary))' }}>Simple REST endpoints with comprehensive documentation for quick implementation</p>
-                  </div>
+                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>Fast</span>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--badge-secondary-bg))'
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
+                    backgroundColor: 'hsl(var(--text-primary))'
                   }}>
-                    <Database className="h-6 w-6" style={{ color: 'hsl(var(--brand-secondary))' }} />
+                    <Code2 className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-1" style={{ color: 'hsl(var(--text-primary))' }}>Rich Climate Data</h3>
-                    <p style={{ color: 'hsl(var(--text-secondary))' }}>Access verified data from leading scientific organizations worldwide</p>
-                  </div>
+                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>RESTful</span>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center" style={{
-                    backgroundColor: 'hsl(var(--badge-accent-bg))'
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
+                    backgroundColor: 'hsl(var(--text-primary))'
                   }}>
-                    <Zap className="h-6 w-6" style={{ color: 'hsl(var(--brand-accent))' }} />
+                    <Database className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-1" style={{ color: 'hsl(var(--text-primary))' }}>Fast & Reliable</h3>
-                    <p style={{ color: 'hsl(var(--text-secondary))' }}>99.9% uptime with lightning-fast response times for production workloads</p>
-                  </div>
+                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>Rich Data</span>
                 </div>
               </motion.div>
 
