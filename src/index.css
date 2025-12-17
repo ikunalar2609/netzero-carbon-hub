@@ -37,44 +37,51 @@
 
     --radius: 0.75rem;
     
-    /* Nature-inspired Blue Theme */
-    --brand-primary: 201 47% 45%;         /* Fresh river blue #3A7CA5 */
-    --brand-primary-light: 201 48% 62%;   /* Soft sky blue #70A9CF */
-    --brand-primary-dark: 201 47% 35%;    /* Deep river blue */
-    --brand-secondary: 201 48% 62%;       /* Sky blue */
-    --brand-accent: 151 36% 66%;          /* Leafy mint green #8BC6A8 */
+    /* Enhanced Nature-inspired Farm Theme */
+    --brand-primary: 201 47% 40%;         /* Deep river blue */
+    --brand-primary-light: 201 48% 55%;   /* Soft sky blue */
+    --brand-primary-dark: 201 47% 30%;    /* Deep ocean blue */
+    --brand-secondary: 142 52% 45%;       /* Fresh meadow green */
+    --brand-accent: 86 50% 50%;           /* Vibrant lime-leaf green */
+    
+    /* Farm-inspired greens */
+    --farm-green: 142 52% 45%;            /* Lush field green */
+    --farm-green-light: 142 45% 60%;      /* Light grass green */
+    --farm-gold: 45 95% 55%;              /* Golden wheat */
+    --farm-earth: 30 35% 40%;             /* Rich soil brown */
     
     /* Text colors */
-    --text-primary: 205 22% 15%;          /* Deep forest charcoal #1E2A30 */
-    --text-secondary: 205 22% 35%;        /* Medium charcoal */
-    --text-muted: 205 15% 55%;            /* Light gray */
+    --text-primary: 205 25% 12%;          /* Deep forest charcoal */
+    --text-secondary: 205 18% 40%;        /* Medium charcoal */
+    --text-muted: 205 12% 55%;            /* Light gray */
     
     /* Background colors */
-    --bg-subtle: 201 40% 93%;             /* Morning fog white-blue #E6F2F7 */
-    --bg-soft: 201 40% 96%;               /* Lighter fog */
+    --bg-subtle: 142 25% 96%;             /* Soft green-tinted white */
+    --bg-soft: 142 20% 98%;               /* Very light green */
     --bg-card: 0 0% 100%;                 /* Pure white */
     
     /* Badge colors */
-    --badge-bg: 201 48% 95%;
-    --badge-text: 201 47% 35%;
-    --badge-secondary-bg: 151 36% 95%;
-    --badge-secondary-text: 151 36% 35%;
-    --badge-accent-bg: 201 40% 93%;
-    --badge-accent-text: 201 47% 45%;
+    --badge-bg: 142 35% 94%;
+    --badge-text: 142 52% 30%;
+    --badge-secondary-bg: 201 40% 94%;
+    --badge-secondary-text: 201 47% 35%;
+    --badge-accent-bg: 86 40% 94%;
+    --badge-accent-text: 86 50% 35%;
     
-    /* Gradient tokens - soft and natural */
-    --gradient-primary: linear-gradient(135deg, hsl(201 47% 45%) 0%, hsl(201 48% 62%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(201 40% 93%) 50%, hsl(0 0% 100%) 100%);
-    --gradient-hero-text: linear-gradient(135deg, hsl(201 47% 45%) 0%, hsl(151 36% 66%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(201 40% 96%) 0%, hsl(0 0% 100%) 50%, hsl(201 40% 96%) 100%);
-    --gradient-cta: linear-gradient(135deg, hsl(201 47% 45%) 0%, hsl(201 48% 62%) 100%);
-    --gradient-cta-hover: linear-gradient(135deg, hsl(201 47% 42%) 0%, hsl(201 48% 58%) 100%);
-    --gradient-badge: linear-gradient(135deg, hsl(201 48% 95%) 0%, hsl(151 36% 95%) 100%);
-    --gradient-dark: linear-gradient(135deg, hsl(205 22% 15%) 0%, hsl(201 47% 25%) 100%);
+    /* Gradient tokens - nature-inspired */
+    --gradient-primary: linear-gradient(135deg, hsl(201 47% 40%) 0%, hsl(142 52% 45%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(142 25% 96%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-hero-text: linear-gradient(135deg, hsl(201 47% 35%) 0%, hsl(142 52% 40%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(142 20% 98%) 0%, hsl(0 0% 100%) 50%, hsl(142 20% 98%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(142 52% 42%) 0%, hsl(142 45% 55%) 100%);
+    --gradient-cta-hover: linear-gradient(135deg, hsl(142 52% 38%) 0%, hsl(142 45% 50%) 100%);
+    --gradient-badge: linear-gradient(135deg, hsl(142 35% 94%) 0%, hsl(201 40% 94%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(205 25% 12%) 0%, hsl(201 47% 20%) 100%);
+    --gradient-farm: linear-gradient(135deg, hsl(142 52% 45%) 0%, hsl(86 50% 50%) 100%);
     
-    /* Glow effects - soft and calming */
-    --glow-primary: 201 47% 45%;
-    --glow-secondary: 151 36% 66%;
+    /* Glow effects - natural greens */
+    --glow-primary: 142 52% 45%;
+    --glow-secondary: 86 50% 50%;
     
     /* Farmly theme colors */
     /* Calculator Theme Colors - Clean & Professional */

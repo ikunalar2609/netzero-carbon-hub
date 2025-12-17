@@ -6,6 +6,7 @@ import HomeHeader from "@/components/home/HomeHeader";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { ToolsShowcase } from "@/components/home/ToolsShowcase";
 import farmlyApiVideo from "@/assets/farmly-api-video.webm";
+import farmHeroBg from "@/assets/farm-hero-bg.jpg";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
 import noaaLogo from "@/assets/logos/noaa-logo.png";
@@ -36,15 +37,20 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       <HomeHeader />
       
-      {/* Minimalist Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20" style={{
-        background: 'var(--gradient-hero)'
-      }}>
+      {/* Hero Section with Farm Background */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-8 py-20 overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${farmHeroBg})` }}
+        />
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/75 to-white/90" />
         <motion.div 
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="max-w-4xl mx-auto space-y-8"
+          className="relative z-10 max-w-4xl mx-auto space-y-8"
         >
           <motion.div 
             variants={fadeInUp}
