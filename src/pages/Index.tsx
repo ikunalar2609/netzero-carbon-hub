@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Leaf, Instagram, Twitter, Linkedin, ArrowRight, Code2, Database, Zap, Sprout, TreeDeciduous, Flower2 } from "lucide-react";
+import { Leaf, Instagram, Twitter, Linkedin, ArrowRight, Code2, Database, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
