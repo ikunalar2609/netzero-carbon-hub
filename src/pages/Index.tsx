@@ -650,34 +650,22 @@ const Index = () => {
       </section>
       
       {/* Modern Footer */}
-      <footer className="py-16 px-4 md:px-8 text-white relative overflow-hidden bg-green-900">
-        <div className="absolute inset-0 bg-gradient-to-t from-green-950/50 to-transparent"></div>
+      <footer className="py-16 px-4 md:px-8 text-white relative overflow-hidden bg-black">
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/50 to-transparent"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="md:col-span-2">
             <div className="flex items-center mb-6">
-                <Leaf className="h-8 w-8 mr-3" style={{ color: 'hsl(var(--brand-accent))' }} />
-                <span className="text-2xl font-semibold">FarmlyCarbon</span>
+                <Leaf className="h-8 w-8 mr-3 text-green-500" />
+                <span className="text-2xl font-semibold text-white">FarmlyCarbon</span>
               </div>
-              <p className="text-gray-400 leading-relaxed mb-8 max-w-md">
+              <p className="text-neutral-400 leading-relaxed mb-8 max-w-md">
                 Empowering agricultural operations worldwide with comprehensive carbon management tools for a sustainable and profitable future.
               </p>
                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
-                  className="text-white rounded-full px-6 py-3 border-0 shadow-lg hover:shadow-xl transition-all"
+                  className="text-black rounded-full px-6 py-3 border-0 shadow-lg hover:shadow-xl transition-all bg-white hover:bg-neutral-100"
                   onClick={() => navigate("/signup")}
-                  style={{
-                    backgroundColor: 'hsl(var(--brand-primary))',
-                    boxShadow: '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'hsl(var(--brand-primary-dark))';
-                    e.currentTarget.style.boxShadow = '0 6px 20px 0 hsl(var(--glow-primary) / 0.35)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'hsl(var(--brand-primary))';
-                    e.currentTarget.style.boxShadow = '0 4px 14px 0 hsl(var(--glow-primary) / 0.25)';
-                  }}
                 >
                   Get Started Today
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -688,55 +676,55 @@ const Index = () => {
             <div>
               <h3 className="text-lg font-semibold mb-6 text-white">Platform</h3>
               <div className="space-y-4">
-                <a href="/dashboard" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Dashboard</a>
-                <a href="/carbon-impact" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Carbon Impact</a>
-                <a href="/net-zero-planner" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Net Zero Planner</a>
-                <a href="/supply-chain" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Supply Chain</a>
+                <a href="/dashboard" className="block text-neutral-400 hover:text-white transition-colors">Dashboard</a>
+                <a href="/carbon-impact" className="block text-neutral-400 hover:text-white transition-colors">Carbon Impact</a>
+                <a href="/net-zero-planner" className="block text-neutral-400 hover:text-white transition-colors">Net Zero Planner</a>
+                <a href="/supply-chain" className="block text-neutral-400 hover:text-white transition-colors">Supply Chain</a>
               </div>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold mb-6 text-white">Resources</h3>
               <div className="space-y-4">
-                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">
+                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-neutral-400 hover:text-white transition-colors">
                   Blog
                 </a>
-                <a href="/login" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Login</a>
-                <a href="/signup" className="block text-gray-400 hover:text-[hsl(var(--brand-accent))] transition-colors">Sign Up</a>
+                <a href="/login" className="block text-neutral-400 hover:text-white transition-colors">Login</a>
+                <a href="/signup" className="block text-neutral-400 hover:text-white transition-colors">Sign Up</a>
               </div>
               
               <div className="mt-8">
                 <h4 className="text-sm font-semibold mb-4 text-white">Connect With Us</h4>
                 <div className="flex space-x-4">
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-green-500/25 transition-all cursor-pointer">
-                      <Instagram className="h-5 w-5" />
+                    <div className="w-10 h-10 bg-neutral-800 border border-neutral-700 rounded-full flex items-center justify-center hover:bg-neutral-700 hover:border-neutral-600 transition-all cursor-pointer">
+                      <Instagram className="h-5 w-5 text-white" />
                     </div>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-green-500/25 transition-all cursor-pointer">
-                      <Twitter className="h-5 w-5" />
+                    <div className="w-10 h-10 bg-neutral-800 border border-neutral-700 rounded-full flex items-center justify-center hover:bg-neutral-700 hover:border-neutral-600 transition-all cursor-pointer">
+                      <Twitter className="h-5 w-5 text-white" />
                     </div>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-green-600/25 transition-all cursor-pointer">
-                      <Linkedin className="h-5 w-5" />
+                    <div className="w-10 h-10 bg-neutral-800 border border-neutral-700 rounded-full flex items-center justify-center hover:bg-neutral-700 hover:border-neutral-600 transition-all cursor-pointer">
+                      <Linkedin className="h-5 w-5 text-white" />
                     </div>
                   </motion.div>
                 </div>
                 <div className="mt-6">
-                  <p className="text-gray-500 text-sm">i.kunal.ar26@gmail.com</p>
+                  <p className="text-neutral-500 text-sm">i.kunal.ar26@gmail.com</p>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="border-t border-green-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm">© 2024 FarmlyCarbon. All rights reserved.</p>
+          <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-neutral-500 text-sm">© 2024 FarmlyCarbon. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Privacy Policy</a>
-              <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Terms of Service</a>
-              <a href="#" className="text-gray-500 hover:text-[hsl(var(--brand-accent))] text-sm transition-colors">Cookie Policy</a>
+              <a href="#" className="text-neutral-500 hover:text-white text-sm transition-colors">Privacy Policy</a>
+              <a href="#" className="text-neutral-500 hover:text-white text-sm transition-colors">Terms of Service</a>
+              <a href="#" className="text-neutral-500 hover:text-white text-sm transition-colors">Cookie Policy</a>
             </div>
           </div>
         </div>
