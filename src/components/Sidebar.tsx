@@ -16,6 +16,7 @@ import {
   LogIn
 } from "lucide-react";
 import { ProfileMenu } from "@/components/ProfileMenu";
+import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -80,12 +81,12 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       )}
     >
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-        <Link to="/dashboard" className="flex items-center space-x-2" onClick={closeSidebar}>
+        <Link to="/" className="flex items-center space-x-2" onClick={closeSidebar}>
           <motion.img 
-            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-            transition={{ duration: 0.5 }}
-            src="/lovable-uploads/2dd40c72-8b51-4483-b562-5b4b5bb78f7c.png" 
-            alt="FarmlyCarbon Logo" 
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            src={farmlyLogo}
+            alt="Farmly Carbon" 
             className="h-10 w-auto" 
           />
           <span className="text-xl font-semibold text-gray-800">FarmlyCarbon</span>
