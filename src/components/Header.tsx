@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MenuIcon, Filter, Search } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -67,6 +68,16 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
           <span className="sr-only">Toggle sidebar</span>
         </Button>
       </motion.div>
+      
+      <Link to="/" className="flex items-center mr-4">
+        <motion.img 
+          src={farmlyLogo}
+          alt="Farmly Carbon"
+          className="h-10 w-auto"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        />
+      </Link>
       
       <motion.h1 
         className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mr-4"

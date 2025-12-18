@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, BarChart3, LogIn, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 
 const HomeHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,15 +22,14 @@ const HomeHeader = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Link to="/" className="flex items-center gap-3 group">
-              <motion.span 
-                className="text-2xl font-bold"
-                style={{ color: 'hsl(var(--brand-primary))' }}
+            <Link to="/" className="flex items-center gap-2 group">
+              <motion.img 
+                src={farmlyLogo}
+                alt="Farmly Carbon"
+                className="h-10 w-auto"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                FarmlyCarbon
-              </motion.span>
+              />
             </Link>
           </motion.div>
           
