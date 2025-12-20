@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle } from "lucide-react";
+import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
-
+import { supabase } from "@/integrations/supabase/client";
 // IPCC GWP values (AR6)
 const GWP_CH4 = 27.9;
 const GWP_N2O = 273;
@@ -84,6 +84,36 @@ interface EnergyData {
   fuelUnit: 'L' | 'kWh' | 'GJ';
 }
 
+interface FlightData {
+  departureIata: string;
+  arrivalIata: string;
+  passengers: number;
+  includeRF: boolean;
+}
+
+interface FlightResult {
+  route: {
+    departure: { name: string; iata: string; icao: string };
+    arrival: { name: string; iata: string; icao: string };
+  };
+  distance: { km: number; miles: number };
+  emissions: {
+    category: string;
+    emissionFactor: number;
+    co2PerPassenger: number;
+    totalCo2: number;
+    passengers: number;
+    rfMultiplier?: number;
+    co2ePerPassenger?: number;
+    totalCo2e?: number;
+  };
+  methodology: {
+    distanceCalculation: string;
+    emissionFactors: string;
+    rfExplanation: string;
+  };
+}
+
 export const EmissionCalculator = () => {
   const [activeTab, setActiveTab] = useState("transport");
   const [transportData, setTransportData] = useState<TransportData>({ 
@@ -104,12 +134,67 @@ export const EmissionCalculator = () => {
     fuelUnit: 'kWh'
   });
   const [wasteData, setWasteData] = useState({ amount: 0, type: "mixed", disposal: "landfill" });
+  const [flightData, setFlightData] = useState<FlightData>({
+    departureIata: '',
+    arrivalIata: '',
+    passengers: 1,
+    includeRF: false
+  });
+  const [flightResult, setFlightResult] = useState<FlightResult | null>(null);
+  const [flightLoading, setFlightLoading] = useState(false);
+  const [flightEmissions, setFlightEmissions] = useState(0);
   const [totalEmissions, setTotalEmissions] = useState(0);
-  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0 });
+  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0 });
   const [detailedTransport, setDetailedTransport] = useState({ total: 0, co2: 0, ch4: 0, n2o: 0, wtt: 0 });
   const [detailedEnergy, setDetailedEnergy] = useState({ total: 0, scope2: 0, scope1: 0, method: 'location' as 'location' | 'market' });
   const [trendData, setTrendData] = useState<any[]>([]);
   const { region } = useRegionDetection();
+
+  // Calculate flight emissions
+  const calculateFlightEmissions = async () => {
+    if (!flightData.departureIata || !flightData.arrivalIata) {
+      toast.error('Please enter both departure and arrival airport codes');
+      return;
+    }
+    
+    if (flightData.departureIata.length !== 3 || flightData.arrivalIata.length !== 3) {
+      toast.error('Please enter valid 3-letter IATA codes (e.g., JFK, LAX)');
+      return;
+    }
+    
+    setFlightLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('flight-emissions', {
+        body: {
+          departureIata: flightData.departureIata.toUpperCase(),
+          arrivalIata: flightData.arrivalIata.toUpperCase(),
+          passengers: flightData.passengers,
+          includeRF: flightData.includeRF
+        }
+      });
+      
+      if (error) {
+        console.error('Flight emissions error:', error);
+        toast.error(error.message || 'Failed to calculate flight emissions');
+        return;
+      }
+      
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+      
+      setFlightResult(data);
+      const emissions = flightData.includeRF ? data.emissions.totalCo2e : data.emissions.totalCo2;
+      setFlightEmissions(emissions);
+      toast.success(`Flight emissions calculated: ${emissions.toFixed(2)} kg CO₂${flightData.includeRF ? 'e' : ''}`);
+    } catch (err) {
+      console.error('Error calculating flight emissions:', err);
+      toast.error('Failed to calculate flight emissions. Please check your airport codes.');
+    } finally {
+      setFlightLoading(false);
+    }
+  };
 
   // Calculate energy emissions with GHG Protocol Scope 1 & 2
   const calculateEnergyEmissions = (data: EnergyData) => {
@@ -239,12 +324,13 @@ export const EmissionCalculator = () => {
       const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : 2.5;
       const wasteEmissions = wasteData.amount * wasteFactor;
       
-      const total = transportEmissions + energyEmissions + wasteEmissions;
+      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions;
       setTotalEmissions(total);
       setEmissionsBreakdown({
         transport: transportEmissions,
         energy: energyEmissions,
-        waste: wasteEmissions
+        waste: wasteEmissions,
+        flight: flightEmissions
       });
       
       // Update trend data
@@ -259,18 +345,22 @@ export const EmissionCalculator = () => {
     };
     
     calculateEmissions();
-  }, [transportData, energyData, wasteData]);
+  }, [transportData, energyData, wasteData, flightEmissions]);
 
   const pieData = [
     { name: "Transport", value: emissionsBreakdown.transport, color: "#2563EB" },
     { name: "Energy", value: emissionsBreakdown.energy, color: "#10B981" },
-    { name: "Waste", value: emissionsBreakdown.waste, color: "#F97316" }
+    { name: "Waste", value: emissionsBreakdown.waste, color: "#F97316" },
+    { name: "Flight", value: emissionsBreakdown.flight, color: "#8B5CF6" }
   ].filter(d => d.value > 0);
 
   const getInsights = () => {
     const insights = [];
     if (emissionsBreakdown.transport > totalEmissions * 0.4) {
       insights.push({ icon: Car, text: "Consider carpooling or public transport to reduce emissions by up to 30%", type: "warning" });
+    }
+    if (emissionsBreakdown.flight > 0) {
+      insights.push({ icon: Plane, text: "Flight emissions are significant. Consider carbon offsetting or alternative travel for shorter routes.", type: "warning" });
     }
     if (energyData.gridType !== 'renewable' && !energyData.hasRenewableCerts) {
       insights.push({ icon: Zap, text: "Switch to renewable energy sources or obtain RECs to cut energy emissions by 50-100%", type: "tip" });
@@ -306,7 +396,7 @@ export const EmissionCalculator = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+            className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
           >
             {/* Total Emissions Card */}
             <motion.div 
@@ -360,6 +450,27 @@ export const EmissionCalculator = () => {
               </div>
             </motion.div>
 
+            {/* Flight Emissions Card */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/5 to-transparent" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#475569]">Flight</span>
+                  <Plane className="h-5 w-5 text-[#8B5CF6]" />
+                </div>
+                <div className="text-3xl font-bold text-[#1E293B] mb-1">
+                  {emissionsBreakdown.flight.toFixed(1)}
+                  <span className="text-lg text-[#475569] ml-1">kg</span>
+                </div>
+                <div className="text-xs text-[#475569]">
+                  {totalEmissions > 0 ? `${((emissionsBreakdown.flight / totalEmissions) * 100).toFixed(0)}% of total` : '0% of total'}
+                </div>
+              </div>
+            </motion.div>
+
             {/* Energy + Waste Combined Card */}
             <motion.div 
               whileHover={{ y: -4 }}
@@ -397,10 +508,14 @@ export const EmissionCalculator = () => {
                   <h2 className="text-xl font-bold text-[#1E293B] mb-4">Calculate Emissions</h2>
                   
                   <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className="grid w-full grid-cols-3 mb-6 bg-[#F9FAFB]/50 backdrop-blur-sm">
+                    <TabsList className="grid w-full grid-cols-4 mb-6 bg-[#F9FAFB]/50 backdrop-blur-sm">
                       <TabsTrigger value="transport" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
                         <Truck className="h-4 w-4 mr-2" />
                         Transport
+                      </TabsTrigger>
+                      <TabsTrigger value="flight" className="data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6]">
+                        <Plane className="h-4 w-4 mr-2" />
+                        Flight
                       </TabsTrigger>
                       <TabsTrigger value="energy" className="data-[state=active]:bg-white data-[state=active]:text-[#10B981]">
                         <Zap className="h-4 w-4 mr-2" />
@@ -786,6 +901,192 @@ export const EmissionCalculator = () => {
                             </SelectContent>
                           </Select>
                         </div>
+                      </motion.div>
+                    </TabsContent>
+
+                    {/* Flight Form */}
+                    <TabsContent value="flight" className="space-y-4 mt-0">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        {/* Flight Calculator Header */}
+                        <div className="p-4 rounded-xl bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/5 border border-[#8B5CF6]/20">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Plane className="h-5 w-5 text-[#8B5CF6]" />
+                            <h4 className="text-sm font-semibold text-[#1E293B]">Flight Emissions Calculator</h4>
+                          </div>
+                          <p className="text-xs text-[#475569]">
+                            Calculate carbon emissions using real airport coordinates and ICAO/DEFRA emission factors.
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Departure Airport (IATA)
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>3-letter airport code (e.g., JFK, LAX, LHR)</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <Input 
+                              type="text" 
+                              maxLength={3}
+                              value={flightData.departureIata}
+                              onChange={(e) => setFlightData({ ...flightData, departureIata: e.target.value.toUpperCase() })}
+                              placeholder="e.g., JFK"
+                              className="rounded-xl border-[#E5E7EB] focus:border-[#8B5CF6] focus:ring-[#8B5CF6] transition-all uppercase"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Arrival Airport (IATA)
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>3-letter airport code (e.g., JFK, LAX, LHR)</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <Input 
+                              type="text" 
+                              maxLength={3}
+                              value={flightData.arrivalIata}
+                              onChange={(e) => setFlightData({ ...flightData, arrivalIata: e.target.value.toUpperCase() })}
+                              placeholder="e.g., LAX"
+                              className="rounded-xl border-[#E5E7EB] focus:border-[#8B5CF6] focus:ring-[#8B5CF6] transition-all uppercase"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Number of Passengers</Label>
+                          <Input 
+                            type="number" 
+                            min={1}
+                            value={flightData.passengers || ''}
+                            onChange={(e) => setFlightData({ ...flightData, passengers: Math.max(1, Number(e.target.value)) })}
+                            placeholder="1"
+                            className="rounded-xl border-[#E5E7EB] focus:border-[#8B5CF6] focus:ring-[#8B5CF6] transition-all"
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-2 pt-2">
+                          <input
+                            type="checkbox"
+                            id="include-rf"
+                            checked={flightData.includeRF}
+                            onChange={(e) => setFlightData({ ...flightData, includeRF: e.target.checked })}
+                            className="rounded border-[#E5E7EB] text-[#8B5CF6] focus:ring-[#8B5CF6]"
+                          />
+                          <Label htmlFor="include-rf" className="text-sm font-medium text-[#1E293B] flex items-center gap-2">
+                            Include non-CO₂ effects (RF multiplier: 1.9x)
+                            <Tooltip>
+                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                              <TooltipContent>Includes contrails, NOx, and water vapor effects</TooltipContent>
+                            </Tooltip>
+                          </Label>
+                        </div>
+
+                        <Button 
+                          onClick={calculateFlightEmissions}
+                          disabled={flightLoading}
+                          className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl py-3"
+                        >
+                          {flightLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Calculating...
+                            </>
+                          ) : (
+                            <>
+                              <Calculator className="h-4 w-4 mr-2" />
+                              Calculate Flight Emissions
+                            </>
+                          )}
+                        </Button>
+
+                        {/* Flight Result Display */}
+                        {flightResult && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-4 space-y-4"
+                          >
+                            {/* Route Info */}
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#8B5CF6]/5 to-transparent border border-[#8B5CF6]/20">
+                              <h4 className="text-sm font-semibold text-[#1E293B] mb-3 flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-[#8B5CF6]" />
+                                Route Details
+                              </h4>
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="text-center">
+                                  <div className="text-lg font-bold text-[#8B5CF6]">{flightResult.route.departure.iata}</div>
+                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{flightResult.route.departure.name}</div>
+                                </div>
+                                <div className="flex-1 flex items-center justify-center px-4">
+                                  <div className="h-px flex-1 bg-[#8B5CF6]/30"></div>
+                                  <Plane className="h-5 w-5 text-[#8B5CF6] mx-2 transform rotate-90" />
+                                  <div className="h-px flex-1 bg-[#8B5CF6]/30"></div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-lg font-bold text-[#8B5CF6]">{flightResult.route.arrival.iata}</div>
+                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{flightResult.route.arrival.name}</div>
+                                </div>
+                              </div>
+                              <div className="text-center mt-3">
+                                <span className="text-sm text-[#475569]">Distance: </span>
+                                <span className="text-sm font-semibold text-[#1E293B]">{flightResult.distance.km.toLocaleString()} km</span>
+                                <span className="text-xs text-[#475569] ml-2">({flightResult.distance.miles.toLocaleString()} miles)</span>
+                              </div>
+                            </div>
+
+                            {/* Emissions Breakdown */}
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20">
+                              <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Emissions Breakdown</h4>
+                              <div className="space-y-1 text-xs text-[#475569]">
+                                <div className="flex justify-between">
+                                  <span>Flight Category:</span>
+                                  <span className="font-medium text-[#1E293B]">{flightResult.emissions.category}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Emission Factor:</span>
+                                  <span className="font-mono">{flightResult.emissions.emissionFactor} kg CO₂/km</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>CO₂ per Passenger:</span>
+                                  <span className="font-mono">{flightResult.emissions.co2PerPassenger.toFixed(2)} kg</span>
+                                </div>
+                                {flightData.includeRF && flightResult.emissions.co2ePerPassenger && (
+                                  <div className="flex justify-between text-[#8B5CF6]">
+                                    <span>CO₂e per Passenger (with RF):</span>
+                                    <span className="font-mono">{flightResult.emissions.co2ePerPassenger.toFixed(2)} kg</span>
+                                  </div>
+                                )}
+                                <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
+                                  <span>Total {flightData.includeRF ? 'CO₂e' : 'CO₂'} ({flightResult.emissions.passengers} passenger{flightResult.emissions.passengers > 1 ? 's' : ''}):</span>
+                                  <span className="font-mono text-[#8B5CF6]">
+                                    {(flightData.includeRF ? flightResult.emissions.totalCo2e : flightResult.emissions.totalCo2)?.toFixed(2)} kg
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Methodology */}
+                            <div className="p-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+                              <h5 className="text-xs font-semibold text-[#475569] mb-1">Methodology</h5>
+                              <p className="text-xs text-[#64748B]">
+                                {flightResult.methodology.distanceCalculation} • {flightResult.methodology.emissionFactors}
+                              </p>
+                              <p className="text-xs text-[#64748B] mt-1 italic">
+                                {flightResult.methodology.rfExplanation}
+                              </p>
+                            </div>
+
+                            {/* Inspirational Message */}
+                            <div className="p-3 rounded-lg bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/5 border border-[#10B981]/20 text-center">
+                              <p className="text-xs text-[#475569] italic">
+                                "Flying connects worlds — but it also leaves a footprint. By understanding our impact, we take the first small step toward flying smarter, lighter, and greener."
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
                       </motion.div>
                     </TabsContent>
                   </Tabs>
