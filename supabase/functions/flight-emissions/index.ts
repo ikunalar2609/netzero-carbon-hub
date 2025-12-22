@@ -466,9 +466,16 @@ function getAirportData(iataCode: string): {
   };
 }
 
-// Get list of supported airports
-function getSupportedAirports(): string[] {
-  return Object.keys(AIRPORTS).sort();
+// Get list of supported airports with full data
+function getSupportedAirports(): { iata: string; name: string; city: string; country: string }[] {
+  return Object.entries(AIRPORTS)
+    .map(([iata, data]) => ({
+      iata,
+      name: data.name,
+      city: data.city,
+      country: data.country
+    }))
+    .sort((a, b) => a.city.localeCompare(b.city));
 }
 
 serve(async (req) => {
@@ -482,11 +489,12 @@ serve(async (req) => {
     
     // Return list of supported airports if requested
     if (listAirports) {
+      const airports = getSupportedAirports();
       return new Response(
         JSON.stringify({ 
           success: true, 
-          airports: getSupportedAirports(),
-          count: getSupportedAirports().length
+          airports,
+          count: airports.length
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );

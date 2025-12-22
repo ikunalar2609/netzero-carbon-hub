@@ -12,6 +12,7 @@ import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
+import { AirportSearch } from "./AirportSearch";
 // IPCC GWP values (AR6)
 const GWP_CH4 = 27.9;
 const GWP_N2O = 273;
@@ -918,39 +919,33 @@ export const EmissionCalculator = () => {
                           </p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Departure Airport (IATA)
+                              Departure Airport
                               <Tooltip>
                                 <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>3-letter airport code (e.g., JFK, LAX, LHR)</TooltipContent>
+                                <TooltipContent>Search by city name or IATA code</TooltipContent>
                               </Tooltip>
                             </Label>
-                            <Input 
-                              type="text" 
-                              maxLength={3}
+                            <AirportSearch
                               value={flightData.departureIata}
-                              onChange={(e) => setFlightData({ ...flightData, departureIata: e.target.value.toUpperCase() })}
-                              placeholder="e.g., JFK"
-                              className="rounded-xl border-[#E5E7EB] focus:border-[#8B5CF6] focus:ring-[#8B5CF6] transition-all uppercase"
+                              onChange={(iata) => setFlightData({ ...flightData, departureIata: iata })}
+                              placeholder="Search departure city..."
                             />
                           </div>
                           <div>
                             <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Arrival Airport (IATA)
+                              Arrival Airport
                               <Tooltip>
                                 <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>3-letter airport code (e.g., JFK, LAX, LHR)</TooltipContent>
+                                <TooltipContent>Search by city name or IATA code</TooltipContent>
                               </Tooltip>
                             </Label>
-                            <Input 
-                              type="text" 
-                              maxLength={3}
+                            <AirportSearch
                               value={flightData.arrivalIata}
-                              onChange={(e) => setFlightData({ ...flightData, arrivalIata: e.target.value.toUpperCase() })}
-                              placeholder="e.g., LAX"
-                              className="rounded-xl border-[#E5E7EB] focus:border-[#8B5CF6] focus:ring-[#8B5CF6] transition-all uppercase"
+                              onChange={(iata) => setFlightData({ ...flightData, arrivalIata: iata })}
+                              placeholder="Search arrival city..."
                             />
                           </div>
                         </div>
