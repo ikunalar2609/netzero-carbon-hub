@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin } from "lucide-react";
+import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -164,6 +164,35 @@ export const EmissionCalculator = () => {
   const [trendData, setTrendData] = useState<any[]>([]);
   const { region } = useRegionDetection();
 
+  // Save calculation to database
+  const saveCalculation = async (
+    type: 'flight' | 'vehicle' | 'energy' | 'diet',
+    inputData: any,
+    resultData: any,
+    totalEmissions: number
+  ) => {
+    try {
+      const { error } = await supabase.from('emission_calculations').insert({
+        calculation_type: type,
+        input_data: inputData,
+        result_data: resultData,
+        total_emissions: totalEmissions
+      });
+
+      if (error) {
+        console.error('Error saving calculation:', error);
+        toast.error('Failed to save calculation to history');
+        return false;
+      }
+      
+      toast.success('Calculation saved to history');
+      return true;
+    } catch (err) {
+      console.error('Error saving calculation:', err);
+      return false;
+    }
+  };
+
   // Calculate flight emissions
   const calculateFlightEmissions = async () => {
     if (!flightData.departureIata || !flightData.arrivalIata) {
@@ -201,6 +230,10 @@ export const EmissionCalculator = () => {
       setFlightResult(data);
       const emissions = flightData.includeRF ? data.emissions.totalCo2e : data.emissions.totalCo2;
       setFlightEmissions(emissions);
+      
+      // Save flight calculation to database
+      await saveCalculation('flight', flightData, data, emissions);
+      
       toast.success(`Flight emissions calculated: ${emissions.toFixed(2)} kg CO₂${flightData.includeRF ? 'e' : ''}`);
     } catch (err) {
       console.error('Error calculating flight emissions:', err);
@@ -208,6 +241,33 @@ export const EmissionCalculator = () => {
     } finally {
       setFlightLoading(false);
     }
+  };
+
+  // Save current transport calculation
+  const saveTransportCalculation = async () => {
+    if (detailedTransport.total <= 0) {
+      toast.error('Please calculate transport emissions first');
+      return;
+    }
+    await saveCalculation('vehicle', transportData, detailedTransport, detailedTransport.total);
+  };
+
+  // Save current energy calculation
+  const saveEnergyCalculation = async () => {
+    if (detailedEnergy.total <= 0) {
+      toast.error('Please calculate energy emissions first');
+      return;
+    }
+    await saveCalculation('energy', energyData, detailedEnergy, detailedEnergy.total);
+  };
+
+  // Save current waste calculation
+  const saveWasteCalculation = async () => {
+    if (emissionsBreakdown.waste <= 0) {
+      toast.error('Please calculate waste emissions first');
+      return;
+    }
+    await saveCalculation('diet', wasteData, { total: emissionsBreakdown.waste }, emissionsBreakdown.waste);
   };
 
   // Calculate energy emissions with GHG Protocol Scope 1 & 2
@@ -682,6 +742,14 @@ export const EmissionCalculator = () => {
                                 <span className="font-mono">{detailedTransport.total.toFixed(2)} kg</span>
                               </div>
                             </div>
+                            <Button 
+                              onClick={saveTransportCalculation}
+                              className="w-full mt-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8]"
+                              size="sm"
+                            >
+                              <Save className="h-4 w-4 mr-2" />
+                              Save to History
+                            </Button>
                           </motion.div>
                         )}
                       </motion.div>
@@ -863,6 +931,14 @@ export const EmissionCalculator = () => {
                                 <span className="font-mono">{detailedEnergy.total.toFixed(2)} kg CO₂e</span>
                               </div>
                             </div>
+                            <Button 
+                              onClick={saveEnergyCalculation}
+                              className="w-full mt-3 rounded-xl bg-[#10B981] hover:bg-[#059669]"
+                              size="sm"
+                            >
+                              <Save className="h-4 w-4 mr-2" />
+                              Save to History
+                            </Button>
                           </motion.div>
                         )}
                       </motion.div>
@@ -915,6 +991,39 @@ export const EmissionCalculator = () => {
                             </SelectContent>
                           </Select>
                         </div>
+
+                        {/* Waste Emission Display */}
+                        {emissionsBreakdown.waste > 0 && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-4 rounded-xl bg-gradient-to-br from-[#F97316]/5 to-transparent border border-[#F97316]/20"
+                          >
+                            <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Waste Emission Summary</h4>
+                            <div className="space-y-1 text-xs text-[#475569]">
+                              <div className="flex justify-between">
+                                <span>Waste Type:</span>
+                                <span className="font-mono capitalize">{wasteData.type}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Disposal Method:</span>
+                                <span className="font-mono capitalize">{wasteData.disposal}</span>
+                              </div>
+                              <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
+                                <span>Total Waste Emissions:</span>
+                                <span className="font-mono">{emissionsBreakdown.waste.toFixed(2)} kg CO₂e</span>
+                              </div>
+                            </div>
+                            <Button 
+                              onClick={saveWasteCalculation}
+                              className="w-full mt-3 rounded-xl bg-[#F97316] hover:bg-[#EA580C]"
+                              size="sm"
+                            >
+                              <Save className="h-4 w-4 mr-2" />
+                              Save to History
+                            </Button>
+                          </motion.div>
+                        )}
                       </motion.div>
                     </TabsContent>
 
