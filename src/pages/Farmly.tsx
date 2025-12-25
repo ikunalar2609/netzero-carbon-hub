@@ -7,11 +7,13 @@ import {
   Database,
   Code,
   ArrowRight,
-  Zap
+  Zap,
+  History
 } from "lucide-react";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
 import { ApiDocumentation } from "@/components/farmly/ApiDocumentation";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
+import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
 
 const Farmly = () => {
   const [activeTab, setActiveTab] = useState("calculator");
@@ -98,8 +100,9 @@ const Farmly = () => {
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-gray-100">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 mb-12 bg-gray-100">
               <TabsTrigger value="calculator" className="text-sm">Calculator</TabsTrigger>
+              <TabsTrigger value="history" className="text-sm">History</TabsTrigger>
               <TabsTrigger value="api-docs" className="text-sm">API Docs</TabsTrigger>
               <TabsTrigger value="explorer" className="text-sm">Explorer</TabsTrigger>
             </TabsList>
@@ -111,6 +114,16 @@ const Farmly = () => {
                 transition={{ duration: 0.6 }}
               >
                 <EmissionCalculator />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="history" className="mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <CalculationHistoryTable />
               </motion.div>
             </TabsContent>
 

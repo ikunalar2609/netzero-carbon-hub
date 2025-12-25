@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      emission_calculations: {
+        Row: {
+          calculation_type: string
+          created_at: string
+          id: string
+          input_data: Json
+          result_data: Json
+          total_emissions: number
+        }
+        Insert: {
+          calculation_type: string
+          created_at?: string
+          id?: string
+          input_data: Json
+          result_data: Json
+          total_emissions: number
+        }
+        Update: {
+          calculation_type?: string
+          created_at?: string
+          id?: string
+          input_data?: Json
+          result_data?: Json
+          total_emissions?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
