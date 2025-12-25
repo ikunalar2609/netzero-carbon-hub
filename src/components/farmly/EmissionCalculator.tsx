@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { AirportSearch } from "./AirportSearch";
+import { FlightRouteMap } from "./FlightRouteMap";
 // IPCC GWP values (AR6)
 const GWP_CH4 = 27.9;
 const GWP_N2O = 273;
@@ -94,8 +95,20 @@ interface FlightData {
 
 interface FlightResult {
   route: {
-    departure: { name: string; iata: string; icao: string };
-    arrival: { name: string; iata: string; icao: string };
+    departure: { 
+      name: string; 
+      iata: string; 
+      city: string;
+      country: string;
+      coordinates: { latitude: number; longitude: number };
+    };
+    arrival: { 
+      name: string; 
+      iata: string; 
+      city: string;
+      country: string;
+      coordinates: { latitude: number; longitude: number };
+    };
   };
   distance: { km: number; miles: number };
   emissions: {
@@ -949,6 +962,23 @@ export const EmissionCalculator = () => {
                             />
                           </div>
                         </div>
+
+                        {/* Flight Route Map */}
+                        <FlightRouteMap
+                          departure={flightResult ? {
+                            iata: flightResult.route.departure.iata,
+                            name: flightResult.route.departure.name,
+                            lat: flightResult.route.departure.coordinates.latitude,
+                            lon: flightResult.route.departure.coordinates.longitude,
+                          } : undefined}
+                          arrival={flightResult ? {
+                            iata: flightResult.route.arrival.iata,
+                            name: flightResult.route.arrival.name,
+                            lat: flightResult.route.arrival.coordinates.latitude,
+                            lon: flightResult.route.arrival.coordinates.longitude,
+                          } : undefined}
+                          distanceKm={flightResult?.distance.km}
+                        />
 
                         <div>
                           <Label className="text-sm font-medium text-[#1E293B] mb-2">Number of Passengers</Label>
