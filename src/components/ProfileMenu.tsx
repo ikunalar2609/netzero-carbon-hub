@@ -16,15 +16,19 @@ import { useAuth } from "@/context/AuthContext";
 export const ProfileMenu = () => {
   const { user, logout } = useAuth();
 
-  // Get initials from user's name
+  // Get initials from user's name (from user_metadata)
   const getInitials = () => {
-    if (!user?.name) return "U";
-    return user.name
+    const name = user?.user_metadata?.name || user?.email || "U";
+    if (typeof name !== 'string') return "U";
+    return name
       .split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase();
+      .toUpperCase()
+      .slice(0, 2);
   };
+
+  const displayName = user?.user_metadata?.name || user?.email?.split('@')[0] || "User";
 
   return (
     <DropdownMenu>
@@ -38,7 +42,7 @@ export const ProfileMenu = () => {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.name}</p>
+            <p className="text-sm font-medium leading-none">{displayName}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user?.email}
             </p>

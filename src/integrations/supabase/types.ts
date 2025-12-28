@@ -22,6 +22,7 @@ export type Database = {
           input_data: Json
           result_data: Json
           total_emissions: number
+          user_id: string | null
         }
         Insert: {
           calculation_type: string
@@ -30,6 +31,7 @@ export type Database = {
           input_data: Json
           result_data: Json
           total_emissions: number
+          user_id?: string | null
         }
         Update: {
           calculation_type?: string
@@ -38,6 +40,7 @@ export type Database = {
           input_data?: Json
           result_data?: Json
           total_emissions?: number
+          user_id?: string | null
         }
         Relationships: []
       }
