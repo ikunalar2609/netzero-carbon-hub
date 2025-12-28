@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      carbon_offsets: {
+        Row: {
+          category: string
+          created_at: string
+          credits: number
+          id: string
+          price_per_ton: number
+          project_name: string
+          quality_score: number
+          selected: boolean
+          updated_at: string
+          user_id: string
+          vintage: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          credits?: number
+          id?: string
+          price_per_ton?: number
+          project_name: string
+          quality_score?: number
+          selected?: boolean
+          updated_at?: string
+          user_id: string
+          vintage?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          credits?: number
+          id?: string
+          price_per_ton?: number
+          project_name?: string
+          quality_score?: number
+          selected?: boolean
+          updated_at?: string
+          user_id?: string
+          vintage?: string | null
+        }
+        Relationships: []
+      }
+      climate_settings: {
+        Row: {
+          baseline_year: number
+          created_at: string
+          id: string
+          selected_scenario: string
+          selected_scope: string
+          target_year: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          baseline_year?: number
+          created_at?: string
+          id?: string
+          selected_scenario?: string
+          selected_scope?: string
+          target_year?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          baseline_year?: number
+          created_at?: string
+          id?: string
+          selected_scenario?: string
+          selected_scope?: string
+          target_year?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       emission_calculations: {
         Row: {
           calculation_type: string
@@ -41,6 +116,204 @@ export type Database = {
           result_data?: Json
           total_emissions?: number
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      emissions_data: {
+        Row: {
+          created_at: string
+          id: string
+          is_projected: boolean
+          scope1: number
+          scope2: number
+          scope3: number
+          total: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_projected?: boolean
+          scope1?: number
+          scope2?: number
+          scope3?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_projected?: boolean
+          scope1?: number
+          scope2?: number
+          scope3?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      milestones: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          offset_dependency: number | null
+          reduction_target: number | null
+          standards: string[] | null
+          status: string
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          offset_dependency?: number | null
+          reduction_target?: number | null
+          standards?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          offset_dependency?: number | null
+          reduction_target?: number | null
+          standards?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      reduction_levers: {
+        Row: {
+          category: string
+          cost: number
+          created_at: string
+          current_value: number
+          enabled: boolean
+          id: string
+          impact: number
+          lever_id: string
+          name: string
+          target_value: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          cost?: number
+          created_at?: string
+          current_value?: number
+          enabled?: boolean
+          id?: string
+          impact?: number
+          lever_id: string
+          name: string
+          target_value?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          cost?: number
+          created_at?: string
+          current_value?: number
+          enabled?: boolean
+          id?: string
+          impact?: number
+          lever_id?: string
+          name?: string
+          target_value?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scenarios: {
+        Row: {
+          created_at: string
+          fleet_electrification: number
+          id: string
+          investment_level: string
+          name: string
+          net_zero_year: number
+          offset_reliance: number
+          renewables_target: number
+          risk_level: string
+          scenario_type: string
+          supplier_engagement: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fleet_electrification?: number
+          id?: string
+          investment_level?: string
+          name: string
+          net_zero_year: number
+          offset_reliance?: number
+          renewables_target?: number
+          risk_level?: string
+          scenario_type: string
+          supplier_engagement?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fleet_electrification?: number
+          id?: string
+          investment_level?: string
+          name?: string
+          net_zero_year?: number
+          offset_reliance?: number
+          renewables_target?: number
+          risk_level?: string
+          scenario_type?: string
+          supplier_engagement?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      standards_compliance: {
+        Row: {
+          created_at: string
+          id: string
+          standard: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          standard: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          standard?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

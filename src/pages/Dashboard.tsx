@@ -1,4 +1,3 @@
-
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import EmissionsChart from "@/components/dashboard/EmissionsChart";
 import EmissionsByCategory from "@/components/dashboard/EmissionsByCategory";
@@ -6,12 +5,14 @@ import ScopeBreakdown from "@/components/dashboard/ScopeBreakdown";
 import ReductionStatus from "@/components/dashboard/ReductionStatus";
 import GoalsProgress from "@/components/dashboard/GoalsProgress";
 import CarbonProjectsSection from "@/components/dashboard/CarbonProjectsSection";
+import DataEntryForm from "@/components/dashboard/DataEntryForm";
 import { InsightEngine } from "@/components/climate/InsightEngine";
 import { EdgeCaseBanner } from "@/components/climate/EdgeCaseBanner";
 import { SmartExport } from "@/components/climate/SmartExport";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useClimate } from "@/context/ClimateContext";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   TrendingDown, 
   Factory, 
@@ -21,10 +22,21 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
-  const { currentEmissions, totalReductionPercent, reductionLevers } = useClimate();
+  const { currentEmissions, totalReductionPercent, reductionLevers, loading } = useClimate();
   
   const renewablesLever = reductionLevers.find(l => l.id === 'renewables');
   const suppliersLever = reductionLevers.find(l => l.id === 'suppliers');
+
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-slide-up">
+        <Skeleton className="h-12 w-64" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32" />)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-slide-up">
@@ -82,6 +94,9 @@ const Dashboard = () => {
         <ReductionStatus />
         <GoalsProgress />
       </div>
+
+      {/* Data Entry Form */}
+      <DataEntryForm />
       
       {/* Carbon Market Insights Section - API Data */}
       <div className="space-y-2">

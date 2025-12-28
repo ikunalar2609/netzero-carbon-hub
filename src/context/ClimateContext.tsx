@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode, useEffect } from 'react';
+import { useClimateData, DbEmissionsData, DbReductionLever, DbMilestone, DbCarbonOffset, DbScenario, DbStandardsCompliance } from '@/hooks/useClimateData';
 
 // ========== Types ==========
-
 export type ScenarioType = 'current' | 'aggressive' | 'moderate';
 export type ScopeType = 'scope1' | 'scope2' | 'scope3' | 'all';
 
@@ -14,6 +14,7 @@ export interface EmissionsData {
 }
 
 export interface Milestone {
+  id?: string;
   year: number;
   event: string;
   status: 'completed' | 'inProgress' | 'planned';
@@ -28,7 +29,7 @@ export interface ReductionLever {
   category: 'renewables' | 'fleet' | 'suppliers' | 'offsets' | 'efficiency';
   currentValue: number;
   targetValue: number;
-  impact: number; // tCO2e reduction
+  impact: number;
   cost: number;
   enabled: boolean;
 }
@@ -39,7 +40,7 @@ export interface CarbonOffset {
   category: string;
   credits: number;
   pricePerTon: number;
-  qualityScore: number; // 0-100
+  qualityScore: number;
   vintage: string;
   selected: boolean;
 }
@@ -73,48 +74,32 @@ export interface DataExplainability {
 }
 
 export interface ClimateState {
-  // Core Settings
   baselineYear: number;
   targetYear: number;
   selectedScenario: ScenarioType;
   selectedScope: ScopeType;
-  
-  // Emissions Data
   historicalEmissions: EmissionsData[];
   currentEmissions: { scope1: number; scope2: number; scope3: number; total: number };
   projectedEmissions: EmissionsData[];
-  
-  // Reduction Configuration
   reductionLevers: ReductionLever[];
   milestones: Milestone[];
-  
-  // Carbon Market
   selectedOffsets: CarbonOffset[];
   totalOffsetsApplied: number;
-  
-  // Scenarios
   scenarios: Record<ScenarioType, ScenarioConfig>;
-  
-  // Quality & Compliance
   qualityScore: number;
   verificationLevel: number;
   standardsCompliance: { standard: string; status: 'compliant' | 'partial' | 'non-compliant' }[];
-  
-  // Insights
   insights: ClimateInsight[];
-  
-  // Calculations
   netZeroProjectedYear: number;
   totalReductionPercent: number;
   offsetDependencyRisk: 'low' | 'medium' | 'high';
   auditReadiness: 'ready' | 'partial' | 'not-ready';
-  
-  // Data tracking
   lastUpdated: Date;
+  loading: boolean;
+  initialized: boolean;
 }
 
 interface ClimateContextValue extends ClimateState {
-  // Actions
   setSelectedScenario: (scenario: ScenarioType) => void;
   setSelectedScope: (scope: ScopeType) => void;
   setTargetYear: (year: number) => void;
@@ -122,8 +107,10 @@ interface ClimateContextValue extends ClimateState {
   updateReductionLever: (leverId: string, value: number) => void;
   selectOffset: (offsetId: string, selected: boolean) => void;
   purchaseCredits: (offsetId: string, amount: number) => void;
-  
-  // Computed values
+  addEmissionData: (data: Omit<EmissionsData, 'total'> & { total?: number }) => Promise<void>;
+  addMilestoneData: (data: Omit<Milestone, 'id'>) => Promise<void>;
+  addOffsetData: (data: Omit<CarbonOffset, 'id'>) => Promise<void>;
+  refreshData: () => Promise<void>;
   getProjectedNetZeroYear: () => number;
   getScenarioDelta: (fromScenario: ScenarioType, toScenario: ScenarioType) => {
     yearsSaved: number;
@@ -136,141 +123,173 @@ interface ClimateContextValue extends ClimateState {
     offsetRisk: string;
   };
   getExplainability: (metric: string) => DataExplainability;
-  
-  // Export
   exportCurrentState: () => object;
 }
 
-const defaultReductionLevers: ReductionLever[] = [
-  { id: 'renewables', name: 'Renewable Energy', category: 'renewables', currentValue: 72, targetValue: 100, impact: 28000, cost: 2500000, enabled: true },
-  { id: 'fleet', name: 'Fleet Electrification', category: 'fleet', currentValue: 50, targetValue: 100, impact: 15000, cost: 1800000, enabled: true },
-  { id: 'suppliers', name: 'Supplier Engagement', category: 'suppliers', currentValue: 58, targetValue: 80, impact: 35000, cost: 500000, enabled: true },
-  { id: 'efficiency', name: 'Energy Efficiency', category: 'efficiency', currentValue: 65, targetValue: 90, impact: 12000, cost: 800000, enabled: true },
-  { id: 'offsets', name: 'Carbon Offsets', category: 'offsets', currentValue: 10, targetValue: 30, impact: 20000, cost: 600000, enabled: false },
-];
-
-const defaultMilestones: Milestone[] = [
-  { year: 2020, event: 'Baseline Assessment', status: 'completed', reductionTarget: 0, standards: ['GHG Protocol'], offsetDependency: 0 },
-  { year: 2022, event: '25% Renewable Energy', status: 'completed', reductionTarget: 10, standards: ['GHG Protocol', 'ISO 14064'], offsetDependency: 0 },
-  { year: 2023, event: '50% Electric Fleet', status: 'completed', reductionTarget: 15, standards: ['SBTi'], offsetDependency: 5 },
-  { year: 2024, event: '75% Supplier Engagement', status: 'inProgress', reductionTarget: 20, standards: ['GHG Protocol', 'CDP'], offsetDependency: 8 },
-  { year: 2025, event: '30% Emissions Reduction', status: 'planned', reductionTarget: 30, standards: ['SBTi', 'ISO 14064'], offsetDependency: 10 },
-  { year: 2026, event: '45% Renewable Energy', status: 'planned', reductionTarget: 35, standards: ['RE100'], offsetDependency: 12 },
-  { year: 2028, event: '60% Emissions Reduction', status: 'planned', reductionTarget: 60, standards: ['SBTi', 'Paris Agreement'], offsetDependency: 15 },
-  { year: 2030, event: '80% Emissions Reduction', status: 'planned', reductionTarget: 80, standards: ['SBTi', 'Net Zero Standard'], offsetDependency: 18 },
-  { year: 2035, event: '95% Emissions Reduction', status: 'planned', reductionTarget: 95, standards: ['Net Zero Standard'], offsetDependency: 20 },
-  { year: 2040, event: 'Net Zero Achievement', status: 'planned', reductionTarget: 100, standards: ['Net Zero Standard', 'SBTi'], offsetDependency: 5 },
-];
-
-const defaultScenarios: Record<ScenarioType, ScenarioConfig> = {
-  current: {
-    name: 'Current Plan',
-    netZeroYear: 2040,
-    renewablesTarget: 80,
-    fleetElectrification: 100,
-    supplierEngagement: 75,
-    offsetReliance: 15,
-    investmentLevel: 'medium',
-    riskLevel: 'medium',
-  },
-  aggressive: {
-    name: 'Aggressive Plan',
-    netZeroYear: 2035,
-    renewablesTarget: 100,
-    fleetElectrification: 100,
-    supplierEngagement: 90,
-    offsetReliance: 25,
-    investmentLevel: 'high',
-    riskLevel: 'high',
-  },
-  moderate: {
-    name: 'Moderate Plan',
-    netZeroYear: 2045,
-    renewablesTarget: 60,
-    fleetElectrification: 80,
-    supplierEngagement: 60,
-    offsetReliance: 35,
-    investmentLevel: 'low',
-    riskLevel: 'low',
-  },
+// Transformation functions
+const transformEmissions = (dbData: DbEmissionsData[]): EmissionsData[] => {
+  return dbData.map(e => ({
+    year: e.year,
+    scope1: Number(e.scope1),
+    scope2: Number(e.scope2),
+    scope3: Number(e.scope3),
+    total: Number(e.total),
+  }));
 };
 
-const defaultHistoricalEmissions: EmissionsData[] = [
-  { year: 2020, scope1: 35000, scope2: 48000, scope3: 85000, total: 168000 },
-  { year: 2021, scope1: 34000, scope2: 45000, scope3: 82000, total: 161000 },
-  { year: 2022, scope1: 32000, scope2: 42000, scope3: 80000, total: 154000 },
-  { year: 2023, scope1: 30000, scope2: 38000, scope3: 78000, total: 146000 },
-  { year: 2024, scope1: 28000, scope2: 34000, scope3: 75000, total: 137000 },
-];
+const transformLevers = (dbData: DbReductionLever[]): ReductionLever[] => {
+  return dbData.map(l => ({
+    id: l.lever_id,
+    name: l.name,
+    category: l.category as ReductionLever['category'],
+    currentValue: Number(l.current_value),
+    targetValue: Number(l.target_value),
+    impact: Number(l.impact),
+    cost: Number(l.cost),
+    enabled: l.enabled,
+  }));
+};
 
-const defaultOffsets: CarbonOffset[] = [
-  { id: '1', projectName: 'Reforestation Project', category: 'Forestry', credits: 5000, pricePerTon: 15.75, qualityScore: 85, vintage: '2023', selected: false },
-  { id: '2', projectName: 'Solar Farm Initiative', category: 'Renewable Energy', credits: 3000, pricePerTon: 22.30, qualityScore: 92, vintage: '2024', selected: false },
-  { id: '3', projectName: 'Methane Capture', category: 'Methane Reduction', credits: 4000, pricePerTon: 18.45, qualityScore: 78, vintage: '2023', selected: false },
-];
+const transformMilestones = (dbData: DbMilestone[]): Milestone[] => {
+  return dbData.map(m => ({
+    id: m.id,
+    year: m.year,
+    event: m.event,
+    status: m.status as Milestone['status'],
+    reductionTarget: Number(m.reduction_target),
+    standards: m.standards,
+    offsetDependency: Number(m.offset_dependency),
+  }));
+};
+
+const transformOffsets = (dbData: DbCarbonOffset[]): CarbonOffset[] => {
+  return dbData.map(o => ({
+    id: o.id,
+    projectName: o.project_name,
+    category: o.category,
+    credits: Number(o.credits),
+    pricePerTon: Number(o.price_per_ton),
+    qualityScore: Number(o.quality_score),
+    vintage: o.vintage,
+    selected: o.selected,
+  }));
+};
+
+const transformScenarios = (dbData: DbScenario[]): Record<ScenarioType, ScenarioConfig> => {
+  const result: Record<ScenarioType, ScenarioConfig> = {
+    current: { name: 'Current Plan', netZeroYear: 2040, renewablesTarget: 80, fleetElectrification: 100, supplierEngagement: 75, offsetReliance: 15, investmentLevel: 'medium', riskLevel: 'medium' },
+    aggressive: { name: 'Aggressive Plan', netZeroYear: 2035, renewablesTarget: 100, fleetElectrification: 100, supplierEngagement: 90, offsetReliance: 25, investmentLevel: 'high', riskLevel: 'high' },
+    moderate: { name: 'Moderate Plan', netZeroYear: 2045, renewablesTarget: 60, fleetElectrification: 80, supplierEngagement: 60, offsetReliance: 35, investmentLevel: 'low', riskLevel: 'low' },
+  };
+  
+  dbData.forEach(s => {
+    if (s.scenario_type in result) {
+      result[s.scenario_type as ScenarioType] = {
+        name: s.name,
+        netZeroYear: s.net_zero_year,
+        renewablesTarget: Number(s.renewables_target),
+        fleetElectrification: Number(s.fleet_electrification),
+        supplierEngagement: Number(s.supplier_engagement),
+        offsetReliance: Number(s.offset_reliance),
+        investmentLevel: s.investment_level as ScenarioConfig['investmentLevel'],
+        riskLevel: s.risk_level as ScenarioConfig['riskLevel'],
+      };
+    }
+  });
+  
+  return result;
+};
+
+const transformCompliance = (dbData: DbStandardsCompliance[]): { standard: string; status: 'compliant' | 'partial' | 'non-compliant' }[] => {
+  return dbData.map(c => ({
+    standard: c.standard,
+    status: c.status as 'compliant' | 'partial' | 'non-compliant',
+  }));
+};
 
 const ClimateContext = createContext<ClimateContextValue | undefined>(undefined);
 
 export const ClimateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<ClimateState>({
-    baselineYear: 2020,
-    targetYear: 2040,
-    selectedScenario: 'current',
-    selectedScope: 'all',
-    historicalEmissions: defaultHistoricalEmissions,
-    currentEmissions: { scope1: 28000, scope2: 34000, scope3: 75000, total: 137000 },
-    projectedEmissions: [],
-    reductionLevers: defaultReductionLevers,
-    milestones: defaultMilestones,
-    selectedOffsets: defaultOffsets,
+  const {
+    loading,
+    initialized,
+    settings,
+    emissionsData,
+    reductionLevers: dbLevers,
+    milestones: dbMilestones,
+    offsets: dbOffsets,
+    scenarios: dbScenarios,
+    compliance: dbCompliance,
+    fetchAllData,
+    updateSettings,
+    updateLever,
+    updateOffset,
+    addEmission,
+    addMilestone,
+    addOffset,
+  } = useClimateData();
+
+  const [localState, setLocalState] = useState<{
+    projectedEmissions: EmissionsData[];
+    insights: ClimateInsight[];
+    totalOffsetsApplied: number;
+    qualityScore: number;
+    offsetDependencyRisk: 'low' | 'medium' | 'high';
+  }>({
+    projectedEmissions: [] as EmissionsData[],
+    insights: [] as ClimateInsight[],
     totalOffsetsApplied: 0,
-    scenarios: defaultScenarios,
     qualityScore: 90,
-    verificationLevel: 3,
-    standardsCompliance: [
-      { standard: 'GHG Protocol', status: 'compliant' },
-      { standard: 'SBTi', status: 'compliant' },
-      { standard: 'ISO 14064', status: 'partial' },
-      { standard: 'CDP', status: 'compliant' },
-    ],
-    insights: [],
-    netZeroProjectedYear: 2040,
-    totalReductionPercent: 18.5,
     offsetDependencyRisk: 'low',
-    auditReadiness: 'ready',
-    lastUpdated: new Date(),
   });
 
-  // Calculate projected emissions based on scenario
-  const calculateProjections = useCallback((scenario: ScenarioType) => {
-    const config = state.scenarios[scenario];
-    const baseline = state.historicalEmissions[0].total;
-    const current = state.currentEmissions.total;
-    const yearsToNetZero = config.netZeroYear - 2024;
-    const annualReduction = current / yearsToNetZero;
-    
-    const projections: EmissionsData[] = [];
-    for (let year = 2025; year <= config.netZeroYear; year++) {
-      const yearsFromNow = year - 2024;
-      const reductionFactor = 1 - (yearsFromNow / yearsToNetZero);
-      const total = Math.max(0, current * reductionFactor);
-      projections.push({
-        year,
-        scope1: total * 0.2,
-        scope2: total * 0.25,
-        scope3: total * 0.55,
-        total,
-      });
-    }
-    return projections;
-  }, [state.scenarios, state.historicalEmissions, state.currentEmissions]);
+  // Transform database data to app format
+  const historicalEmissions = useMemo(() => 
+    transformEmissions(emissionsData.filter(e => !e.is_projected)), 
+    [emissionsData]
+  );
+  
+  const reductionLevers = useMemo(() => transformLevers(dbLevers), [dbLevers]);
+  const milestones = useMemo(() => transformMilestones(dbMilestones), [dbMilestones]);
+  const selectedOffsets = useMemo(() => transformOffsets(dbOffsets), [dbOffsets]);
+  const scenarios = useMemo(() => transformScenarios(dbScenarios), [dbScenarios]);
+  const standardsCompliance = useMemo(() => transformCompliance(dbCompliance), [dbCompliance]);
 
-  // Generate insights based on current state
+  const currentEmissions = useMemo(() => {
+    const latestYear = historicalEmissions.reduce((max, e) => e.year > max.year ? e : max, historicalEmissions[0] || { year: 0, scope1: 0, scope2: 0, scope3: 0, total: 0 });
+    return {
+      scope1: latestYear?.scope1 || 0,
+      scope2: latestYear?.scope2 || 0,
+      scope3: latestYear?.scope3 || 0,
+      total: latestYear?.total || 0,
+    };
+  }, [historicalEmissions]);
+
+  const baselineYear = settings?.baseline_year || 2020;
+  const targetYear = settings?.target_year || 2040;
+  const selectedScenario = (settings?.selected_scenario || 'current') as ScenarioType;
+  const selectedScope = (settings?.selected_scope || 'all') as ScopeType;
+
+  // Calculate derived values
+  const baselineEmissions = useMemo(() => {
+    const baseline = historicalEmissions.find(e => e.year === baselineYear);
+    return baseline?.total || 168000;
+  }, [historicalEmissions, baselineYear]);
+
+  const totalReductionPercent = useMemo(() => {
+    if (baselineEmissions === 0) return 0;
+    return ((baselineEmissions - currentEmissions.total) / baselineEmissions) * 100;
+  }, [baselineEmissions, currentEmissions.total]);
+
+  const netZeroProjectedYear = scenarios[selectedScenario]?.netZeroYear || 2040;
+
+  // Generate insights
   const generateInsights = useCallback((): ClimateInsight[] => {
     const insights: ClimateInsight[] = [];
-    const config = state.scenarios[state.selectedScenario];
+    const config = scenarios[selectedScenario];
     
-    // Net Zero progress insight
+    if (!config) return insights;
+
     const yearsAhead = 2050 - config.netZeroYear;
     if (yearsAhead > 0) {
       insights.push({
@@ -284,8 +303,7 @@ export const ClimateProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
     }
 
-    // Scope 3 warning
-    const scope3Ratio = state.currentEmissions.scope3 / state.currentEmissions.total;
+    const scope3Ratio = currentEmissions.total > 0 ? currentEmissions.scope3 / currentEmissions.total : 0;
     if (scope3Ratio > 0.5) {
       insights.push({
         id: '2',
@@ -297,206 +315,117 @@ export const ClimateProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
     }
 
-    // Offset risk
     if (config.offsetReliance > 20) {
       insights.push({
         id: '3',
         type: 'warning',
-        message: `${state.selectedScenario === 'aggressive' ? 'Aggressive' : 'Current'} plan has ${config.offsetReliance}% offset reliance - consider increasing direct reductions`,
+        message: `${selectedScenario === 'aggressive' ? 'Aggressive' : 'Current'} plan has ${config.offsetReliance}% offset reliance - consider increasing direct reductions`,
         metric: 'Offset Dependency',
         source: 'Risk Assessment',
         timestamp: new Date(),
       });
     }
 
-    // Scenario comparison
-    if (state.selectedScenario !== 'aggressive') {
-      const currentConfig = state.scenarios[state.selectedScenario];
-      const aggressiveConfig = state.scenarios.aggressive;
-      const yearsSaved = currentConfig.netZeroYear - aggressiveConfig.netZeroYear;
-      insights.push({
-        id: '4',
-        type: 'info',
-        message: `Switching to Aggressive plan would achieve Net Zero ${yearsSaved} years earlier`,
-        metric: 'Scenario Comparison',
-        delta: yearsSaved,
-        source: 'Scenario Engine',
-        timestamp: new Date(),
-      });
-    }
-
-    // Audit readiness
-    const compliantCount = state.standardsCompliance.filter(s => s.status === 'compliant').length;
-    if (compliantCount >= 3) {
-      insights.push({
-        id: '5',
-        type: 'positive',
-        message: 'Your Net Zero claim is audit-ready with strong standards compliance',
-        metric: 'Audit Readiness',
-        source: 'Compliance Check',
-        timestamp: new Date(),
-      });
-    }
-
     return insights;
-  }, [state.currentEmissions, state.scenarios, state.selectedScenario, state.standardsCompliance]);
+  }, [scenarios, selectedScenario, currentEmissions]);
 
-  // Update milestones based on scenario
-  const updateMilestonesForScenario = useCallback((scenario: ScenarioType): Milestone[] => {
-    const config = state.scenarios[scenario];
-    const baseYear = 2024;
-    const netZeroYear = config.netZeroYear;
-    const totalYears = netZeroYear - baseYear;
-    
-    return state.milestones.map(milestone => {
-      if (milestone.status === 'completed') return milestone;
-      
-      // Adjust year based on scenario acceleration
-      const yearOffset = milestone.year - 2024;
-      const adjustedOffset = scenario === 'aggressive' 
-        ? Math.floor(yearOffset * 0.7)
-        : scenario === 'moderate' 
-          ? Math.floor(yearOffset * 1.3)
-          : yearOffset;
-      
-      const newYear = Math.min(2024 + adjustedOffset, netZeroYear);
-      
-      // Adjust offset dependency based on scenario
-      const offsetMultiplier = scenario === 'aggressive' ? 1.5 : scenario === 'moderate' ? 2 : 1;
-      
-      return {
-        ...milestone,
-        year: milestone.year <= 2024 ? milestone.year : newYear,
-        offsetDependency: Math.round((milestone.offsetDependency || 0) * offsetMultiplier),
-      };
-    });
-  }, [state.milestones, state.scenarios]);
+  const insights = useMemo(() => generateInsights(), [generateInsights]);
 
   // Actions
   const setSelectedScenario = useCallback((scenario: ScenarioType) => {
-    setState(prev => {
-      const newMilestones = updateMilestonesForScenario(scenario);
-      const newProjections = calculateProjections(scenario);
-      return {
-        ...prev,
-        selectedScenario: scenario,
-        milestones: newMilestones,
-        projectedEmissions: newProjections,
-        netZeroProjectedYear: prev.scenarios[scenario].netZeroYear,
-        insights: generateInsights(),
-        lastUpdated: new Date(),
-      };
-    });
-  }, [updateMilestonesForScenario, calculateProjections, generateInsights]);
+    updateSettings({ selected_scenario: scenario });
+  }, [updateSettings]);
 
   const setSelectedScope = useCallback((scope: ScopeType) => {
-    setState(prev => ({
-      ...prev,
-      selectedScope: scope,
-      lastUpdated: new Date(),
-    }));
-  }, []);
+    updateSettings({ selected_scope: scope });
+  }, [updateSettings]);
 
   const setTargetYear = useCallback((year: number) => {
-    setState(prev => ({
-      ...prev,
-      targetYear: year,
-      lastUpdated: new Date(),
-    }));
-  }, []);
+    updateSettings({ target_year: year });
+  }, [updateSettings]);
 
   const toggleReductionLever = useCallback((leverId: string) => {
-    setState(prev => {
-      const newLevers = prev.reductionLevers.map(lever =>
-        lever.id === leverId ? { ...lever, enabled: !lever.enabled } : lever
-      );
-      return {
-        ...prev,
-        reductionLevers: newLevers,
-        lastUpdated: new Date(),
-      };
-    });
-  }, []);
+    const lever = reductionLevers.find(l => l.id === leverId);
+    if (lever) {
+      updateLever(leverId, { enabled: !lever.enabled });
+    }
+  }, [reductionLevers, updateLever]);
 
-  const updateReductionLever = useCallback((leverId: string, value: number) => {
-    setState(prev => {
-      const newLevers = prev.reductionLevers.map(lever =>
-        lever.id === leverId ? { ...lever, currentValue: value } : lever
-      );
-      return {
-        ...prev,
-        reductionLevers: newLevers,
-        lastUpdated: new Date(),
-      };
-    });
-  }, []);
+  const updateReductionLeverValue = useCallback((leverId: string, value: number) => {
+    updateLever(leverId, { current_value: value });
+  }, [updateLever]);
 
   const selectOffset = useCallback((offsetId: string, selected: boolean) => {
-    setState(prev => {
-      const newOffsets = prev.selectedOffsets.map(offset =>
-        offset.id === offsetId ? { ...offset, selected } : offset
-      );
-      const totalApplied = newOffsets.filter(o => o.selected).reduce((sum, o) => sum + o.credits, 0);
-      
-      // Calculate new quality score impact
-      const selectedOffsets = newOffsets.filter(o => o.selected);
-      const avgQuality = selectedOffsets.length > 0
-        ? selectedOffsets.reduce((sum, o) => sum + o.qualityScore, 0) / selectedOffsets.length
-        : 100;
-      
-      return {
-        ...prev,
-        selectedOffsets: newOffsets,
-        totalOffsetsApplied: totalApplied,
-        offsetDependencyRisk: totalApplied > 20000 ? 'high' : totalApplied > 10000 ? 'medium' : 'low',
-        qualityScore: Math.round(90 * (avgQuality / 100)),
-        lastUpdated: new Date(),
-      };
-    });
-  }, []);
+    updateOffset(offsetId, { selected });
+  }, [updateOffset]);
 
   const purchaseCredits = useCallback((offsetId: string, amount: number) => {
-    setState(prev => {
-      const newOffsets = prev.selectedOffsets.map(offset =>
-        offset.id === offsetId ? { ...offset, credits: offset.credits + amount, selected: true } : offset
-      );
-      const totalApplied = newOffsets.filter(o => o.selected).reduce((sum, o) => sum + o.credits, 0);
-      
-      // Update current emissions (reduce residual)
-      const reduction = Math.min(amount, prev.currentEmissions.total);
-      
-      return {
-        ...prev,
-        selectedOffsets: newOffsets,
-        totalOffsetsApplied: totalApplied,
-        currentEmissions: {
-          ...prev.currentEmissions,
-          total: prev.currentEmissions.total - reduction * 0.8, // Quality-weighted reduction
-        },
-        lastUpdated: new Date(),
-      };
-    });
-  }, []);
+    const offset = selectedOffsets.find(o => o.id === offsetId);
+    if (offset) {
+      updateOffset(offsetId, { credits: offset.credits + amount, selected: true });
+    }
+  }, [selectedOffsets, updateOffset]);
 
-  // Computed values
+  const addEmissionData = useCallback(async (data: Omit<EmissionsData, 'total'> & { total?: number }) => {
+    const total = data.total ?? (data.scope1 + data.scope2 + data.scope3);
+    await addEmission({
+      year: data.year,
+      scope1: data.scope1,
+      scope2: data.scope2,
+      scope3: data.scope3,
+      total,
+      is_projected: false,
+    });
+  }, [addEmission]);
+
+  const addMilestoneData = useCallback(async (data: Omit<Milestone, 'id'>) => {
+    await addMilestone({
+      year: data.year,
+      event: data.event,
+      status: data.status,
+      reduction_target: data.reductionTarget || 0,
+      standards: data.standards || [],
+      offset_dependency: data.offsetDependency || 0,
+    });
+  }, [addMilestone]);
+
+  const addOffsetData = useCallback(async (data: Omit<CarbonOffset, 'id'>) => {
+    await addOffset({
+      project_name: data.projectName,
+      category: data.category,
+      credits: data.credits,
+      price_per_ton: data.pricePerTon,
+      quality_score: data.qualityScore,
+      vintage: data.vintage,
+      selected: data.selected,
+    });
+  }, [addOffset]);
+
+  const refreshData = useCallback(async () => {
+    await fetchAllData();
+  }, [fetchAllData]);
+
+  // Computed value getters
   const getProjectedNetZeroYear = useCallback(() => {
-    return state.scenarios[state.selectedScenario].netZeroYear;
-  }, [state.scenarios, state.selectedScenario]);
+    return scenarios[selectedScenario]?.netZeroYear || 2040;
+  }, [scenarios, selectedScenario]);
 
   const getScenarioDelta = useCallback((fromScenario: ScenarioType, toScenario: ScenarioType) => {
-    const from = state.scenarios[fromScenario];
-    const to = state.scenarios[toScenario];
+    const from = scenarios[fromScenario];
+    const to = scenarios[toScenario];
+    
+    if (!from || !to) return { yearsSaved: 0, costChange: 0, emissionsReduced: 0 };
     
     const yearsSaved = from.netZeroYear - to.netZeroYear;
     const costMultiplier = { low: 1, medium: 2, high: 3 };
     const costChange = (costMultiplier[to.investmentLevel] - costMultiplier[from.investmentLevel]) * 1000000;
-    const emissionsReduced = yearsSaved * 5000; // Rough estimate
+    const emissionsReduced = yearsSaved * 5000;
     
     return { yearsSaved, costChange, emissionsReduced };
-  }, [state.scenarios]);
+  }, [scenarios]);
 
   const getMilestoneImpact = useCallback((milestoneYear: number) => {
-    const milestone = state.milestones.find(m => m.year === milestoneYear);
+    const milestone = milestones.find(m => m.year === milestoneYear);
     if (!milestone) {
       return { standards: [], confidence: 0, offsetRisk: 'unknown' };
     }
@@ -512,26 +441,27 @@ export const ClimateProvider: React.FC<{ children: ReactNode }> = ({ children })
       confidence: 100 - (milestone.offsetDependency || 0) * 2,
       offsetRisk,
     };
-  }, [state.milestones]);
+  }, [milestones]);
 
   const getExplainability = useCallback((metric: string): DataExplainability => {
+    const now = new Date();
     const explanations: Record<string, DataExplainability> = {
       'totalEmissions': {
         formula: 'Scope 1 + Scope 2 + Scope 3 = Total Emissions',
         dataSources: ['Internal Operations Data', 'Utility Bills', 'Supply Chain Reports'],
-        lastUpdated: state.lastUpdated,
+        lastUpdated: now,
         confidence: 95,
       },
       'netZeroYear': {
         formula: 'Current Year + (Residual Emissions / Annual Reduction Rate)',
         dataSources: ['Emissions Trajectory Model', 'Reduction Project Pipeline'],
-        lastUpdated: state.lastUpdated,
+        lastUpdated: now,
         confidence: 85,
       },
       'qualityScore': {
         formula: '(Carbon Accounting × 0.25) + (Additionality × 0.25) + (Permanence × 0.2) + (Verification × 0.3)',
         dataSources: ['Third-party Verification', 'Internal Audit', 'Registry Data'],
-        lastUpdated: state.lastUpdated,
+        lastUpdated: now,
         confidence: 90,
       },
     };
@@ -539,56 +469,92 @@ export const ClimateProvider: React.FC<{ children: ReactNode }> = ({ children })
     return explanations[metric] || {
       formula: 'Calculated from multiple data inputs',
       dataSources: ['Various Sources'],
-      lastUpdated: state.lastUpdated,
+      lastUpdated: now,
       confidence: 80,
     };
-  }, [state.lastUpdated]);
+  }, []);
 
   const exportCurrentState = useCallback(() => {
     return {
       exportDate: new Date().toISOString(),
-      scenario: state.selectedScenario,
-      scopeFilter: state.selectedScope,
-      targetYear: state.targetYear,
-      currentEmissions: state.currentEmissions,
-      netZeroProjectedYear: state.netZeroProjectedYear,
-      milestones: state.milestones.filter(m => m.status !== 'completed'),
-      selectedOffsets: state.selectedOffsets.filter(o => o.selected),
-      qualityScore: state.qualityScore,
-      insights: state.insights,
-      standardsCompliance: state.standardsCompliance,
+      scenario: selectedScenario,
+      scopeFilter: selectedScope,
+      targetYear,
+      currentEmissions,
+      netZeroProjectedYear,
+      milestones: milestones.filter(m => m.status !== 'completed'),
+      selectedOffsets: selectedOffsets.filter(o => o.selected),
+      qualityScore: localState.qualityScore,
+      insights,
+      standardsCompliance,
     };
-  }, [state]);
+  }, [selectedScenario, selectedScope, targetYear, currentEmissions, netZeroProjectedYear, milestones, selectedOffsets, localState.qualityScore, insights, standardsCompliance]);
+
+  // Calculate total offsets
+  useEffect(() => {
+    const totalApplied = selectedOffsets.filter(o => o.selected).reduce((sum, o) => sum + o.credits, 0);
+    const selectedOffsetsFiltered = selectedOffsets.filter(o => o.selected);
+    const avgQuality = selectedOffsetsFiltered.length > 0
+      ? selectedOffsetsFiltered.reduce((sum, o) => sum + o.qualityScore, 0) / selectedOffsetsFiltered.length
+      : 100;
+
+    setLocalState(prev => ({
+      ...prev,
+      totalOffsetsApplied: totalApplied,
+      qualityScore: Math.round(90 * (avgQuality / 100)),
+      offsetDependencyRisk: totalApplied > 20000 ? 'high' : totalApplied > 10000 ? 'medium' : 'low',
+    }));
+  }, [selectedOffsets]);
 
   const value = useMemo<ClimateContextValue>(() => ({
-    ...state,
-    insights: generateInsights(),
+    loading,
+    initialized,
+    baselineYear,
+    targetYear,
+    selectedScenario,
+    selectedScope,
+    historicalEmissions,
+    currentEmissions,
+    projectedEmissions: localState.projectedEmissions,
+    reductionLevers,
+    milestones,
+    selectedOffsets,
+    totalOffsetsApplied: localState.totalOffsetsApplied,
+    scenarios,
+    qualityScore: localState.qualityScore,
+    verificationLevel: 3,
+    standardsCompliance,
+    insights,
+    netZeroProjectedYear,
+    totalReductionPercent,
+    offsetDependencyRisk: localState.offsetDependencyRisk,
+    auditReadiness: 'ready',
+    lastUpdated: new Date(),
+    // Actions
     setSelectedScenario,
     setSelectedScope,
     setTargetYear,
     toggleReductionLever,
-    updateReductionLever,
+    updateReductionLever: updateReductionLeverValue,
     selectOffset,
     purchaseCredits,
+    addEmissionData,
+    addMilestoneData,
+    addOffsetData,
+    refreshData,
     getProjectedNetZeroYear,
     getScenarioDelta,
     getMilestoneImpact,
     getExplainability,
     exportCurrentState,
   }), [
-    state,
-    generateInsights,
-    setSelectedScenario,
-    setSelectedScope,
-    setTargetYear,
-    toggleReductionLever,
-    updateReductionLever,
-    selectOffset,
-    purchaseCredits,
-    getProjectedNetZeroYear,
-    getScenarioDelta,
-    getMilestoneImpact,
-    getExplainability,
+    loading, initialized, baselineYear, targetYear, selectedScenario, selectedScope,
+    historicalEmissions, currentEmissions, localState, reductionLevers, milestones,
+    selectedOffsets, scenarios, standardsCompliance, insights, netZeroProjectedYear,
+    totalReductionPercent, setSelectedScenario, setSelectedScope, setTargetYear,
+    toggleReductionLever, updateReductionLeverValue, selectOffset, purchaseCredits,
+    addEmissionData, addMilestoneData, addOffsetData, refreshData,
+    getProjectedNetZeroYear, getScenarioDelta, getMilestoneImpact, getExplainability,
     exportCurrentState,
   ]);
 
