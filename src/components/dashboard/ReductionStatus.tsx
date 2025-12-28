@@ -1,6 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useClimate } from "@/context/ClimateContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CategoryProps {
   title: string;
@@ -25,16 +26,16 @@ const Category = ({ title, status, progress, target, scope }: CategoryProps) => 
       <div className="flex items-center space-x-3">
         <div className="w-32 bg-gray-100 rounded-full h-2.5">
           <div
-            className="h-2.5 rounded-full"
+            className="h-2.5 rounded-full transition-all duration-500"
             style={{
-              width: `${progress}%`,
+              width: `${Math.min(progress, 100)}%`,
               backgroundColor:
                 status === "On Track" ? "#09AB75" : status === "At Risk" ? "#FFC745" : "#EA384C",
             }}
           ></div>
         </div>
         <span
-          className="text-sm font-medium"
+          className="text-sm font-medium min-w-[70px] text-right"
           style={{
             color:
               status === "On Track" ? "#09AB75" : status === "At Risk" ? "#FFC745" : "#EA384C",
@@ -48,40 +49,68 @@ const Category = ({ title, status, progress, target, scope }: CategoryProps) => 
 };
 
 const ReductionStatus = () => {
+  const { reductionLevers, loading } = useClimate();
+
+  // Map reduction levers to status categories
+  const categories = reductionLevers.map(lever => {
+    const progress = lever.targetValue > 0 
+      ? (lever.currentValue / lever.targetValue) * 100 
+      : 0;
+    
+    let status = "On Track";
+    if (progress < 50) status = "Behind";
+    else if (progress < 75) status = "At Risk";
+
+    const scopeMap: Record<string, string> = {
+      fleet: "Scope 1",
+      renewables: "Scope 2",
+      suppliers: "Scope 3",
+      efficiency: "Scope 2",
+      offsets: "Scope 3",
+    };
+
+    return {
+      title: lever.name,
+      status: lever.enabled ? status : "Disabled",
+      progress,
+      target: `Target: ${lever.targetValue}% by 2030`,
+      scope: scopeMap[lever.category] || "All",
+    };
+  }).filter(c => c.status !== "Disabled").slice(0, 4);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Reduction Status</CardTitle>
+        </CardHeader>
+        <CardContent className="px-6 space-y-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="flex items-center justify-between py-3">
+              <Skeleton className="h-10 w-48" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Reduction Status</CardTitle>
       </CardHeader>
       <CardContent className="px-6">
-        <Category
-          title="Transition to Electric Fleet"
-          status="On Track"
-          progress={78}
-          target="Target: -15% by 2025"
-          scope="Scope 1"
-        />
-        <Category
-          title="Renewable Energy Implementation"
-          status="On Track"
-          progress={65}
-          target="Target: 80% by 2026"
-          scope="Scope 2"
-        />
-        <Category
-          title="Sustainable Procurement"
-          status="At Risk"
-          progress={45}
-          target="Target: -30% by 2027"
-          scope="Scope 3"
-        />
-        <Category
-          title="Waste Reduction"
-          status="Behind"
-          progress={25}
-          target="Target: -40% by 2025"
-          scope="Scope 3"
-        />
+        {categories.length > 0 ? (
+          categories.map((cat, idx) => (
+            <Category key={idx} {...cat} />
+          ))
+        ) : (
+          <p className="text-muted-foreground text-center py-4">
+            No reduction levers configured. Add data to see progress.
+          </p>
+        )}
       </CardContent>
     </Card>
   );
