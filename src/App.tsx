@@ -8,6 +8,7 @@ import { AnimatePresence } from "@/components/AnimatePresence";
 import { DarkModeProvider } from "@/context/DarkModeContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppwriteProvider } from "@/context/AppwriteContext";
+import { ClimateProvider } from "@/context/ClimateContext";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 
 // Layout
@@ -38,41 +39,43 @@ function App() {
           <Toaster />
           <Sonner />
           <AppwriteProvider>
-            <BrowserRouter>
-              <AuthProvider>
-                <ScrollToTop />
-                <AnimatePresence>
-                  <Routes>
-                    {/* Public landing page */}
-                    <Route path="/" element={<Index />} />
-                    
-                    {/* New Farmly page */}
-                    <Route path="/farmly" element={<Farmly />} />
-                    
-                    {/* Public routes */}
-                    <Route element={<PublicRoute />}>
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/signup" element={<Signup />} />
-                    </Route>
-                    
-                    {/* Protected routes */}
-                    <Route element={<ProtectedRoute />}>
-                      <Route path="/dashboard" element={<Layout />}>
-                        <Route index element={<Dashboard />} />
-                        <Route path="emissions" element={<EmissionsTracker />} />
-                        <Route path="supply-chain" element={<SupplyChain />} />
-                        <Route path="net-zero-planner" element={<NetZeroPlanner />} />
-                        <Route path="carbon-impact" element={<CarbonImpact />} />
-                        <Route path="carbon-market" element={<CarbonMarketInsights />} />
-                        <Route path="settings" element={<Settings />} />
-                        <Route path="profile" element={<Profile />} />
-                        <Route path="*" element={<NotFound />} />
+            <ClimateProvider>
+              <BrowserRouter>
+                <AuthProvider>
+                  <ScrollToTop />
+                  <AnimatePresence>
+                    <Routes>
+                      {/* Public landing page */}
+                      <Route path="/" element={<Index />} />
+                      
+                      {/* New Farmly page */}
+                      <Route path="/farmly" element={<Farmly />} />
+                      
+                      {/* Public routes */}
+                      <Route element={<PublicRoute />}>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
                       </Route>
-                    </Route>
-                  </Routes>
-                </AnimatePresence>
-              </AuthProvider>
-            </BrowserRouter>
+                      
+                      {/* Protected routes */}
+                      <Route element={<ProtectedRoute />}>
+                        <Route path="/dashboard" element={<Layout />}>
+                          <Route index element={<Dashboard />} />
+                          <Route path="emissions" element={<EmissionsTracker />} />
+                          <Route path="supply-chain" element={<SupplyChain />} />
+                          <Route path="net-zero-planner" element={<NetZeroPlanner />} />
+                          <Route path="carbon-impact" element={<CarbonImpact />} />
+                          <Route path="carbon-market" element={<CarbonMarketInsights />} />
+                          <Route path="settings" element={<Settings />} />
+                          <Route path="profile" element={<Profile />} />
+                          <Route path="*" element={<NotFound />} />
+                        </Route>
+                      </Route>
+                    </Routes>
+                  </AnimatePresence>
+                </AuthProvider>
+              </BrowserRouter>
+            </ClimateProvider>
           </AppwriteProvider>
         </TooltipProvider>
       </DarkModeProvider>
