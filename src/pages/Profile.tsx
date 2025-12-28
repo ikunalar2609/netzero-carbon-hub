@@ -4,32 +4,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ArrowLeft, CheckCircle, User } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
-interface ProfileUpdateData {
+interface ProfileFormData {
   name: string;
   email: string;
-  phone: string;
 }
 
 const Profile = () => {
-  const { user, updateUserProfile } = useAuth();
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<ProfileUpdateData>({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<ProfileFormData>({
+    name: "",
+    email: "",
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.name || "",
+        name: user.user_metadata?.name || "",
         email: user.email || "",
-        phone: user.phone || "",
       });
     }
   }, [user]);
@@ -42,28 +40,33 @@ const Profile = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Ensure name is always provided to match ProfileUpdateData requirements
-    const updatedProfile = {
-      name: formData.name || user?.name || '', // Ensure name is always provided
-      email: formData.email,
-      phone: formData.phone
-    };
-    
-    updateUserProfile(updatedProfile);
-    setIsEditing(false);
-    toast({
-      title: "Profile updated",
-      description: "Your profile information has been updated successfully."
-    });
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          name: formData.name,
+        },
+      });
+
+      if (error) throw error;
+
+      setIsEditing(false);
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to update profile";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="space-y-6 animate-slide-up">
       <div className="flex items-center gap-2">
-        <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+        <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
@@ -87,7 +90,7 @@ const Profile = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isLoading}
                 required
               />
             </div>
@@ -98,32 +101,28 @@ const Profile = () => {
                 id="email" 
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
-                disabled={!isEditing}
-                required
+                disabled={true}
+                className="bg-muted"
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input 
-                type="tel" 
-                id="phone" 
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
+              <p className="text-xs text-muted-foreground">Email cannot be changed here</p>
             </div>
             {isEditing ? (
               <div className="flex justify-end space-x-2">
-                <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
-                <Button type="submit">
-                  Update Profile
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  onClick={() => setIsEditing(false)}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Updating..." : "Update Profile"}
                   <CheckCircle className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             ) : (
-              <Button onClick={() => setIsEditing(true)}>
+              <Button type="button" onClick={() => setIsEditing(true)}>
                 Edit Profile
                 <User className="w-4 h-4 ml-2" />
               </Button>

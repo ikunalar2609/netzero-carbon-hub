@@ -118,11 +118,6 @@ const Login = () => {
               </form>
             </Form>
 
-            <div className="mt-4 text-center text-sm">
-              <p className="text-muted-foreground">
-                Demo credentials: admin@farmlycarbon.com / password123
-              </p>
-            </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-center text-sm">

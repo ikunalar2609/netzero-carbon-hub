@@ -51,6 +51,7 @@ interface EmissionCalculation {
   result_data: any;
   total_emissions: number;
   created_at: string;
+  user_id: string | null;
 }
 
 export const CalculationHistoryTable = () => {

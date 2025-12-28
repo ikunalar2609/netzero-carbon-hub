@@ -172,11 +172,20 @@ export const EmissionCalculator = () => {
     totalEmissions: number
   ) => {
     try {
+      // Get current user for RLS
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error('Please log in to save calculations');
+        return false;
+      }
+
       const { error } = await supabase.from('emission_calculations').insert({
         calculation_type: type,
         input_data: inputData,
         result_data: resultData,
-        total_emissions: totalEmissions
+        total_emissions: totalEmissions,
+        user_id: user.id
       });
 
       if (error) {

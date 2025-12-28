@@ -1,109 +1,72 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-type User = {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  phone?: string;
-};
-
-type ProfileUpdateData = {
-  name: string;
-  email: string;
-  phone?: string;
-};
+import { supabase } from "@/integrations/supabase/client";
+import { User, Session } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: User | null;
+  session: Session | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
-  updateUserProfile: (data: ProfileUpdateData) => Promise<void>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  session: null,
   loading: true,
   login: async () => {},
   signup: async () => {},
-  logout: () => {},
-  updateUserProfile: async () => {},
+  logout: async () => {},
   isAuthenticated: false,
 });
 
-// Mock user data for demonstration
-const mockUsers = [
-  {
-    id: "1",
-    email: "admin@farmlycarbon.com",
-    password: "password123",
-    name: "Admin User",
-    role: "admin",
-    phone: "+1 (555) 123-4567",
-  },
-  {
-    id: "2",
-    email: "user@farmlycarbon.com",
-    password: "password123",
-    name: "Demo User",
-    role: "user",
-    phone: "",
-  },
-];
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Check if user is already logged in
   useEffect(() => {
-    const checkAuth = () => {
-      const storedUser = localStorage.getItem("farmlycarbon_user");
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-        } catch (error) {
-          console.error("Failed to parse user data", error);
-          localStorage.removeItem("farmlycarbon_user");
-        }
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
       }
-      setLoading(false);
-    };
+    );
 
-    checkAuth();
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simulate API call
     setLoading(true);
     try {
-      // Mock authentication
-      const foundUser = mockUsers.find(
-        (u) => u.email === email && u.password === password
-      );
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (!foundUser) {
-        throw new Error("Invalid email or password");
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          throw new Error("Invalid email or password");
+        }
+        throw error;
       }
 
-      // Extract the user object without the password
-      const { password: _, ...userWithoutPassword } = foundUser;
-      
-      // Save to localStorage
-      localStorage.setItem(
-        "farmlycarbon_user",
-        JSON.stringify(userWithoutPassword)
-      );
-      
-      setUser(userWithoutPassword);
+      setUser(data.user);
+      setSession(data.session);
       toast.success("Logged in successfully");
       navigate("/dashboard");
     } catch (error) {
@@ -116,29 +79,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    // Simulate API call
     setLoading(true);
     try {
-      // Check if email already exists
-      if (mockUsers.some((u) => u.email === email)) {
-        throw new Error("Email already in use");
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            name: name,
+          },
+        },
+      });
+
+      if (error) {
+        if (error.message.includes("User already registered")) {
+          throw new Error("Email already in use");
+        }
+        throw error;
       }
 
-      // Create new user
-      const newUser = {
-        id: `${mockUsers.length + 1}`,
-        email,
-        name,
-        role: "user",
-        phone: "",
-      };
-
-      // Save to localStorage
-      localStorage.setItem("farmlycarbon_user", JSON.stringify(newUser));
-      
-      setUser(newUser);
-      toast.success("Account created successfully");
-      navigate("/dashboard");
+      if (data.user) {
+        setUser(data.user);
+        setSession(data.session);
+        toast.success("Account created successfully");
+        navigate("/dashboard");
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Signup failed";
       toast.error(message);
@@ -148,46 +116,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateUserProfile = async (data: ProfileUpdateData) => {
-    if (!user) throw new Error("User not authenticated");
-    
+  const logout = async () => {
     try {
-      // In a real app, this would be an API call
-      const updatedUser = {
-        ...user,
-        ...data
-      };
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       
-      // Update localStorage
-      localStorage.setItem("farmlycarbon_user", JSON.stringify(updatedUser));
-      
-      // Update state
-      setUser(updatedUser);
-      return Promise.resolve();
+      setUser(null);
+      setSession(null);
+      toast.success("Logged out successfully");
+      navigate("/login");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Update failed";
+      const message = error instanceof Error ? error.message : "Logout failed";
       toast.error(message);
-      throw error;
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("farmlycarbon_user");
-    setUser(null);
-    toast.success("Logged out successfully");
-    navigate("/login");
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        session,
         loading,
         login,
         signup,
         logout,
-        updateUserProfile,
-        isAuthenticated: !!user,
+        isAuthenticated: !!session,
       }}
     >
       {children}
