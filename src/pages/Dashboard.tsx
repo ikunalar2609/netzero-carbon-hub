@@ -6,48 +6,64 @@ import ScopeBreakdown from "@/components/dashboard/ScopeBreakdown";
 import ReductionStatus from "@/components/dashboard/ReductionStatus";
 import GoalsProgress from "@/components/dashboard/GoalsProgress";
 import CarbonProjectsSection from "@/components/dashboard/CarbonProjectsSection";
+import { InsightEngine } from "@/components/climate/InsightEngine";
+import { EdgeCaseBanner } from "@/components/climate/EdgeCaseBanner";
+import { SmartExport } from "@/components/climate/SmartExport";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useClimate } from "@/context/ClimateContext";
 import { 
   TrendingDown, 
   Factory, 
   Leaf, 
   Globe,
   ArrowRight,
-  LineChart
 } from "lucide-react";
 
 const Dashboard = () => {
+  const { currentEmissions, totalReductionPercent, reductionLevers } = useClimate();
+  
+  const renewablesLever = reductionLevers.find(l => l.id === 'renewables');
+  const suppliersLever = reductionLevers.find(l => l.id === 'suppliers');
+
   return (
     <div className="space-y-6 animate-slide-up">
-      <h1 className="text-3xl font-bold tracking-tight">Your Dashboard</h1>
-      <p className="text-muted-foreground">Track your carbon reduction progress and reach your FarmlyCarbon goals</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Your Dashboard</h1>
+          <p className="text-muted-foreground">Track your carbon reduction progress and reach your FarmlyCarbon goals</p>
+        </div>
+        <SmartExport />
+      </div>
+      
+      <EdgeCaseBanner />
+      <InsightEngine />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SummaryCard
           title="Decarbonization Status"
-          value="-33%"
+          value={`-${totalReductionPercent.toFixed(1)}%`}
           description="Reduction since 2020"
           trend={{ value: 8, isPositive: true }}
           icon={TrendingDown}
         />
         <SummaryCard
           title="Emissions Reduced"
-          value="122,658"
+          value={(168000 - currentEmissions.total).toLocaleString()}
           description="metric tonnes CO₂e"
           trend={{ value: 12, isPositive: true }}
           icon={Factory}
         />
         <SummaryCard
           title="Renewable Energy"
-          value="72%"
+          value={`${renewablesLever?.currentValue || 72}%`}
           description="of total energy consumption"
           trend={{ value: 15, isPositive: true }}
           icon={Leaf}
         />
         <SummaryCard
           title="Sustainable Procurement"
-          value="58%"
+          value={`${suppliersLever?.currentValue || 58}%`}
           description="of suppliers with carbon goals"
           trend={{ value: 5, isPositive: true }}
           icon={Globe}
