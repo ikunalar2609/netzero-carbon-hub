@@ -19,12 +19,30 @@ import {
   RefreshCw, 
   Download,
   Calendar,
-  Filter
+  Filter,
+  X
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 interface EmissionCalculation {
   id: string;
@@ -39,6 +57,10 @@ export const CalculationHistoryTable = () => {
   const [calculations, setCalculations] = useState<EmissionCalculation[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>("all");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
   const fetchCalculations = async () => {
     setLoading(true);
@@ -51,6 +73,16 @@ export const CalculationHistoryTable = () => {
 
       if (filterType !== "all") {
         query = query.eq('calculation_type', filterType);
+      }
+
+      if (dateFrom) {
+        query = query.gte('created_at', dateFrom.toISOString());
+      }
+
+      if (dateTo) {
+        const endOfDay = new Date(dateTo);
+        endOfDay.setHours(23, 59, 59, 999);
+        query = query.lte('created_at', endOfDay.toISOString());
       }
 
       const { data, error } = await query;
@@ -72,7 +104,39 @@ export const CalculationHistoryTable = () => {
 
   useEffect(() => {
     fetchCalculations();
-  }, [filterType]);
+  }, [filterType, dateFrom, dateTo]);
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('emission_calculations')
+        .delete()
+        .eq('id', deleteId);
+
+      if (error) {
+        console.error('Error deleting calculation:', error);
+        toast.error('Failed to delete calculation');
+        return;
+      }
+
+      setCalculations(prev => prev.filter(calc => calc.id !== deleteId));
+      toast.success('Calculation deleted successfully');
+    } catch (err) {
+      console.error('Error:', err);
+      toast.error('Failed to delete calculation');
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
+  };
+
+  const clearDateFilters = () => {
+    setDateFrom(undefined);
+    setDateTo(undefined);
+  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -152,6 +216,28 @@ export const CalculationHistoryTable = () => {
 
   return (
     <div className="space-y-6">
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Calculation</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this calculation? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete} 
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <motion.div
@@ -190,11 +276,11 @@ export const CalculationHistoryTable = () => {
 
       {/* Filters and Actions */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-gray-500" />
             <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-[180px] rounded-xl">
+              <SelectTrigger className="w-[140px] rounded-xl">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
@@ -205,6 +291,72 @@ export const CalculationHistoryTable = () => {
                 <SelectItem value="diet">Diet/Waste</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Date Range Filter */}
+          <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "rounded-xl justify-start text-left font-normal",
+                    !dateFrom && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {dateFrom ? format(dateFrom, "MMM dd") : "From"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={setDateFrom}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+
+            <span className="text-gray-400">–</span>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "rounded-xl justify-start text-left font-normal",
+                    !dateTo && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {dateTo ? format(dateTo, "MMM dd") : "To"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={dateTo}
+                  onSelect={setDateTo}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+
+            {(dateFrom || dateTo) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearDateFilters}
+                className="rounded-xl h-8 w-8 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -255,6 +407,7 @@ export const CalculationHistoryTable = () => {
                     <TableHead className="font-semibold">Details</TableHead>
                     <TableHead className="font-semibold text-right">Emissions</TableHead>
                     <TableHead className="font-semibold">Date</TableHead>
+                    <TableHead className="font-semibold w-[60px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -281,6 +434,16 @@ export const CalculationHistoryTable = () => {
                       </TableCell>
                       <TableCell className="text-gray-500">
                         {format(new Date(calc.created_at), 'MMM dd, yyyy HH:mm')}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeleteId(calc.id)}
+                          className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </motion.tr>
                   ))}
