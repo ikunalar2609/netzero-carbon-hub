@@ -28,6 +28,7 @@ import NotFound from "@/pages/NotFound";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import Farmly from "@/pages/Farmly";
+import FarmlyDocs from "@/pages/FarmlyDocs";
 
 const queryClient = new QueryClient();
 
@@ -48,8 +49,9 @@ function App() {
                       {/* Public landing page */}
                       <Route path="/" element={<Index />} />
                       
-                      {/* New Farmly page */}
+                      {/* Farmly pages */}
                       <Route path="/farmly" element={<Farmly />} />
+                      <Route path="/farmly/docs" element={<FarmlyDocs />} />
                       
                       {/* Public routes */}
                       <Route element={<PublicRoute />}>
