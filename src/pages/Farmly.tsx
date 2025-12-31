@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +9,8 @@ import {
   Code,
   ArrowRight,
   Zap,
-  History
+  History,
+  BookOpen
 } from "lucide-react";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
 import { ApiDocumentation } from "@/components/farmly/ApiDocumentation";
@@ -63,7 +65,18 @@ const Farmly = () => {
                 onClick={() => setActiveTab("api-docs")}
               >
                 <Code className="mr-2 h-4 w-4" />
-                API Documentation
+                API Reference
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 h-auto rounded-full"
+                asChild
+              >
+                <Link to="/farmly/docs">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Full Documentation
+                </Link>
               </Button>
             </div>
           </motion.div>
