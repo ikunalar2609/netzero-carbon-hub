@@ -9,11 +9,9 @@ import {
   Code,
   ArrowRight,
   Zap,
-  History,
   BookOpen
 } from "lucide-react";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
-import { ApiDocumentation } from "@/components/farmly/ApiDocumentation";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
 import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
 
@@ -62,15 +60,6 @@ const Farmly = () => {
                 variant="outline" 
                 size="lg" 
                 className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 h-auto rounded-full"
-                onClick={() => setActiveTab("api-docs")}
-              >
-                <Code className="mr-2 h-4 w-4" />
-                API Reference
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 h-auto rounded-full"
                 asChild
               >
                 <Link to="/farmly/docs">
@@ -113,10 +102,9 @@ const Farmly = () => {
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 mb-12 bg-gray-100">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-gray-100">
               <TabsTrigger value="calculator" className="text-sm">Calculator</TabsTrigger>
               <TabsTrigger value="history" className="text-sm">History</TabsTrigger>
-              <TabsTrigger value="api-docs" className="text-sm">API Docs</TabsTrigger>
               <TabsTrigger value="explorer" className="text-sm">Explorer</TabsTrigger>
             </TabsList>
 
@@ -140,15 +128,6 @@ const Farmly = () => {
               </motion.div>
             </TabsContent>
 
-            <TabsContent value="api-docs" className="mt-0">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <ApiDocumentation />
-              </motion.div>
-            </TabsContent>
 
             <TabsContent value="explorer" className="mt-0">
               <motion.div
