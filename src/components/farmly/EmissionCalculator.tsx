@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin, Save } from "lucide-react";
+import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin, Save, Ship, Anchor } from "lucide-react";
 import { toast } from "sonner";
 import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,6 +14,8 @@ import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { supabase } from "@/integrations/supabase/client";
 import { AirportSearch } from "./AirportSearch";
 import { FlightRouteMap } from "./FlightRouteMap";
+import { PortSearch, type Port } from "./PortSearch";
+import { SeaRouteMap } from "./SeaRouteMap";
 // IPCC GWP values (AR6)
 const GWP_CH4 = 27.9;
 const GWP_N2O = 273;
@@ -93,6 +95,40 @@ interface FlightData {
   includeRF: boolean;
 }
 
+interface SeaFreightData {
+  originPort: Port | null;
+  destinationPort: Port | null;
+  cargoWeight: number;
+  shipType: string;
+  fuelType: string;
+  loadFactor: number;
+  calculationMethod: 'tonne-km' | 'fuel-based';
+  fuelConsumed?: number;
+}
+
+// Maritime emission factors (IMO / GLEC Framework) - gCO₂/tonne-km
+const SHIP_EF = {
+  'container': 0.015,      // Container ship average
+  'bulk-carrier': 0.008,   // Bulk carrier
+  'oil-tanker': 0.011,     // Oil/Chemical tanker  
+  'ro-ro': 0.022,          // Roll-on/Roll-off
+  'general-cargo': 0.018,  // General cargo vessel
+};
+
+// Fuel type CO₂ factors (kgCO₂/tonne fuel) - IMO
+const MARINE_FUEL_EF = {
+  'hfo': 3.114,    // Heavy Fuel Oil
+  'mgo': 3.206,    // Marine Gas Oil
+  'lng': 2.750,    // Liquefied Natural Gas
+};
+
+// CH₄ and N₂O factors for maritime (gCH₄/tonne-km, gN₂O/tonne-km)
+const MARITIME_GHG = {
+  'hfo': { ch4: 0.00006, n2o: 0.00015 },
+  'mgo': { ch4: 0.00005, n2o: 0.00014 },
+  'lng': { ch4: 0.00025, n2o: 0.00010 }, // Higher CH₄ for LNG (methane slip)
+};
+
 interface FlightResult {
   route: {
     departure: { 
@@ -128,6 +164,18 @@ interface FlightResult {
   };
 }
 
+interface SeaFreightResult {
+  distance: number;
+  tonneKm: number;
+  emissions: {
+    co2: number;
+    ch4: number;
+    n2o: number;
+    co2e: number;
+  };
+  method: 'tonne-km' | 'fuel-based';
+}
+
 export const EmissionCalculator = () => {
   const [activeTab, setActiveTab] = useState("transport");
   const [transportData, setTransportData] = useState<TransportData>({ 
@@ -154,11 +202,24 @@ export const EmissionCalculator = () => {
     passengers: 1,
     includeRF: false
   });
+  const [seaFreightData, setSeaFreightData] = useState<SeaFreightData>({
+    originPort: null,
+    destinationPort: null,
+    cargoWeight: 0,
+    shipType: 'container',
+    fuelType: 'hfo',
+    loadFactor: 70,
+    calculationMethod: 'tonne-km',
+    fuelConsumed: undefined
+  });
   const [flightResult, setFlightResult] = useState<FlightResult | null>(null);
+  const [seaFreightResult, setSeaFreightResult] = useState<SeaFreightResult | null>(null);
   const [flightLoading, setFlightLoading] = useState(false);
+  const [seaLoading, setSeaLoading] = useState(false);
   const [flightEmissions, setFlightEmissions] = useState(0);
+  const [seaEmissions, setSeaEmissions] = useState(0);
   const [totalEmissions, setTotalEmissions] = useState(0);
-  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0 });
+  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0, sea: 0 });
   const [detailedTransport, setDetailedTransport] = useState({ total: 0, co2: 0, ch4: 0, n2o: 0, wtt: 0 });
   const [detailedEnergy, setDetailedEnergy] = useState({ total: 0, scope2: 0, scope1: 0, method: 'location' as 'location' | 'market' });
   const [trendData, setTrendData] = useState<any[]>([]);
@@ -277,6 +338,96 @@ export const EmissionCalculator = () => {
       return;
     }
     await saveCalculation('diet', wasteData, { total: emissionsBreakdown.waste }, emissionsBreakdown.waste);
+  };
+
+  // Save current sea freight calculation
+  const saveSeaFreightCalculation = async () => {
+    if (!seaFreightResult || seaFreightResult.emissions.co2e <= 0) {
+      toast.error('Please calculate sea freight emissions first');
+      return;
+    }
+    await saveCalculation('vehicle', seaFreightData, seaFreightResult, seaFreightResult.emissions.co2e);
+  };
+
+  // Calculate Haversine distance for sea routes
+  const calculateSeaDistance = (origin: Port, destination: Port): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (destination.lat - origin.lat) * Math.PI / 180;
+    const dLon = (destination.lon - origin.lon) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(origin.lat * Math.PI / 180) * Math.cos(destination.lat * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    // Sea routes are typically 1.4x longer than straight-line distance
+    return R * c * 1.4;
+  };
+
+  // Calculate sea freight emissions
+  const calculateSeaFreightEmissions = () => {
+    if (!seaFreightData.originPort || !seaFreightData.destinationPort) {
+      toast.error('Please select both origin and destination ports');
+      return;
+    }
+    
+    if (seaFreightData.cargoWeight <= 0) {
+      toast.error('Please enter cargo weight');
+      return;
+    }
+    
+    setSeaLoading(true);
+    
+    try {
+      const distance = calculateSeaDistance(seaFreightData.originPort, seaFreightData.destinationPort);
+      const tonneKm = seaFreightData.cargoWeight * distance;
+      
+      let co2 = 0;
+      let ch4 = 0;
+      let n2o = 0;
+      
+      if (seaFreightData.calculationMethod === 'tonne-km') {
+        // Tonne-km method (GLEC/IPCC)
+        const shipEF = SHIP_EF[seaFreightData.shipType as keyof typeof SHIP_EF] || SHIP_EF['container'];
+        co2 = tonneKm * shipEF; // kg CO₂
+        
+        // Add CH₄ and N₂O based on fuel type
+        const ghgFactors = MARITIME_GHG[seaFreightData.fuelType as keyof typeof MARITIME_GHG] || MARITIME_GHG['hfo'];
+        ch4 = tonneKm * ghgFactors.ch4 * GWP_CH4 / 1000; // Convert g to kg and apply GWP
+        n2o = tonneKm * ghgFactors.n2o * GWP_N2O / 1000;
+      } else if (seaFreightData.calculationMethod === 'fuel-based' && seaFreightData.fuelConsumed) {
+        // Fuel-based method (IMO)
+        const fuelEF = MARINE_FUEL_EF[seaFreightData.fuelType as keyof typeof MARINE_FUEL_EF] || MARINE_FUEL_EF['hfo'];
+        co2 = seaFreightData.fuelConsumed * fuelEF; // tonnes fuel * kgCO₂/tonne
+        
+        // Estimate CH₄ and N₂O from fuel
+        const ghgFactors = MARITIME_GHG[seaFreightData.fuelType as keyof typeof MARITIME_GHG] || MARITIME_GHG['hfo'];
+        ch4 = seaFreightData.fuelConsumed * 1000 * ghgFactors.ch4 * GWP_CH4 / 1000;
+        n2o = seaFreightData.fuelConsumed * 1000 * ghgFactors.n2o * GWP_N2O / 1000;
+      }
+      
+      const co2e = co2 + ch4 + n2o;
+      
+      const result: SeaFreightResult = {
+        distance: Math.round(distance),
+        tonneKm: Math.round(tonneKm),
+        emissions: {
+          co2: Math.round(co2 * 100) / 100,
+          ch4: Math.round(ch4 * 100) / 100,
+          n2o: Math.round(n2o * 100) / 100,
+          co2e: Math.round(co2e * 100) / 100,
+        },
+        method: seaFreightData.calculationMethod,
+      };
+      
+      setSeaFreightResult(result);
+      setSeaEmissions(result.emissions.co2e);
+      
+      toast.success(`Sea freight emissions calculated: ${result.emissions.co2e.toFixed(2)} kg CO₂e`);
+    } catch (err) {
+      console.error('Error calculating sea freight emissions:', err);
+      toast.error('Failed to calculate sea freight emissions');
+    } finally {
+      setSeaLoading(false);
+    }
   };
 
   // Calculate energy emissions with GHG Protocol Scope 1 & 2
@@ -407,13 +558,14 @@ export const EmissionCalculator = () => {
       const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : 2.5;
       const wasteEmissions = wasteData.amount * wasteFactor;
       
-      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions;
+      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions + seaEmissions;
       setTotalEmissions(total);
       setEmissionsBreakdown({
         transport: transportEmissions,
         energy: energyEmissions,
         waste: wasteEmissions,
-        flight: flightEmissions
+        flight: flightEmissions,
+        sea: seaEmissions
       });
       
       // Update trend data
@@ -428,13 +580,14 @@ export const EmissionCalculator = () => {
     };
     
     calculateEmissions();
-  }, [transportData, energyData, wasteData, flightEmissions]);
+  }, [transportData, energyData, wasteData, flightEmissions, seaEmissions]);
 
   const pieData = [
     { name: "Transport", value: emissionsBreakdown.transport, color: "#2563EB" },
     { name: "Energy", value: emissionsBreakdown.energy, color: "#10B981" },
     { name: "Waste", value: emissionsBreakdown.waste, color: "#F97316" },
-    { name: "Flight", value: emissionsBreakdown.flight, color: "#8B5CF6" }
+    { name: "Flight", value: emissionsBreakdown.flight, color: "#8B5CF6" },
+    { name: "Sea Freight", value: emissionsBreakdown.sea, color: "#0EA5E9" }
   ].filter(d => d.value > 0);
 
   const getInsights = () => {
@@ -444,6 +597,9 @@ export const EmissionCalculator = () => {
     }
     if (emissionsBreakdown.flight > 0) {
       insights.push({ icon: Plane, text: "Flight emissions are significant. Consider carbon offsetting or alternative travel for shorter routes.", type: "warning" });
+    }
+    if (emissionsBreakdown.sea > 0) {
+      insights.push({ icon: Ship, text: "Sea freight has lower emissions per tonne-km than air. Consider consolidating shipments for efficiency.", type: "tip" });
     }
     if (energyData.gridType !== 'renewable' && !energyData.hasRenewableCerts) {
       insights.push({ icon: Zap, text: "Switch to renewable energy sources or obtain RECs to cut energy emissions by 50-100%", type: "tip" });
@@ -479,7 +635,7 @@ export const EmissionCalculator = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
+            className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6"
           >
             {/* Total Emissions Card */}
             <motion.div 
@@ -554,6 +710,27 @@ export const EmissionCalculator = () => {
               </div>
             </motion.div>
 
+            {/* Sea Freight Emissions Card */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9]/5 to-transparent" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#475569]">Sea Freight</span>
+                  <Ship className="h-5 w-5 text-[#0EA5E9]" />
+                </div>
+                <div className="text-3xl font-bold text-[#1E293B] mb-1">
+                  {emissionsBreakdown.sea.toFixed(1)}
+                  <span className="text-lg text-[#475569] ml-1">kg</span>
+                </div>
+                <div className="text-xs text-[#475569]">
+                  {totalEmissions > 0 ? `${((emissionsBreakdown.sea / totalEmissions) * 100).toFixed(0)}% of total` : '0% of total'}
+                </div>
+              </div>
+            </motion.div>
+
             {/* Energy + Waste Combined Card */}
             <motion.div 
               whileHover={{ y: -4 }}
@@ -591,7 +768,7 @@ export const EmissionCalculator = () => {
                   <h2 className="text-xl font-bold text-[#1E293B] mb-4">Calculate Emissions</h2>
                   
                   <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className="grid w-full grid-cols-4 mb-6 bg-[#F9FAFB]/50 backdrop-blur-sm">
+                    <TabsList className="grid w-full grid-cols-5 mb-6 bg-[#F9FAFB]/50 backdrop-blur-sm">
                       <TabsTrigger value="transport" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
                         <Truck className="h-4 w-4 mr-2" />
                         Transport
@@ -599,6 +776,10 @@ export const EmissionCalculator = () => {
                       <TabsTrigger value="flight" className="data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6]">
                         <Plane className="h-4 w-4 mr-2" />
                         Flight
+                      </TabsTrigger>
+                      <TabsTrigger value="sea" className="data-[state=active]:bg-white data-[state=active]:text-[#0EA5E9]">
+                        <Ship className="h-4 w-4 mr-2" />
+                        Sea
                       </TabsTrigger>
                       <TabsTrigger value="energy" className="data-[state=active]:bg-white data-[state=active]:text-[#10B981]">
                         <Zap className="h-4 w-4 mr-2" />
@@ -1036,7 +1217,253 @@ export const EmissionCalculator = () => {
                       </motion.div>
                     </TabsContent>
 
-                    {/* Flight Form */}
+                    {/* Sea Freight Form */}
+                    <TabsContent value="sea" className="space-y-4 mt-0">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        {/* Sea Freight Calculator Header */}
+                        <div className="p-4 rounded-xl bg-gradient-to-br from-[#0EA5E9]/10 to-[#0EA5E9]/5 border border-[#0EA5E9]/20">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Ship className="h-5 w-5 text-[#0EA5E9]" />
+                            <h4 className="text-sm font-semibold text-[#1E293B]">Sea Freight Emissions Calculator</h4>
+                          </div>
+                          <p className="text-xs text-[#475569]">
+                            Calculate maritime freight emissions using IMO/GLEC Framework and IPCC methodologies.
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Origin Port
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>Search by port name or code</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <PortSearch
+                              value={seaFreightData.originPort?.code || ''}
+                              onChange={(port) => setSeaFreightData({ ...seaFreightData, originPort: port })}
+                              placeholder="Search origin port..."
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Destination Port
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>Search by port name or code</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <PortSearch
+                              value={seaFreightData.destinationPort?.code || ''}
+                              onChange={(port) => setSeaFreightData({ ...seaFreightData, destinationPort: port })}
+                              placeholder="Search destination port..."
+                            />
+                          </div>
+                        </div>
+
+                        {/* Sea Route Map */}
+                        <SeaRouteMap
+                          origin={seaFreightData.originPort || undefined}
+                          destination={seaFreightData.destinationPort || undefined}
+                          distanceKm={seaFreightResult?.distance}
+                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Cargo Weight (tonnes)
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>Total cargo weight in metric tonnes</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <Input 
+                              type="number" 
+                              min={0}
+                              value={seaFreightData.cargoWeight || ''}
+                              onChange={(e) => setSeaFreightData({ ...seaFreightData, cargoWeight: Number(e.target.value) })}
+                              placeholder="e.g., 20"
+                              className="rounded-xl border-[#E5E7EB] focus:border-[#0EA5E9] focus:ring-[#0EA5E9] transition-all"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Ship Type</Label>
+                            <Select value={seaFreightData.shipType} onValueChange={(v) => setSeaFreightData({ ...seaFreightData, shipType: v })}>
+                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="container">Container Ship (0.015 kgCO₂/t-km)</SelectItem>
+                                <SelectItem value="bulk-carrier">Bulk Carrier (0.008 kgCO₂/t-km)</SelectItem>
+                                <SelectItem value="oil-tanker">Oil/Chemical Tanker (0.011 kgCO₂/t-km)</SelectItem>
+                                <SelectItem value="ro-ro">Ro-Ro (0.022 kgCO₂/t-km)</SelectItem>
+                                <SelectItem value="general-cargo">General Cargo (0.018 kgCO₂/t-km)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
+                            <Select value={seaFreightData.fuelType} onValueChange={(v) => setSeaFreightData({ ...seaFreightData, fuelType: v })}>
+                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="hfo">Heavy Fuel Oil (HFO)</SelectItem>
+                                <SelectItem value="mgo">Marine Gas Oil (MGO)</SelectItem>
+                                <SelectItem value="lng">LNG</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Calculation Method</Label>
+                            <Select 
+                              value={seaFreightData.calculationMethod} 
+                              onValueChange={(v: 'tonne-km' | 'fuel-based') => setSeaFreightData({ ...seaFreightData, calculationMethod: v })}
+                            >
+                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="tonne-km">Tonne-Kilometre (GLEC/IPCC)</SelectItem>
+                                <SelectItem value="fuel-based">Fuel-Based (IMO Tier 2)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        {seaFreightData.calculationMethod === 'fuel-based' && (
+                          <div>
+                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              Fuel Consumed (tonnes)
+                              <Tooltip>
+                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
+                                <TooltipContent>Actual fuel consumption for the voyage</TooltipContent>
+                              </Tooltip>
+                            </Label>
+                            <Input 
+                              type="number" 
+                              min={0}
+                              step={0.1}
+                              value={seaFreightData.fuelConsumed || ''}
+                              onChange={(e) => setSeaFreightData({ ...seaFreightData, fuelConsumed: Number(e.target.value) })}
+                              placeholder="e.g., 150"
+                              className="rounded-xl border-[#E5E7EB] focus:border-[#0EA5E9] focus:ring-[#0EA5E9] transition-all"
+                            />
+                          </div>
+                        )}
+
+                        <Button 
+                          onClick={calculateSeaFreightEmissions}
+                          disabled={seaLoading}
+                          className="w-full bg-[#0EA5E9] hover:bg-[#0284C7] text-white rounded-xl py-3"
+                        >
+                          {seaLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Calculating...
+                            </>
+                          ) : (
+                            <>
+                              <Calculator className="h-4 w-4 mr-2" />
+                              Calculate Sea Freight Emissions
+                            </>
+                          )}
+                        </Button>
+
+                        {/* Sea Freight Result Display */}
+                        {seaFreightResult && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-4 space-y-4"
+                          >
+                            {/* Route Info */}
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#0EA5E9]/5 to-transparent border border-[#0EA5E9]/20">
+                              <h4 className="text-sm font-semibold text-[#1E293B] mb-3 flex items-center gap-2">
+                                <Anchor className="h-4 w-4 text-[#0EA5E9]" />
+                                Route Details
+                              </h4>
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="text-center">
+                                  <div className="text-lg font-bold text-[#0EA5E9]">{seaFreightData.originPort?.code}</div>
+                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{seaFreightData.originPort?.city}</div>
+                                </div>
+                                <div className="flex-1 flex items-center justify-center px-4">
+                                  <div className="h-px flex-1 bg-[#0EA5E9]/30"></div>
+                                  <Ship className="h-5 w-5 text-[#0EA5E9] mx-2" />
+                                  <div className="h-px flex-1 bg-[#0EA5E9]/30"></div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-lg font-bold text-[#0EA5E9]">{seaFreightData.destinationPort?.code}</div>
+                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{seaFreightData.destinationPort?.city}</div>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4 mt-3 text-center">
+                                <div>
+                                  <span className="text-xs text-[#475569]">Distance</span>
+                                  <div className="text-sm font-semibold text-[#1E293B]">{seaFreightResult.distance.toLocaleString()} km</div>
+                                </div>
+                                <div>
+                                  <span className="text-xs text-[#475569]">Tonne-km</span>
+                                  <div className="text-sm font-semibold text-[#1E293B]">{seaFreightResult.tonneKm.toLocaleString()}</div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Emissions Breakdown */}
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20">
+                              <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Emissions Breakdown</h4>
+                              <div className="space-y-1 text-xs text-[#475569]">
+                                <div className="flex justify-between">
+                                  <span>Ship Type:</span>
+                                  <span className="font-medium text-[#1E293B] capitalize">{seaFreightData.shipType.replace('-', ' ')}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Method:</span>
+                                  <span className="font-medium text-[#1E293B]">{seaFreightResult.method === 'tonne-km' ? 'Tonne-km (GLEC)' : 'Fuel-based (IMO)'}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>CO₂:</span>
+                                  <span className="font-mono">{seaFreightResult.emissions.co2.toFixed(2)} kg</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>CH₄ (as CO₂e):</span>
+                                  <span className="font-mono">{seaFreightResult.emissions.ch4.toFixed(2)} kg</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>N₂O (as CO₂e):</span>
+                                  <span className="font-mono">{seaFreightResult.emissions.n2o.toFixed(2)} kg</span>
+                                </div>
+                                <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
+                                  <span>Total CO₂e:</span>
+                                  <span className="font-mono text-[#0EA5E9]">{seaFreightResult.emissions.co2e.toFixed(2)} kg</span>
+                                </div>
+                              </div>
+                              <Button 
+                                onClick={saveSeaFreightCalculation}
+                                className="w-full mt-3 rounded-xl bg-[#0EA5E9] hover:bg-[#0284C7]"
+                                size="sm"
+                              >
+                                <Save className="h-4 w-4 mr-2" />
+                                Save to History
+                              </Button>
+                            </div>
+
+                            {/* Methodology Note */}
+                            <div className="p-3 rounded-lg bg-[#F0F9FF] border border-[#BAE6FD]">
+                              <p className="text-xs text-[#0369A1] leading-relaxed">
+                                <strong>Methodology:</strong> IPCC 2006 Transport Guidelines, IMO GHG Study, GHG Protocol Scope 3 (Category 4), GLEC Framework. Emission factors are versioned and auditable.
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    </TabsContent>
+
                     <TabsContent value="flight" className="space-y-4 mt-0">
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                         {/* Flight Calculator Header */}
