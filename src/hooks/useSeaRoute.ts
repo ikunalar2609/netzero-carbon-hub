@@ -1,5 +1,11 @@
-import { useCallback } from 'react';
-import searoute from 'searoute-js';
+import { useCallback, useMemo } from 'react';
+import PathFinder from 'geojson-path-finder';
+import * as turfMeta from '@turf/meta';
+import * as turfHelpers from '@turf/helpers';
+import length from '@turf/length';
+import rhumbDistance from '@turf/rhumb-distance';
+import pointToLineDistance from '@turf/point-to-line-distance';
+import marnetData from '@/data/marnet_densified.json';
 
 interface SeaRouteResult {
   distance: number;
@@ -39,50 +45,95 @@ function detectKeyWaypoints(coordinates: [number, number][]): string[] {
   return waypoints;
 }
 
+// Snap a point to the nearest vertex on the maritime network
+function snapToNetwork(
+  point: GeoJSON.Feature<GeoJSON.Point>,
+  marnet: GeoJSON.FeatureCollection<GeoJSON.LineString>
+): GeoJSON.Feature<GeoJSON.Point> {
+  let nearestLineIndex = 0;
+  let minDistance = Infinity;
+
+  // Find the nearest line segment
+  turfMeta.featureEach(marnet, (feature, ftIndex) => {
+    try {
+      const dist = pointToLineDistance(point, feature as GeoJSON.Feature<GeoJSON.LineString>, { units: 'kilometers' });
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearestLineIndex = ftIndex;
+      }
+    } catch (e) {
+      // Skip invalid features
+    }
+  });
+
+  // Find the nearest vertex on that line
+  let nearestVertexDist: number | null = null;
+  let nearestCoord: [number, number] | null = null;
+
+  turfMeta.coordEach(marnet.features[nearestLineIndex], (currentCoord) => {
+    const distToVertex = rhumbDistance(point, turfHelpers.point(currentCoord as [number, number]));
+    
+    if (nearestVertexDist === null || distToVertex < nearestVertexDist) {
+      nearestVertexDist = distToVertex;
+      nearestCoord = currentCoord as [number, number];
+    }
+  });
+
+  return turfHelpers.point(nearestCoord || [0, 0]);
+}
+
 export function useSeaRoute() {
+  // Initialize the path finder once with the maritime network
+  const pathFinder = useMemo(() => {
+    try {
+      return new PathFinder(marnetData as GeoJSON.FeatureCollection<GeoJSON.LineString>);
+    } catch (err) {
+      console.error('Failed to initialize PathFinder:', err);
+      return null;
+    }
+  }, []);
+
   const calculateRoute = useCallback((
     origin: { lon: number; lat: number; name?: string },
     destination: { lon: number; lat: number; name?: string }
   ): SeaRouteResult | null => {
+    if (!pathFinder) {
+      console.warn('PathFinder not initialized');
+      return null;
+    }
+
     try {
-      // Create GeoJSON Point features for searoute-js
-      const originPoint = {
-        type: "Feature" as const,
-        properties: { name: origin.name || "Origin" },
-        geometry: {
-          type: "Point" as const,
-          coordinates: [origin.lon, origin.lat]
-        }
-      };
+      // Create GeoJSON Point features
+      const originPoint = turfHelpers.point([origin.lon, origin.lat], { name: origin.name || "Origin" });
+      const destinationPoint = turfHelpers.point([destination.lon, destination.lat], { name: destination.name || "Destination" });
 
-      const destinationPoint = {
-        type: "Feature" as const,
-        properties: { name: destination.name || "Destination" },
-        geometry: {
-          type: "Point" as const,
-          coordinates: [destination.lon, destination.lat]
-        }
-      };
+      // Snap points to the maritime network
+      const snappedOrigin = snapToNetwork(originPoint, marnetData as GeoJSON.FeatureCollection<GeoJSON.LineString>);
+      const snappedDestination = snapToNetwork(destinationPoint, marnetData as GeoJSON.FeatureCollection<GeoJSON.LineString>);
 
-      // Compute the sea route using searoute-js (returns kilometers)
-      const route = searoute(originPoint, destinationPoint, 'km');
+      // Find the path
+      const path = pathFinder.findPath(snappedOrigin, snappedDestination);
 
-      if (!route || !route.geometry) {
+      if (!path || !path.path || path.path.length === 0) {
         console.warn('No maritime route found between the specified locations');
         return null;
       }
 
-      // Extract route information
-      const coordinates = route.geometry.coordinates as [number, number][];
-      const distance = route.properties?.length || 0;
+      // Create a LineString from the path
+      const lineString = turfHelpers.lineString(path.path);
+      
+      // Calculate distance in kilometers
+      const distanceKm = length(lineString, { units: 'kilometers' });
 
-      console.log(`Sea route computed: ${coordinates.length} points, ${distance.toFixed(2)} km`);
+      const coordinates = path.path as [number, number][];
+      
+      console.log(`Sea route computed: ${coordinates.length} points, ${distanceKm.toFixed(2)} km`);
 
       // Detect key waypoints (straits, canals)
       const waypoints = detectKeyWaypoints(coordinates);
 
       return {
-        distance: Math.round(distance * 100) / 100,
+        distance: Math.round(distanceKm * 100) / 100,
         geometry: coordinates,
         waypoints,
       };
@@ -90,7 +141,7 @@ export function useSeaRoute() {
       console.error('Error calculating sea route:', err);
       return null;
     }
-  }, []);
+  }, [pathFinder]);
 
   return { calculateRoute };
 }
