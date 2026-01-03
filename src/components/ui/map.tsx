@@ -270,14 +270,27 @@ function MapRoute({
     const routeBgLayerId = `route-bg-layer-${sourceId}`
 
     // Generate curved coordinates if needed
-    let routeCoordinates = coordinates
-    if (curved && coordinates.length === 2) {
-      routeCoordinates = generateArcPoints(coordinates[0], coordinates[1], 100)
+    let routeCoordinates: [number, number][] = []
+    if (curved) {
+      // For multi-point routes, generate curves between each segment
+      for (let i = 0; i < coordinates.length - 1; i++) {
+        const segmentPoints = generateArcPoints(coordinates[i], coordinates[i + 1], 50)
+        // Avoid duplicating the last point of previous segment
+        if (i > 0) segmentPoints.shift()
+        routeCoordinates.push(...segmentPoints)
+      }
+    } else {
+      routeCoordinates = coordinates
     }
 
     const addRoute = () => {
-      // Add source
-      if (!map.getSource(routeSourceId)) {
+      try {
+        // Remove existing layers and sources first
+        if (map.getLayer(routeLayerId)) map.removeLayer(routeLayerId)
+        if (map.getLayer(routeBgLayerId)) map.removeLayer(routeBgLayerId)
+        if (map.getSource(routeSourceId)) map.removeSource(routeSourceId)
+
+        // Add source
         map.addSource(routeSourceId, {
           type: "geojson",
           data: {
@@ -289,10 +302,8 @@ function MapRoute({
             },
           },
         })
-      }
 
-      // Add background layer for better visibility
-      if (!map.getLayer(routeBgLayerId)) {
+        // Add background layer for better visibility
         map.addLayer({
           id: routeBgLayerId,
           type: "line",
@@ -307,10 +318,8 @@ function MapRoute({
             "line-opacity": opacity * 0.3,
           },
         })
-      }
 
-      // Add main route layer
-      if (!map.getLayer(routeLayerId)) {
+        // Add main route layer
         map.addLayer({
           id: routeLayerId,
           type: "line",
@@ -326,19 +335,29 @@ function MapRoute({
             ...(dashArray && { "line-dasharray": dashArray }),
           },
         })
+      } catch (e) {
+        console.error("Error adding route:", e)
       }
     }
 
+    // Add route when style is loaded
+    const handleStyleLoad = () => addRoute()
+    
     if (map.isStyleLoaded()) {
       addRoute()
     } else {
-      map.on("load", addRoute)
+      map.on("style.load", handleStyleLoad)
     }
 
     return () => {
-      if (map.getLayer(routeLayerId)) map.removeLayer(routeLayerId)
-      if (map.getLayer(routeBgLayerId)) map.removeLayer(routeBgLayerId)
-      if (map.getSource(routeSourceId)) map.removeSource(routeSourceId)
+      map.off("style.load", handleStyleLoad)
+      try {
+        if (map.getLayer(routeLayerId)) map.removeLayer(routeLayerId)
+        if (map.getLayer(routeBgLayerId)) map.removeLayer(routeBgLayerId)
+        if (map.getSource(routeSourceId)) map.removeSource(routeSourceId)
+      } catch (e) {
+        // Map might already be removed
+      }
     }
   }, [map, coordinates, color, width, opacity, dashArray, curved, sourceId])
 
