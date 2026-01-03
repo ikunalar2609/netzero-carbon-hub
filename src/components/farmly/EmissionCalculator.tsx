@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin, Save, Ship, Anchor } from "lucide-react";
 import { toast } from "sonner";
 import { useRegionDetection } from "@/hooks/useRegionDetection";
+import { useSeaRoute } from "@/hooks/useSeaRoute";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
@@ -174,6 +175,8 @@ interface SeaFreightResult {
     co2e: number;
   };
   method: 'tonne-km' | 'fuel-based';
+  routeGeometry?: [number, number][];
+  waypoints?: string[];
 }
 
 export const EmissionCalculator = () => {
@@ -224,6 +227,7 @@ export const EmissionCalculator = () => {
   const [detailedEnergy, setDetailedEnergy] = useState({ total: 0, scope2: 0, scope1: 0, method: 'location' as 'location' | 'market' });
   const [trendData, setTrendData] = useState<any[]>([]);
   const { region } = useRegionDetection();
+  const { calculateRoute: calculateSeaRoute } = useSeaRoute();
 
   // Save calculation to database
   const saveCalculation = async (
@@ -349,8 +353,8 @@ export const EmissionCalculator = () => {
     await saveCalculation('vehicle', seaFreightData, seaFreightResult, seaFreightResult.emissions.co2e);
   };
 
-  // Calculate Haversine distance for sea routes
-  const calculateSeaDistance = (origin: Port, destination: Port): number => {
+  // Calculate Haversine distance as fallback for sea routes
+  const calculateSeaDistanceFallback = (origin: Port, destination: Port): number => {
     const R = 6371; // Earth's radius in km
     const dLat = (destination.lat - origin.lat) * Math.PI / 180;
     const dLon = (destination.lon - origin.lon) * Math.PI / 180;
@@ -377,7 +381,27 @@ export const EmissionCalculator = () => {
     setSeaLoading(true);
     
     try {
-      const distance = calculateSeaDistance(seaFreightData.originPort, seaFreightData.destinationPort);
+      // Try to get real sea route using searoute-js
+      const routeData = calculateSeaRoute(
+        { lon: seaFreightData.originPort.lon, lat: seaFreightData.originPort.lat, name: seaFreightData.originPort.city },
+        { lon: seaFreightData.destinationPort.lon, lat: seaFreightData.destinationPort.lat, name: seaFreightData.destinationPort.city }
+      );
+      
+      let distance: number;
+      let routeGeometry: [number, number][] | undefined;
+      let waypoints: string[] = [];
+
+      if (routeData) {
+        distance = routeData.distance;
+        routeGeometry = routeData.geometry;
+        waypoints = routeData.waypoints;
+        console.log(`Real sea route: ${distance.toFixed(0)} km, ${routeGeometry.length} points, waypoints: ${waypoints.join(', ')}`);
+      } else {
+        // Fallback to Haversine estimation
+        distance = calculateSeaDistanceFallback(seaFreightData.originPort, seaFreightData.destinationPort);
+        console.log(`Fallback Haversine distance: ${distance.toFixed(0)} km`);
+      }
+
       const tonneKm = seaFreightData.cargoWeight * distance;
       
       let co2 = 0;
@@ -416,12 +440,15 @@ export const EmissionCalculator = () => {
           co2e: Math.round(co2e * 100) / 100,
         },
         method: seaFreightData.calculationMethod,
+        routeGeometry,
+        waypoints,
       };
       
       setSeaFreightResult(result);
       setSeaEmissions(result.emissions.co2e);
       
-      toast.success(`Sea freight emissions calculated: ${result.emissions.co2e.toFixed(2)} kg CO₂e`);
+      const waypointInfo = waypoints.length > 0 ? ` via ${waypoints.join(', ')}` : '';
+      toast.success(`Sea freight emissions: ${result.emissions.co2e.toFixed(2)} kg CO₂e${waypointInfo}`);
     } catch (err) {
       console.error('Error calculating sea freight emissions:', err);
       toast.error('Failed to calculate sea freight emissions');
@@ -1267,6 +1294,8 @@ export const EmissionCalculator = () => {
                           origin={seaFreightData.originPort || undefined}
                           destination={seaFreightData.destinationPort || undefined}
                           distanceKm={seaFreightResult?.distance}
+                          routeGeometry={seaFreightResult?.routeGeometry}
+                          waypoints={seaFreightResult?.waypoints}
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
