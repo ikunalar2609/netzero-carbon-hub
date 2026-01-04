@@ -17,6 +17,7 @@ import { AirportSearch } from "./AirportSearch";
 import { FlightRouteMap } from "./FlightRouteMap";
 import { PortSearch, type Port } from "./PortSearch";
 import { SeaRouteMap } from "./SeaRouteMap";
+import { RouteComparison } from "./RouteComparison";
 // IPCC GWP values (AR6)
 const GWP_CH4 = 27.9;
 const GWP_N2O = 273;
@@ -1488,6 +1489,24 @@ export const EmissionCalculator = () => {
                                 <strong>Methodology:</strong> IPCC 2006 Transport Guidelines, IMO GHG Study, GHG Protocol Scope 3 (Category 4), GLEC Framework. Emission factors are versioned and auditable.
                               </p>
                             </div>
+
+                            {/* Alternative Route Comparison */}
+                            <RouteComparison
+                              origin={seaFreightData.originPort}
+                              destination={seaFreightData.destinationPort}
+                              cargoWeight={seaFreightData.cargoWeight}
+                              shipType={seaFreightData.shipType}
+                              primaryRoute={seaFreightResult ? {
+                                name: seaFreightResult.waypoints.length > 0 ? `Via ${seaFreightResult.waypoints[0]}` : 'Direct',
+                                distance: seaFreightResult.distance,
+                                waypoints: seaFreightResult.waypoints || [],
+                                geometry: seaFreightResult.routeGeometry || [],
+                                co2: seaFreightResult.emissions.co2e,
+                                estimatedDays: Math.round((seaFreightResult.distance / 1.852) / (15 * 24)),
+                              } : undefined}
+                              calculateRoute={calculateSeaRoute}
+                              emissionFactor={SHIP_EF[seaFreightData.shipType as keyof typeof SHIP_EF] || 0.015}
+                            />
                           </motion.div>
                         )}
                       </motion.div>
