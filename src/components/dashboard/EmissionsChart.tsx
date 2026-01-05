@@ -5,7 +5,7 @@ import {
   Area,
   AreaChart,
   ResponsiveContainer,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
   Legend,
@@ -147,7 +147,7 @@ const EmissionsChart = () => {
                 domain={[0, 'dataMax + 20']}
                 tickFormatter={(value) => `${value}`}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <RechartsTooltip content={<CustomTooltip />} />
               <Area
                 type="monotone"
                 dataKey="target"
