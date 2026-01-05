@@ -20,6 +20,7 @@ import {
   Leaf, 
   Plane, 
   Ship, 
+  Trash2,
   Truck, 
   Zap,
   Info,
@@ -568,41 +569,85 @@ const CalculationsSection = () => (
     <div>
       <h2 className="text-3xl font-bold text-foreground mb-4">Calculation Methodology</h2>
       <p className="text-lg text-muted-foreground">
-        Detailed explanation of the scientific methodologies used in FarmlyAPI calculations.
+        Detailed explanation of the scientific methodologies used in FarmlyAPI calculations, 
+        following international standards including IPCC 2006 Guidelines, DEFRA 2024, ICAO, IMO, and GLEC Framework.
       </p>
     </div>
 
+    {/* Flight Emissions */}
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Plane className="h-5 w-5" />
           Flight Emissions Calculation
         </CardTitle>
+        <CardDescription>
+          Based on ICAO Carbon Calculator methodology and DEFRA 2024 emission factors
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h4 className="font-semibold mb-2">Formula</h4>
-          <div className="bg-muted p-4 rounded-lg font-mono text-sm">
-            <p>Total Emissions (kg CO₂e) = Fuel Consumed (kg) × Emission Factor × Radiative Forcing Multiplier</p>
-            <p className="mt-2 text-muted-foreground">
-              Per Passenger = Total Emissions × (Passenger Weight Factor / Total Load Factor)
-            </p>
+          <h4 className="font-semibold mb-2">Distance Calculation</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-2">
+            <p className="text-muted-foreground mb-2">Using Haversine Formula for great-circle distance:</p>
+            <p>a = sin²(Δφ/2) + cos(φ₁) × cos(φ₂) × sin²(Δλ/2)</p>
+            <p>c = 2 × atan2(√a, √(1−a))</p>
+            <p>Distance = R × c (where R = 6,371 km)</p>
           </div>
         </div>
 
         <div>
-          <h4 className="font-semibold mb-2">Key Parameters</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 border rounded-lg">
-              <p className="font-medium">Emission Factor (IPCC)</p>
-              <p className="text-2xl font-bold text-primary">3.16 kg CO₂/kg fuel</p>
-              <p className="text-xs text-muted-foreground mt-1">IPCC 2006 Guidelines for Jet A fuel</p>
+          <h4 className="font-semibold mb-2">Emissions Formulas</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-4">
+            <div>
+              <p className="text-muted-foreground mb-1">Method 1: Distance-based (DEFRA)</p>
+              <p>CO₂e = Distance (km) × Passengers × Distance Factor (kg CO₂/pax-km)</p>
             </div>
-            <div className="p-4 border rounded-lg">
-              <p className="font-medium">Radiative Forcing Multiplier</p>
-              <p className="text-2xl font-bold text-primary">1.9×</p>
-              <p className="text-xs text-muted-foreground mt-1">Accounts for non-CO₂ effects (contrails, NOx, etc.)</p>
+            <div>
+              <p className="text-muted-foreground mb-1">Method 2: Fuel-based (ICAO)</p>
+              <p>Total CO₂e = Fuel (kg) × Emission Factor × Radiative Forcing</p>
+              <p>Per Passenger = Total CO₂e × (Pax Weight Factor / Total Load)</p>
             </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Distance-Based Emission Factors (DEFRA 2024)</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Flight Type</th>
+                  <th className="text-left py-2">Distance Range</th>
+                  <th className="text-left py-2">Economy Class</th>
+                  <th className="text-left py-2">Business Class</th>
+                  <th className="text-left py-2">First Class</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Short-haul</td>
+                  <td className="py-2">&lt; 3,700 km</td>
+                  <td className="py-2 font-mono">0.158 kg CO₂/pax-km</td>
+                  <td className="py-2 font-mono">0.237 kg CO₂/pax-km</td>
+                  <td className="py-2 font-mono">0.237 kg CO₂/pax-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Medium-haul</td>
+                  <td className="py-2">3,700 - 5,500 km</td>
+                  <td className="py-2 font-mono">0.151 kg CO₂/pax-km</td>
+                  <td className="py-2 font-mono">0.227 kg CO₂/pax-km</td>
+                  <td className="py-2 font-mono">0.302 kg CO₂/pax-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Long-haul</td>
+                  <td className="py-2">&gt; 5,500 km</td>
+                  <td className="py-2 font-mono">0.146 kg CO₂/pax-km</td>
+                  <td className="py-2 font-mono">0.424 kg CO₂/pax-km</td>
+                  <td className="py-2 font-mono">0.584 kg CO₂/pax-km</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -644,6 +689,18 @@ const CalculationsSection = () => (
                   <td className="py-2">300-350 pax</td>
                 </tr>
                 <tr className="border-b">
+                  <td className="py-2 font-mono">B787</td>
+                  <td className="py-2">Wide-body</td>
+                  <td className="py-2">5.8 kg/km</td>
+                  <td className="py-2">240-330 pax</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-mono">A380</td>
+                  <td className="py-2">Super Jumbo</td>
+                  <td className="py-2">12.0 kg/km</td>
+                  <td className="py-2">525-853 pax</td>
+                </tr>
+                <tr className="border-b">
                   <td className="py-2 font-mono">E175</td>
                   <td className="py-2">Regional</td>
                   <td className="py-2">1.8 kg/km</td>
@@ -654,63 +711,420 @@ const CalculationsSection = () => (
           </div>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 border rounded-lg">
+            <p className="font-medium">Jet A Emission Factor (IPCC)</p>
+            <p className="text-2xl font-bold text-primary">3.16 kg CO₂/kg fuel</p>
+            <p className="text-xs text-muted-foreground mt-1">IPCC 2006 Guidelines for Jet A fuel</p>
+          </div>
+          <div className="p-4 border rounded-lg">
+            <p className="font-medium">Radiative Forcing Multiplier</p>
+            <p className="text-2xl font-bold text-primary">1.9×</p>
+            <p className="text-xs text-muted-foreground mt-1">Accounts for non-CO₂ effects at altitude</p>
+          </div>
+        </div>
+
         <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
           <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Why Radiative Forcing?</h4>
           <p className="text-sm text-blue-700/80 dark:text-blue-300/80">
             Aircraft emissions at altitude have additional climate impacts beyond CO₂ alone. 
             The 1.9× multiplier (recommended by IPCC) accounts for contrails, water vapor, 
-            and NOx emissions that contribute to warming but aren't captured in CO₂ measurements alone.
+            and NOx emissions that contribute to warming. This is optional but recommended for 
+            comprehensive climate impact assessment.
           </p>
         </div>
       </CardContent>
     </Card>
 
+    {/* Sea Freight Emissions */}
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Ship className="h-5 w-5" />
-          Freight Emissions Calculation
+          Sea Freight Emissions Calculation
         </CardTitle>
+        <CardDescription>
+          Based on IMO GHG Studies, GLEC Framework, and GHG Protocol Scope 3 Category 4
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h4 className="font-semibold mb-2">Formula</h4>
-          <div className="bg-muted p-4 rounded-lg font-mono text-sm">
-            <p>Emissions (kg CO₂e) = Weight (tonnes) × Distance (km) × Emission Factor (kg CO₂e/tonne-km)</p>
+          <h4 className="font-semibold mb-2">Distance Calculation</h4>
+          <div className="bg-muted p-4 rounded-lg text-sm space-y-2">
+            <p className="text-muted-foreground">
+              Sea routes are calculated using real maritime shipping lane networks, not straight-line distances. 
+              Our routing engine uses the MARNET densified network with 5000+ waypoints to compute accurate paths 
+              that follow established shipping lanes.
+            </p>
+            <div className="mt-3 p-3 bg-background/50 rounded border">
+              <p className="font-mono text-xs">
+                Route = PathFinder(origin, destination, maritimeNetwork)<br/>
+                Distance = Σ segmentLengths(routeGeometry)
+              </p>
+            </div>
           </div>
         </div>
 
         <div>
-          <h4 className="font-semibold mb-2">Modal Emission Factors</h4>
+          <h4 className="font-semibold mb-2">Primary Calculation Method: Tonne-Kilometre</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-2">
+            <p className="text-muted-foreground mb-2">Following GLEC Framework and GHG Protocol:</p>
+            <p>CO₂e (kg) = Cargo Weight (tonnes) × Distance (km) × Emission Factor (kg CO₂e/tkm)</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Ship Type Emission Factors (IMO 2020 / DEFRA 2024)</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2">Transport Mode</th>
+                  <th className="text-left py-2">Ship Type</th>
+                  <th className="text-left py-2">Size Category</th>
                   <th className="text-left py-2">Emission Factor</th>
-                  <th className="text-left py-2">Source</th>
+                  <th className="text-left py-2">Unit</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b">
-                  <td className="py-2">Air Freight</td>
-                  <td className="py-2 font-mono">0.602 kg CO₂e/tonne-km</td>
-                  <td className="py-2 text-muted-foreground">DEFRA 2024</td>
+                  <td className="py-2 font-medium">Container Ship</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.016</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="py-2">Road (HGV)</td>
-                  <td className="py-2 font-mono">0.089 kg CO₂e/tonne-km</td>
-                  <td className="py-2 text-muted-foreground">DEFRA 2024</td>
+                  <td className="py-2 font-medium">Container Ship</td>
+                  <td className="py-2">&gt;8000 TEU</td>
+                  <td className="py-2 font-mono">0.008</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="py-2">Sea (Container)</td>
-                  <td className="py-2 font-mono">0.016 kg CO₂e/tonne-km</td>
-                  <td className="py-2 text-muted-foreground">IMO 2020</td>
+                  <td className="py-2 font-medium">Container Ship</td>
+                  <td className="py-2">&lt;1000 TEU</td>
+                  <td className="py-2 font-mono">0.028</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="py-2">Rail</td>
-                  <td className="py-2 font-mono">0.028 kg CO₂e/tonne-km</td>
-                  <td className="py-2 text-muted-foreground">DEFRA 2024</td>
+                  <td className="py-2 font-medium">Bulk Carrier</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.003</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Tanker (Crude)</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.005</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Tanker (Product)</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.009</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">RoRo Ferry</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.060</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">General Cargo</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.012</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Refrigerated Cargo</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.018</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">LNG Carrier</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.011</td>
+                  <td className="py-2 text-muted-foreground">kg CO₂e/tonne-km</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Alternative Method: Fuel-Based (Tier 2/3)</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-2">
+            <p className="text-muted-foreground mb-2">When actual fuel consumption is known:</p>
+            <p>CO₂ (kg) = Fuel Consumed (kg) × 3.114</p>
+            <p className="mt-2">CH₄ (kg CO₂e) = Fuel (kg) × 0.00006 × 27.9 (GWP)</p>
+            <p>N₂O (kg CO₂e) = Fuel (kg) × 0.00018 × 273 (GWP)</p>
+            <p className="mt-2 pt-2 border-t">Total CO₂e = CO₂ + CH₄ (CO₂e) + N₂O (CO₂e)</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Marine Fuel Emission Factors</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Fuel Type</th>
+                  <th className="text-left py-2">CO₂ (kg/kg fuel)</th>
+                  <th className="text-left py-2">CH₄ (g/kg fuel)</th>
+                  <th className="text-left py-2">N₂O (g/kg fuel)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">HFO (Heavy Fuel Oil)</td>
+                  <td className="py-2 font-mono">3.114</td>
+                  <td className="py-2 font-mono">0.06</td>
+                  <td className="py-2 font-mono">0.18</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">MGO (Marine Gas Oil)</td>
+                  <td className="py-2 font-mono">3.206</td>
+                  <td className="py-2 font-mono">0.06</td>
+                  <td className="py-2 font-mono">0.18</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">LNG</td>
+                  <td className="py-2 font-mono">2.750</td>
+                  <td className="py-2 font-mono">6.90</td>
+                  <td className="py-2 font-mono">0.11</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">VLSFO</td>
+                  <td className="py-2 font-mono">3.151</td>
+                  <td className="py-2 font-mono">0.06</td>
+                  <td className="py-2 font-mono">0.18</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Key Maritime Passages Detected</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {[
+              "Suez Canal", "Panama Canal", "Strait of Malacca", "Strait of Gibraltar",
+              "Strait of Hormuz", "Bab el-Mandeb", "Singapore Strait", "English Channel",
+              "Cape of Good Hope", "Cape Horn", "Bosphorus", "Taiwan Strait",
+              "Torres Strait", "Mozambique Channel", "Korea Strait", "Bering Strait"
+            ].map((passage, i) => (
+              <div key={i} className="px-3 py-2 bg-muted rounded text-sm text-center">
+                {passage}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+          <h4 className="font-semibold text-green-700 dark:text-green-300 mb-2">Route Comparison Feature</h4>
+          <p className="text-sm text-green-700/80 dark:text-green-300/80">
+            Our API supports comparing alternative routes (e.g., Suez vs Cape of Good Hope, Panama vs Cape Horn) 
+            to help logistics planners optimize for emissions, cost, or transit time. Route comparisons include 
+            distance differentials, estimated transit times, and CO₂e impact analysis.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Vehicle Emissions */}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Truck className="h-5 w-5" />
+          Vehicle & Road Transport Emissions
+        </CardTitle>
+        <CardDescription>
+          Based on DEFRA 2024 conversion factors and EPA emission standards
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div>
+          <h4 className="font-semibold mb-2">Calculation Methods</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-4">
+            <div>
+              <p className="text-muted-foreground mb-1">Method 1: Fuel-based</p>
+              <p>CO₂e (kg) = Fuel Consumed (L) × Fuel Emission Factor (kg CO₂e/L)</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground mb-1">Method 2: Distance-based</p>
+              <p>CO₂e (kg) = Distance (km) × Vehicle Factor (kg CO₂e/km)</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground mb-1">Method 3: Freight (tonne-km)</p>
+              <p>CO₂e (kg) = Weight (tonnes) × Distance (km) × Freight Factor</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Fuel Emission Factors (DEFRA 2024)</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Fuel Type</th>
+                  <th className="text-left py-2">CO₂ (kg/L)</th>
+                  <th className="text-left py-2">CH₄ (g/L)</th>
+                  <th className="text-left py-2">N₂O (g/L)</th>
+                  <th className="text-left py-2">Total CO₂e (kg/L)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Petrol (Gasoline)</td>
+                  <td className="py-2 font-mono">2.315</td>
+                  <td className="py-2 font-mono">0.50</td>
+                  <td className="py-2 font-mono">0.22</td>
+                  <td className="py-2 font-mono">2.392</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Diesel</td>
+                  <td className="py-2 font-mono">2.669</td>
+                  <td className="py-2 font-mono">0.06</td>
+                  <td className="py-2 font-mono">0.13</td>
+                  <td className="py-2 font-mono">2.706</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">LPG</td>
+                  <td className="py-2 font-mono">1.560</td>
+                  <td className="py-2 font-mono">0.68</td>
+                  <td className="py-2 font-mono">0.02</td>
+                  <td className="py-2 font-mono">1.584</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">CNG</td>
+                  <td className="py-2 font-mono">2.540</td>
+                  <td className="py-2 font-mono">3.30</td>
+                  <td className="py-2 font-mono">0.01</td>
+                  <td className="py-2 font-mono">2.635</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Biodiesel (B20)</td>
+                  <td className="py-2 font-mono">2.135</td>
+                  <td className="py-2 font-mono">0.06</td>
+                  <td className="py-2 font-mono">0.13</td>
+                  <td className="py-2 font-mono">2.172</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">E10 Petrol</td>
+                  <td className="py-2 font-mono">2.084</td>
+                  <td className="py-2 font-mono">0.50</td>
+                  <td className="py-2 font-mono">0.22</td>
+                  <td className="py-2 font-mono">2.161</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Vehicle Type Emission Factors</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Vehicle Type</th>
+                  <th className="text-left py-2">Size/Engine</th>
+                  <th className="text-left py-2">kg CO₂e/km</th>
+                  <th className="text-left py-2">kg CO₂e/mile</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Small Car</td>
+                  <td className="py-2">&lt;1.4L</td>
+                  <td className="py-2 font-mono">0.154</td>
+                  <td className="py-2 font-mono">0.248</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Medium Car</td>
+                  <td className="py-2">1.4-2.0L</td>
+                  <td className="py-2 font-mono">0.192</td>
+                  <td className="py-2 font-mono">0.309</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Large Car</td>
+                  <td className="py-2">&gt;2.0L</td>
+                  <td className="py-2 font-mono">0.282</td>
+                  <td className="py-2 font-mono">0.454</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Hybrid</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.120</td>
+                  <td className="py-2 font-mono">0.193</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Electric (BEV)</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.053</td>
+                  <td className="py-2 font-mono">0.085</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Motorcycle</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.114</td>
+                  <td className="py-2 font-mono">0.183</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Van</td>
+                  <td className="py-2">&lt;3.5t</td>
+                  <td className="py-2 font-mono">0.249</td>
+                  <td className="py-2 font-mono">0.401</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">HGV Rigid</td>
+                  <td className="py-2">7.5-17t</td>
+                  <td className="py-2 font-mono">0.518</td>
+                  <td className="py-2 font-mono">0.834</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">HGV Articulated</td>
+                  <td className="py-2">&gt;33t</td>
+                  <td className="py-2 font-mono">0.929</td>
+                  <td className="py-2 font-mono">1.495</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Freight Transport Factors (Road)</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Vehicle Type</th>
+                  <th className="text-left py-2">Load Factor</th>
+                  <th className="text-left py-2">kg CO₂e/tonne-km</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">HGV (all diesel)</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.089</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">HGV Articulated</td>
+                  <td className="py-2">50% laden</td>
+                  <td className="py-2 font-mono">0.053</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">HGV Articulated</td>
+                  <td className="py-2">100% laden</td>
+                  <td className="py-2 font-mono">0.038</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Van</td>
+                  <td className="py-2">Average</td>
+                  <td className="py-2 font-mono">0.583</td>
                 </tr>
               </tbody>
             </table>
@@ -719,46 +1133,256 @@ const CalculationsSection = () => (
       </CardContent>
     </Card>
 
+    {/* Energy Emissions */}
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Zap className="h-5 w-5" />
           Energy Emissions Calculation
         </CardTitle>
+        <CardDescription>
+          Based on GHG Protocol Scope 2 Guidance and regional grid factors
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h4 className="font-semibold mb-2">Electricity (Scope 2)</h4>
-          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-2">
-            <p><strong>Location-based:</strong> Consumption (kWh) × Regional Grid Factor</p>
-            <p><strong>Market-based:</strong> Consumption (kWh) × Supplier/REC Factor</p>
+          <h4 className="font-semibold mb-2">Electricity Emissions (Scope 2)</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-3">
+            <div>
+              <p className="text-muted-foreground mb-1">Location-based method:</p>
+              <p>CO₂e (kg) = Consumption (kWh) × Regional Grid Factor (kg CO₂e/kWh)</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground mb-1">Market-based method:</p>
+              <p>CO₂e (kg) = Consumption (kWh) × Supplier Factor (kg CO₂e/kWh)</p>
+              <p className="text-xs text-muted-foreground mt-1">Note: RECs/GOs can reduce market-based emissions to zero</p>
+            </div>
           </div>
         </div>
 
         <div>
-          <h4 className="font-semibold mb-2">Sample Grid Emission Factors (2024)</h4>
+          <h4 className="font-semibold mb-2">Global Grid Emission Factors (2024)</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { region: "US Average", factor: "0.371" },
-              { region: "EU Average", factor: "0.233" },
-              { region: "UK", factor: "0.207" },
-              { region: "Germany", factor: "0.338" },
-              { region: "France", factor: "0.052" },
-              { region: "China", factor: "0.555" },
-              { region: "India", factor: "0.708" },
-              { region: "Australia", factor: "0.656" },
+              { region: "US Average", factor: "0.371", trend: "↓" },
+              { region: "EU Average", factor: "0.233", trend: "↓" },
+              { region: "UK", factor: "0.207", trend: "↓" },
+              { region: "Germany", factor: "0.338", trend: "↓" },
+              { region: "France", factor: "0.052", trend: "→" },
+              { region: "China", factor: "0.555", trend: "↓" },
+              { region: "India", factor: "0.708", trend: "↓" },
+              { region: "Australia", factor: "0.656", trend: "↓" },
+              { region: "Japan", factor: "0.457", trend: "↓" },
+              { region: "Brazil", factor: "0.074", trend: "→" },
+              { region: "Canada", factor: "0.120", trend: "→" },
+              { region: "South Africa", factor: "0.928", trend: "↓" },
             ].map((item, i) => (
               <div key={i} className="p-3 border rounded-lg text-center">
                 <p className="text-xs text-muted-foreground">{item.region}</p>
                 <p className="font-mono font-semibold">{item.factor}</p>
-                <p className="text-xs text-muted-foreground">kg CO₂e/kWh</p>
+                <p className="text-xs text-muted-foreground">kg CO₂e/kWh {item.trend}</p>
               </div>
             ))}
           </div>
         </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Natural Gas & Heating Fuels (Scope 1)</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Fuel Type</th>
+                  <th className="text-left py-2">Unit</th>
+                  <th className="text-left py-2">CO₂ (kg)</th>
+                  <th className="text-left py-2">CH₄ (g)</th>
+                  <th className="text-left py-2">N₂O (g)</th>
+                  <th className="text-left py-2">Total CO₂e (kg)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Natural Gas</td>
+                  <td className="py-2">kWh</td>
+                  <td className="py-2 font-mono">0.183</td>
+                  <td className="py-2 font-mono">0.05</td>
+                  <td className="py-2 font-mono">0.01</td>
+                  <td className="py-2 font-mono">0.187</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Natural Gas</td>
+                  <td className="py-2">m³</td>
+                  <td className="py-2 font-mono">2.021</td>
+                  <td className="py-2 font-mono">0.55</td>
+                  <td className="py-2 font-mono">0.11</td>
+                  <td className="py-2 font-mono">2.067</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Heating Oil</td>
+                  <td className="py-2">L</td>
+                  <td className="py-2 font-mono">2.540</td>
+                  <td className="py-2 font-mono">0.13</td>
+                  <td className="py-2 font-mono">0.01</td>
+                  <td className="py-2 font-mono">2.547</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Coal (Industrial)</td>
+                  <td className="py-2">kg</td>
+                  <td className="py-2 font-mono">2.883</td>
+                  <td className="py-2 font-mono">0.55</td>
+                  <td className="py-2 font-mono">0.14</td>
+                  <td className="py-2 font-mono">2.937</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Wood Pellets</td>
+                  <td className="py-2">kg</td>
+                  <td className="py-2 font-mono">0.047</td>
+                  <td className="py-2 font-mono">0.93</td>
+                  <td className="py-2 font-mono">0.47</td>
+                  <td className="py-2 font-mono">0.201</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+          <h4 className="font-semibold text-amber-700 dark:text-amber-300 mb-2">Renewable Energy Certificates (RECs)</h4>
+          <p className="text-sm text-amber-700/80 dark:text-amber-300/80">
+            When calculating market-based emissions, verified RECs or Guarantees of Origin (GOs) can be applied 
+            to reduce Scope 2 emissions. The API supports specifying REC coverage percentage to calculate 
+            net emissions after renewable energy procurement.
+          </p>
+        </div>
       </CardContent>
     </Card>
 
+    {/* Waste Emissions */}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Trash2 className="h-5 w-5" />
+          Waste Emissions Calculation
+        </CardTitle>
+        <CardDescription>
+          Based on EPA WARM model and DEFRA waste disposal factors
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div>
+          <h4 className="font-semibold mb-2">Calculation Formula</h4>
+          <div className="bg-muted p-4 rounded-lg font-mono text-sm">
+            <p>CO₂e (kg) = Waste Weight (tonnes) × Emission Factor (kg CO₂e/tonne)</p>
+            <p className="text-muted-foreground mt-2 text-xs">
+              Factors vary by waste type and disposal method (landfill, incineration, recycling, composting)
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Waste Disposal Emission Factors</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">Waste Type</th>
+                  <th className="text-left py-2">Landfill</th>
+                  <th className="text-left py-2">Incineration</th>
+                  <th className="text-left py-2">Recycling</th>
+                  <th className="text-left py-2">Composting</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Mixed MSW</td>
+                  <td className="py-2 font-mono">446</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Paper/Cardboard</td>
+                  <td className="py-2 font-mono">1,042</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-469</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Food Waste</td>
+                  <td className="py-2 font-mono">578</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-</td>
+                  <td className="py-2 font-mono">-8</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Garden Waste</td>
+                  <td className="py-2 font-mono">578</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-</td>
+                  <td className="py-2 font-mono">-8</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Plastics (Mixed)</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-1,390</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Glass</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-315</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Metals (Mixed)</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-4,231</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Textiles</td>
+                  <td className="py-2 font-mono">445</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-3,169</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Electronics (WEEE)</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-1,000</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 font-medium">Construction Waste</td>
+                  <td className="py-2 font-mono">21</td>
+                  <td className="py-2 font-mono">-</td>
+                  <td className="py-2 font-mono">-57</td>
+                  <td className="py-2 font-mono">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            * All values in kg CO₂e/tonne. Negative values indicate avoided emissions from recycling/composting.
+          </p>
+        </div>
+
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
+          <h4 className="font-semibold text-purple-700 dark:text-purple-300 mb-2">Circular Economy Benefits</h4>
+          <p className="text-sm text-purple-700/80 dark:text-purple-300/80">
+            Recycling and composting often result in negative net emissions (avoided emissions) by replacing 
+            virgin material production. The API calculates both gross emissions and net emissions after 
+            accounting for material recovery benefits.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* GWP Values */}
     <Card>
       <CardHeader>
         <CardTitle>Global Warming Potentials (GWP)</CardTitle>
@@ -766,7 +1390,7 @@ const CalculationsSection = () => (
           FarmlyAPI supports multiple IPCC Assessment Report values for converting GHGs to CO₂ equivalents
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -774,7 +1398,7 @@ const CalculationsSection = () => (
                 <th className="text-left py-2">Gas</th>
                 <th className="text-left py-2">AR4 (2007)</th>
                 <th className="text-left py-2">AR5 (2014)</th>
-                <th className="text-left py-2">AR6 (2021)</th>
+                <th className="text-left py-2 bg-primary/10">AR6 (2021) ✓</th>
               </tr>
             </thead>
             <tbody>
@@ -782,34 +1406,78 @@ const CalculationsSection = () => (
                 <td className="py-2">CO₂</td>
                 <td className="py-2 font-mono">1</td>
                 <td className="py-2 font-mono">1</td>
-                <td className="py-2 font-mono">1</td>
+                <td className="py-2 font-mono bg-primary/10">1</td>
               </tr>
               <tr className="border-b">
                 <td className="py-2">CH₄ (Methane)</td>
                 <td className="py-2 font-mono">25</td>
                 <td className="py-2 font-mono">28</td>
-                <td className="py-2 font-mono">27.9</td>
+                <td className="py-2 font-mono bg-primary/10">27.9</td>
               </tr>
               <tr className="border-b">
                 <td className="py-2">N₂O (Nitrous Oxide)</td>
                 <td className="py-2 font-mono">298</td>
                 <td className="py-2 font-mono">265</td>
-                <td className="py-2 font-mono">273</td>
+                <td className="py-2 font-mono bg-primary/10">273</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2">HFCs (avg)</td>
+                <td className="py-2">HFC-134a</td>
                 <td className="py-2 font-mono">1,430</td>
                 <td className="py-2 font-mono">1,300</td>
-                <td className="py-2 font-mono">1,526</td>
+                <td className="py-2 font-mono bg-primary/10">1,526</td>
               </tr>
               <tr className="border-b">
                 <td className="py-2">SF₆</td>
                 <td className="py-2 font-mono">22,800</td>
                 <td className="py-2 font-mono">23,500</td>
-                <td className="py-2 font-mono">24,300</td>
+                <td className="py-2 font-mono bg-primary/10">24,300</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2">NF₃</td>
+                <td className="py-2 font-mono">17,200</td>
+                <td className="py-2 font-mono">16,100</td>
+                <td className="py-2 font-mono bg-primary/10">17,400</td>
               </tr>
             </tbody>
           </table>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          ✓ AR6 (2021) values are used by default as per latest IPCC guidance. 
+          API supports specifying alternative GWP scenarios for regulatory compliance.
+        </p>
+      </CardContent>
+    </Card>
+
+    {/* Standards Compliance */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Standards & Frameworks Compliance</CardTitle>
+        <CardDescription>
+          FarmlyAPI calculations align with major international emissions accounting standards
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { name: "GHG Protocol", desc: "Corporate Standard, Scope 3 Standard", type: "Framework" },
+            { name: "IPCC 2006 Guidelines", desc: "Tier 1, 2, and 3 methods", type: "Methodology" },
+            { name: "ISO 14064", desc: "GHG inventories and verification", type: "Standard" },
+            { name: "DEFRA 2024", desc: "UK Government conversion factors", type: "Data Source" },
+            { name: "EPA eGRID", desc: "US regional electricity factors", type: "Data Source" },
+            { name: "IEA", desc: "Global electricity emission factors", type: "Data Source" },
+            { name: "IMO GHG Studies", desc: "Maritime emission methodologies", type: "Methodology" },
+            { name: "GLEC Framework", desc: "Logistics emissions calculation", type: "Framework" },
+            { name: "ICAO", desc: "Aviation emissions methodology", type: "Methodology" },
+            { name: "SBTi", desc: "Science-based target setting", type: "Framework" },
+          ].map((item, i) => (
+            <div key={i} className="p-4 border rounded-lg">
+              <div className="flex items-center justify-between mb-1">
+                <p className="font-semibold">{item.name}</p>
+                <span className="text-xs bg-muted px-2 py-0.5 rounded">{item.type}</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
