@@ -15,15 +15,56 @@ interface SeaRouteResult {
 
 // Define key maritime passages with bounding boxes
 const MARITIME_PASSAGES = [
+  // Major Canals
   { name: 'Suez Canal', bbox: [32.0, 29.5, 34.0, 31.5] },
   { name: 'Panama Canal', bbox: [-80.0, 8.5, -79.0, 9.5] },
+  
+  // European Passages
   { name: 'Strait of Gibraltar', bbox: [-6.5, 35.5, -5.0, 36.5] },
-  { name: 'Strait of Malacca', bbox: [99.0, 1.0, 104.0, 4.0] },
+  { name: 'English Channel', bbox: [-5.0, 49.0, 2.0, 51.5] },
+  { name: 'Dover Strait', bbox: [1.0, 50.8, 2.0, 51.2] },
+  { name: 'Bosphorus', bbox: [28.8, 40.9, 29.2, 41.3] },
+  { name: 'Dardanelles', bbox: [26.0, 40.0, 26.8, 40.5] },
+  { name: 'Skagerrak', bbox: [8.0, 57.0, 12.0, 59.0] },
+  { name: 'Kattegat', bbox: [10.5, 55.5, 12.5, 57.5] },
+  { name: 'Baltic Straits', bbox: [10.0, 54.5, 13.0, 56.5] },
+  
+  // Middle East & Red Sea
   { name: 'Strait of Hormuz', bbox: [55.0, 25.5, 57.0, 27.0] },
   { name: 'Bab el-Mandeb', bbox: [43.0, 12.0, 44.0, 13.0] },
-  { name: 'English Channel', bbox: [-5.0, 49.0, 2.0, 51.5] },
-  { name: 'Cape of Good Hope', bbox: [18.0, -35.0, 20.0, -33.0] },
+  
+  // Southeast Asia
+  { name: 'Strait of Malacca', bbox: [99.0, 1.0, 104.0, 4.0] },
   { name: 'Singapore Strait', bbox: [103.5, 1.0, 104.5, 1.5] },
+  { name: 'Sunda Strait', bbox: [105.0, -6.5, 106.0, -5.5] },
+  { name: 'Lombok Strait', bbox: [115.3, -9.0, 116.0, -8.0] },
+  { name: 'Makassar Strait', bbox: [117.0, -3.0, 120.0, 2.0] },
+  { name: 'Taiwan Strait', bbox: [118.0, 23.0, 121.0, 26.0] },
+  { name: 'Luzon Strait', bbox: [120.0, 18.5, 122.5, 21.5] },
+  
+  // East Asia
+  { name: 'Korea Strait', bbox: [128.0, 33.5, 130.0, 35.5] },
+  { name: 'Tsugaru Strait', bbox: [139.5, 41.0, 141.5, 42.0] },
+  { name: 'La Pérouse Strait', bbox: [141.5, 45.0, 143.5, 46.5] },
+  
+  // Oceania
+  { name: 'Torres Strait', bbox: [141.5, -11.0, 143.5, -9.5] },
+  { name: 'Bass Strait', bbox: [144.0, -40.0, 149.0, -38.0] },
+  
+  // Africa
+  { name: 'Cape of Good Hope', bbox: [18.0, -35.0, 20.0, -33.0] },
+  { name: 'Mozambique Channel', bbox: [35.0, -25.0, 45.0, -12.0] },
+  
+  // Americas
+  { name: 'Cape Horn', bbox: [-68.0, -56.5, -66.0, -55.0] },
+  { name: 'Strait of Magellan', bbox: [-74.0, -54.0, -68.0, -52.0] },
+  { name: 'Yucatan Channel', bbox: [-87.0, 21.0, -85.0, 22.5] },
+  { name: 'Florida Strait', bbox: [-82.0, 23.0, -79.0, 25.5] },
+  { name: 'Windward Passage', bbox: [-74.5, 19.5, -73.0, 20.5] },
+  
+  // Arctic
+  { name: 'Bering Strait', bbox: [-170.0, 65.0, -168.0, 66.5] },
+  { name: 'Davis Strait', bbox: [-60.0, 64.0, -52.0, 68.0] },
 ];
 
 function detectKeyWaypoints(coordinates: [number, number][]): string[] {
