@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Flame, 
@@ -26,59 +26,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Map, MapControls, MapMarker } from "@/components/ui/map";
 import HomeHeader from "@/components/home/HomeHeader";
-
-// Marker data type
-interface MarkerData {
-  lat: number;
-  lng: number;
-  intensity: "high" | "medium" | "low";
-  label?: string;
-}
-
-// Intensity colors
-const intensityColors = {
-  high: "#ef4444",
-  medium: "#f59e0b", 
-  low: "#22c55e"
-};
-
-// Custom Marker Component with glow effect
-const GlowingMarker = ({ intensity, label }: { intensity: "high" | "medium" | "low"; label?: string }) => {
-  const color = intensityColors[intensity];
-  
-  return (
-    <div className="relative group cursor-pointer">
-      {/* Glow effect */}
-      <div 
-        className="absolute inset-0 rounded-full animate-ping"
-        style={{ 
-          backgroundColor: color,
-          opacity: 0.4,
-          width: '20px',
-          height: '20px',
-          marginLeft: '-4px',
-          marginTop: '-4px'
-        }}
-      />
-      {/* Marker dot */}
-      <div 
-        className="w-3 h-3 rounded-full border-2 border-white/50 shadow-lg relative z-10"
-        style={{ 
-          backgroundColor: color,
-          boxShadow: `0 0 15px ${color}80, 0 0 30px ${color}40`
-        }}
-      />
-      {/* Label tooltip */}
-      {label && (
-        <div className="absolute left-1/2 -translate-x-1/2 -top-8 bg-gray-900/90 px-2 py-1 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
-          {label}
-        </div>
-      )}
-    </div>
-  );
-};
 
 // Map Card Component
 interface MapCardProps {
@@ -86,14 +34,12 @@ interface MapCardProps {
   icon: React.ReactNode;
   source: string;
   legend: { label: string; color: string }[];
-  markers: MarkerData[];
-  center?: [number, number];
-  zoom?: number;
+  children?: React.ReactNode;
   timeFilter?: boolean;
   regionFilter?: boolean;
 }
 
-const MapCard = ({ title, icon, source, legend, markers, center = [0, 20], zoom = 1.5, timeFilter, regionFilter }: MapCardProps) => {
+const MapCard = ({ title, icon, source, legend, children, timeFilter, regionFilter }: MapCardProps) => {
   const [timeRange, setTimeRange] = useState("7d");
   const [region, setRegion] = useState("global");
 
@@ -159,24 +105,7 @@ const MapCard = ({ title, icon, source, legend, markers, center = [0, 20], zoom 
 
       {/* Map Content */}
       <div className="aspect-[4/3] relative">
-        <Map
-          center={center}
-          zoom={zoom}
-          theme="dark"
-          interactive={true}
-          className="w-full h-full"
-        >
-          <MapControls position="bottom-left" showZoom={true} showCompass={false} />
-          {markers.map((marker, index) => (
-            <MapMarker
-              key={index}
-              longitude={marker.lng}
-              latitude={marker.lat}
-            >
-              <GlowingMarker intensity={marker.intensity} label={marker.label} />
-            </MapMarker>
-          ))}
-        </Map>
+        {children}
       </div>
 
       {/* Legend */}
@@ -204,6 +133,118 @@ const MapCard = ({ title, icon, source, legend, markers, center = [0, 20], zoom 
         </div>
       </div>
     </motion.div>
+  );
+};
+
+// Simulated Map Background with markers
+const SimulatedMap = ({ 
+  markers,
+  style = "dark"
+}: { 
+  markers: { lat: number; lng: number; intensity: "high" | "medium" | "low"; label?: string }[];
+  style?: "dark" | "satellite";
+}) => {
+  const intensityColors = {
+    high: "#ef4444",
+    medium: "#f59e0b", 
+    low: "#22c55e"
+  };
+
+  // Convert lat/lng to percentage positions
+  const getPosition = (lat: number, lng: number) => ({
+    x: ((lng + 180) / 360) * 100,
+    y: ((90 - lat) / 180) * 100
+  });
+
+  return (
+    <div className="absolute inset-0 bg-[#0d1421]">
+      {/* Grid overlay */}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(75, 85, 99, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(75, 85, 99, 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }}
+      />
+      
+      {/* Simplified world map outline */}
+      <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 50" preserveAspectRatio="none">
+        {/* Continents simplified */}
+        <path
+          d="M15,20 Q20,15 25,18 L30,15 Q35,12 40,15 L45,18 Q50,20 55,18 L60,15 Q65,12 70,15 L75,18 Q80,20 85,18"
+          fill="none"
+          stroke="#374151"
+          strokeWidth="0.3"
+        />
+        <path
+          d="M20,25 Q25,22 30,25 L35,28 Q40,30 45,28 L50,25 Q55,22 60,25 L65,28"
+          fill="none"
+          stroke="#374151"
+          strokeWidth="0.3"
+        />
+        <path
+          d="M70,25 Q75,22 80,25 L85,28 Q90,30 92,28"
+          fill="none"
+          stroke="#374151"
+          strokeWidth="0.3"
+        />
+      </svg>
+
+      {/* Continent labels */}
+      <div className="absolute top-[30%] left-[15%] text-[10px] text-gray-600 uppercase tracking-widest">America</div>
+      <div className="absolute top-[25%] left-[45%] text-[10px] text-gray-600 uppercase tracking-widest">Europe</div>
+      <div className="absolute top-[30%] left-[60%] text-[10px] text-gray-600 uppercase tracking-widest">Asia</div>
+      <div className="absolute top-[45%] left-[48%] text-[10px] text-gray-600 uppercase tracking-widest">Africa</div>
+      <div className="absolute top-[60%] left-[75%] text-[10px] text-gray-600 uppercase tracking-widest">Australia</div>
+
+      {/* Markers */}
+      {markers.map((marker, index) => {
+        const pos = getPosition(marker.lat, marker.lng);
+        const color = intensityColors[marker.intensity];
+        
+        return (
+          <motion.div
+            key={index}
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
+            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
+            whileHover={{ scale: 1.5 }}
+          >
+            {/* Glow effect */}
+            <div 
+              className="absolute inset-0 rounded-full animate-ping"
+              style={{ 
+                backgroundColor: color,
+                opacity: 0.3,
+                width: '20px',
+                height: '20px',
+                marginLeft: '-6px',
+                marginTop: '-6px'
+              }}
+            />
+            {/* Marker dot */}
+            <div 
+              className="w-3 h-3 rounded-full border-2 border-white/50 shadow-lg relative z-10"
+              style={{ 
+                backgroundColor: color,
+                boxShadow: `0 0 15px ${color}80, 0 0 30px ${color}40`
+              }}
+            />
+            {/* Label tooltip */}
+            {marker.label && (
+              <div className="absolute left-1/2 -translate-x-1/2 -top-8 bg-gray-900/90 px-2 py-1 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                {marker.label}
+              </div>
+            )}
+          </motion.div>
+        );
+      })}
+    </div>
   );
 };
 
@@ -329,12 +370,11 @@ const Maps = () => {
               { label: "Medium", color: "#f59e0b" },
               { label: "Low", color: "#22c55e" }
             ]}
-            markers={wildfireMarkers}
-            center={[0, 20]}
-            zoom={1.5}
             timeFilter
             regionFilter
-          />
+          >
+            <SimulatedMap markers={wildfireMarkers} />
+          </MapCard>
 
           {/* Groundwater Levels - India */}
           <MapCard
@@ -346,11 +386,10 @@ const Maps = () => {
               { label: "Semi-Critical", color: "#f59e0b" },
               { label: "Safe", color: "#22c55e" }
             ]}
-            markers={groundwaterIndiaMarkers}
-            center={[78.9629, 22.5937]}
-            zoom={4}
             timeFilter
-          />
+          >
+            <SimulatedMap markers={groundwaterIndiaMarkers} />
+          </MapCard>
 
           {/* Global Groundwater Stress */}
           <MapCard
@@ -362,11 +401,10 @@ const Maps = () => {
               { label: "Medium Stress", color: "#f59e0b" },
               { label: "Low Stress", color: "#22c55e" }
             ]}
-            markers={globalWaterStressMarkers}
-            center={[0, 20]}
-            zoom={1.5}
             regionFilter
-          />
+          >
+            <SimulatedMap markers={globalWaterStressMarkers} />
+          </MapCard>
 
           {/* Forest Cover & Tree Loss */}
           <MapCard
@@ -378,12 +416,11 @@ const Maps = () => {
               { label: "Moderate", color: "#f59e0b" },
               { label: "Stable", color: "#22c55e" }
             ]}
-            markers={forestLossMarkers}
-            center={[-20, 0]}
-            zoom={1.5}
             timeFilter
             regionFilter
-          />
+          >
+            <SimulatedMap markers={forestLossMarkers} />
+          </MapCard>
         </div>
 
         {/* Data Sources Section */}
