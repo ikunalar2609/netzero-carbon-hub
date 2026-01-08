@@ -29,6 +29,7 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import Farmly from "@/pages/Farmly";
 import FarmlyDocs from "@/pages/FarmlyDocs";
+import Maps from "@/pages/Maps";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,9 @@ function App() {
                       {/* Farmly pages */}
                       <Route path="/farmly" element={<Farmly />} />
                       <Route path="/farmly/docs" element={<FarmlyDocs />} />
+                      
+                      {/* Maps page */}
+                      <Route path="/maps" element={<Maps />} />
                       
                       {/* Public routes */}
                       <Route element={<PublicRoute />}>

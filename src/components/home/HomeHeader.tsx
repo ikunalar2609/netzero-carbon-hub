@@ -68,6 +68,18 @@ const HomeHeader = () => {
             
             <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
               <Link 
+                to="/maps" 
+                className="flex items-center gap-2 font-semibold transition-colors duration-300"
+                style={{ color: 'hsl(var(--text-secondary))' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'hsl(var(--brand-primary))'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'hsl(var(--text-secondary))'}
+              >
+                <span>Maps</span>
+              </Link>
+            </motion.div>
+            
+            <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+              <Link 
                 to="/dashboard" 
                 className="flex items-center gap-2 font-semibold transition-colors duration-300"
                 style={{ color: 'hsl(var(--text-secondary))' }}
@@ -142,6 +154,15 @@ const HomeHeader = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span>Farmly API</span>
+              </Link>
+              
+              <Link 
+                to="/maps" 
+                className="flex items-center gap-2 font-semibold py-3 px-4 rounded-lg transition-colors"
+                style={{ color: 'hsl(var(--text-secondary))' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span>Maps</span>
               </Link>
               
               <Link 
