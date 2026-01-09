@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { 
   Flame, 
@@ -11,7 +11,12 @@ import {
   Info,
   Maximize2,
   Filter,
-  Loader2
+  Loader2,
+  Zap,
+  Satellite,
+  TrendingUp,
+  AlertTriangle,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +34,6 @@ import {
 } from "@/components/ui/tooltip";
 import HomeHeader from "@/components/home/HomeHeader";
 import { Map, MapMarker, MapControls } from "@/components/ui/map";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface FireData {
@@ -294,19 +298,27 @@ const Maps = () => {
   const [fireData, setFireData] = useState<FireData[]>([]);
   const [loading, setLoading] = useState(false);
   const [days, setDays] = useState("1");
+  const [satelliteSource, setSatelliteSource] = useState("VIIRS_SNPP_NRT");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [totalFireCount, setTotalFireCount] = useState(0);
 
-  const fetchFireData = useCallback(async (daysParam: string) => {
+  // Fire statistics
+  const fireStats = useMemo(() => {
+    if (!fireData.length) return null;
+    const highIntensity = fireData.filter(f => f.frp > 50).length;
+    const mediumIntensity = fireData.filter(f => f.frp > 20 && f.frp <= 50).length;
+    const lowIntensity = fireData.filter(f => f.frp <= 20).length;
+    const avgFrp = fireData.reduce((sum, f) => sum + (f.frp || 0), 0) / fireData.length;
+    const maxFrp = Math.max(...fireData.map(f => f.frp || 0));
+    
+    return { highIntensity, mediumIntensity, lowIntensity, avgFrp, maxFrp };
+  }, [fireData]);
+
+  const fetchFireData = useCallback(async (daysParam: string, source: string) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('nasa-firms', {
-        body: {},
-        headers: {},
-      });
-
-      // Construct URL with query params
       const response = await fetch(
-        `https://iokkwxjkvzgstkkbwnoa.supabase.co/functions/v1/nasa-firms?days=${daysParam}&source=VIIRS_SNPP_NRT&area=world`,
+        `https://iokkwxjkvzgstkkbwnoa.supabase.co/functions/v1/nasa-firms?days=${daysParam}&source=${source}&area=world`,
         {
           method: 'GET',
           headers: {
@@ -323,10 +335,9 @@ const Maps = () => {
       
       if (result.fires) {
         setFireData(result.fires);
+        setTotalFireCount(result.count || result.fires.length);
         setLastUpdated(new Date());
-        if (result.count > 0) {
-          toast.success(`Loaded ${result.count} fire hotspots`);
-        }
+        toast.success(`Loaded ${result.count || result.fires.length} active fires`);
       }
     } catch (error) {
       console.error('Error fetching fire data:', error);
@@ -337,11 +348,15 @@ const Maps = () => {
   }, []);
 
   useEffect(() => {
-    fetchFireData(days);
-  }, [days, fetchFireData]);
+    fetchFireData(days, satelliteSource);
+  }, [days, satelliteSource, fetchFireData]);
 
   const handleTimeChange = (time: string) => {
     setDays(time);
+  };
+
+  const handleSatelliteChange = (source: string) => {
+    setSatelliteSource(source);
   };
 
   return (
@@ -372,9 +387,10 @@ const Maps = () => {
               variant="outline" 
               size="sm"
               className="bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
-              onClick={() => fetchFireData(days)}
+              onClick={() => fetchFireData(days, satelliteSource)}
+              disabled={loading}
             >
-              <MapPin className="h-4 w-4 mr-2" />
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh Data
             </Button>
             <Button 
@@ -406,42 +422,162 @@ const Maps = () => {
           </div>
         </motion.div>
 
+        {/* Fire Statistics Panel */}
+        {fireStats && (
+          <motion.div 
+            className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-3"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <Flame className="h-3.5 w-3.5 text-orange-400" />
+                Total Active Fires
+              </div>
+              <div className="text-2xl font-bold text-white">{totalFireCount.toLocaleString()}</div>
+            </div>
+            <div className="bg-gray-900/60 border border-red-900/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+                High Intensity
+              </div>
+              <div className="text-2xl font-bold text-red-400">{fireStats.highIntensity}</div>
+            </div>
+            <div className="bg-gray-900/60 border border-amber-900/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <Zap className="h-3.5 w-3.5 text-amber-400" />
+                Medium Intensity
+              </div>
+              <div className="text-2xl font-bold text-amber-400">{fireStats.mediumIntensity}</div>
+            </div>
+            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <TrendingUp className="h-3.5 w-3.5 text-cyan-400" />
+                Avg FRP (MW)
+              </div>
+              <div className="text-2xl font-bold text-cyan-400">{fireStats.avgFrp.toFixed(1)}</div>
+            </div>
+            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <Flame className="h-3.5 w-3.5 text-red-500" />
+                Max FRP (MW)
+              </div>
+              <div className="text-2xl font-bold text-red-500">{fireStats.maxFrp.toFixed(1)}</div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Map Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Wildfire Activity Map - Live Data */}
-          <MapCard
-            title="Wildfire Activity"
-            icon={<Flame className="h-5 w-5 text-orange-400" />}
-            source="NASA FIRMS (Live)"
-            legend={[
-              { label: "High FRP", color: "#ef4444" },
-              { label: "Medium", color: "#f59e0b" },
-              { label: "Low", color: "#22c55e" }
-            ]}
-            timeFilter
-            regionFilter
-            onTimeChange={handleTimeChange}
-            loading={loading}
-            dataCount={fireData.length}
-          >
-            <Map 
-              center={[0, 20]} 
-              zoom={1.5} 
-              theme="dark"
-              className="absolute inset-0"
+          {/* Wildfire Activity Map - Live Data - Full Width */}
+          <div className="lg:col-span-2">
+            <motion.div
+              className="relative bg-[#0a0f1a] rounded-2xl overflow-hidden border border-gray-800/50 shadow-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-              <MapControls position="top-right" showZoom showCompass={false} />
-              {fireData.map((fire, index) => (
-                <MapMarker
-                  key={`fire-${index}`}
-                  longitude={fire.longitude}
-                  latitude={fire.latitude}
+              {/* Header */}
+              <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-[#0a0f1a] via-[#0a0f1a]/90 to-transparent">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-orange-500/20 rounded-lg backdrop-blur-sm border border-orange-500/30">
+                      <Flame className="h-5 w-5 text-orange-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold">Active Wildfire Detection</h3>
+                      <p className="text-xs text-gray-400">Live NASA FIRMS satellite data</p>
+                    </div>
+                    {loading && <Loader2 className="h-4 w-4 text-orange-400 animate-spin" />}
+                  </div>
+                  
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Time Filter */}
+                    <Select value={days} onValueChange={handleTimeChange}>
+                      <SelectTrigger className="h-8 w-28 bg-gray-800/80 border-gray-700 text-xs text-gray-300">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-900 border-gray-700">
+                        <SelectItem value="1">Last 24h</SelectItem>
+                        <SelectItem value="2">Last 48h</SelectItem>
+                        <SelectItem value="7">Last 7 days</SelectItem>
+                        <SelectItem value="10">Last 10 days</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {/* Satellite Source Filter */}
+                    <Select value={satelliteSource} onValueChange={handleSatelliteChange}>
+                      <SelectTrigger className="h-8 w-36 bg-gray-800/80 border-gray-700 text-xs text-gray-300">
+                        <Satellite className="h-3 w-3 mr-1" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-900 border-gray-700">
+                        <SelectItem value="VIIRS_SNPP_NRT">VIIRS SNPP</SelectItem>
+                        <SelectItem value="VIIRS_NOAA20_NRT">VIIRS NOAA-20</SelectItem>
+                        <SelectItem value="MODIS_NRT">MODIS Terra/Aqua</SelectItem>
+                        <SelectItem value="LANDSAT_NRT">Landsat</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-white">
+                          <Maximize2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Expand Map</TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+
+              {/* Map */}
+              <div className="aspect-[21/9] relative">
+                <Map 
+                  center={[0, 20]} 
+                  zoom={1.8} 
+                  theme="dark"
+                  className="absolute inset-0"
                 >
-                  <FireMarker fire={fire} />
-                </MapMarker>
-              ))}
-            </Map>
-          </MapCard>
+                  <MapControls position="top-right" showZoom showCompass={false} />
+                  {fireData.map((fire, index) => (
+                    <MapMarker
+                      key={`fire-${index}`}
+                      longitude={fire.longitude}
+                      latitude={fire.latitude}
+                    >
+                      <FireMarker fire={fire} />
+                    </MapMarker>
+                  ))}
+                </Map>
+              </div>
+
+              {/* Legend */}
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-[#0a0f1a] via-[#0a0f1a]/90 to-transparent">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500" style={{ boxShadow: '0 0 8px #ef444480' }} />
+                      <span className="text-xs text-gray-400">High FRP (&gt;50 MW)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-amber-500" style={{ boxShadow: '0 0 8px #f59e0b80' }} />
+                      <span className="text-xs text-gray-400">Medium (20-50 MW)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-green-500" style={{ boxShadow: '0 0 8px #22c55e80' }} />
+                      <span className="text-xs text-gray-400">Low (&lt;20 MW)</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                    <Satellite className="h-3 w-3" />
+                    <span>Source: NASA FIRMS • {satelliteSource.replace('_NRT', '').replace('_', ' ')}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
 
           {/* Groundwater Levels - India */}
           <MapCard
