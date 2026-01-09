@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { 
   Flame, 
@@ -10,7 +10,8 @@ import {
   Clock,
   Info,
   Maximize2,
-  Filter
+  Filter,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,8 +28,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import HomeHeader from "@/components/home/HomeHeader";
+import { Map, MapMarker, MapControls } from "@/components/ui/map";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-// Map Card Component
+interface FireData {
+  latitude: number;
+  longitude: number;
+  brightness: number;
+  confidence: string | number;
+  acq_date: string;
+  satellite: string;
+  frp: number;
+}
+
 interface MapCardProps {
   title: string;
   icon: React.ReactNode;
@@ -37,11 +50,29 @@ interface MapCardProps {
   children?: React.ReactNode;
   timeFilter?: boolean;
   regionFilter?: boolean;
+  onTimeChange?: (time: string) => void;
+  onRegionChange?: (region: string) => void;
+  loading?: boolean;
+  dataCount?: number;
 }
 
-const MapCard = ({ title, icon, source, legend, children, timeFilter, regionFilter }: MapCardProps) => {
-  const [timeRange, setTimeRange] = useState("7d");
-  const [region, setRegion] = useState("global");
+const MapCard = ({ 
+  title, icon, source, legend, children, 
+  timeFilter, regionFilter, onTimeChange, onRegionChange,
+  loading, dataCount
+}: MapCardProps) => {
+  const [timeRange, setTimeRange] = useState("1");
+  const [region, setRegion] = useState("world");
+
+  const handleTimeChange = (value: string) => {
+    setTimeRange(value);
+    onTimeChange?.(value);
+  };
+
+  const handleRegionChange = (value: string) => {
+    setRegion(value);
+    onRegionChange?.(value);
+  };
 
   return (
     <motion.div
@@ -59,34 +90,38 @@ const MapCard = ({ title, icon, source, legend, children, timeFilter, regionFilt
               {icon}
             </div>
             <h3 className="text-white font-semibold text-sm">{title}</h3>
+            {loading && <Loader2 className="h-4 w-4 text-gray-400 animate-spin" />}
+            {dataCount !== undefined && !loading && (
+              <Badge variant="outline" className="text-[10px] bg-gray-800/80 border-gray-700 text-gray-300">
+                {dataCount} points
+              </Badge>
+            )}
           </div>
           
           <div className="flex items-center gap-2">
             {timeFilter && (
-              <Select value={timeRange} onValueChange={setTimeRange}>
+              <Select value={timeRange} onValueChange={handleTimeChange}>
                 <SelectTrigger className="h-8 w-24 bg-gray-800/80 border-gray-700 text-xs text-gray-300">
                   <Clock className="h-3 w-3 mr-1" />
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-900 border-gray-700">
-                  <SelectItem value="24h">24h</SelectItem>
-                  <SelectItem value="7d">7 days</SelectItem>
-                  <SelectItem value="30d">30 days</SelectItem>
+                  <SelectItem value="1">24h</SelectItem>
+                  <SelectItem value="7">7 days</SelectItem>
+                  <SelectItem value="10">10 days</SelectItem>
                 </SelectContent>
               </Select>
             )}
             
             {regionFilter && (
-              <Select value={region} onValueChange={setRegion}>
+              <Select value={region} onValueChange={handleRegionChange}>
                 <SelectTrigger className="h-8 w-24 bg-gray-800/80 border-gray-700 text-xs text-gray-300">
                   <Globe className="h-3 w-3 mr-1" />
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-900 border-gray-700">
-                  <SelectItem value="global">Global</SelectItem>
-                  <SelectItem value="india">India</SelectItem>
-                  <SelectItem value="usa">USA</SelectItem>
-                  <SelectItem value="europe">Europe</SelectItem>
+                  <SelectItem value="world">Global</SelectItem>
+                  <SelectItem value="-180,-60,180,60">Main Land</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -136,165 +171,178 @@ const MapCard = ({ title, icon, source, legend, children, timeFilter, regionFilt
   );
 };
 
-// Simulated Map Background with markers
-const SimulatedMap = ({ 
-  markers,
-  style = "dark"
-}: { 
-  markers: { lat: number; lng: number; intensity: "high" | "medium" | "low"; label?: string }[];
-  style?: "dark" | "satellite";
-}) => {
-  const intensityColors = {
-    high: "#ef4444",
-    medium: "#f59e0b", 
-    low: "#22c55e"
+// Fire marker component
+const FireMarker = ({ fire }: { fire: FireData }) => {
+  const getIntensity = () => {
+    if (fire.frp > 50) return "high";
+    if (fire.frp > 20) return "medium";
+    return "low";
   };
 
-  // Convert lat/lng to percentage positions
-  const getPosition = (lat: number, lng: number) => ({
-    x: ((lng + 180) / 360) * 100,
-    y: ((90 - lat) / 180) * 100
-  });
+  const intensity = getIntensity();
+  const colors = {
+    high: "#ef4444",
+    medium: "#f59e0b",
+    low: "#22c55e"
+  };
+  const color = colors[intensity];
 
   return (
-    <div className="absolute inset-0 bg-[#0d1421]">
-      {/* Grid overlay */}
+    <div className="relative group cursor-pointer">
+      {/* Glow effect */}
       <div 
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(75, 85, 99, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(75, 85, 99, 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px'
+        className="absolute inset-0 rounded-full animate-ping"
+        style={{ 
+          backgroundColor: color,
+          opacity: 0.3,
+          width: '16px',
+          height: '16px',
+          marginLeft: '-4px',
+          marginTop: '-4px'
         }}
       />
-      
-      {/* Simplified world map outline */}
-      <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 50" preserveAspectRatio="none">
-        {/* Continents simplified */}
-        <path
-          d="M15,20 Q20,15 25,18 L30,15 Q35,12 40,15 L45,18 Q50,20 55,18 L60,15 Q65,12 70,15 L75,18 Q80,20 85,18"
-          fill="none"
-          stroke="#374151"
-          strokeWidth="0.3"
-        />
-        <path
-          d="M20,25 Q25,22 30,25 L35,28 Q40,30 45,28 L50,25 Q55,22 60,25 L65,28"
-          fill="none"
-          stroke="#374151"
-          strokeWidth="0.3"
-        />
-        <path
-          d="M70,25 Q75,22 80,25 L85,28 Q90,30 92,28"
-          fill="none"
-          stroke="#374151"
-          strokeWidth="0.3"
-        />
-      </svg>
+      {/* Marker dot */}
+      <div 
+        className="w-2.5 h-2.5 rounded-full border border-white/50"
+        style={{ 
+          backgroundColor: color,
+          boxShadow: `0 0 10px ${color}80`
+        }}
+      />
+      {/* Tooltip */}
+      <div className="absolute left-1/2 -translate-x-1/2 -top-16 bg-gray-900/95 px-3 py-2 rounded-lg text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none border border-gray-700">
+        <div className="font-semibold mb-1">{fire.satellite} Detection</div>
+        <div>Date: {fire.acq_date}</div>
+        <div>FRP: {fire.frp?.toFixed(1)} MW</div>
+        <div>Confidence: {fire.confidence}</div>
+      </div>
+    </div>
+  );
+};
 
-      {/* Continent labels */}
-      <div className="absolute top-[30%] left-[15%] text-[10px] text-gray-600 uppercase tracking-widest">America</div>
-      <div className="absolute top-[25%] left-[45%] text-[10px] text-gray-600 uppercase tracking-widest">Europe</div>
-      <div className="absolute top-[30%] left-[60%] text-[10px] text-gray-600 uppercase tracking-widest">Asia</div>
-      <div className="absolute top-[45%] left-[48%] text-[10px] text-gray-600 uppercase tracking-widest">Africa</div>
-      <div className="absolute top-[60%] left-[75%] text-[10px] text-gray-600 uppercase tracking-widest">Australia</div>
+// Static marker data for non-wildfire maps
+const groundwaterIndiaMarkers = [
+  { lat: 28.6139, lng: 77.2090, intensity: "high" as const, label: "Delhi - Critical" },
+  { lat: 26.8467, lng: 80.9462, intensity: "high" as const, label: "Lucknow - Critical" },
+  { lat: 22.5726, lng: 88.3639, intensity: "medium" as const, label: "Kolkata" },
+  { lat: 19.0760, lng: 72.8777, intensity: "low" as const, label: "Mumbai - Safe" },
+  { lat: 12.9716, lng: 77.5946, intensity: "medium" as const, label: "Bangalore" },
+  { lat: 13.0827, lng: 80.2707, intensity: "low" as const, label: "Chennai" },
+  { lat: 23.0225, lng: 72.5714, intensity: "high" as const, label: "Ahmedabad - Critical" },
+  { lat: 17.3850, lng: 78.4867, intensity: "medium" as const, label: "Hyderabad" },
+];
 
-      {/* Markers */}
-      {markers.map((marker, index) => {
-        const pos = getPosition(marker.lat, marker.lng);
-        const color = intensityColors[marker.intensity];
-        
-        return (
-          <motion.div
-            key={index}
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: index * 0.1, duration: 0.3 }}
-            whileHover={{ scale: 1.5 }}
-          >
-            {/* Glow effect */}
-            <div 
-              className="absolute inset-0 rounded-full animate-ping"
-              style={{ 
-                backgroundColor: color,
-                opacity: 0.3,
-                width: '20px',
-                height: '20px',
-                marginLeft: '-6px',
-                marginTop: '-6px'
-              }}
-            />
-            {/* Marker dot */}
-            <div 
-              className="w-3 h-3 rounded-full border-2 border-white/50 shadow-lg relative z-10"
-              style={{ 
-                backgroundColor: color,
-                boxShadow: `0 0 15px ${color}80, 0 0 30px ${color}40`
-              }}
-            />
-            {/* Label tooltip */}
-            {marker.label && (
-              <div className="absolute left-1/2 -translate-x-1/2 -top-8 bg-gray-900/90 px-2 py-1 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                {marker.label}
-              </div>
-            )}
-          </motion.div>
-        );
-      })}
+const globalWaterStressMarkers = [
+  { lat: 31.0461, lng: 34.8516, intensity: "high" as const, label: "Middle East" },
+  { lat: 28.3949, lng: 84.1240, intensity: "high" as const, label: "South Asia" },
+  { lat: 35.8617, lng: 104.1954, intensity: "high" as const, label: "Northern China" },
+  { lat: 33.9391, lng: -6.9686, intensity: "medium" as const, label: "North Africa" },
+  { lat: 40.4637, lng: -3.7492, intensity: "medium" as const, label: "Spain" },
+  { lat: -25.2744, lng: 133.7751, intensity: "medium" as const, label: "Australia" },
+  { lat: 37.0902, lng: -95.7129, intensity: "low" as const, label: "Central USA" },
+  { lat: -14.2350, lng: -51.9253, intensity: "low" as const, label: "Brazil" },
+];
+
+const forestLossMarkers = [
+  { lat: -3.4653, lng: -62.2159, intensity: "high" as const, label: "Amazon Deforestation" },
+  { lat: 0.7893, lng: 113.9213, intensity: "high" as const, label: "Borneo" },
+  { lat: -0.0236, lng: 37.9062, intensity: "medium" as const, label: "East Africa" },
+  { lat: 5.1521, lng: -2.9248, intensity: "medium" as const, label: "West Africa" },
+  { lat: 64.2008, lng: -152.4937, intensity: "low" as const, label: "Alaska" },
+  { lat: 60.4720, lng: 8.4689, intensity: "low" as const, label: "Scandinavia" },
+  { lat: -6.3690, lng: 34.8888, intensity: "medium" as const, label: "Tanzania" },
+  { lat: 15.8700, lng: 100.9925, intensity: "high" as const, label: "Southeast Asia" },
+];
+
+// Static marker component
+const StaticMarker = ({ intensity, label }: { intensity: "high" | "medium" | "low"; label: string }) => {
+  const colors = {
+    high: "#ef4444",
+    medium: "#f59e0b",
+    low: "#22c55e"
+  };
+  const color = colors[intensity];
+
+  return (
+    <div className="relative group cursor-pointer">
+      <div 
+        className="absolute inset-0 rounded-full animate-ping"
+        style={{ 
+          backgroundColor: color,
+          opacity: 0.3,
+          width: '16px',
+          height: '16px',
+          marginLeft: '-4px',
+          marginTop: '-4px'
+        }}
+      />
+      <div 
+        className="w-3 h-3 rounded-full border border-white/50"
+        style={{ 
+          backgroundColor: color,
+          boxShadow: `0 0 10px ${color}80`
+        }}
+      />
+      <div className="absolute left-1/2 -translate-x-1/2 -top-8 bg-gray-900/95 px-2 py-1 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+        {label}
+      </div>
     </div>
   );
 };
 
 const Maps = () => {
-  const [locateMe, setLocateMe] = useState(false);
+  const [fireData, setFireData] = useState<FireData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [days, setDays] = useState("1");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Sample data for different maps
-  const wildfireMarkers = [
-    { lat: 37.7749, lng: -122.4194, intensity: "high" as const, label: "California Fires" },
-    { lat: 36.7783, lng: -119.4179, intensity: "high" as const, label: "Central Valley" },
-    { lat: 34.0522, lng: -118.2437, intensity: "medium" as const, label: "Los Angeles" },
-    { lat: -33.8688, lng: 151.2093, intensity: "high" as const, label: "Australia" },
-    { lat: 55.7558, lng: 37.6173, intensity: "low" as const, label: "Russia" },
-    { lat: 28.6139, lng: 77.2090, intensity: "medium" as const, label: "Delhi, India" },
-    { lat: 51.5074, lng: -0.1278, intensity: "low" as const, label: "London" },
-    { lat: -23.5505, lng: -46.6333, intensity: "high" as const, label: "São Paulo" },
-  ];
+  const fetchFireData = useCallback(async (daysParam: string) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('nasa-firms', {
+        body: {},
+        headers: {},
+      });
 
-  const groundwaterIndiaMarkers = [
-    { lat: 28.6139, lng: 77.2090, intensity: "high" as const, label: "Delhi - Critical" },
-    { lat: 26.8467, lng: 80.9462, intensity: "high" as const, label: "Lucknow - Critical" },
-    { lat: 22.5726, lng: 88.3639, intensity: "medium" as const, label: "Kolkata" },
-    { lat: 19.0760, lng: 72.8777, intensity: "low" as const, label: "Mumbai - Safe" },
-    { lat: 12.9716, lng: 77.5946, intensity: "medium" as const, label: "Bangalore" },
-    { lat: 13.0827, lng: 80.2707, intensity: "low" as const, label: "Chennai" },
-    { lat: 23.0225, lng: 72.5714, intensity: "high" as const, label: "Ahmedabad - Critical" },
-    { lat: 17.3850, lng: 78.4867, intensity: "medium" as const, label: "Hyderabad" },
-  ];
+      // Construct URL with query params
+      const response = await fetch(
+        `https://iokkwxjkvzgstkkbwnoa.supabase.co/functions/v1/nasa-firms?days=${daysParam}&source=VIIRS_SNPP_NRT&area=world`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-  const globalWaterStressMarkers = [
-    { lat: 31.0461, lng: 34.8516, intensity: "high" as const, label: "Middle East" },
-    { lat: 28.3949, lng: 84.1240, intensity: "high" as const, label: "South Asia" },
-    { lat: 35.8617, lng: 104.1954, intensity: "high" as const, label: "Northern China" },
-    { lat: 33.9391, lng: -6.9686, intensity: "medium" as const, label: "North Africa" },
-    { lat: 40.4637, lng: -3.7492, intensity: "medium" as const, label: "Spain" },
-    { lat: -25.2744, lng: 133.7751, intensity: "medium" as const, label: "Australia" },
-    { lat: 37.0902, lng: -95.7129, intensity: "low" as const, label: "Central USA" },
-    { lat: -14.2350, lng: -51.9253, intensity: "low" as const, label: "Brazil" },
-  ];
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
 
-  const forestLossMarkers = [
-    { lat: -3.4653, lng: -62.2159, intensity: "high" as const, label: "Amazon Deforestation" },
-    { lat: 0.7893, lng: 113.9213, intensity: "high" as const, label: "Borneo" },
-    { lat: -0.0236, lng: 37.9062, intensity: "medium" as const, label: "East Africa" },
-    { lat: 5.1521, lng: -2.9248, intensity: "medium" as const, label: "West Africa" },
-    { lat: 64.2008, lng: -152.4937, intensity: "low" as const, label: "Alaska" },
-    { lat: 60.4720, lng: 8.4689, intensity: "low" as const, label: "Scandinavia" },
-    { lat: -6.3690, lng: 34.8888, intensity: "medium" as const, label: "Tanzania" },
-    { lat: 15.8700, lng: 100.9925, intensity: "high" as const, label: "Southeast Asia" },
-  ];
+      const result = await response.json();
+      
+      if (result.fires) {
+        setFireData(result.fires);
+        setLastUpdated(new Date());
+        if (result.count > 0) {
+          toast.success(`Loaded ${result.count} fire hotspots`);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching fire data:', error);
+      toast.error('Failed to load live fire data');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFireData(days);
+  }, [days, fetchFireData]);
+
+  const handleTimeChange = (time: string) => {
+    setDays(time);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
@@ -324,10 +372,10 @@ const Maps = () => {
               variant="outline" 
               size="sm"
               className="bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
-              onClick={() => setLocateMe(!locateMe)}
+              onClick={() => fetchFireData(days)}
             >
               <MapPin className="h-4 w-4 mr-2" />
-              Locate Me
+              Refresh Data
             </Button>
             <Button 
               variant="outline" 
@@ -352,7 +400,7 @@ const Maps = () => {
                 Live Data
               </Badge>
               <Badge variant="outline" className="bg-gray-800 text-gray-400 border-gray-700">
-                Last updated: 2 min ago
+                {lastUpdated ? `Updated: ${lastUpdated.toLocaleTimeString()}` : 'Loading...'}
               </Badge>
             </div>
           </div>
@@ -360,20 +408,39 @@ const Maps = () => {
 
         {/* Map Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Wildfire Activity Map */}
+          {/* Wildfire Activity Map - Live Data */}
           <MapCard
             title="Wildfire Activity"
             icon={<Flame className="h-5 w-5 text-orange-400" />}
-            source="NASA FIRMS"
+            source="NASA FIRMS (Live)"
             legend={[
-              { label: "High", color: "#ef4444" },
+              { label: "High FRP", color: "#ef4444" },
               { label: "Medium", color: "#f59e0b" },
               { label: "Low", color: "#22c55e" }
             ]}
             timeFilter
             regionFilter
+            onTimeChange={handleTimeChange}
+            loading={loading}
+            dataCount={fireData.length}
           >
-            <SimulatedMap markers={wildfireMarkers} />
+            <Map 
+              center={[0, 20]} 
+              zoom={1.5} 
+              theme="dark"
+              className="absolute inset-0"
+            >
+              <MapControls position="top-right" showZoom showCompass={false} />
+              {fireData.map((fire, index) => (
+                <MapMarker
+                  key={`fire-${index}`}
+                  longitude={fire.longitude}
+                  latitude={fire.latitude}
+                >
+                  <FireMarker fire={fire} />
+                </MapMarker>
+              ))}
+            </Map>
           </MapCard>
 
           {/* Groundwater Levels - India */}
@@ -388,7 +455,23 @@ const Maps = () => {
             ]}
             timeFilter
           >
-            <SimulatedMap markers={groundwaterIndiaMarkers} />
+            <Map 
+              center={[78, 22]} 
+              zoom={4} 
+              theme="dark"
+              className="absolute inset-0"
+            >
+              <MapControls position="top-right" showZoom showCompass={false} />
+              {groundwaterIndiaMarkers.map((marker, index) => (
+                <MapMarker
+                  key={`gw-india-${index}`}
+                  longitude={marker.lng}
+                  latitude={marker.lat}
+                >
+                  <StaticMarker intensity={marker.intensity} label={marker.label} />
+                </MapMarker>
+              ))}
+            </Map>
           </MapCard>
 
           {/* Global Groundwater Stress */}
@@ -403,7 +486,23 @@ const Maps = () => {
             ]}
             regionFilter
           >
-            <SimulatedMap markers={globalWaterStressMarkers} />
+            <Map 
+              center={[30, 20]} 
+              zoom={1.5} 
+              theme="dark"
+              className="absolute inset-0"
+            >
+              <MapControls position="top-right" showZoom showCompass={false} />
+              {globalWaterStressMarkers.map((marker, index) => (
+                <MapMarker
+                  key={`water-stress-${index}`}
+                  longitude={marker.lng}
+                  latitude={marker.lat}
+                >
+                  <StaticMarker intensity={marker.intensity} label={marker.label} />
+                </MapMarker>
+              ))}
+            </Map>
           </MapCard>
 
           {/* Forest Cover & Tree Loss */}
@@ -419,7 +518,23 @@ const Maps = () => {
             timeFilter
             regionFilter
           >
-            <SimulatedMap markers={forestLossMarkers} />
+            <Map 
+              center={[-20, 0]} 
+              zoom={1.5} 
+              theme="dark"
+              className="absolute inset-0"
+            >
+              <MapControls position="top-right" showZoom showCompass={false} />
+              {forestLossMarkers.map((marker, index) => (
+                <MapMarker
+                  key={`forest-${index}`}
+                  longitude={marker.lng}
+                  latitude={marker.lat}
+                >
+                  <StaticMarker intensity={marker.intensity} label={marker.label} />
+                </MapMarker>
+              ))}
+            </Map>
           </MapCard>
         </div>
 
@@ -440,39 +555,32 @@ const Maps = () => {
                 <Flame className="h-4 w-4 text-orange-400" />
                 <span className="text-sm font-medium text-white">Wildfire Data</span>
               </div>
-              <p className="text-xs text-gray-400">NASA FIRMS API - MODIS & VIIRS satellite fire detection with confidence levels</p>
+              <p className="text-xs text-gray-400">NASA FIRMS API - Live VIIRS satellite fire detection with Fire Radiative Power (FRP)</p>
             </div>
             <div className="p-4 bg-gray-800/30 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Droplets className="h-4 w-4 text-blue-400" />
                 <span className="text-sm font-medium text-white">India Groundwater</span>
               </div>
-              <p className="text-xs text-gray-400">India-WRIS, NWIC & CGWB - District-level seasonal monitoring data</p>
+              <p className="text-xs text-gray-400">India-WRIS & Central Ground Water Board - District-level groundwater depth data</p>
             </div>
             <div className="p-4 bg-gray-800/30 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Globe className="h-4 w-4 text-cyan-400" />
                 <span className="text-sm font-medium text-white">Global Water Stress</span>
               </div>
-              <p className="text-xs text-gray-400">UN IGRAC GGIS - Aquifer boundaries and stress indicators</p>
+              <p className="text-xs text-gray-400">UN IGRAC Global Groundwater Information System - Aquifer stress indicators</p>
             </div>
             <div className="p-4 bg-gray-800/30 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <TreePine className="h-4 w-4 text-green-400" />
-                <span className="text-sm font-medium text-white">Forest Watch</span>
+                <span className="text-sm font-medium text-white">Forest Cover</span>
               </div>
-              <p className="text-xs text-gray-400">Global Forest Watch - GLAD-S2 alerts and annual change data</p>
+              <p className="text-xs text-gray-400">Global Forest Watch - GLAD-S2 tree cover loss alerts and annual change data</p>
             </div>
           </div>
         </motion.div>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-800 py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-500 text-sm">
-          <p>© CARTO, © OpenStreetMap contributors • Data refreshed every 15 minutes</p>
-        </div>
-      </footer>
     </div>
   );
 };

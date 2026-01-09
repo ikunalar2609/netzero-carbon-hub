@@ -1,5 +1,8 @@
 project_id = "iokkwxjkvzgstkkbwnoa"
 
+[functions.nasa-firms]
+verify_jwt = false
+
 [functions.calculate-flight-emission]
 verify_jwt = false
 
