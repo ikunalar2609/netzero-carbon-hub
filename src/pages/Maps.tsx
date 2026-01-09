@@ -815,7 +815,7 @@ const FireMarker = ({ fire }: { fire: FireData }) => {
         <div className="bg-black/90 backdrop-blur-md border border-white/10 rounded-lg px-3 py-2 text-[11px] text-white shadow-xl">
           <div className="font-semibold mb-1 text-white">Detection</div>
           <div className="text-white/90">Date: {fire.acq_date}</div>
-          <div className="text-white/90">FRP: {fire.frp.toFixed(1)} MW</div>
+          <div className="text-white/90">Fire Radiative Power(FRP): {fire.frp.toFixed(1)} MW</div>
           <div className="text-white/90">Confidence: {fire.confidence}</div>
           <div className="font-semibold mb-1">{fire.satellite}</div>
           <div>Date: {fire.acq_date}</div>
