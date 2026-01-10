@@ -1388,6 +1388,27 @@ export default function MapsMinimal() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 space-y-6 pb-12">
+        {/* Minimal Stats */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-white border rounded p-3">
+            <div className="text-xs text-gray-500">Total Fires</div>
+            <div className="text-lg font-semibold">{fireData.length}</div>
+          </div>
+          <div className="bg-white border rounded p-3">
+            <div className="text-xs text-gray-500">High Intensity</div>
+            <div className="text-lg font-semibold">
+              {fireData.filter(f => f.frp > 50).length}
+            </div>
+          </div>
+          <div className="bg-white border rounded p-3">
+            <div className="text-xs text-gray-500">Forest Records</div>
+            <div className="text-lg font-semibold">{filteredForest.length}</div>
+          </div>
+          <div className="bg-white border rounded p-3">
+            <div className="text-xs text-gray-500">Region</div>
+            <div className="text-lg font-semibold capitalize">{selectedRegion.replace('-', ' ')}</div>
+          </div>
+        </section>
         <section className="bg-white border rounded shadow-sm overflow-hidden">
           <div className="p-3 border-b">
             <div className="flex items-center justify-between">
