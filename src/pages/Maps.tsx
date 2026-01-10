@@ -1304,11 +1304,17 @@ export default function MapsMinimal() {
 
     setLoadingFires(true);
     try {
-      const res = await fetch(`/api/nasa-firms?days=${d}&source=${src}`);
+      const res = await fetch(
+        `https://iokkwxjkvzgstkkbwnoa.supabase.co/functions/v1/nasa-firms?days=${d}&source=${src}&area=world`
+      );
+
+      if (!res.ok) throw new Error('API failed');
+
       const json = await res.json();
       setFireData(json.fires || []);
     } catch (e) {
-      console.error("Failed to fetch fires", e);
+      console.error('Failed to fetch fires', e);
+      setFireData([]);
     } finally {
       setLoadingFires(false);
     }
