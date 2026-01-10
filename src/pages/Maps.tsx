@@ -726,21 +726,16 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Flame,
-  Droplets,
   TreePine,
   Globe,
-  Layers,
   Clock,
-  Info,
-  Maximize2,
-  Filter,
   Loader2,
-  Zap,
   Satellite,
   TrendingUp,
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
+import { parseForestExcel, ForestData, getForestIntensity, formatHectares } from "@/utils/parseForestData";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -829,12 +824,45 @@ const FireMarker = ({ fire }: { fire: FireData }) => {
 
 /* -------------------- Main Component -------------------- */
 
+/* -------------------- Forest Marker -------------------- */
+
+const ForestMarker = ({ forest }: { forest: ForestData }) => {
+  const intensity = getForestIntensity(forest.gfc_extent_ha);
+  const colorMap = { high: "#22c55e", medium: "#84cc16", low: "#a3e635" };
+  const size = intensity === "high" ? 16 : intensity === "medium" ? 12 : 8;
+
+  return (
+    <div className="relative group">
+      {intensity === "high" && (
+        <div
+          className="absolute rounded-full animate-pulse opacity-40"
+          style={{ width: size + 8, height: size + 8, backgroundColor: colorMap[intensity] }}
+        />
+      )}
+      <div
+        className="rounded-full border border-white/40"
+        style={{ width: size, height: size, backgroundColor: colorMap[intensity], boxShadow: `0 0 12px ${colorMap[intensity]}80` }}
+      />
+      <div className="absolute left-1/2 -translate-x-1/2 -top-20 opacity-0 group-hover:opacity-100 transition pointer-events-none z-50">
+        <div className="bg-black/90 backdrop-blur-md border border-white/10 rounded-lg px-3 py-2 text-[11px] text-white shadow-xl whitespace-nowrap">
+          <div className="font-semibold mb-1 text-green-400">{forest.country}</div>
+          <div>Forest Extent: {formatHectares(forest.gfc_extent_ha)}</div>
+          <div>Total Area: {formatHectares(forest.area_ha)}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* -------------------- Main Component -------------------- */
+
 const Maps = () => {
   const [fireData, setFireData] = useState<FireData[]>([]);
+  const [forestData, setForestData] = useState<ForestData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [forestLoading, setForestLoading] = useState(false);
   const [days, setDays] = useState("1");
-  const [satelliteSource, setSatelliteSource] =
-    useState("VIIRS_SNPP_NRT");
+  const [satelliteSource, setSatelliteSource] = useState("VIIRS_SNPP_NRT");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [totalFireCount, setTotalFireCount] = useState(0);
 
@@ -889,20 +917,42 @@ const Maps = () => {
     fetchFireData(days, satelliteSource);
   }, [days, satelliteSource, fetchFireData]);
 
+  // Load forest data from Excel
+  useEffect(() => {
+    const loadForestData = async () => {
+      setForestLoading(true);
+      try {
+        const data = await parseForestExcel('/src/data/global_forest_data.xlsx');
+        setForestData(data);
+      } catch (error) {
+        console.error('Failed to load forest data:', error);
+      } finally {
+        setForestLoading(false);
+      }
+    };
+    loadForestData();
+  }, []);
+
   /* -------------------- Memoized Markers -------------------- */
 
   const fireMarkers = useMemo(
     () =>
       fireData.map((fire, i) => (
-        <MapMarker
-          key={i}
-          longitude={fire.longitude}
-          latitude={fire.latitude}
-        >
+        <MapMarker key={i} longitude={fire.longitude} latitude={fire.latitude}>
           <FireMarker fire={fire} />
         </MapMarker>
       )),
     [fireData]
+  );
+
+  const forestMarkers = useMemo(
+    () =>
+      forestData.map((forest, i) => (
+        <MapMarker key={i} longitude={forest.longitude!} latitude={forest.latitude!}>
+          <ForestMarker forest={forest} />
+        </MapMarker>
+      )),
+    [forestData]
   );
 
   /* -------------------- UI -------------------- */
@@ -1064,6 +1114,58 @@ const Maps = () => {
               <MapControls showZoom position="top-right" />
               {fireMarkers}
             </Map>
+          </div>
+        </motion.div>
+
+        {/* Natural Forest Map */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl mt-8"
+        >
+          <div className="absolute inset-x-0 top-0 z-20 bg-black/50 backdrop-blur-xl p-4 flex justify-between">
+            <div>
+              <h3 className="text-white font-semibold flex items-center gap-2">
+                <TreePine className="h-5 w-5 text-green-400" />
+                Natural Forest Cover
+              </h3>
+              <p className="text-xs text-gray-400">
+                Global Forest Watch • {forestData.length} countries
+              </p>
+            </div>
+          </div>
+
+          {forestLoading && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
+              <Loader2 className="h-10 w-10 text-green-400 animate-spin" />
+            </div>
+          )}
+
+          <div className="aspect-[21/9] relative">
+            <Map center={[0, 20]} zoom={1.5} theme="dark" className="absolute inset-0">
+              <MapControls showZoom position="top-right" />
+              {forestMarkers}
+            </Map>
+          </div>
+
+          {/* Legend */}
+          <div className="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur-md rounded-lg p-3 text-xs">
+            <div className="text-gray-400 mb-2">Forest Extent</div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="text-white">&gt;50M ha</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-lime-500" />
+                <span className="text-white">&gt;10M ha</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-lime-300" />
+                <span className="text-white">&lt;10M ha</span>
+              </div>
+            </div>
           </div>
         </motion.div>
       </main>
