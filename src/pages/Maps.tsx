@@ -1231,10 +1231,14 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Map, MapMarker, MapControls } from "@/components/ui/map";
-import { parseForestExcel, ForestData, getForestIntensity, formatHectares } from "@/utils/parseForestData";
+import {
+  parseForestExcel,
+  ForestData,
+  getForestIntensity,
+  formatHectares,
+} from "@/utils/parseForestData";
 
 /* -------------------- Types -------------------- */
-
 interface FireData {
   latitude: number;
   longitude: number;
@@ -1244,28 +1248,39 @@ interface FireData {
   confidence: string | number;
 }
 
-/* -------------------- Regions (kept for filtering) -------------------- */
-const regions: Record<string, { center: [number, number]; zoom: number; countries: string[] }> = {
-  all: { center: [0, 20], zoom: 1.5, countries: [] },
-  africa: { center: [20, 0], zoom: 2.5, countries: [] },
-  asia: { center: [100, 30], zoom: 2.5, countries: [] },
-  europe: { center: [15, 50], zoom: 3, countries: [] },
-  "north-america": { center: [-100, 45], zoom: 2.5, countries: [] },
-  "south-america": { center: [-60, -15], zoom: 2.5, countries: [] },
-  oceania: { center: [140, -25], zoom: 3, countries: [] },
+/* -------------------- Regions -------------------- */
+const regions: Record<
+  string,
+  { center: [number, number]; zoom: number }
+> = {
+  all: { center: [0, 20], zoom: 1.5 },
+  africa: { center: [20, 0], zoom: 2.5 },
+  asia: { center: [100, 30], zoom: 2.5 },
+  europe: { center: [15, 50], zoom: 3 },
+  "north-america": { center: [-100, 45], zoom: 2.5 },
+  "south-america": { center: [-60, -15], zoom: 2.5 },
+  oceania: { center: [140, -25], zoom: 3 },
 };
 
-/* -------------------- Minimal Marker components -------------------- */
+/* -------------------- Markers -------------------- */
 const FireMarker = ({ fire }: { fire: FireData }) => {
-  const color = fire.frp > 50 ? "bg-red-500" : fire.frp > 20 ? "bg-yellow-400" : "bg-green-400";
+  const color =
+    fire.frp > 50
+      ? "bg-red-500"
+      : fire.frp > 20
+      ? "bg-yellow-400"
+      : "bg-green-400";
 
   return (
     <div className="relative group">
-      <div className={`w-3 h-3 rounded-full border border-white/30 ${color}`} />
-
-      <div className="invisible group-hover:visible absolute -left-1/2 -top-10 bg-black text-white text-xs px-2 py-1 rounded">
+      <div
+        className={`w-3 h-3 rounded-full border border-white/30 ${color}`}
+      />
+      <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-black text-white text-[11px] px-2 py-1 rounded whitespace-nowrap">
         <div className="font-medium">{fire.satellite}</div>
-        <div>{fire.acq_date} • FRP {fire.frp.toFixed(1)} MW</div>
+        <div>
+          {fire.acq_date} • FRP {fire.frp.toFixed(1)} MW
+        </div>
       </div>
     </div>
   );
@@ -1273,118 +1288,171 @@ const FireMarker = ({ fire }: { fire: FireData }) => {
 
 const ForestMarker = ({ forest }: { forest: ForestData }) => {
   const intensity = getForestIntensity(forest.gfc_extent_ha);
-  const color = intensity === "high" ? "bg-green-700" : intensity === "medium" ? "bg-green-500" : "bg-green-300";
+  const color =
+    intensity === "high"
+      ? "bg-green-700"
+      : intensity === "medium"
+      ? "bg-green-500"
+      : "bg-green-300";
 
   return (
     <div className="relative group">
-      <div className={`w-3 h-3 rounded-full border border-white/20 ${color}`} />
-      <div className="invisible group-hover:visible absolute -left-20 -top-14 bg-white text-gray-800 text-xs px-2 py-1 rounded shadow">
+      <div
+        className={`w-3 h-3 rounded-full border border-white/20 ${color}`}
+      />
+      <div className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-white text-gray-800 text-[11px] px-2 py-1 rounded shadow whitespace-nowrap">
         <div className="font-medium">{forest.country}</div>
-        <div className="text-xs">Extent: {formatHectares(forest.gfc_extent_ha)}</div>
+        <div>{formatHectares(forest.gfc_extent_ha)}</div>
       </div>
     </div>
   );
 };
 
-/* -------------------- Main (Minimal) Component -------------------- */
+/* -------------------- Main Component -------------------- */
 export default function MapsMinimal() {
   const [fireData, setFireData] = useState<FireData[]>([]);
   const [forestData, setForestData] = useState<ForestData[]>([]);
   const [loadingFires, setLoadingFires] = useState(false);
   const [loadingForest, setLoadingForest] = useState(false);
+
   const [days, setDays] = useState("1");
-  const [satelliteSource, setSatelliteSource] = useState("VIIRS_SNPP_NRT");
+  const [satelliteSource, setSatelliteSource] =
+    useState("VIIRS_SNPP_NRT");
   const [selectedRegion, setSelectedRegion] = useState("all");
 
   const lastFetchRef = useRef(0);
 
+  /* -------------------- Fire Fetch (Optimized) -------------------- */
   const fetchFireData = useCallback(async (d: string, src: string) => {
-    if (Date.now() - lastFetchRef.current < 3000) return;
+    if (Date.now() - lastFetchRef.current < 2000) return;
     lastFetchRef.current = Date.now();
 
+    const controller = new AbortController();
     setLoadingFires(true);
+
     try {
       const res = await fetch(
-        `https://iokkwxjkvzgstkkbwnoa.supabase.co/functions/v1/nasa-firms?days=${d}&source=${src}&area=world`
+        `https://iokkwxjkvzgstkkbwnoa.supabase.co/functions/v1/nasa-firms?days=${d}&source=${src}&area=world&limit=5000`,
+        { signal: controller.signal }
       );
 
-      if (!res.ok) throw new Error('API failed');
+      if (!res.ok) throw new Error("API failed");
 
       const json = await res.json();
-      setFireData(json.fires || []);
-    } catch (e) {
-      console.error('Failed to fetch fires', e);
-      setFireData([]);
+      const fires = (json.fires || []).slice(0, 3000); // HARD CAP
+      setFireData(fires);
+    } catch (e: any) {
+      if (e.name !== "AbortError") {
+        console.error("Fire fetch failed", e);
+        setFireData([]);
+      }
     } finally {
       setLoadingFires(false);
     }
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
     fetchFireData(days, satelliteSource);
   }, [days, satelliteSource, fetchFireData]);
 
+  /* -------------------- Forest Load (Deferred) -------------------- */
   useEffect(() => {
-    const load = async () => {
+    const loadForest = async () => {
       setLoadingForest(true);
       try {
-        const data = await parseForestExcel('/data/global_forest_data.xlsx');
-        setForestData(data || []);
+        const data = await parseForestExcel(
+          "/data/global_forest_data.xlsx"
+        );
+        const cleaned = (data || []).filter(
+          (d) => d.latitude && d.longitude
+        );
+        setForestData(cleaned);
       } catch (e) {
-        console.error('Failed to load forests', e);
+        console.error("Forest load failed", e);
       } finally {
         setLoadingForest(false);
       }
     };
-    load();
+
+    if ("requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(loadForest);
+    } else {
+      setTimeout(loadForest, 500);
+    }
   }, []);
 
+  /* -------------------- Memoized Markers -------------------- */
   const fireMarkers = useMemo(
-    () => fireData.map((f, i) => (
-      <MapMarker key={i} longitude={f.longitude} latitude={f.latitude}>
-        <FireMarker fire={f} />
-      </MapMarker>
-    )),
+    () =>
+      fireData.map((f, i) => (
+        <MapMarker
+          key={i}
+          longitude={f.longitude}
+          latitude={f.latitude}
+        >
+          <FireMarker fire={f} />
+        </MapMarker>
+      )),
     [fireData]
   );
 
-  const filteredForest = useMemo(() => {
-    if (selectedRegion === 'all') return forestData;
-    // If regions had country lists, they'd filter by iso. Keeping simple.
-    return forestData;
-  }, [forestData, selectedRegion]);
-
   const forestMarkers = useMemo(
-    () => filteredForest.map((f, i) => (
-      <MapMarker key={i} longitude={f.longitude!} latitude={f.latitude!}>
-        <ForestMarker forest={f} />
-      </MapMarker>
-    )),
-    [filteredForest]
+    () =>
+      forestData.map((f, i) => (
+        <MapMarker
+          key={i}
+          longitude={f.longitude!}
+          latitude={f.latitude!}
+        >
+          <ForestMarker forest={f} />
+        </MapMarker>
+      )),
+    [forestData]
   );
 
+  const region = regions[selectedRegion] || regions.all;
+
+  /* -------------------- UI -------------------- */
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between">
+      <header className="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold">Environmental Maps</h1>
-          <p className="text-sm text-gray-600">Satellite-based view — minimal UI</p>
+          <h1 className="text-2xl font-semibold">
+            Environmental Maps
+          </h1>
+          <p className="text-sm text-gray-600">
+            Fast, minimal, data-first
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <select className="border px-2 py-1 rounded text-sm" value={days} onChange={(e) => setDays(e.target.value)}>
+        <div className="flex gap-2 text-sm">
+          <select
+            className="border rounded px-2 py-1"
+            value={days}
+            onChange={(e) => setDays(e.target.value)}
+          >
             <option value="1">24h</option>
             <option value="2">48h</option>
             <option value="7">7d</option>
           </select>
 
-          <select className="border px-2 py-1 rounded text-sm" value={satelliteSource} onChange={(e) => setSatelliteSource(e.target.value)}>
+          <select
+            className="border rounded px-2 py-1"
+            value={satelliteSource}
+            onChange={(e) => setSatelliteSource(e.target.value)}
+          >
             <option value="VIIRS_SNPP_NRT">VIIRS SNPP</option>
             <option value="VIIRS_NOAA20_NRT">VIIRS NOAA-20</option>
             <option value="MODIS_NRT">MODIS</option>
           </select>
 
-          <select className="border px-2 py-1 rounded text-sm" value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)}>
+          <select
+            className="border rounded px-2 py-1"
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+          >
             <option value="all">All</option>
             <option value="asia">Asia</option>
             <option value="africa">Africa</option>
@@ -1394,60 +1462,79 @@ export default function MapsMinimal() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 space-y-6 pb-12">
-        {/* Minimal Stats */}
+        {/* Stats */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-white border rounded p-3">
             <div className="text-xs text-gray-500">Total Fires</div>
-            <div className="text-lg font-semibold">{fireData.length}</div>
+            <div className="text-lg font-semibold">
+              {fireData.length}
+            </div>
           </div>
           <div className="bg-white border rounded p-3">
             <div className="text-xs text-gray-500">High Intensity</div>
             <div className="text-lg font-semibold">
-              {fireData.filter(f => f.frp > 50).length}
+              {fireData.filter((f) => f.frp > 50).length}
             </div>
           </div>
           <div className="bg-white border rounded p-3">
             <div className="text-xs text-gray-500">Forest Records</div>
-            <div className="text-lg font-semibold">{filteredForest.length}</div>
+            <div className="text-lg font-semibold">
+              {forestData.length}
+            </div>
           </div>
           <div className="bg-white border rounded p-3">
             <div className="text-xs text-gray-500">Region</div>
-            <div className="text-lg font-semibold capitalize">{selectedRegion.replace('-', ' ')}</div>
-          </div>
-        </section>
-        <section className="bg-white border rounded shadow-sm overflow-hidden">
-          <div className="p-3 border-b">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">Active Wildfires</div>
-              <div className="text-xs text-gray-500">{loadingFires ? 'Updating...' : `${fireData.length} points`}</div>
+            <div className="text-lg font-semibold capitalize">
+              {selectedRegion.replace("-", " ")}
             </div>
           </div>
+        </section>
 
+        {/* Fire Map */}
+        <section className="bg-white border rounded overflow-hidden">
+          <div className="p-3 border-b text-sm flex justify-between">
+            <span>Active Wildfires</span>
+            <span className="text-gray-500">
+              {loadingFires ? "Loading…" : `${fireData.length} points`}
+            </span>
+          </div>
           <div className="h-80 relative">
-            <Map center={[0, 20]} zoom={1.8} theme="dark" className="absolute inset-0">
+            <Map
+              center={[0, 20]}
+              zoom={1.8}
+              theme="dark"
+              className="absolute inset-0"
+            >
               <MapControls showZoom position="top-right" />
               {fireMarkers}
             </Map>
           </div>
         </section>
 
-        <section className="bg-white border rounded shadow-sm overflow-hidden">
-          <div className="p-3 border-b">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">Natural Forest Cover</div>
-              <div className="text-xs text-gray-500">{loadingForest ? 'Loading...' : `${filteredForest.length} records`}</div>
-            </div>
+        {/* Forest Map */}
+        <section className="bg-white border rounded overflow-hidden">
+          <div className="p-3 border-b text-sm flex justify-between">
+            <span>Natural Forest Cover</span>
+            <span className="text-gray-500">
+              {loadingForest ? "Loading…" : `${forestData.length} records`}
+            </span>
           </div>
-
           <div className="h-80 relative">
-            <Map center={regions[selectedRegion]?.center || regions.all.center} zoom={regions[selectedRegion]?.zoom || 1.5} theme="light" className="absolute inset-0">
+            <Map
+              center={region.center}
+              zoom={region.zoom}
+              theme="light"
+              className="absolute inset-0"
+            >
               <MapControls showZoom position="top-right" />
               {forestMarkers}
             </Map>
           </div>
         </section>
 
-        <footer className="text-center text-xs text-gray-500">Minimal UI • Data sources: NASA FIRMS & Global Forest Watch</footer>
+        <footer className="text-center text-xs text-gray-500">
+          NASA FIRMS • Global Forest Watch
+        </footer>
       </main>
     </div>
   );
