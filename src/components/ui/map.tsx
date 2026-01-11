@@ -364,6 +364,96 @@ function MapRoute({
   return null
 }
 
+// MapGeoJSONLayer component for rendering GeoJSON polygons/fills
+interface MapGeoJSONLayerProps {
+  id: string
+  geojson: GeoJSON.FeatureCollection | GeoJSON.Feature
+  fillColor?: string
+  fillOpacity?: number
+  strokeColor?: string
+  strokeWidth?: number
+  strokeOpacity?: number
+}
+
+function MapGeoJSONLayer({
+  id,
+  geojson,
+  fillColor = "#22c55e",
+  fillOpacity = 0.6,
+  strokeColor = "#16a34a",
+  strokeWidth = 1,
+  strokeOpacity = 0.8,
+}: MapGeoJSONLayerProps) {
+  const map = useMap()
+
+  React.useEffect(() => {
+    if (!map) return
+
+    const sourceId = `geojson-source-${id}`
+    const fillLayerId = `geojson-fill-${id}`
+    const strokeLayerId = `geojson-stroke-${id}`
+
+    const addLayer = () => {
+      try {
+        // Remove existing layers and source
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId)
+        if (map.getLayer(strokeLayerId)) map.removeLayer(strokeLayerId)
+        if (map.getSource(sourceId)) map.removeSource(sourceId)
+
+        // Add source
+        map.addSource(sourceId, {
+          type: "geojson",
+          data: geojson,
+        })
+
+        // Add fill layer
+        map.addLayer({
+          id: fillLayerId,
+          type: "fill",
+          source: sourceId,
+          paint: {
+            "fill-color": fillColor,
+            "fill-opacity": fillOpacity,
+          },
+        })
+
+        // Add stroke layer
+        map.addLayer({
+          id: strokeLayerId,
+          type: "line",
+          source: sourceId,
+          paint: {
+            "line-color": strokeColor,
+            "line-width": strokeWidth,
+            "line-opacity": strokeOpacity,
+          },
+        })
+      } catch (e) {
+        console.error("Error adding GeoJSON layer:", e)
+      }
+    }
+
+    if (map.isStyleLoaded()) {
+      addLayer()
+    } else {
+      map.on("style.load", addLayer)
+    }
+
+    return () => {
+      map.off("style.load", addLayer)
+      try {
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId)
+        if (map.getLayer(strokeLayerId)) map.removeLayer(strokeLayerId)
+        if (map.getSource(sourceId)) map.removeSource(sourceId)
+      } catch (e) {
+        // Map might already be removed
+      }
+    }
+  }, [map, id, geojson, fillColor, fillOpacity, strokeColor, strokeWidth, strokeOpacity])
+
+  return null
+}
+
 // Helper function to generate arc points for curved routes
 function generateArcPoints(
   start: [number, number],
@@ -394,4 +484,4 @@ function generateArcPoints(
   return points
 }
 
-export { Map, MapControls, MapMarker, MapRoute, generateArcPoints }
+export { Map, MapControls, MapMarker, MapRoute, MapGeoJSONLayer, generateArcPoints }

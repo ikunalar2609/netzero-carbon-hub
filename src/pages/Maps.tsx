@@ -1230,7 +1230,7 @@
 // export default Maps;
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Map, MapMarker, MapControls } from "@/components/ui/map";
+import { Map, MapMarker, MapControls, MapGeoJSONLayer } from "@/components/ui/map";
 import {
   parseForestExcel,
   ForestData,
@@ -1252,10 +1252,10 @@ interface TreeLossData {
   region: string;
   latitude: number;
   longitude: number;
-  lossPercentage: number; // Tree cover loss as percentage
-  lossYear: string; // Range like "2020-2024"
-  area: string; // Description of area
-  cause: string; // Primary cause
+  lossPercentage: number;
+  lossYear: string;
+  area: string;
+  cause: string;
 }
 
 /* -------------------- Regions -------------------- */
@@ -1272,11 +1272,52 @@ const regions: Record<
   oceania: { center: [140, -25], zoom: 3 },
 };
 
+/* -------------------- Fallback Forest Data -------------------- */
+const fallbackForestData: ForestData[] = [
+  { iso: 'BRA', country: 'Brazil', gfc_extent_ha: 492000000, area_ha: 851600000, latitude: -14.24, longitude: -51.93 },
+  { iso: 'RUS', country: 'Russia', gfc_extent_ha: 815000000, area_ha: 1710000000, latitude: 61.52, longitude: 105.32 },
+  { iso: 'CAN', country: 'Canada', gfc_extent_ha: 347000000, area_ha: 998500000, latitude: 56.13, longitude: -106.35 },
+  { iso: 'USA', country: 'United States', gfc_extent_ha: 310000000, area_ha: 937300000, latitude: 37.09, longitude: -95.71 },
+  { iso: 'CHN', country: 'China', gfc_extent_ha: 208000000, area_ha: 960000000, latitude: 35.86, longitude: 104.20 },
+  { iso: 'COD', country: 'DR Congo', gfc_extent_ha: 152000000, area_ha: 234500000, latitude: -4.04, longitude: 21.76 },
+  { iso: 'AUS', country: 'Australia', gfc_extent_ha: 134000000, area_ha: 769200000, latitude: -25.27, longitude: 133.78 },
+  { iso: 'IDN', country: 'Indonesia', gfc_extent_ha: 91000000, area_ha: 191000000, latitude: -0.79, longitude: 113.92 },
+  { iso: 'PER', country: 'Peru', gfc_extent_ha: 72000000, area_ha: 128500000, latitude: -9.19, longitude: -75.02 },
+  { iso: 'IND', country: 'India', gfc_extent_ha: 70000000, area_ha: 328700000, latitude: 20.59, longitude: 78.96 },
+  { iso: 'MEX', country: 'Mexico', gfc_extent_ha: 66000000, area_ha: 196400000, latitude: 23.63, longitude: -102.55 },
+  { iso: 'COL', country: 'Colombia', gfc_extent_ha: 59000000, area_ha: 114200000, latitude: 4.57, longitude: -74.30 },
+  { iso: 'ARG', country: 'Argentina', gfc_extent_ha: 29000000, area_ha: 278000000, latitude: -38.42, longitude: -63.62 },
+  { iso: 'BOL', country: 'Bolivia', gfc_extent_ha: 50000000, area_ha: 109900000, latitude: -16.29, longitude: -63.59 },
+  { iso: 'VEN', country: 'Venezuela', gfc_extent_ha: 47000000, area_ha: 91600000, latitude: 6.42, longitude: -66.59 },
+  { iso: 'MYS', country: 'Malaysia', gfc_extent_ha: 22000000, area_ha: 33000000, latitude: 4.21, longitude: 101.98 },
+  { iso: 'PNG', country: 'Papua New Guinea', gfc_extent_ha: 33000000, area_ha: 46300000, latitude: -6.31, longitude: 143.96 },
+  { iso: 'MMR', country: 'Myanmar', gfc_extent_ha: 29000000, area_ha: 67700000, latitude: 21.92, longitude: 95.96 },
+  { iso: 'AGO', country: 'Angola', gfc_extent_ha: 58000000, area_ha: 124700000, latitude: -11.20, longitude: 17.87 },
+  { iso: 'MOZ', country: 'Mozambique', gfc_extent_ha: 38000000, area_ha: 80200000, latitude: -18.67, longitude: 35.53 },
+  { iso: 'TZA', country: 'Tanzania', gfc_extent_ha: 46000000, area_ha: 94500000, latitude: -6.37, longitude: 34.89 },
+  { iso: 'ZMB', country: 'Zambia', gfc_extent_ha: 44000000, area_ha: 75300000, latitude: -13.13, longitude: 27.85 },
+  { iso: 'SWE', country: 'Sweden', gfc_extent_ha: 28000000, area_ha: 45000000, latitude: 60.13, longitude: 18.64 },
+  { iso: 'FIN', country: 'Finland', gfc_extent_ha: 22000000, area_ha: 33800000, latitude: 61.92, longitude: 25.75 },
+  { iso: 'JPN', country: 'Japan', gfc_extent_ha: 25000000, area_ha: 37800000, latitude: 36.20, longitude: 138.25 },
+  { iso: 'GAB', country: 'Gabon', gfc_extent_ha: 22000000, area_ha: 26800000, latitude: -0.80, longitude: 11.61 },
+  { iso: 'CMR', country: 'Cameroon', gfc_extent_ha: 19000000, area_ha: 47500000, latitude: 7.37, longitude: 12.35 },
+  { iso: 'CAF', country: 'Central African Republic', gfc_extent_ha: 22000000, area_ha: 62300000, latitude: 6.61, longitude: 20.94 },
+  { iso: 'COG', country: 'Congo', gfc_extent_ha: 22000000, area_ha: 34200000, latitude: -0.23, longitude: 15.83 },
+  { iso: 'ECU', country: 'Ecuador', gfc_extent_ha: 12000000, area_ha: 28400000, latitude: -1.83, longitude: -78.18 },
+  { iso: 'GUY', country: 'Guyana', gfc_extent_ha: 18000000, area_ha: 21500000, latitude: 4.86, longitude: -58.93 },
+  { iso: 'SUR', country: 'Suriname', gfc_extent_ha: 15000000, area_ha: 16400000, latitude: 3.92, longitude: -56.03 },
+  { iso: 'LAO', country: 'Laos', gfc_extent_ha: 16000000, area_ha: 23700000, latitude: 19.86, longitude: 102.50 },
+  { iso: 'KHM', country: 'Cambodia', gfc_extent_ha: 10000000, area_ha: 18100000, latitude: 12.57, longitude: 104.99 },
+  { iso: 'THA', country: 'Thailand', gfc_extent_ha: 16000000, area_ha: 51300000, latitude: 15.87, longitude: 100.99 },
+  { iso: 'VNM', country: 'Vietnam', gfc_extent_ha: 14000000, area_ha: 33100000, latitude: 14.06, longitude: 108.28 },
+  { iso: 'NOR', country: 'Norway', gfc_extent_ha: 12000000, area_ha: 38500000, latitude: 60.47, longitude: 8.47 },
+  { iso: 'DEU', country: 'Germany', gfc_extent_ha: 11000000, area_ha: 35740000, latitude: 51.17, longitude: 10.45 },
+  { iso: 'FRA', country: 'France', gfc_extent_ha: 17000000, area_ha: 64000000, latitude: 46.23, longitude: 2.21 },
+  { iso: 'ESP', country: 'Spain', gfc_extent_ha: 18000000, area_ha: 50600000, latitude: 40.46, longitude: -3.75 },
+];
+
 /* -------------------- Global Forest Change 2000-2024 Data -------------------- */
-// Data sourced from Hansen/UMD/Google/USGS/NASA Global Forest Change dataset
-// https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/download.html
 const treeLossHotspots: TreeLossData[] = [
-  // South America - Amazon Basin
   { region: "Brazilian Amazon", latitude: -3.47, longitude: -62.22, lossPercentage: 18.5, lossYear: "2020-2024", area: "Amazonas State", cause: "Agriculture & Cattle" },
   { region: "Rondônia", latitude: -10.83, longitude: -63.34, lossPercentage: 22.3, lossYear: "2020-2024", area: "Arc of Deforestation", cause: "Soy & Cattle" },
   { region: "Mato Grosso", latitude: -12.64, longitude: -55.42, lossPercentage: 25.7, lossYear: "2020-2024", area: "Cerrado Transition", cause: "Agricultural Expansion" },
@@ -1284,39 +1325,67 @@ const treeLossHotspots: TreeLossData[] = [
   { region: "Bolivia Lowlands", latitude: -16.29, longitude: -63.59, lossPercentage: 15.2, lossYear: "2020-2024", area: "Santa Cruz", cause: "Soy Expansion" },
   { region: "Peruvian Amazon", latitude: -5.94, longitude: -75.02, lossPercentage: 12.1, lossYear: "2020-2024", area: "Loreto", cause: "Oil Palm & Mining" },
   { region: "Gran Chaco", latitude: -23.45, longitude: -61.12, lossPercentage: 20.4, lossYear: "2020-2024", area: "Paraguay/Argentina", cause: "Cattle Ranching" },
-  
-  // Southeast Asia
   { region: "Borneo (Kalimantan)", latitude: 0.79, longitude: 113.92, lossPercentage: 28.6, lossYear: "2020-2024", area: "Indonesian Borneo", cause: "Oil Palm Plantations" },
   { region: "Sumatra", latitude: -0.59, longitude: 101.34, lossPercentage: 31.2, lossYear: "2020-2024", area: "Riau Province", cause: "Pulp & Palm Oil" },
   { region: "Papua New Guinea", latitude: -5.57, longitude: 145.28, lossPercentage: 14.8, lossYear: "2020-2024", area: "Highlands Region", cause: "Logging & Agriculture" },
   { region: "Myanmar", latitude: 21.92, longitude: 95.96, lossPercentage: 16.3, lossYear: "2020-2024", area: "Sagaing Region", cause: "Teak Logging" },
   { region: "Cambodia", latitude: 12.57, longitude: 104.99, lossPercentage: 19.7, lossYear: "2020-2024", area: "Mondulkiri", cause: "Rubber Plantations" },
   { region: "Sarawak", latitude: 2.47, longitude: 113.02, lossPercentage: 21.4, lossYear: "2020-2024", area: "Malaysian Borneo", cause: "Oil Palm & Logging" },
-  
-  // Central Africa
   { region: "DR Congo Basin", latitude: -0.02, longitude: 21.76, lossPercentage: 13.9, lossYear: "2020-2024", area: "Équateur Province", cause: "Subsistence Agriculture" },
   { region: "Cameroon", latitude: 3.85, longitude: 11.50, lossPercentage: 11.2, lossYear: "2020-2024", area: "South Region", cause: "Cocoa & Logging" },
   { region: "Gabon", latitude: -0.80, longitude: 11.61, lossPercentage: 8.4, lossYear: "2020-2024", area: "Ogooué-Ivindo", cause: "Selective Logging" },
   { region: "Congo Republic", latitude: -0.23, longitude: 15.83, lossPercentage: 9.7, lossYear: "2020-2024", area: "Northern Congo", cause: "Industrial Logging" },
   { region: "Madagascar", latitude: -18.77, longitude: 46.87, lossPercentage: 17.5, lossYear: "2020-2024", area: "Eastern Rainforest", cause: "Slash-and-Burn" },
-  
-  // Russia/Boreal
   { region: "Siberia", latitude: 64.25, longitude: 100.25, lossPercentage: 12.8, lossYear: "2020-2024", area: "Krasnoyarsk Krai", cause: "Wildfires" },
   { region: "Russian Far East", latitude: 52.03, longitude: 135.08, lossPercentage: 15.6, lossYear: "2020-2024", area: "Khabarovsk", cause: "Logging & Fires" },
   { region: "Sakha Republic", latitude: 66.76, longitude: 124.12, lossPercentage: 10.3, lossYear: "2020-2024", area: "Yakutia", cause: "Climate Fires" },
-  
-  // North America
   { region: "Canadian Boreal", latitude: 54.73, longitude: -113.29, lossPercentage: 11.4, lossYear: "2020-2024", area: "Alberta", cause: "Oil Sands & Fires" },
   { region: "British Columbia", latitude: 53.73, longitude: -127.65, lossPercentage: 14.2, lossYear: "2020-2024", area: "Central Coast", cause: "Mountain Pine Beetle" },
   { region: "Pacific Northwest", latitude: 44.06, longitude: -121.31, lossPercentage: 9.8, lossYear: "2020-2024", area: "Oregon", cause: "Wildfires" },
-  
-  // Other regions
   { region: "West Africa (Côte d'Ivoire)", latitude: 6.83, longitude: -5.29, lossPercentage: 26.1, lossYear: "2020-2024", area: "Cocoa Belt", cause: "Cocoa Expansion" },
   { region: "Ghana", latitude: 6.61, longitude: -1.62, lossPercentage: 18.9, lossYear: "2020-2024", area: "Western Region", cause: "Cocoa & Mining" },
   { region: "Laos", latitude: 18.21, longitude: 103.89, lossPercentage: 15.4, lossYear: "2020-2024", area: "Luang Prabang", cause: "Rubber & Agriculture" },
   { region: "Vietnam Highlands", latitude: 14.06, longitude: 108.28, lossPercentage: 12.7, lossYear: "2020-2024", area: "Central Highlands", cause: "Coffee & Rubber" },
   { region: "Philippines", latitude: 7.87, longitude: 125.49, lossPercentage: 13.3, lossYear: "2020-2024", area: "Mindanao", cause: "Palm Oil & Logging" },
 ];
+
+/* -------------------- Forest Cover GeoJSON for Global Forest Change Map -------------------- */
+// Simplified polygon regions representing major forest cover areas
+const forestCoverGeoJSON: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [
+    // Amazon Basin
+    { type: "Feature", properties: { name: "Amazon Basin", coverage: 85 }, geometry: { type: "Polygon", coordinates: [[[-74, 5], [-50, 5], [-50, -15], [-74, -15], [-74, 5]]] } },
+    // Congo Basin
+    { type: "Feature", properties: { name: "Congo Basin", coverage: 78 }, geometry: { type: "Polygon", coordinates: [[[10, 5], [30, 5], [30, -8], [10, -8], [10, 5]]] } },
+    // Southeast Asia
+    { type: "Feature", properties: { name: "Borneo", coverage: 65 }, geometry: { type: "Polygon", coordinates: [[[109, 7], [119, 7], [119, -4], [109, -4], [109, 7]]] } },
+    { type: "Feature", properties: { name: "Sumatra", coverage: 55 }, geometry: { type: "Polygon", coordinates: [[[97, 5], [106, 5], [106, -6], [97, -6], [97, 5]]] } },
+    { type: "Feature", properties: { name: "Papua/PNG", coverage: 72 }, geometry: { type: "Polygon", coordinates: [[[130, 0], [152, 0], [152, -10], [130, -10], [130, 0]]] } },
+    // Boreal Forests - Canada
+    { type: "Feature", properties: { name: "Canadian Boreal", coverage: 70 }, geometry: { type: "Polygon", coordinates: [[[-140, 70], [-60, 70], [-60, 50], [-140, 50], [-140, 70]]] } },
+    // Boreal Forests - Russia
+    { type: "Feature", properties: { name: "Siberian Taiga", coverage: 75 }, geometry: { type: "Polygon", coordinates: [[[60, 72], [180, 72], [180, 50], [60, 50], [60, 72]]] } },
+    // Central America
+    { type: "Feature", properties: { name: "Central America", coverage: 48 }, geometry: { type: "Polygon", coordinates: [[[-92, 23], [-78, 23], [-78, 7], [-92, 7], [-92, 23]]] } },
+    // West Africa
+    { type: "Feature", properties: { name: "West Africa", coverage: 35 }, geometry: { type: "Polygon", coordinates: [[[-17, 12], [10, 12], [10, 4], [-17, 4], [-17, 12]]] } },
+    // Madagascar
+    { type: "Feature", properties: { name: "Madagascar", coverage: 42 }, geometry: { type: "Polygon", coordinates: [[[43, -12], [50, -12], [50, -26], [43, -26], [43, -12]]] } },
+    // Myanmar/Thailand
+    { type: "Feature", properties: { name: "Indochina", coverage: 52 }, geometry: { type: "Polygon", coordinates: [[[92, 28], [110, 28], [110, 10], [92, 10], [92, 28]]] } },
+    // European Forests
+    { type: "Feature", properties: { name: "Scandinavian Forests", coverage: 68 }, geometry: { type: "Polygon", coordinates: [[[5, 71], [32, 71], [32, 55], [5, 55], [5, 71]]] } },
+    // US Pacific Northwest
+    { type: "Feature", properties: { name: "Pacific Northwest", coverage: 58 }, geometry: { type: "Polygon", coordinates: [[[-130, 55], [-115, 55], [-115, 40], [-130, 40], [-130, 55]]] } },
+    // Eastern Australia
+    { type: "Feature", properties: { name: "Australian Forests", coverage: 25 }, geometry: { type: "Polygon", coordinates: [[[140, -10], [154, -10], [154, -40], [140, -40], [140, -10]]] } },
+    // Andes Forests
+    { type: "Feature", properties: { name: "Andean Cloud Forests", coverage: 45 }, geometry: { type: "Polygon", coordinates: [[[-82, 10], [-68, 10], [-68, -20], [-82, -20], [-82, 10]]] } },
+    // Japan
+    { type: "Feature", properties: { name: "Japan Forests", coverage: 67 }, geometry: { type: "Polygon", coordinates: [[[129, 45], [146, 45], [146, 30], [129, 30], [129, 45]]] } },
+  ]
+};
 
 /* -------------------- Markers -------------------- */
 const FireMarker = ({ fire }: { fire: FireData }) => {
@@ -1446,30 +1515,27 @@ export default function MapsMinimal() {
     fetchFireData(days, satelliteSource);
   }, [days, satelliteSource, fetchFireData]);
 
-  /* -------------------- Forest Load (Deferred) -------------------- */
+  /* -------------------- Forest Load with Fallback -------------------- */
   useEffect(() => {
     const loadForest = async () => {
       setLoadingForest(true);
       try {
-        const data = await parseForestExcel(
-          "/data/global_forest_data.xlsx"
-        );
-        const cleaned = (data || []).filter(
-          (d) => d.latitude && d.longitude
-        );
-        setForestData(cleaned);
+        const data = await parseForestExcel("/data/global_forest_data.xlsx");
+        const cleaned = (data || []).filter((d) => d.latitude && d.longitude);
+        if (cleaned.length > 0) {
+          setForestData(cleaned);
+        } else {
+          // Use fallback data if Excel parsing fails or returns empty
+          setForestData(fallbackForestData);
+        }
       } catch (e) {
-        console.error("Forest load failed", e);
+        console.error("Forest load failed, using fallback:", e);
+        setForestData(fallbackForestData);
       } finally {
         setLoadingForest(false);
       }
     };
-
-    if ("requestIdleCallback" in window) {
-      (window as any).requestIdleCallback(loadForest);
-    } else {
-      setTimeout(loadForest, 500);
-    }
+    loadForest();
   }, []);
 
   /* -------------------- Memoized Markers -------------------- */
@@ -1673,6 +1739,15 @@ export default function MapsMinimal() {
               className="absolute inset-0"
             >
               <MapControls showZoom position="top-right" />
+              <MapGeoJSONLayer
+                id="forest-cover"
+                geojson={forestCoverGeoJSON}
+                fillColor="#22c55e"
+                fillOpacity={0.5}
+                strokeColor="#16a34a"
+                strokeWidth={1}
+                strokeOpacity={0.7}
+              />
               {treeLossMarkers}
             </Map>
           </div>
