@@ -158,6 +158,36 @@ export type Database = {
         }
         Relationships: []
       }
+      forest_cover_regions: {
+        Row: {
+          area_km2: number
+          coordinates: Json
+          coverage: number
+          created_at: string
+          id: string
+          name: string
+          region: string
+        }
+        Insert: {
+          area_km2?: number
+          coordinates: Json
+          coverage?: number
+          created_at?: string
+          id?: string
+          name: string
+          region: string
+        }
+        Update: {
+          area_km2?: number
+          coordinates?: Json
+          coverage?: number
+          created_at?: string
+          id?: string
+          name?: string
+          region?: string
+        }
+        Relationships: []
+      }
       milestones: {
         Row: {
           created_at: string
@@ -314,6 +344,42 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      tree_loss_hotspots: {
+        Row: {
+          area: string
+          cause: string
+          created_at: string
+          id: string
+          latitude: number
+          longitude: number
+          loss_percentage: number
+          loss_year: string
+          region: string
+        }
+        Insert: {
+          area: string
+          cause: string
+          created_at?: string
+          id?: string
+          latitude: number
+          longitude: number
+          loss_percentage: number
+          loss_year: string
+          region: string
+        }
+        Update: {
+          area?: string
+          cause?: string
+          created_at?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          loss_percentage?: number
+          loss_year?: string
+          region?: string
         }
         Relationships: []
       }
