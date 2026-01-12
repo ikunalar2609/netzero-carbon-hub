@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.flight-emissions]
 verify_jwt = false
+
+[functions.map-data]
+verify_jwt = false
