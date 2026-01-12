@@ -6,6 +6,7 @@ import {
   getForestIntensity,
   formatHectares,
 } from "@/utils/parseForestData";
+import { detailedForestCoverGeoJSON } from "@/data/forestCoverGeoJSON";
 
 
 /* -------------------- Types -------------------- */
@@ -120,42 +121,8 @@ const treeLossHotspots: TreeLossData[] = [
 ];
 
 /* -------------------- Forest Cover GeoJSON for Global Forest Change Map -------------------- */
-// Simplified polygon regions representing major forest cover areas
-const forestCoverGeoJSON: GeoJSON.FeatureCollection = {
-  type: "FeatureCollection",
-  features: [
-    // Amazon Basin
-    { type: "Feature", properties: { name: "Amazon Basin", coverage: 85 }, geometry: { type: "Polygon", coordinates: [[[-74, 5], [-50, 5], [-50, -15], [-74, -15], [-74, 5]]] } },
-    // Congo Basin
-    { type: "Feature", properties: { name: "Congo Basin", coverage: 78 }, geometry: { type: "Polygon", coordinates: [[[10, 5], [30, 5], [30, -8], [10, -8], [10, 5]]] } },
-    // Southeast Asia
-    { type: "Feature", properties: { name: "Borneo", coverage: 65 }, geometry: { type: "Polygon", coordinates: [[[109, 7], [119, 7], [119, -4], [109, -4], [109, 7]]] } },
-    { type: "Feature", properties: { name: "Sumatra", coverage: 55 }, geometry: { type: "Polygon", coordinates: [[[97, 5], [106, 5], [106, -6], [97, -6], [97, 5]]] } },
-    { type: "Feature", properties: { name: "Papua/PNG", coverage: 72 }, geometry: { type: "Polygon", coordinates: [[[130, 0], [152, 0], [152, -10], [130, -10], [130, 0]]] } },
-    // Boreal Forests - Canada
-    { type: "Feature", properties: { name: "Canadian Boreal", coverage: 70 }, geometry: { type: "Polygon", coordinates: [[[-140, 70], [-60, 70], [-60, 50], [-140, 50], [-140, 70]]] } },
-    // Boreal Forests - Russia
-    { type: "Feature", properties: { name: "Siberian Taiga", coverage: 75 }, geometry: { type: "Polygon", coordinates: [[[60, 72], [180, 72], [180, 50], [60, 50], [60, 72]]] } },
-    // Central America
-    { type: "Feature", properties: { name: "Central America", coverage: 48 }, geometry: { type: "Polygon", coordinates: [[[-92, 23], [-78, 23], [-78, 7], [-92, 7], [-92, 23]]] } },
-    // West Africa
-    { type: "Feature", properties: { name: "West Africa", coverage: 35 }, geometry: { type: "Polygon", coordinates: [[[-17, 12], [10, 12], [10, 4], [-17, 4], [-17, 12]]] } },
-    // Madagascar
-    { type: "Feature", properties: { name: "Madagascar", coverage: 42 }, geometry: { type: "Polygon", coordinates: [[[43, -12], [50, -12], [50, -26], [43, -26], [43, -12]]] } },
-    // Myanmar/Thailand
-    { type: "Feature", properties: { name: "Indochina", coverage: 52 }, geometry: { type: "Polygon", coordinates: [[[92, 28], [110, 28], [110, 10], [92, 10], [92, 28]]] } },
-    // European Forests
-    { type: "Feature", properties: { name: "Scandinavian Forests", coverage: 68 }, geometry: { type: "Polygon", coordinates: [[[5, 71], [32, 71], [32, 55], [5, 55], [5, 71]]] } },
-    // US Pacific Northwest
-    { type: "Feature", properties: { name: "Pacific Northwest", coverage: 58 }, geometry: { type: "Polygon", coordinates: [[[-130, 55], [-115, 55], [-115, 40], [-130, 40], [-130, 55]]] } },
-    // Eastern Australia
-    { type: "Feature", properties: { name: "Australian Forests", coverage: 25 }, geometry: { type: "Polygon", coordinates: [[[140, -10], [154, -10], [154, -40], [140, -40], [140, -10]]] } },
-    // Andes Forests
-    { type: "Feature", properties: { name: "Andean Cloud Forests", coverage: 45 }, geometry: { type: "Polygon", coordinates: [[[-82, 10], [-68, 10], [-68, -20], [-82, -20], [-82, 10]]] } },
-    // Japan
-    { type: "Feature", properties: { name: "Japan Forests", coverage: 67 }, geometry: { type: "Polygon", coordinates: [[[129, 45], [146, 45], [146, 30], [129, 30], [129, 45]]] } },
-  ]
-};
+// Using detailed imported GeoJSON data from src/data/forestCoverGeoJSON.ts
+// This provides accurate polygon boundaries for 60+ major forest regions worldwide
 
 /* -------------------- Markers -------------------- */
 const FireMarker = ({ fire }: { fire: FireData }) => {
@@ -511,7 +478,7 @@ export default function MapsMinimal() {
               <MapControls showZoom position="top-right" />
               <MapGeoJSONLayer
                 id="forest-cover"
-                geojson={forestCoverGeoJSON}
+                geojson={detailedForestCoverGeoJSON}
                 fillColor="#22c55e"
                 fillOpacity={0.5}
                 strokeColor="#16a34a"
