@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Map, MapMarker, MapControls, MapGeoJSONLayer } from "@/components/ui/map";
+import { Map, MapMarker, MapControls, MapGeoJSONLayer, MapHeatmapLayer, MapGridOverlay } from "@/components/ui/map";
 import {
   parseForestExcel,
   ForestData,
@@ -436,55 +436,137 @@ export default function MapsMinimal() {
           </div>
         </section>
 
-        {/* Tree Cover Loss Map - NEW */}
-        <section className="bg-gray-900 border border-gray-700 rounded overflow-hidden">
-          <div className="p-3 border-b border-gray-700 text-sm flex justify-between items-center">
+        {/* Global Forest Change Heatmap - Full Width Satellite Style */}
+        <section className="bg-[#1a1a1a] border border-gray-800 rounded-lg overflow-hidden shadow-2xl">
+          <div className="p-4 border-b border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
             <div>
-              <span className="text-white font-medium">🌳 Global Forest Change 2000-2024</span>
-              <p className="text-xs text-gray-400 mt-0.5">Hansen/UMD/Google/USGS/NASA • Tree Cover Loss Hotspots</p>
+              <h2 className="text-white font-semibold text-lg flex items-center gap-2">
+                🌳 Global Forest Change 2000-2024
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">Hansen/UMD/Google/USGS/NASA • Satellite-Based Forest Density Visualization</p>
             </div>
-            <span className="text-gray-400 text-xs">
-              {treeLossStats.total} deforestation hotspots • {treeLossStats.critical} critical
-            </span>
+            <div className="flex items-center gap-4 text-xs">
+              <span className="text-gray-400">
+                {treeLossStats.total} hotspots • {treeLossStats.critical} critical
+              </span>
+            </div>
           </div>
-          <div className="h-96 relative">
+          
+          {/* Full-width heatmap container */}
+          <div className="relative h-[500px] md:h-[600px] w-full bg-[#0d0d0d]">
             <Map
-              center={[0, 10]}
-              zoom={1.6}
+              center={[0, 20]}
+              zoom={1.4}
               theme="dark"
               className="absolute inset-0"
             >
               <MapControls showZoom position="top-right" />
-              {dbForestCover && dbForestCover.features.length > 0 && (
-                <MapGeoJSONLayer
-                  id="forest-cover"
-                  geojson={dbForestCover}
-                  fillColor="#22c55e"
-                  fillOpacity={0.5}
-                  strokeColor="#16a34a"
-                  strokeWidth={1}
-                  strokeOpacity={0.7}
-                />
-              )}
+              
+              {/* Grid overlay for lat/lon lines */}
+              <MapGridOverlay 
+                latSpacing={15} 
+                lonSpacing={15} 
+                color="rgba(255, 255, 255, 0.15)"
+                opacity={0.5}
+              />
+              
+              {/* Heatmap layer for forest density */}
+              <MapHeatmapLayer
+                id="forest-heatmap"
+                data={forestData.map(f => ({
+                  longitude: f.longitude || 0,
+                  latitude: f.latitude || 0,
+                  intensity: Math.min(f.gfc_extent_ha / 500000000, 1)
+                }))}
+                radius={35}
+                intensity={1.2}
+                colorStops={[
+                  { stop: 0, color: "rgba(0, 0, 0, 0)" },
+                  { stop: 0.1, color: "#052e16" },
+                  { stop: 0.25, color: "#14532d" },
+                  { stop: 0.4, color: "#166534" },
+                  { stop: 0.55, color: "#15803d" },
+                  { stop: 0.7, color: "#22c55e" },
+                  { stop: 0.85, color: "#4ade80" },
+                  { stop: 1, color: "#86efac" },
+                ]}
+                opacity={0.9}
+              />
+
+              {/* Deforestation hotspots as red/orange heatmap overlay */}
+              <MapHeatmapLayer
+                id="deforestation-heatmap"
+                data={dbTreeLoss.map(d => ({
+                  longitude: d.longitude,
+                  latitude: d.latitude,
+                  intensity: Math.min(d.loss_percentage / 25, 1)
+                }))}
+                radius={25}
+                intensity={0.8}
+                colorStops={[
+                  { stop: 0, color: "rgba(0, 0, 0, 0)" },
+                  { stop: 0.2, color: "rgba(234, 88, 12, 0.4)" },
+                  { stop: 0.5, color: "rgba(239, 68, 68, 0.6)" },
+                  { stop: 0.8, color: "rgba(220, 38, 38, 0.8)" },
+                  { stop: 1, color: "#fca5a5" },
+                ]}
+                opacity={0.75}
+              />
+
+              {/* Tree loss markers for detailed info on hover */}
               {treeLossMarkers}
             </Map>
+            
+            {/* Coordinate labels overlay */}
+            <div className="absolute top-2 left-2 text-[10px] text-gray-500 font-mono pointer-events-none">
+              90°N
+            </div>
+            <div className="absolute bottom-2 left-2 text-[10px] text-gray-500 font-mono pointer-events-none">
+              90°S
+            </div>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-mono pointer-events-none">
+              0° (Equator)
+            </div>
           </div>
-          <div className="p-3 bg-gray-800 border-t border-gray-700 flex flex-wrap gap-4 text-xs">
-            <span className="flex items-center gap-1.5 text-gray-300">
-              <span className="w-3 h-3 rounded-full bg-red-600 border border-white/50"></span> 
-              Critical (&gt;20% loss)
-            </span>
-            <span className="flex items-center gap-1.5 text-gray-300">
-              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 border border-white/50"></span> 
-              High (15-20% loss)
-            </span>
-            <span className="flex items-center gap-1.5 text-gray-300">
-              <span className="w-2 h-2 rounded-full bg-yellow-500 border border-white/50"></span> 
-              Moderate (&lt;15% loss)
-            </span>
-            <span className="ml-auto text-gray-500">
-              Period: 2020-2024 • Data: GFC v1.12
-            </span>
+          
+          {/* Legend bar */}
+          <div className="p-4 bg-[#111] border-t border-gray-800 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-6 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Forest Density:</span>
+                <div className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-sm" style={{ background: '#052e16' }}></span>
+                  <span className="w-3 h-3 rounded-sm" style={{ background: '#166534' }}></span>
+                  <span className="w-3 h-3 rounded-sm" style={{ background: '#22c55e' }}></span>
+                  <span className="w-3 h-3 rounded-sm" style={{ background: '#86efac' }}></span>
+                  <span className="text-gray-500 ml-1">Low → High</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Deforestation:</span>
+                <div className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-sm" style={{ background: 'rgba(234, 88, 12, 0.6)' }}></span>
+                  <span className="w-3 h-3 rounded-sm" style={{ background: 'rgba(239, 68, 68, 0.7)' }}></span>
+                  <span className="w-3 h-3 rounded-sm" style={{ background: '#fca5a5' }}></span>
+                  <span className="text-gray-500 ml-1">Moderate → Severe</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-600 border border-white/50"></span> 
+                Critical (&gt;20% loss)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-orange-500 border border-white/50"></span> 
+                High (15-20%)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-yellow-500 border border-white/50"></span> 
+                Moderate
+              </span>
+              <span className="ml-2">Period: 2020-2024 • GFC v1.12</span>
+            </div>
           </div>
         </section>
 
