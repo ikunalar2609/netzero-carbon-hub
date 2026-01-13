@@ -281,6 +281,7 @@ const CarbonMarketInsights = () => {
         </TabsContent>
       </Tabs>
     </div>
+    
   );
 };
 
