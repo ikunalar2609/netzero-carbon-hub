@@ -281,11 +281,11 @@ const CarbonMarketInsights = () => {
         </TabsContent>
       </Tabs>
     </div>
-    
+
   );
 };
 
-// Project Card Component
+// Project Card Component for Carbon Market Insight
 const ProjectCard = ({ project }: { project: CarbonProject }) => (
   <Card className="overflow-hidden h-full">
     <div className="h-40 overflow-hidden">
