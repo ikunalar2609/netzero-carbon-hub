@@ -6,8 +6,7 @@ import {
   getForestIntensity,
   formatHectares,
 } from "@/utils/parseForestData";
-import { detailedForestCoverGeoJSON } from "@/data/forestCoverGeoJSON";
-
+import { useMapData } from "@/hooks/useMapData";
 
 /* -------------------- Types -------------------- */
 interface FireData {
@@ -87,42 +86,17 @@ const fallbackForestData: ForestData[] = [
   { iso: 'ESP', country: 'Spain', gfc_extent_ha: 18000000, area_ha: 50600000, latitude: 40.46, longitude: -3.75 },
 ];
 
-/* -------------------- Global Forest Change 2000-2024 Data -------------------- */
-const treeLossHotspots: TreeLossData[] = [
-  { region: "Brazilian Amazon", latitude: -3.47, longitude: -62.22, lossPercentage: 18.5, lossYear: "2020-2024", area: "Amazonas State", cause: "Agriculture & Cattle" },
-  { region: "Rondônia", latitude: -10.83, longitude: -63.34, lossPercentage: 22.3, lossYear: "2020-2024", area: "Arc of Deforestation", cause: "Soy & Cattle" },
-  { region: "Mato Grosso", latitude: -12.64, longitude: -55.42, lossPercentage: 25.7, lossYear: "2020-2024", area: "Cerrado Transition", cause: "Agricultural Expansion" },
-  { region: "Pará", latitude: -4.27, longitude: -52.28, lossPercentage: 19.8, lossYear: "2020-2024", area: "Eastern Amazon", cause: "Mining & Logging" },
-  { region: "Bolivia Lowlands", latitude: -16.29, longitude: -63.59, lossPercentage: 15.2, lossYear: "2020-2024", area: "Santa Cruz", cause: "Soy Expansion" },
-  { region: "Peruvian Amazon", latitude: -5.94, longitude: -75.02, lossPercentage: 12.1, lossYear: "2020-2024", area: "Loreto", cause: "Oil Palm & Mining" },
-  { region: "Gran Chaco", latitude: -23.45, longitude: -61.12, lossPercentage: 20.4, lossYear: "2020-2024", area: "Paraguay/Argentina", cause: "Cattle Ranching" },
-  { region: "Borneo (Kalimantan)", latitude: 0.79, longitude: 113.92, lossPercentage: 28.6, lossYear: "2020-2024", area: "Indonesian Borneo", cause: "Oil Palm Plantations" },
-  { region: "Sumatra", latitude: -0.59, longitude: 101.34, lossPercentage: 31.2, lossYear: "2020-2024", area: "Riau Province", cause: "Pulp & Palm Oil" },
-  { region: "Papua New Guinea", latitude: -5.57, longitude: 145.28, lossPercentage: 14.8, lossYear: "2020-2024", area: "Highlands Region", cause: "Logging & Agriculture" },
-  { region: "Myanmar", latitude: 21.92, longitude: 95.96, lossPercentage: 16.3, lossYear: "2020-2024", area: "Sagaing Region", cause: "Teak Logging" },
-  { region: "Cambodia", latitude: 12.57, longitude: 104.99, lossPercentage: 19.7, lossYear: "2020-2024", area: "Mondulkiri", cause: "Rubber Plantations" },
-  { region: "Sarawak", latitude: 2.47, longitude: 113.02, lossPercentage: 21.4, lossYear: "2020-2024", area: "Malaysian Borneo", cause: "Oil Palm & Logging" },
-  { region: "DR Congo Basin", latitude: -0.02, longitude: 21.76, lossPercentage: 13.9, lossYear: "2020-2024", area: "Équateur Province", cause: "Subsistence Agriculture" },
-  { region: "Cameroon", latitude: 3.85, longitude: 11.50, lossPercentage: 11.2, lossYear: "2020-2024", area: "South Region", cause: "Cocoa & Logging" },
-  { region: "Gabon", latitude: -0.80, longitude: 11.61, lossPercentage: 8.4, lossYear: "2020-2024", area: "Ogooué-Ivindo", cause: "Selective Logging" },
-  { region: "Congo Republic", latitude: -0.23, longitude: 15.83, lossPercentage: 9.7, lossYear: "2020-2024", area: "Northern Congo", cause: "Industrial Logging" },
-  { region: "Madagascar", latitude: -18.77, longitude: 46.87, lossPercentage: 17.5, lossYear: "2020-2024", area: "Eastern Rainforest", cause: "Slash-and-Burn" },
-  { region: "Siberia", latitude: 64.25, longitude: 100.25, lossPercentage: 12.8, lossYear: "2020-2024", area: "Krasnoyarsk Krai", cause: "Wildfires" },
-  { region: "Russian Far East", latitude: 52.03, longitude: 135.08, lossPercentage: 15.6, lossYear: "2020-2024", area: "Khabarovsk", cause: "Logging & Fires" },
-  { region: "Sakha Republic", latitude: 66.76, longitude: 124.12, lossPercentage: 10.3, lossYear: "2020-2024", area: "Yakutia", cause: "Climate Fires" },
-  { region: "Canadian Boreal", latitude: 54.73, longitude: -113.29, lossPercentage: 11.4, lossYear: "2020-2024", area: "Alberta", cause: "Oil Sands & Fires" },
-  { region: "British Columbia", latitude: 53.73, longitude: -127.65, lossPercentage: 14.2, lossYear: "2020-2024", area: "Central Coast", cause: "Mountain Pine Beetle" },
-  { region: "Pacific Northwest", latitude: 44.06, longitude: -121.31, lossPercentage: 9.8, lossYear: "2020-2024", area: "Oregon", cause: "Wildfires" },
-  { region: "West Africa (Côte d'Ivoire)", latitude: 6.83, longitude: -5.29, lossPercentage: 26.1, lossYear: "2020-2024", area: "Cocoa Belt", cause: "Cocoa Expansion" },
-  { region: "Ghana", latitude: 6.61, longitude: -1.62, lossPercentage: 18.9, lossYear: "2020-2024", area: "Western Region", cause: "Cocoa & Mining" },
-  { region: "Laos", latitude: 18.21, longitude: 103.89, lossPercentage: 15.4, lossYear: "2020-2024", area: "Luang Prabang", cause: "Rubber & Agriculture" },
-  { region: "Vietnam Highlands", latitude: 14.06, longitude: 108.28, lossPercentage: 12.7, lossYear: "2020-2024", area: "Central Highlands", cause: "Coffee & Rubber" },
-  { region: "Philippines", latitude: 7.87, longitude: 125.49, lossPercentage: 13.3, lossYear: "2020-2024", area: "Mindanao", cause: "Palm Oil & Logging" },
-];
-
-/* -------------------- Forest Cover GeoJSON for Global Forest Change Map -------------------- */
-// Using detailed imported GeoJSON data from src/data/forestCoverGeoJSON.ts
-// This provides accurate polygon boundaries for 60+ major forest regions worldwide
+/* -------------------- Tree Loss Data Type for DB -------------------- */
+interface TreeLossFromDB {
+  id: string;
+  region: string;
+  latitude: number;
+  longitude: number;
+  loss_percentage: number;
+  loss_year: string;
+  area: string;
+  cause: string;
+}
 
 /* -------------------- Markers -------------------- */
 const FireMarker = ({ fire }: { fire: FireData }) => {
@@ -170,8 +144,8 @@ const ForestMarker = ({ forest }: { forest: ForestData }) => {
   );
 };
 
-const TreeLossMarker = ({ data }: { data: TreeLossData }) => {
-  const intensity = data.lossPercentage > 20 ? "critical" : data.lossPercentage > 15 ? "high" : "moderate";
+const TreeLossMarkerDB = ({ data }: { data: TreeLossFromDB }) => {
+  const intensity = data.loss_percentage > 20 ? "critical" : data.loss_percentage > 15 ? "high" : "moderate";
   const colorMap = {
     critical: "bg-red-600",
     high: "bg-orange-500",
@@ -194,8 +168,8 @@ const TreeLossMarker = ({ data }: { data: TreeLossData }) => {
       />
       <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-gray-900 text-white text-[11px] px-3 py-2 rounded-lg shadow-xl whitespace-nowrap z-50 border border-gray-700">
         <div className="font-semibold text-orange-400 mb-1">{data.region}</div>
-        <div className="text-gray-300">Loss: <span className="text-white font-medium">{data.lossPercentage}%</span></div>
-        <div className="text-gray-300">Period: <span className="text-white">{data.lossYear}</span></div>
+        <div className="text-gray-300">Loss: <span className="text-white font-medium">{data.loss_percentage}%</span></div>
+        <div className="text-gray-300">Period: <span className="text-white">{data.loss_year}</span></div>
         <div className="text-gray-300">Area: <span className="text-white">{data.area}</span></div>
         <div className="text-gray-300">Cause: <span className="text-yellow-400">{data.cause}</span></div>
       </div>
@@ -216,6 +190,9 @@ export default function MapsMinimal() {
   const [selectedRegion, setSelectedRegion] = useState("all");
 
   const lastFetchRef = useRef(0);
+
+  // Lazy-loaded map data from database
+  const { forestCover: dbForestCover, treeLoss: dbTreeLoss, loading: loadingMapData } = useMapData();
 
   /* -------------------- Fire Fetch (Optimized) -------------------- */
   const fetchFireData = useCallback(async (d: string, src: string) => {
@@ -306,25 +283,27 @@ export default function MapsMinimal() {
 
   const treeLossMarkers = useMemo(
     () =>
-      treeLossHotspots.map((d, i) => (
+      dbTreeLoss.map((d, i) => (
         <MapMarker
-          key={i}
+          key={d.id || i}
           longitude={d.longitude}
           latitude={d.latitude}
         >
-          <TreeLossMarker data={d} />
+          <TreeLossMarkerDB data={d} />
         </MapMarker>
       )),
-    []
+    [dbTreeLoss]
   );
 
   // Stats for tree loss
   const treeLossStats = useMemo(() => {
-    const critical = treeLossHotspots.filter(d => d.lossPercentage > 20).length;
-    const high = treeLossHotspots.filter(d => d.lossPercentage > 15 && d.lossPercentage <= 20).length;
-    const avgLoss = treeLossHotspots.reduce((sum, d) => sum + d.lossPercentage, 0) / treeLossHotspots.length;
-    return { critical, high, avgLoss, total: treeLossHotspots.length };
-  }, []);
+    const critical = dbTreeLoss.filter(d => d.loss_percentage > 20).length;
+    const high = dbTreeLoss.filter(d => d.loss_percentage > 15 && d.loss_percentage <= 20).length;
+    const avgLoss = dbTreeLoss.length > 0 
+      ? dbTreeLoss.reduce((sum, d) => sum + d.loss_percentage, 0) / dbTreeLoss.length 
+      : 0;
+    return { critical, high, avgLoss, total: dbTreeLoss.length };
+  }, [dbTreeLoss]);
 
   const region = regions[selectedRegion] || regions.all;
 
@@ -476,15 +455,17 @@ export default function MapsMinimal() {
               className="absolute inset-0"
             >
               <MapControls showZoom position="top-right" />
-              <MapGeoJSONLayer
-                id="forest-cover"
-                geojson={detailedForestCoverGeoJSON}
-                fillColor="#22c55e"
-                fillOpacity={0.5}
-                strokeColor="#16a34a"
-                strokeWidth={1}
-                strokeOpacity={0.7}
-              />
+              {dbForestCover && dbForestCover.features.length > 0 && (
+                <MapGeoJSONLayer
+                  id="forest-cover"
+                  geojson={dbForestCover}
+                  fillColor="#22c55e"
+                  fillOpacity={0.5}
+                  strokeColor="#16a34a"
+                  strokeWidth={1}
+                  strokeOpacity={0.7}
+                />
+              )}
               {treeLossMarkers}
             </Map>
           </div>
