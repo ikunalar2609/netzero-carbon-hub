@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-interface TreeLossHotspot {
+export interface TreeLossHotspot {
   id: string;
   region: string;
   latitude: number;
@@ -18,6 +18,15 @@ interface MapDataResponse {
   loading: boolean;
   error: string | null;
 }
+
+// Fallback data when DB is empty
+const fallbackTreeLoss: TreeLossHotspot[] = [
+  { id: "1", region: "Brazilian Amazon", latitude: -3.47, longitude: -62.22, loss_percentage: 18.5, loss_year: "2020-2024", area: "Amazonas State", cause: "Agriculture & Cattle" },
+  { id: "2", region: "Borneo (Kalimantan)", latitude: 0.79, longitude: 113.92, loss_percentage: 28.6, loss_year: "2020-2024", area: "Indonesian Borneo", cause: "Oil Palm Plantations" },
+  { id: "3", region: "Sumatra", latitude: -0.59, longitude: 101.34, loss_percentage: 31.2, loss_year: "2020-2024", area: "Riau Province", cause: "Pulp & Palm Oil" },
+  { id: "4", region: "DR Congo Basin", latitude: -0.02, longitude: 21.76, loss_percentage: 13.9, loss_year: "2020-2024", area: "Équateur Province", cause: "Subsistence Agriculture" },
+  { id: "5", region: "Siberia", latitude: 64.25, longitude: 100.25, loss_percentage: 12.8, loss_year: "2020-2024", area: "Krasnoyarsk Krai", cause: "Wildfires" },
+];
 
 // In-memory cache to avoid repeated fetches
 const cache: {
@@ -88,14 +97,18 @@ export function useMapData(regionFilter?: string): MapDataResponse {
 
       // Update cache
       cache.forestCover = geoJSON;
-      cache.treeLoss = treeLossResult.data || [];
+      cache.treeLoss = treeLossResult.data && treeLossResult.data.length > 0 
+        ? treeLossResult.data 
+        : fallbackTreeLoss;
       cache.timestamp = now;
 
       setForestCover(geoJSON);
-      setTreeLoss(treeLossResult.data || []);
+      setTreeLoss(cache.treeLoss);
     } catch (err: any) {
       console.error("Map data fetch error:", err);
       setError(err.message || "Failed to load map data");
+      // Use fallback on error
+      setTreeLoss(fallbackTreeLoss);
     } finally {
       setLoading(false);
       fetchingRef.current = false;
