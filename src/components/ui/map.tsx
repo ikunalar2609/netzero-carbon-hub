@@ -454,6 +454,231 @@ function MapGeoJSONLayer({
   return null
 }
 
+// MapHeatmapLayer component for heatmap visualization
+interface MapHeatmapLayerProps {
+  id: string
+  data: { longitude: number; latitude: number; intensity?: number }[]
+  radius?: number
+  intensity?: number
+  colorStops?: { stop: number; color: string }[]
+  opacity?: number
+}
+
+function MapHeatmapLayer({
+  id,
+  data,
+  radius = 20,
+  intensity = 1,
+  colorStops = [
+    { stop: 0, color: "rgba(0, 0, 0, 0)" },
+    { stop: 0.2, color: "#064e3b" },
+    { stop: 0.4, color: "#059669" },
+    { stop: 0.6, color: "#10b981" },
+    { stop: 0.8, color: "#34d399" },
+    { stop: 1, color: "#6ee7b7" },
+  ],
+  opacity = 0.85,
+}: MapHeatmapLayerProps) {
+  const map = useMap()
+
+  React.useEffect(() => {
+    if (!map || data.length === 0) return
+
+    const sourceId = `heatmap-source-${id}`
+    const layerId = `heatmap-layer-${id}`
+
+    const geojsonData: GeoJSON.FeatureCollection = {
+      type: "FeatureCollection",
+      features: data.map((point) => ({
+        type: "Feature",
+        properties: { intensity: point.intensity || 1 },
+        geometry: {
+          type: "Point",
+          coordinates: [point.longitude, point.latitude],
+        },
+      })),
+    }
+
+    const addLayer = () => {
+      try {
+        if (map.getLayer(layerId)) map.removeLayer(layerId)
+        if (map.getSource(sourceId)) map.removeSource(sourceId)
+
+        map.addSource(sourceId, {
+          type: "geojson",
+          data: geojsonData,
+        })
+
+        // Build color expression from colorStops
+        const heatmapColorExpr: (string | number | string[])[] = [
+          "interpolate",
+          ["linear"],
+          ["heatmap-density"],
+        ]
+        colorStops.forEach(({ stop, color }) => {
+          heatmapColorExpr.push(stop, color)
+        })
+
+        map.addLayer({
+          id: layerId,
+          type: "heatmap",
+          source: sourceId,
+          paint: {
+            "heatmap-weight": [
+              "interpolate",
+              ["linear"],
+              ["get", "intensity"],
+              0, 0,
+              1, 1,
+            ] as maplibregl.ExpressionSpecification,
+            "heatmap-intensity": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              0, intensity,
+              9, intensity * 3,
+            ] as maplibregl.ExpressionSpecification,
+            "heatmap-color": heatmapColorExpr as maplibregl.ExpressionSpecification,
+            "heatmap-radius": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              0, radius * 0.5,
+              9, radius * 3,
+            ] as maplibregl.ExpressionSpecification,
+            "heatmap-opacity": opacity,
+          },
+        })
+      } catch (e) {
+        console.error("Error adding heatmap layer:", e)
+      }
+    }
+
+    if (map.isStyleLoaded()) {
+      addLayer()
+    } else {
+      map.on("style.load", addLayer)
+    }
+
+    return () => {
+      map.off("style.load", addLayer)
+      try {
+        if (map.getLayer(layerId)) map.removeLayer(layerId)
+        if (map.getSource(sourceId)) map.removeSource(sourceId)
+      } catch (e) {
+        // Map might already be removed
+      }
+    }
+  }, [map, id, data, radius, intensity, colorStops, opacity])
+
+  return null
+}
+
+// MapGridOverlay component for lat/lon grid lines
+interface MapGridOverlayProps {
+  latSpacing?: number
+  lonSpacing?: number
+  color?: string
+  opacity?: number
+}
+
+function MapGridOverlay({
+  latSpacing = 15,
+  lonSpacing = 15,
+  color = "rgba(255, 255, 255, 0.25)",
+  opacity = 0.4,
+}: MapGridOverlayProps) {
+  const map = useMap()
+
+  React.useEffect(() => {
+    if (!map) return
+
+    const sourceId = "grid-overlay-source"
+    const layerId = "grid-overlay-layer"
+
+    // Generate grid lines
+    const features: GeoJSON.Feature[] = []
+
+    // Latitude lines (horizontal)
+    for (let lat = -75; lat <= 75; lat += latSpacing) {
+      features.push({
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [-180, lat],
+            [180, lat],
+          ],
+        },
+      })
+    }
+
+    // Longitude lines (vertical)
+    for (let lon = -180; lon <= 180; lon += lonSpacing) {
+      features.push({
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [lon, -85],
+            [lon, 85],
+          ],
+        },
+      })
+    }
+
+    const gridData: GeoJSON.FeatureCollection = {
+      type: "FeatureCollection",
+      features,
+    }
+
+    const addGrid = () => {
+      try {
+        if (map.getLayer(layerId)) map.removeLayer(layerId)
+        if (map.getSource(sourceId)) map.removeSource(sourceId)
+
+        map.addSource(sourceId, {
+          type: "geojson",
+          data: gridData,
+        })
+
+        map.addLayer({
+          id: layerId,
+          type: "line",
+          source: sourceId,
+          paint: {
+            "line-color": color,
+            "line-width": 0.5,
+            "line-opacity": opacity,
+          },
+        })
+      } catch (e) {
+        console.error("Error adding grid overlay:", e)
+      }
+    }
+
+    if (map.isStyleLoaded()) {
+      addGrid()
+    } else {
+      map.on("style.load", addGrid)
+    }
+
+    return () => {
+      map.off("style.load", addGrid)
+      try {
+        if (map.getLayer(layerId)) map.removeLayer(layerId)
+        if (map.getSource(sourceId)) map.removeSource(sourceId)
+      } catch (e) {
+        // Map might already be removed
+      }
+    }
+  }, [map, latSpacing, lonSpacing, color, opacity])
+
+  return null
+}
+
 // Helper function to generate arc points for curved routes
 function generateArcPoints(
   start: [number, number],
@@ -484,4 +709,4 @@ function generateArcPoints(
   return points
 }
 
-export { Map, MapControls, MapMarker, MapRoute, MapGeoJSONLayer, generateArcPoints }
+export { Map, MapControls, MapMarker, MapRoute, MapGeoJSONLayer, MapHeatmapLayer, MapGridOverlay, generateArcPoints }
