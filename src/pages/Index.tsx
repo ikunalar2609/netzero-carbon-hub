@@ -68,7 +68,7 @@ const Index = () => {
           <motion.p 
             variants={fadeInUp}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed text-gray-700"
+            className="text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed text-gray-100"
           >
             Simple, powerful carbon management for sustainable agriculture
           </motion.p>
