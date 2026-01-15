@@ -593,7 +593,7 @@ export default function MapsMinimal() {
           </div>
         </section>
 
-        <footer className="text-center text-xs text-gray-500 space-y-1">
+        <footer className="text-center text-xs text-black space-y-1">
           <div>NASA FIRMS • Global Forest Watch • Hansen/UMD/Google/USGS/NASA Global Forest Change</div>
           <div className="text-black">Data sources for scientific and educational purposes</div>
         </footer>
