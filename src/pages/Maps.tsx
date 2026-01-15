@@ -571,17 +571,17 @@ export default function MapsMinimal() {
               <span className="ml-2">Period: 2020-2024 • GFC v1.12</span>
             </div> */}
             <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1.5 text-gray-500">
+              <span className="flex items-center gap-1.5 text-gray-100">
                 <span className="w-2 h-2 rounded-full bg-red-600 border border-white/50"></span> 
                 Critical (&gt;20% loss)
               </span>
 
-              <span className="flex items-center gap-1.5 text-gray-500">
+              <span className="flex items-center gap-1.5 text-gray-100">
                 <span className="w-2 h-2 rounded-full bg-orange-500 border border-white/50"></span> 
                 High (15–20%)
               </span>
 
-              <span className="flex items-center gap-1.5 text-gray-500">
+              <span className="flex items-center gap-1.5 text-gray-100">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 border border-white/50"></span> 
                 Moderate
               </span>
