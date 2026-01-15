@@ -586,7 +586,7 @@ export default function MapsMinimal() {
                 Moderate
               </span>
 
-              <span className="ml-1 text-gray-500">
+              <span className="ml-2 text-gray-500">
                 Period: 2020–2024 • GFC v1.12
               </span>
             </div>
