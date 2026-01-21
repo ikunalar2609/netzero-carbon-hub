@@ -319,7 +319,7 @@ export default function MapsMinimal() {
             Environmental Maps
           </h1>
           <p className="text-sm text-gray-600">
-            Fast, minimal, data-first
+            Wildfire, Natural Forest Cover, Global Forest Change 2000-2024
           </p>
         </div>
 
