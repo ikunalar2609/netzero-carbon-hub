@@ -42,7 +42,7 @@ serve(async (req) => {
     const regionFilter = url.searchParams.get("region");
 
     const response: {
-      forestCover?: GeoJSON.FeatureCollection;
+      forestCover?: { type: string; features: unknown[] };
       treeLoss?: TreeLossHotspot[];
     } = {};
 
@@ -111,8 +111,9 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Map data error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch map data";
     return new Response(
-      JSON.stringify({ error: error.message || "Failed to fetch map data" }),
+      JSON.stringify({ error: errorMessage }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
