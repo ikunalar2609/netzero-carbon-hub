@@ -112,10 +112,7 @@ const FireMarker = ({ fire }: { fire: FireData }) => {
       <div
         className={`w-3 h-3 rounded-full border border-white/30 ${color}`}
       />
-      <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2  opacity-0 group-hover:opacity-100 transition
-          bg-black/90 text-white
-          text-[11px] px-2 py-1 rounded whitespace-nowrap z-50
-          shadow-lg">
+      <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-900 text-white text-[11px] px-3 py-2 rounded-md whitespace-nowrap z-[9999] shadow-xl border border-white/20">
         <div className="font-medium">{fire.satellite}</div>
         <div>
           {fire.acq_date} • FRP {fire.frp.toFixed(1)} MW
