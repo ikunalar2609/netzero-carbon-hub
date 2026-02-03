@@ -453,10 +453,10 @@ export default function MapsMinimal() {
           </div>
           
           {/* Full-width heatmap container */}
-          <div className="relative h-[500px] md:h-[600px] w-full bg-[#0d0d0d]">
+          <div className="relative h-[550px] md:h-[650px] w-full bg-[#080808]">
             <Map
-              center={[0, 20]}
-              zoom={1.4}
+              center={[0, 15]}
+              zoom={1.6}
               theme="dark"
               className="absolute inset-0"
             >
@@ -464,53 +464,56 @@ export default function MapsMinimal() {
               
               {/* Grid overlay for lat/lon lines */}
               <MapGridOverlay 
-                latSpacing={15} 
-                lonSpacing={15} 
-                color="rgba(255, 255, 255, 0.15)"
-                opacity={0.5}
+                latSpacing={20} 
+                lonSpacing={30} 
+                color="rgba(255, 255, 255, 0.08)"
+                opacity={0.4}
               />
               
-              {/* Heatmap layer for forest density */}
+              {/* Heatmap layer for forest density - expanded coverage */}
               <MapHeatmapLayer
                 id="forest-heatmap"
                 data={forestData.map(f => ({
                   longitude: f.longitude || 0,
                   latitude: f.latitude || 0,
-                  intensity: Math.min(f.gfc_extent_ha / 500000000, 1)
+                  intensity: Math.min(f.gfc_extent_ha / 300000000, 1)
                 }))}
-                radius={35}
-                intensity={1.2}
+                radius={60}
+                intensity={1.5}
                 colorStops={[
                   { stop: 0, color: "rgba(0, 0, 0, 0)" },
-                  { stop: 0.1, color: "#052e16" },
-                  { stop: 0.25, color: "#14532d" },
-                  { stop: 0.4, color: "#166534" },
-                  { stop: 0.55, color: "#15803d" },
-                  { stop: 0.7, color: "#22c55e" },
-                  { stop: 0.85, color: "#4ade80" },
+                  { stop: 0.05, color: "#022c22" },
+                  { stop: 0.15, color: "#052e16" },
+                  { stop: 0.3, color: "#14532d" },
+                  { stop: 0.45, color: "#166534" },
+                  { stop: 0.6, color: "#15803d" },
+                  { stop: 0.75, color: "#22c55e" },
+                  { stop: 0.9, color: "#4ade80" },
                   { stop: 1, color: "#86efac" },
                 ]}
-                opacity={0.9}
+                opacity={0.95}
               />
 
-              {/* Deforestation hotspots as red/orange heatmap overlay */}
+              {/* Deforestation hotspots as red/orange heatmap overlay - enhanced visibility */}
               <MapHeatmapLayer
                 id="deforestation-heatmap"
                 data={dbTreeLoss.map(d => ({
                   longitude: d.longitude,
                   latitude: d.latitude,
-                  intensity: Math.min(d.loss_percentage / 25, 1)
+                  intensity: Math.min(d.loss_percentage / 20, 1)
                 }))}
-                radius={25}
-                intensity={0.8}
+                radius={45}
+                intensity={1.1}
                 colorStops={[
                   { stop: 0, color: "rgba(0, 0, 0, 0)" },
-                  { stop: 0.2, color: "rgba(234, 88, 12, 0.4)" },
-                  { stop: 0.5, color: "rgba(239, 68, 68, 0.6)" },
-                  { stop: 0.8, color: "rgba(220, 38, 38, 0.8)" },
+                  { stop: 0.15, color: "rgba(251, 146, 60, 0.5)" },
+                  { stop: 0.35, color: "rgba(234, 88, 12, 0.6)" },
+                  { stop: 0.55, color: "rgba(239, 68, 68, 0.75)" },
+                  { stop: 0.75, color: "rgba(220, 38, 38, 0.85)" },
+                  { stop: 0.9, color: "rgba(185, 28, 28, 0.9)" },
                   { stop: 1, color: "#fca5a5" },
                 ]}
-                opacity={0.75}
+                opacity={0.85}
               />
 
               {/* Tree loss markers for detailed info on hover */}
@@ -518,14 +521,17 @@ export default function MapsMinimal() {
             </Map>
             
             {/* Coordinate labels overlay */}
-            <div className="absolute top-2 left-2 text-[10px] text-gray-500 font-mono pointer-events-none">
+            <div className="absolute top-3 left-3 text-[10px] text-gray-400 font-mono pointer-events-none bg-black/40 px-1.5 py-0.5 rounded">
               90°N
             </div>
-            <div className="absolute bottom-2 left-2 text-[10px] text-gray-500 font-mono pointer-events-none">
+            <div className="absolute bottom-3 left-3 text-[10px] text-gray-400 font-mono pointer-events-none bg-black/40 px-1.5 py-0.5 rounded">
               90°S
             </div>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-mono pointer-events-none">
-              0° (Equator)
+            <div className="absolute bottom-3 right-3 text-[10px] text-gray-400 font-mono pointer-events-none bg-black/40 px-1.5 py-0.5 rounded">
+              180°E
+            </div>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] text-gray-400 font-mono pointer-events-none bg-black/40 px-1.5 py-0.5 rounded">
+              0° (Prime Meridian)
             </div>
           </div>
           
