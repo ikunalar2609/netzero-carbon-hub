@@ -86,7 +86,6 @@ const HomeHeader = () => {
                 onMouseEnter={(e) => e.currentTarget.style.color = 'hsl(var(--brand-primary))'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'hsl(var(--text-secondary))'}
               >
-                <BarChart3 className="h-4 w-4" />
                 <span>Dashboard</span>
               </Link>
             </motion.div>
