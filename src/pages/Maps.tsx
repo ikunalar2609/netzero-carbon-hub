@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { Link } from "react-router-dom";
+ import { ArrowLeft } from "lucide-react";
 import { Map, MapMarker, MapControls, MapGeoJSONLayer, MapHeatmapLayer, MapGridOverlay } from "@/components/ui/map";
 import {
   parseForestExcel,
@@ -310,7 +312,16 @@ export default function MapsMinimal() {
   /* -------------------- UI -------------------- */
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center">
+      <header className="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center border-b border-gray-200 mb-6">
+        <div className="flex items-center gap-4">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Home</span>
+          </Link>
+          <div className="h-6 w-px bg-gray-300" />
         <div>
           <h1 className="text-2xl font-semibold">
             Environmental Maps
@@ -318,6 +329,7 @@ export default function MapsMinimal() {
           <p className="text-sm text-gray-600">
             Wildfire, Natural Forest Cover, Global Forest Change 2000-2024
           </p>
+        </div>
         </div>
 
         <div className="flex gap-2 text-sm">
