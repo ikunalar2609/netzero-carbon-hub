@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Calculator,
-  Database,
+  FileSpreadsheet,
   Code,
+  Database,
   ArrowRight,
   Zap,
   BookOpen
@@ -14,6 +15,7 @@ import {
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
 import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
+ import { CarbonAccountingTemplate } from "@/components/farmly/CarbonAccountingTemplate";
 
 const Farmly = () => {
   const [activeTab, setActiveTab] = useState("calculator");
@@ -102,8 +104,9 @@ const Farmly = () => {
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-gray-100">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 mb-12 bg-gray-100">
               <TabsTrigger value="calculator" className="text-sm">Calculator</TabsTrigger>
+              <TabsTrigger value="template" className="text-sm">Template</TabsTrigger>
               <TabsTrigger value="history" className="text-sm">History</TabsTrigger>
               <TabsTrigger value="explorer" className="text-sm">Explorer</TabsTrigger>
             </TabsList>
@@ -115,6 +118,16 @@ const Farmly = () => {
                 transition={{ duration: 0.6 }}
               >
                 <EmissionCalculator />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="template" className="mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <CarbonAccountingTemplate />
               </motion.div>
             </TabsContent>
 
