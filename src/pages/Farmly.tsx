@@ -106,7 +106,7 @@ const Farmly = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 mb-12 bg-gray-100">
               <TabsTrigger value="calculator" className="text-sm">Calculator</TabsTrigger>
-              <TabsTrigger value="template" className="text-sm">Template</TabsTrigger>
+              <TabsTrigger value="template" className="text-sm">CAT</TabsTrigger>
               <TabsTrigger value="history" className="text-sm">History</TabsTrigger>
               <TabsTrigger value="explorer" className="text-sm">Explorer</TabsTrigger>
             </TabsList>
