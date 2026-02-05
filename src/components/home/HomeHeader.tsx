@@ -62,7 +62,7 @@ const HomeHeader = () => {
                 onMouseEnter={(e) => e.currentTarget.style.color = 'hsl(var(--brand-primary))'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'hsl(var(--text-secondary))'}
               >
-                <span>Farmly API</span>
+                <span>Farmly CAT</span>
               </Link>
             </motion.div>
             
