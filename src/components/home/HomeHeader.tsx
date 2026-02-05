@@ -153,7 +153,7 @@ const HomeHeader = () => {
                 style={{ color: 'hsl(var(--text-secondary))' }}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span>Farmly API</span>
+                <span>Farmly</span>
               </Link>
               
               <Link 
