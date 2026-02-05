@@ -37,7 +37,7 @@ const Farmly = () => {
             className="space-y-8"
           >
             <span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600">
-              Carbon Emissions API
+              Carbon Emissions Accounting
             </span>
             
             <h1 className="text-6xl md:text-8xl font-light tracking-tight text-gray-900">
