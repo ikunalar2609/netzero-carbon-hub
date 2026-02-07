@@ -31,7 +31,7 @@ import {
 import { toast } from "sonner";
 
 const FarmlyDocs = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState(searchParams.get("section") || "overview");
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const FarmlyDocs = () => {
                   key={section.id}
                   variant={activeSection === section.id ? "secondary" : "ghost"}
                   className="w-full justify-start"
-                  onClick={() => setActiveSection(section.id)}
+                  onClick={() => { setActiveSection(section.id); setSearchParams({ section: section.id }); }}
                 >
                   <section.icon className="h-4 w-4 mr-2" />
                   {section.label}
