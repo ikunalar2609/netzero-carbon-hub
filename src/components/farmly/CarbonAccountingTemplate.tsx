@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FileSpreadsheet, 
@@ -19,7 +20,8 @@ import {
   Eye,
   Edit3,
   Copy,
-  Clock
+  Clock,
+  BookOpen
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -545,6 +547,11 @@ export const CarbonAccountingTemplate = () => {
               </h2>
               <p className="text-sm text-gray-600">
                 BeZero Carbon standardized format for carbon project reporting
+                {" · "}
+                <RouterLink to="/docs?section=cat" className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 underline underline-offset-2">
+                  <BookOpen className="h-3 w-3" />
+                  Read Documentation
+                </RouterLink>
               </p>
             </div>
           </div>

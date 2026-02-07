@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ import {
   Copy, 
   Database, 
   ExternalLink, 
+  FileSpreadsheet,
   FileText, 
   Leaf, 
   Plane, 
@@ -30,7 +31,13 @@ import {
 import { toast } from "sonner";
 
 const FarmlyDocs = () => {
-  const [activeSection, setActiveSection] = useState("overview");
+  const [searchParams] = useSearchParams();
+  const [activeSection, setActiveSection] = useState(searchParams.get("section") || "overview");
+
+  useEffect(() => {
+    const section = searchParams.get("section");
+    if (section) setActiveSection(section);
+  }, [searchParams]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -44,6 +51,7 @@ const FarmlyDocs = () => {
     { id: "endpoints", label: "API Endpoints", icon: Database },
     { id: "calculations", label: "Calculation Methodology", icon: Calculator },
     { id: "emission-factors", label: "Emission Factors", icon: Leaf },
+    { id: "cat", label: "Carbon Accounting", icon: FileSpreadsheet },
     { id: "examples", label: "Code Examples", icon: FileText },
     { id: "errors", label: "Error Handling", icon: AlertCircle },
   ];
@@ -109,6 +117,7 @@ const FarmlyDocs = () => {
             {activeSection === "endpoints" && <EndpointsSection copyToClipboard={copyToClipboard} />}
             {activeSection === "calculations" && <CalculationsSection />}
             {activeSection === "emission-factors" && <EmissionFactorsSection />}
+            {activeSection === "cat" && <CATSection />}
             {activeSection === "examples" && <ExamplesSection copyToClipboard={copyToClipboard} />}
             {activeSection === "errors" && <ErrorsSection />}
           </motion.div>
@@ -1894,6 +1903,250 @@ const ErrorsSection = () => (
             </tbody>
           </table>
         </div>
+      </CardContent>
+    </Card>
+  </div>
+);
+
+// Carbon Accounting Template Section
+const CATSection = () => (
+  <div className="space-y-8">
+    <div>
+      <h2 className="text-3xl font-bold text-foreground mb-4">Carbon Accounting Template (CAT)</h2>
+      <p className="text-lg text-muted-foreground leading-relaxed">
+        The Carbon Accounting Template is a standardized digital format for recording, tracking, and reporting 
+        project-based carbon credits. Based on BeZero Carbon's CAT v1.0, it provides a structured framework 
+        for both forecast (ex ante) and verified (ex post) carbon accounting.
+      </p>
+    </div>
+
+    <Card className="bg-emerald-50/50 border-emerald-200">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileSpreadsheet className="h-5 w-5 text-emerald-600" />
+          Getting Started
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm text-muted-foreground">
+        <p>Access the Carbon Accounting Template from the <strong>Template</strong> tab on the Farmly dashboard. The template is organized into the following sections:</p>
+        <ol className="list-decimal list-inside space-y-1 ml-2">
+          <li><strong>Section 1.1: Project Information</strong> — Core project metadata</li>
+          <li><strong>Table 1.2: Project Entities</strong> — Stakeholder details</li>
+          <li><strong>Table 1.3: Documentation Links</strong> — Supporting documents</li>
+          <li><strong>Table 2.1: Forecast Issuance (Ex Ante)</strong> — Projected carbon credits</li>
+          <li><strong>Table 2.2: Ex Post Issuance</strong> — Verified carbon credits</li>
+        </ol>
+      </CardContent>
+    </Card>
+
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-foreground">Section 1.1: Project Information</h3>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-4">
+            Record the basic identifiers and timeline of your carbon project as registered under the relevant standard body.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left p-2 font-medium">Field</th>
+                  <th className="text-left p-2 font-medium">Description</th>
+                  <th className="text-left p-2 font-medium">Example</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.1 Project Name</td><td className="p-2">Official project name as registered</td><td className="p-2">Amazon REDD+ Project</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.2 Project Country</td><td className="p-2">ISO-3 country code(s)</td><td className="p-2">BRA</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.3 Standard Body</td><td className="p-2">Accrediting standard body</td><td className="p-2">Verra (VCS)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.4 Project Code</td><td className="p-2">Registry project identifier</td><td className="p-2">VCS-1234</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.5 Project Start Date</td><td className="p-2">Date project activities commenced</td><td className="p-2">2020-01-15</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.6 Crediting Period Start</td><td className="p-2">First date project can claim credits</td><td className="p-2">2020-06-01</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">1.1.7 Crediting Period End</td><td className="p-2">Last date project can claim credits</td><td className="p-2">2050-05-31</td></tr>
+                <tr><td className="p-2 font-mono text-xs">1.1.8 Commitment Period</td><td className="p-2">Duration ensuring permanence of credits</td><td className="p-2">30 years</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-foreground">Table 1.2: Project Entities</h3>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-4">
+            Record all stakeholders involved in the project. Each entity should include their role, legal name, and contact details.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left p-2 font-medium">Field</th>
+                  <th className="text-left p-2 font-medium">Description</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">Role</td><td className="p-2">Project Owner, Developer/Proponent, Auditor/VVB, Validation Body, Verification Body</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">Legal Name</td><td className="p-2">Registered legal name of the entity</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">Contact Person</td><td className="p-2">Primary contact individual</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">Address</td><td className="p-2">Registered business address</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">Telephone</td><td className="p-2">Contact phone number</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">Email</td><td className="p-2">Contact email address</td></tr>
+                <tr><td className="p-2 font-mono text-xs">Website URL</td><td className="p-2">Entity's website or registry profile URL</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-foreground">Table 1.3: Documentation Links</h3>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-4">
+            Link to all publicly available project documentation. Supported document types include:
+          </p>
+          <ul className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+            {["Project Design Document (PDD)", "Validation Report", "Verification Report", "Monitoring Report", "Non-Permanence Risk Assessment", "Cancellation Certificate"].map((doc, i) => (
+              <li key={i} className="flex items-center gap-2">
+                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                {doc}
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-foreground">Table 2.1: Forecast Issuance (Ex Ante)</h3>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-4">
+            Record forecast (projected) carbon credit issuance per vintage year. Data is sourced from the project description, 
+            validation report, and non-permanence risk assessment. All values are in <strong>tCO₂e</strong> (tonnes of CO₂ equivalent).
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-emerald-50/50">
+                  <th className="text-left p-2 font-medium">Column</th>
+                  <th className="text-left p-2 font-medium">Description</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.1 Crediting Period</td><td className="p-2">Sequential crediting period number</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.2 Vintage Year</td><td className="p-2">Calendar year the credits correspond to</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.3 Baseline Changes</td><td className="p-2">Change in carbon stocks under the baseline scenario (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.4 Project Stock Changes</td><td className="p-2">Actual/projected change in project carbon stocks (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.5 Assumed Leakage</td><td className="p-2">Estimated emissions displaced outside the project boundary (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.6 Risk Buffer Allocation</td><td className="p-2">Credits allocated to the buffer pool for non-permanence risk (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.7 Risk Buffer Release</td><td className="p-2">Credits released from the buffer pool (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.8 Paid Risk Buffer</td><td className="p-2">Buffer credits that have been compensated (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.1.9 Deducted Credits</td><td className="p-2">Credits deducted for other adjustments (tCO₂e)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs bg-emerald-50">2.1.10 Forecast Issuance</td><td className="p-2 bg-emerald-50"><strong>Net forecast credits to be issued (tCO₂e)</strong></td></tr>
+                <tr><td className="p-2 font-mono text-xs">2.1.11 Methodology</td><td className="p-2">Applied methodology (e.g., VM0007, VM0009)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4 bg-muted/50 border border-border rounded-lg p-3">
+            <p className="text-xs text-muted-foreground">
+              <strong>Formula:</strong> Forecast Issuance = Baseline Changes − Project Stock Changes − Leakage − Buffer Allocation + Buffer Release − Paid Buffer − Deducted Credits
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-foreground">Table 2.2: Ex Post Issuance</h3>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-4">
+            Record verified (actual) carbon credit issuance per vintage year. Data is sourced from monitoring reports 
+            and verification reports. Includes additional fields for georeferencing and responsible parties.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-blue-50/50">
+                  <th className="text-left p-2 font-medium">Column</th>
+                  <th className="text-left p-2 font-medium">Description</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.2.1–2.2.9</td><td className="p-2">Same structure as Ex Ante (Period, Vintage, Baseline, Project, Leakage, Buffers, Deductions)</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs bg-blue-50">2.2.10 Ex Post Issuance</td><td className="p-2 bg-blue-50"><strong>Net verified credits issued (tCO₂e)</strong></td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.2.11 Issuance Validation</td><td className="p-2">Validation/verification status</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.2.12 Georef Source</td><td className="p-2">URL to georeferenced project boundary or map data</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.2.13 Project Owner</td><td className="p-2">Auto-populated from Table 1.2 entities</td></tr>
+                <tr className="border-b border-border/50"><td className="p-2 font-mono text-xs">2.2.14 Project Developer</td><td className="p-2">Auto-populated from Table 1.2 entities</td></tr>
+                <tr><td className="p-2 font-mono text-xs">2.2.15 Project Auditor</td><td className="p-2">Auto-populated from Table 1.2 entities</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-foreground">Saving & Exporting</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Save Template</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground space-y-2">
+            <p>Click <strong>Save Template</strong> to store your current data locally. Saved templates appear in the "Saved Templates" section where you can:</p>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>Preview the full template in a dialog</li>
+              <li>Load and edit a saved template</li>
+              <li>Delete templates you no longer need</li>
+            </ul>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Export to CSV</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground space-y-2">
+            <p>Click <strong>Export CSV</strong> to download a structured CSV file containing all sections. The export follows the standardized CAT format and includes:</p>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>All project metadata and entity details</li>
+              <li>Ex Ante and Ex Post tables with totals</li>
+              <li>Documentation links</li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+
+    <Card className="bg-muted/50">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Info className="h-5 w-5" />
+          Best Practices
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          {[
+            "All data should be sourced from publicly available project documentation",
+            "Use ISO-3 country codes (e.g., BRA, IDN, COD) for the Project Country field",
+            "Ensure the crediting period start and end dates align with registry records",
+            "Risk buffer allocations should match the non-permanence risk assessment report",
+            "Save templates frequently to avoid data loss during extended editing sessions",
+            "Use the Preview feature to verify data accuracy before exporting to CSV",
+            "Ex Post records should be updated only after verification reports are finalized",
+          ].map((tip, i) => (
+            <li key={i} className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+              {tip}
+            </li>
+          ))}
+        </ul>
       </CardContent>
     </Card>
   </div>
