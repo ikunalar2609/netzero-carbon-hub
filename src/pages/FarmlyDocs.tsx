@@ -26,7 +26,9 @@ import {
   Zap,
   Info,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,7 +38,11 @@ const FarmlyDocs = () => {
 
   useEffect(() => {
     const section = searchParams.get("section");
-    if (section) setActiveSection(section);
+    if (section) {
+      setActiveSection(section);
+      const apiIds = ["quickstart", "authentication", "endpoints", "examples", "errors"];
+      if (apiIds.includes(section)) setApiOpen(true);
+    }
   }, [searchParams]);
 
   const copyToClipboard = (text: string) => {
@@ -44,17 +50,23 @@ const FarmlyDocs = () => {
     toast.success("Copied to clipboard!");
   };
 
-  const sections = [
-    { id: "overview", label: "Overview", icon: BookOpen },
+  const apiSubSections = [
     { id: "quickstart", label: "Quick Start", icon: Zap },
     { id: "authentication", label: "Authentication", icon: Code },
     { id: "endpoints", label: "API Endpoints", icon: Database },
-    { id: "calculations", label: "Calculation Methodology", icon: Calculator },
-    { id: "emission-factors", label: "Emission Factors", icon: Leaf },
-    { id: "cat", label: "Carbon Accounting", icon: FileSpreadsheet },
     { id: "examples", label: "Code Examples", icon: FileText },
     { id: "errors", label: "Error Handling", icon: AlertCircle },
   ];
+
+  const sections = [
+    { id: "overview", label: "Overview", icon: BookOpen },
+    { id: "calculations", label: "Calculation Methodology", icon: Calculator },
+    { id: "emission-factors", label: "Emission Factors", icon: Leaf },
+    { id: "cat", label: "Carbon Accounting", icon: FileSpreadsheet },
+  ];
+
+  const isApiSection = apiSubSections.some(s => s.id === activeSection);
+  const [apiOpen, setApiOpen] = useState(isApiSection);
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,7 +100,46 @@ const FarmlyDocs = () => {
         <aside className="w-64 shrink-0 border-r border-border sticky top-16 h-[calc(100vh-4rem)]">
           <ScrollArea className="h-full py-6 px-4">
             <nav className="space-y-1">
-              {sections.map((section) => (
+              {/* Overview */}
+              <Button
+                variant={activeSection === "overview" ? "secondary" : "ghost"}
+                className="w-full justify-start"
+                onClick={() => { setActiveSection("overview"); setSearchParams({ section: "overview" }); }}
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                Overview
+              </Button>
+
+              {/* API Dropdown */}
+              <div>
+                <Button
+                  variant={isApiSection ? "secondary" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setApiOpen(!apiOpen)}
+                >
+                  <Code className="h-4 w-4 mr-2" />
+                  API
+                  {apiOpen ? <ChevronDown className="h-4 w-4 ml-auto" /> : <ChevronRight className="h-4 w-4 ml-auto" />}
+                </Button>
+                {apiOpen && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
+                    {apiSubSections.map((section) => (
+                      <Button
+                        key={section.id}
+                        variant={activeSection === section.id ? "secondary" : "ghost"}
+                        className="w-full justify-start text-sm h-8"
+                        onClick={() => { setActiveSection(section.id); setSearchParams({ section: section.id }); }}
+                      >
+                        <section.icon className="h-3.5 w-3.5 mr-2" />
+                        {section.label}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Remaining top-level sections */}
+              {sections.filter(s => s.id !== "overview").map((section) => (
                 <Button
                   key={section.id}
                   variant={activeSection === section.id ? "secondary" : "ghost"}
