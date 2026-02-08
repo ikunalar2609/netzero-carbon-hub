@@ -1,11 +1,10 @@
-
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
 
-  // While checking authentication status, show nothing
+  // While checking authentication status, show nothing ksks
   if (loading) {
     return null;
   }
