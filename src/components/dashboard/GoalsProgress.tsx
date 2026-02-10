@@ -37,10 +37,10 @@ const GoalsProgress = () => {
   ];
 
   return (
-    <Card>
+    <Card className="bg-[#141414] border-white/10">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Goals Progress</CardTitle>
-        <Button variant="outline" size="sm" className="h-8 gap-1">
+        <CardTitle className="text-lg font-semibold text-white">Goals Progress</CardTitle>
+        <Button variant="outline" size="sm" className="h-8 gap-1 bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
           <span>View All</span>
           <ArrowUpRight className="h-3.5 w-3.5" />
         </Button>
@@ -50,30 +50,42 @@ const GoalsProgress = () => {
           {goals.map((goal) => (
             <div key={goal.id} className="space-y-2">
               <div className="flex justify-between items-center">
-                <h4 className="text-sm font-medium">{goal.name}</h4>
+                <h4 className="text-sm font-medium text-gray-200">{goal.name}</h4>
                 <span 
                   className="text-xs font-medium px-2 py-1 rounded-full"
                   style={{ 
                     backgroundColor: goal.status === "On Track" 
-                      ? "#E6F7F1" 
+                      ? "rgba(16, 185, 129, 0.15)" 
                       : goal.status === "At Risk" 
-                        ? "#FFF8E6" 
-                        : "#FFDEE2",
+                        ? "rgba(245, 158, 11, 0.15)" 
+                        : "rgba(239, 68, 68, 0.15)",
                     color: goal.status === "On Track" 
-                      ? "#09AB75" 
+                      ? "#10b981" 
                       : goal.status === "At Risk" 
-                        ? "#FFC745" 
-                        : "#EA384C"
+                        ? "#f59e0b" 
+                        : "#ef4444"
                   }}
                 >
                   {goal.status}
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <Progress value={goal.progress} className="h-2" />
-                <span className="text-sm font-medium w-10">{goal.progress}%</span>
+                <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ 
+                      width: `${goal.progress}%`,
+                      background: goal.status === "On Track" 
+                        ? "linear-gradient(90deg, #10b981, #34d399)" 
+                        : goal.status === "At Risk" 
+                          ? "linear-gradient(90deg, #f59e0b, #fbbf24)" 
+                          : "linear-gradient(90deg, #ef4444, #f87171)"
+                    }}
+                  />
+                </div>
+                <span className="text-sm font-medium w-10 text-gray-300">{goal.progress}%</span>
               </div>
-              <p className="text-xs text-muted-foreground">Target: {goal.target}</p>
+              <p className="text-xs text-gray-500">Target: {goal.target}</p>
             </div>
           ))}
         </div>

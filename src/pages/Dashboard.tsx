@@ -30,9 +30,9 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="space-y-6 animate-slide-up">
-        <Skeleton className="h-12 w-64" />
+        <Skeleton className="h-12 w-64 bg-white/5" />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32" />)}
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32 bg-white/5" />)}
         </div>
       </div>
     );
@@ -42,8 +42,8 @@ const Dashboard = () => {
     <div className="space-y-6 animate-slide-up">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Your Dashboard</h1>
-          <p className="text-muted-foreground">Track your carbon reduction progress and reach your FarmlyCarbon goals</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Your Dashboard</h1>
+          <p className="text-gray-400">Track your carbon reduction progress and reach your FarmlyCarbon goals</p>
         </div>
         <SmartExport />
       </div>
@@ -101,15 +101,15 @@ const Dashboard = () => {
       {/* Carbon Market Insights Section - API Data */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Carbon Market Insights</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-white">Carbon Market Insights</h2>
           <Link to="/dashboard/carbon-market">
-            <Button variant="outline" size="sm" className="gap-1">
+            <Button variant="outline" size="sm" className="gap-1 bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
               View Full Market Section
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-500">
           Live data from Carbonmark API (https://v16.api.carbonmark.com)
         </p>
       </div>
