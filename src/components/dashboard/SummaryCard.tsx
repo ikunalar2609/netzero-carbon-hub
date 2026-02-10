@@ -24,27 +24,27 @@ const SummaryCard = ({
   className,
 }: SummaryCardProps) => {
   return (
-    <Card className={cn("overflow-hidden transition-all duration-200 hover:shadow-lg bg-[#141414] border-white/10", className)}>
+    <Card className={cn("overflow-hidden transition-all duration-200 hover:shadow-md", className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
-        {Icon && <Icon className="h-4 w-4 text-emerald-500" />}
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-white">{value}</div>
+        <div className="text-2xl font-bold">{value}</div>
         {(description || trend) && (
           <div className="flex items-center mt-1">
             {trend && (
               <span
                 className={cn(
                   "text-xs font-medium mr-2",
-                  trend.isPositive ? "text-emerald-400" : "text-red-400"
+                  trend.isPositive ? "text-green-500" : "text-red-500"
                 )}
               >
                 {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}%
               </span>
             )}
             {description && (
-              <p className="text-xs text-gray-500">{description}</p>
+              <p className="text-xs text-muted-foreground">{description}</p>
             )}
           </div>
         )}

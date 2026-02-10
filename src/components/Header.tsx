@@ -44,11 +44,12 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Searching for:", searchTerm);
+    // Implement search functionality here
   };
 
   return (
     <motion.header 
-      className="sticky top-0 z-10 bg-[#111111]/95 backdrop-blur-lg border-b border-white/10 h-16 flex items-center px-4 md:px-6"
+      className="sticky top-0 z-10 bg-gradient-to-r from-white/90 to-gray-50/90 dark:from-gray-900/90 dark:to-gray-800/90 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 h-16 flex items-center px-4 md:px-6 shadow-lg"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -60,7 +61,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
         <Button
           variant="ghost"
           size="icon"
-          className="mr-4 md:hidden text-gray-300 hover:bg-white/10 hover:text-white"
+          className="mr-4 md:hidden hover:bg-gray-100 dark:hover:bg-gray-800"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <MenuIcon className="h-6 w-6" />
@@ -69,7 +70,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
       </motion.div>
       
       <motion.h1
-        className="text-xl font-bold text-white mr-4"
+        className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mr-4"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
@@ -87,11 +88,11 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
         <Input
           type="search"
           placeholder="Search..."
-          className="pl-10 pr-4 bg-white/5 border-white/10 text-gray-200 placeholder:text-gray-500 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+          className="pl-10 pr-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200/50 dark:border-gray-700/50 focus:border-green-500 dark:focus:border-green-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Search className="absolute left-3 h-4 w-4 text-gray-500" />
+        <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
       </motion.form>
       
       <motion.div 
@@ -106,34 +107,34 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button variant="outline" size="sm" className="flex gap-1 bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
+              <Button variant="outline" size="sm" className="flex gap-1 backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <Filter className="h-4 w-4" />
                 <span className="hidden sm:inline">Filter</span>
               </Button>
             </motion.div>
           </PopoverTrigger>
-          <PopoverContent className="w-80 bg-[#1a1a1a] border-white/10 text-gray-200">
+          <PopoverContent className="w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-gray-200/50 dark:border-gray-800/50">
             <div className="space-y-4">
-              <h4 className="font-medium text-white">Filter Options</h4>
+              <h4 className="font-medium">Filter Options</h4>
               <div className="space-y-2">
-                <h5 className="text-sm font-medium text-gray-300">Status</h5>
+                <h5 className="text-sm font-medium">Status</h5>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">In Progress</Button>
-                  <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">Planning</Button>
-                  <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">Completed</Button>
+                  <Button variant="outline" size="sm">In Progress</Button>
+                  <Button variant="outline" size="sm">Planning</Button>
+                  <Button variant="outline" size="sm">Completed</Button>
                 </div>
               </div>
               <div className="space-y-2">
-                <h5 className="text-sm font-medium text-gray-300">Category</h5>
+                <h5 className="text-sm font-medium">Category</h5>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">Energy</Button>
-                  <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">Transportation</Button>
-                  <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">Waste</Button>
+                  <Button variant="outline" size="sm">Energy</Button>
+                  <Button variant="outline" size="sm">Transportation</Button>
+                  <Button variant="outline" size="sm">Waste</Button>
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">Reset</Button>
-                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">Apply Filters</Button>
+                <Button variant="outline" size="sm">Reset</Button>
+                <Button size="sm">Apply Filters</Button>
               </div>
             </div>
           </PopoverContent>
@@ -143,7 +144,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
+          <Button variant="outline" size="sm" className="backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700">
             Export Data
           </Button>
         </motion.div>

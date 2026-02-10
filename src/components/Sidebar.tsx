@@ -76,11 +76,11 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       animate={isOpen ? "open" : "closed"}
       variants={sidebarVariants}
       className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-[#111111] border-r border-white/10 transform lg:relative lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-white transform lg:relative lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      <div className="flex items-center justify-between h-16 px-4 border-b border-white/10">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
         <Link to="/" className="flex items-center space-x-2" onClick={closeSidebar}>
           <motion.img 
             whileHover={{ scale: 1.05 }}
@@ -89,13 +89,13 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             alt="Farmly Carbon" 
             className="h-10 w-auto" 
           />
-          <span className="text-xl font-semibold text-white">FarmlyCarbon</span>
+          <span className="text-xl font-semibold text-gray-800">FarmlyCarbon</span>
         </Link>
         {isMobile && (
           <motion.div
             whileTap={{ scale: 0.9 }}
           >
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-gray-300 hover:bg-white/10 hover:text-white">
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-gray-800 hover:bg-gray-100">
               <X className="h-5 w-5" />
             </Button>
           </motion.div>
@@ -122,8 +122,8 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                 className={cn(
                   "flex items-center px-3 py-3 text-base font-medium rounded-lg transition-all duration-200",
                   isActive
-                    ? "bg-emerald-500/15 text-emerald-400 shadow-sm"
-                    : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                    ? "bg-gray-100 text-green-700 shadow-sm"
+                    : "text-gray-700 hover:bg-gray-100"
                 )}
               >
                 <motion.div
@@ -131,7 +131,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   className="mr-3"
                 >
-                  <Icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-emerald-400" : "text-gray-500")} />
+                  <Icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-green-700" : "text-gray-600")} />
                 </motion.div>
                 <span>{item.name}</span>
               </Link>
@@ -139,7 +139,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           );
         })}
         
-        <div className="border-t border-white/10 mt-4 pt-4">
+        <div className="border-t border-gray-200 mt-4 pt-4">
           <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Quick Links
           </h3>
@@ -159,14 +159,14 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={closeSidebar}
-                    className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200"
+                    className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200"
                   >
                     <motion.div
                       whileHover={{ scale: 1.2 }}
                       transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       className="mr-3"
                     >
-                      <Icon className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                      <Icon className="h-4 w-4 flex-shrink-0 text-gray-600" />
                     </motion.div>
                     <span>{item.name}</span>
                   </a>
@@ -174,14 +174,14 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                   <Link
                     to={item.href}
                     onClick={closeSidebar}
-                    className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200"
+                    className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200"
                   >
                     <motion.div
                       whileHover={{ scale: 1.2 }}
                       transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       className="mr-3"
                     >
-                      <Icon className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                      <Icon className="h-4 w-4 flex-shrink-0 text-gray-600" />
                     </motion.div>
                     <span>{item.name}</span>
                   </Link>
@@ -198,14 +198,14 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       >
         <Link
           to="/dashboard/settings"
-          className="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200"
+          className="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200"
         >
           <motion.div
             whileHover={{ rotate: 180 }}
             transition={{ duration: 0.5 }}
             className="mr-3"
           >
-            <Settings className="h-5 w-5 flex-shrink-0 text-gray-500" />
+            <Settings className="h-5 w-5 flex-shrink-0 text-gray-600" />
           </motion.div>
           <span>Settings</span>
         </Link>
