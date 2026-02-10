@@ -46,7 +46,6 @@ export const DataEntryForm = () => {
       toast.error('Please enter a valid year between 2000 and 2100');
       return;
     }
-
     setIsSaving(true);
     try {
       await addEmissionData({
@@ -66,7 +65,6 @@ export const DataEntryForm = () => {
       toast.error('Please enter a milestone event name');
       return;
     }
-
     setIsSaving(true);
     try {
       await addMilestoneData({
@@ -77,13 +75,7 @@ export const DataEntryForm = () => {
         offsetDependency: milestoneForm.offsetDependency,
         standards: [],
       });
-      setMilestoneForm({
-        year: milestoneForm.year + 1,
-        event: '',
-        status: 'planned',
-        reductionTarget: 0,
-        offsetDependency: 0,
-      });
+      setMilestoneForm({ year: milestoneForm.year + 1, event: '', status: 'planned', reductionTarget: 0, offsetDependency: 0 });
     } finally {
       setIsSaving(false);
     }
@@ -94,7 +86,6 @@ export const DataEntryForm = () => {
       toast.error('Please enter a project name');
       return;
     }
-
     setIsSaving(true);
     try {
       await addOffsetData({
@@ -106,87 +97,58 @@ export const DataEntryForm = () => {
         vintage: offsetForm.vintage,
         selected: false,
       });
-      setOffsetForm({
-        projectName: '',
-        category: 'Forestry',
-        credits: 0,
-        pricePerTon: 0,
-        qualityScore: 80,
-        vintage: new Date().getFullYear().toString(),
-      });
+      setOffsetForm({ projectName: '', category: 'Forestry', credits: 0, pricePerTon: 0, qualityScore: 80, vintage: new Date().getFullYear().toString() });
     } finally {
       setIsSaving(false);
     }
   };
 
+  const inputClasses = "bg-white/5 border-white/10 text-gray-200 placeholder:text-gray-600 focus:border-emerald-500/50";
+  const labelClasses = "text-gray-400";
+
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg bg-[#141414] border-white/10">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold">Add Climate Data</CardTitle>
-        <Button variant="outline" size="sm" onClick={refreshData} disabled={loading}>
+        <CardTitle className="text-xl font-bold text-white">Add Climate Data</CardTitle>
+        <Button variant="outline" size="sm" onClick={refreshData} disabled={loading} className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="emissions">Emissions</TabsTrigger>
-            <TabsTrigger value="milestones">Milestones</TabsTrigger>
-            <TabsTrigger value="offsets">Carbon Offsets</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10">
+            <TabsTrigger value="emissions" className="text-gray-400 data-[state=active]:bg-white/10 data-[state=active]:text-white">Emissions</TabsTrigger>
+            <TabsTrigger value="milestones" className="text-gray-400 data-[state=active]:bg-white/10 data-[state=active]:text-white">Milestones</TabsTrigger>
+            <TabsTrigger value="offsets" className="text-gray-400 data-[state=active]:bg-white/10 data-[state=active]:text-white">Carbon Offsets</TabsTrigger>
           </TabsList>
 
           <TabsContent value="emissions" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="em-year">Year</Label>
-                <Input
-                  id="em-year"
-                  type="number"
-                  value={emissionForm.year}
-                  onChange={(e) => setEmissionForm(prev => ({ ...prev, year: parseInt(e.target.value) || 0 }))}
-                  min={2000}
-                  max={2100}
-                />
+                <Label htmlFor="em-year" className={labelClasses}>Year</Label>
+                <Input id="em-year" type="number" value={emissionForm.year} onChange={(e) => setEmissionForm(prev => ({ ...prev, year: parseInt(e.target.value) || 0 }))} min={2000} max={2100} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="scope1">Scope 1 (tCO₂e)</Label>
-                <Input
-                  id="scope1"
-                  type="number"
-                  value={emissionForm.scope1}
-                  onChange={(e) => setEmissionForm(prev => ({ ...prev, scope1: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                />
+                <Label htmlFor="scope1" className={labelClasses}>Scope 1 (tCO₂e)</Label>
+                <Input id="scope1" type="number" value={emissionForm.scope1} onChange={(e) => setEmissionForm(prev => ({ ...prev, scope1: parseFloat(e.target.value) || 0 }))} min={0} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="scope2">Scope 2 (tCO₂e)</Label>
-                <Input
-                  id="scope2"
-                  type="number"
-                  value={emissionForm.scope2}
-                  onChange={(e) => setEmissionForm(prev => ({ ...prev, scope2: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                />
+                <Label htmlFor="scope2" className={labelClasses}>Scope 2 (tCO₂e)</Label>
+                <Input id="scope2" type="number" value={emissionForm.scope2} onChange={(e) => setEmissionForm(prev => ({ ...prev, scope2: parseFloat(e.target.value) || 0 }))} min={0} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="scope3">Scope 3 (tCO₂e)</Label>
-                <Input
-                  id="scope3"
-                  type="number"
-                  value={emissionForm.scope3}
-                  onChange={(e) => setEmissionForm(prev => ({ ...prev, scope3: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                />
+                <Label htmlFor="scope3" className={labelClasses}>Scope 3 (tCO₂e)</Label>
+                <Input id="scope3" type="number" value={emissionForm.scope3} onChange={(e) => setEmissionForm(prev => ({ ...prev, scope3: parseFloat(e.target.value) || 0 }))} min={0} className={inputClasses} />
               </div>
             </div>
-            <div className="flex justify-between items-center pt-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                Total: <span className="font-semibold text-foreground">
+            <div className="flex justify-between items-center pt-4 border-t border-white/5">
+              <div className="text-sm text-gray-500">
+                Total: <span className="font-semibold text-gray-200">
                   {(emissionForm.scope1 + emissionForm.scope2 + emissionForm.scope3).toLocaleString()} tCO₂e
                 </span>
               </div>
-              <Button onClick={handleAddEmission} disabled={isSaving}>
+              <Button onClick={handleAddEmission} disabled={isSaving} className="bg-emerald-600 hover:bg-emerald-700 text-white">
                 {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
                 Add Emission Data
               </Button>
@@ -196,37 +158,18 @@ export const DataEntryForm = () => {
           <TabsContent value="milestones" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="ms-year">Target Year</Label>
-                <Input
-                  id="ms-year"
-                  type="number"
-                  value={milestoneForm.year}
-                  onChange={(e) => setMilestoneForm(prev => ({ ...prev, year: parseInt(e.target.value) || 0 }))}
-                  min={2020}
-                  max={2100}
-                />
+                <Label htmlFor="ms-year" className={labelClasses}>Target Year</Label>
+                <Input id="ms-year" type="number" value={milestoneForm.year} onChange={(e) => setMilestoneForm(prev => ({ ...prev, year: parseInt(e.target.value) || 0 }))} min={2020} max={2100} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="ms-event">Milestone Event</Label>
-                <Input
-                  id="ms-event"
-                  placeholder="e.g., 50% Emissions Reduction"
-                  value={milestoneForm.event}
-                  onChange={(e) => setMilestoneForm(prev => ({ ...prev, event: e.target.value }))}
-                />
+                <Label htmlFor="ms-event" className={labelClasses}>Milestone Event</Label>
+                <Input id="ms-event" placeholder="e.g., 50% Emissions Reduction" value={milestoneForm.event} onChange={(e) => setMilestoneForm(prev => ({ ...prev, event: e.target.value }))} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="ms-status">Status</Label>
-                <Select
-                  value={milestoneForm.status}
-                  onValueChange={(value: 'completed' | 'inProgress' | 'planned') => 
-                    setMilestoneForm(prev => ({ ...prev, status: value }))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
+                <Label htmlFor="ms-status" className={labelClasses}>Status</Label>
+                <Select value={milestoneForm.status} onValueChange={(value: 'completed' | 'inProgress' | 'planned') => setMilestoneForm(prev => ({ ...prev, status: value }))}>
+                  <SelectTrigger className={inputClasses}><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border-white/10 text-gray-200">
                     <SelectItem value="planned">Planned</SelectItem>
                     <SelectItem value="inProgress">In Progress</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
@@ -234,19 +177,12 @@ export const DataEntryForm = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="ms-target">Reduction Target (%)</Label>
-                <Input
-                  id="ms-target"
-                  type="number"
-                  value={milestoneForm.reductionTarget}
-                  onChange={(e) => setMilestoneForm(prev => ({ ...prev, reductionTarget: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                  max={100}
-                />
+                <Label htmlFor="ms-target" className={labelClasses}>Reduction Target (%)</Label>
+                <Input id="ms-target" type="number" value={milestoneForm.reductionTarget} onChange={(e) => setMilestoneForm(prev => ({ ...prev, reductionTarget: parseFloat(e.target.value) || 0 }))} min={0} max={100} className={inputClasses} />
               </div>
             </div>
-            <div className="flex justify-end pt-4 border-t">
-              <Button onClick={handleAddMilestone} disabled={isSaving}>
+            <div className="flex justify-end pt-4 border-t border-white/5">
+              <Button onClick={handleAddMilestone} disabled={isSaving} className="bg-emerald-600 hover:bg-emerald-700 text-white">
                 {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
                 Add Milestone
               </Button>
@@ -256,24 +192,14 @@ export const DataEntryForm = () => {
           <TabsContent value="offsets" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="of-name">Project Name</Label>
-                <Input
-                  id="of-name"
-                  placeholder="e.g., Amazon Reforestation"
-                  value={offsetForm.projectName}
-                  onChange={(e) => setOffsetForm(prev => ({ ...prev, projectName: e.target.value }))}
-                />
+                <Label htmlFor="of-name" className={labelClasses}>Project Name</Label>
+                <Input id="of-name" placeholder="e.g., Amazon Reforestation" value={offsetForm.projectName} onChange={(e) => setOffsetForm(prev => ({ ...prev, projectName: e.target.value }))} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="of-category">Category</Label>
-                <Select
-                  value={offsetForm.category}
-                  onValueChange={(value) => setOffsetForm(prev => ({ ...prev, category: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
+                <Label htmlFor="of-category" className={labelClasses}>Category</Label>
+                <Select value={offsetForm.category} onValueChange={(value) => setOffsetForm(prev => ({ ...prev, category: value }))}>
+                  <SelectTrigger className={inputClasses}><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border-white/10 text-gray-200">
                     <SelectItem value="Forestry">Forestry</SelectItem>
                     <SelectItem value="Renewable Energy">Renewable Energy</SelectItem>
                     <SelectItem value="Methane Reduction">Methane Reduction</SelectItem>
@@ -283,48 +209,24 @@ export const DataEntryForm = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="of-credits">Credits (tCO₂e)</Label>
-                <Input
-                  id="of-credits"
-                  type="number"
-                  value={offsetForm.credits}
-                  onChange={(e) => setOffsetForm(prev => ({ ...prev, credits: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                />
+                <Label htmlFor="of-credits" className={labelClasses}>Credits (tCO₂e)</Label>
+                <Input id="of-credits" type="number" value={offsetForm.credits} onChange={(e) => setOffsetForm(prev => ({ ...prev, credits: parseFloat(e.target.value) || 0 }))} min={0} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="of-price">Price per Ton ($)</Label>
-                <Input
-                  id="of-price"
-                  type="number"
-                  step="0.01"
-                  value={offsetForm.pricePerTon}
-                  onChange={(e) => setOffsetForm(prev => ({ ...prev, pricePerTon: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                />
+                <Label htmlFor="of-price" className={labelClasses}>Price per Ton ($)</Label>
+                <Input id="of-price" type="number" step="0.01" value={offsetForm.pricePerTon} onChange={(e) => setOffsetForm(prev => ({ ...prev, pricePerTon: parseFloat(e.target.value) || 0 }))} min={0} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="of-quality">Quality Score (0-100)</Label>
-                <Input
-                  id="of-quality"
-                  type="number"
-                  value={offsetForm.qualityScore}
-                  onChange={(e) => setOffsetForm(prev => ({ ...prev, qualityScore: parseFloat(e.target.value) || 0 }))}
-                  min={0}
-                  max={100}
-                />
+                <Label htmlFor="of-quality" className={labelClasses}>Quality Score (0-100)</Label>
+                <Input id="of-quality" type="number" value={offsetForm.qualityScore} onChange={(e) => setOffsetForm(prev => ({ ...prev, qualityScore: parseFloat(e.target.value) || 0 }))} min={0} max={100} className={inputClasses} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="of-vintage">Vintage Year</Label>
-                <Input
-                  id="of-vintage"
-                  value={offsetForm.vintage}
-                  onChange={(e) => setOffsetForm(prev => ({ ...prev, vintage: e.target.value }))}
-                />
+                <Label htmlFor="of-vintage" className={labelClasses}>Vintage Year</Label>
+                <Input id="of-vintage" value={offsetForm.vintage} onChange={(e) => setOffsetForm(prev => ({ ...prev, vintage: e.target.value }))} className={inputClasses} />
               </div>
             </div>
-            <div className="flex justify-end pt-4 border-t">
-              <Button onClick={handleAddOffset} disabled={isSaving}>
+            <div className="flex justify-end pt-4 border-t border-white/5">
+              <Button onClick={handleAddOffset} disabled={isSaving} className="bg-emerald-600 hover:bg-emerald-700 text-white">
                 {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
                 Add Carbon Offset
               </Button>

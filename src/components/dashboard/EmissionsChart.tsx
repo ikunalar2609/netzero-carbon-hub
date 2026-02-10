@@ -57,8 +57,8 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-4 border border-gray-200 rounded-xl shadow-xl backdrop-blur-sm">
-        <p className="font-semibold text-sm text-gray-700 mb-2">{label}</p>
+      <div className="bg-[#1a1a1a] p-4 border border-white/10 rounded-xl shadow-xl backdrop-blur-sm">
+        <p className="font-semibold text-sm text-gray-300 mb-2">{label}</p>
         <div className="space-y-2">
           {payload.map((entry) => (
             entry.value !== null && (
@@ -67,8 +67,8 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
                   className="w-4 h-4 rounded-full mr-3 shadow-sm"
                   style={{ backgroundColor: entry.color }}
                 />
-                <p className="text-sm font-medium">
-                  {entry.name}: <span className="font-bold text-gray-900">{entry.value}</span> tCO₂e
+                <p className="text-sm font-medium text-gray-300">
+                  {entry.name}: <span className="font-bold text-white">{entry.value}</span> tCO₂e
                 </p>
               </div>
             )
@@ -97,16 +97,16 @@ const EmissionsChart = () => {
       : "month";
 
   return (
-    <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50">
+    <Card className="shadow-lg border-white/10 bg-[#141414]">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+        <CardTitle className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
           Net Zero Tracker
         </CardTitle>
         <Tabs defaultValue="yearly" value={period} onValueChange={setPeriod} className="h-8">
-          <TabsList className="grid grid-cols-3 h-8 w-auto bg-gray-100">
-            <TabsTrigger value="monthly" className="text-xs h-8 font-medium">Monthly</TabsTrigger>
-            <TabsTrigger value="quarterly" className="text-xs h-8 font-medium">Quarterly</TabsTrigger>
-            <TabsTrigger value="yearly" className="text-xs h-8 font-medium">Yearly</TabsTrigger>
+          <TabsList className="grid grid-cols-3 h-8 w-auto bg-white/5 border border-white/10">
+            <TabsTrigger value="monthly" className="text-xs h-8 font-medium text-gray-400 data-[state=active]:bg-white/10 data-[state=active]:text-white">Monthly</TabsTrigger>
+            <TabsTrigger value="quarterly" className="text-xs h-8 font-medium text-gray-400 data-[state=active]:bg-white/10 data-[state=active]:text-white">Quarterly</TabsTrigger>
+            <TabsTrigger value="yearly" className="text-xs h-8 font-medium text-gray-400 data-[state=active]:bg-white/10 data-[state=active]:text-white">Yearly</TabsTrigger>
           </TabsList>
         </Tabs>
       </CardHeader>
@@ -124,26 +124,26 @@ const EmissionsChart = () => {
             >
               <defs>
                 <linearGradient id="targetGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#d97706" stopOpacity={0.9} />
-                  <stop offset="50%" stopColor="#f59e0b" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#fcd34d" stopOpacity={0.2} />
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+                  <stop offset="50%" stopColor="#f59e0b" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.05} />
                 </linearGradient>
                 <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1e40af" stopOpacity={0.9} />
-                  <stop offset="50%" stopColor="#3b82f6" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#93c5fd" stopOpacity={0.2} />
+                  <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
+                  <stop offset="50%" stopColor="#06b6d4" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
               <XAxis 
                 dataKey={xKey} 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 12, fill: '#475569', fontWeight: 500 }} 
+                tick={{ fontSize: 12, fill: '#6b7280', fontWeight: 500 }} 
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 12, fill: '#475569', fontWeight: 500 }} 
+                tick={{ fontSize: 12, fill: '#6b7280', fontWeight: 500 }} 
                 domain={[0, 'dataMax + 20']}
                 tickFormatter={(value) => `${value}`}
               />
@@ -151,21 +151,21 @@ const EmissionsChart = () => {
               <Area
                 type="monotone"
                 dataKey="target"
-                stroke="#d97706"
-                strokeWidth={4}
+                stroke="#f59e0b"
+                strokeWidth={3}
                 fill="url(#targetGradient)"
                 name="Target"
-                activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
+                activeDot={{ r: 8, strokeWidth: 3, stroke: "#1a1a1a", fill: "#f59e0b" }}
                 animationDuration={1500}
               />
               <Area
                 type="monotone"
                 dataKey="actual"
-                stroke="#1e40af"
-                strokeWidth={4}
+                stroke="#06b6d4"
+                strokeWidth={3}
                 fill="url(#actualGradient)"
                 name="Actual"
-                activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
+                activeDot={{ r: 8, strokeWidth: 3, stroke: "#1a1a1a", fill: "#06b6d4" }}
                 animationDuration={1500}
               />
               <Legend 
@@ -174,7 +174,8 @@ const EmissionsChart = () => {
                 wrapperStyle={{ 
                   paddingTop: '20px',
                   fontSize: '14px',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  color: '#9ca3af'
                 }}
               />
             </AreaChart>
