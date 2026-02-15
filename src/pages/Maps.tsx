@@ -10,7 +10,7 @@ import {
 } from "@/utils/parseForestData";
 import { useMapData } from "@/hooks/useMapData";
 
-/* -------------------- Types -------------------------- */
+/* -------------------- Types ----------------------- */
 interface FireData {
   latitude: number;
   longitude: number;
