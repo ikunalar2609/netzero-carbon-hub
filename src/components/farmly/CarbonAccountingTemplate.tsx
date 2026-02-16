@@ -549,7 +549,6 @@ export const CarbonAccountingTemplate = () => {
                 BeZero Carbon standardized format for carbon project reporting
                 {" · "}
                 <RouterLink to="farmly/docs?section=cat" className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 underline underline-offset-2">
-                  <BookOpen className="h-3 w-3" />
                   Read Documentation
                 </RouterLink>
               </p>
