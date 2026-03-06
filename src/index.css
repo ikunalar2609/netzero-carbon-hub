@@ -98,6 +98,18 @@
     --calc-muted: 142 20% 35%;          /* Muted green */
     --calc-card: 0 0% 100%;             /* Pure white */
     --calc-border: 142 15% 90%;         /* Green border */
+
+    /* Farmly SaaS Dashboard - Indigo theme */
+    --farmly-indigo: 239 84% 67%;
+    --farmly-indigo-dark: 239 84% 57%;
+    --farmly-indigo-light: 239 84% 77%;
+    --farmly-blue: 221 83% 53%;
+    --farmly-surface: 210 40% 98%;
+    --farmly-surface-alt: 214 32% 96%;
+    --farmly-border: 220 13% 91%;
+    --farmly-text: 222 47% 11%;
+    --farmly-text-secondary: 215 16% 47%;
+    --farmly-text-muted: 215 20% 65%;
     
     /* Shadows and effects - green tinted */
     --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.04);
