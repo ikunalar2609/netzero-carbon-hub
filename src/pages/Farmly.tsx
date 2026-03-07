@@ -76,7 +76,7 @@ const Farmly = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#0B0F1A]">
+    <div className="h-screen flex flex-col bg-[#0B0F1A] farmly-dark text-white">
       {/* ═══ TOP NAV — Dark premium bar ═══ */}
       <header className="h-[52px] bg-[#0F1629] border-b border-[#1E293B] flex items-center px-4 shrink-0 z-20">
         {/* Logo cluster */}
@@ -292,8 +292,8 @@ const Farmly = () => {
               </div>
             </div>
 
-            {/* Tab content */}
-            <div className="p-4">
+            {/* Tab content — light bg for inner components */}
+            <div className="p-4 bg-white rounded-b-lg text-foreground" style={{ color: 'initial' }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
