@@ -165,21 +165,42 @@
 
 @layer base {
   * {
-    @apply border-border text-black;
+    @apply border-border;
   }
   
   body {
-    @apply bg-background text-black antialiased;
+    @apply bg-background text-foreground antialiased;
   }
   
   /* Hover styles for links and interactive elements */
   a, button, [role="button"] {
-    @apply hover:text-gray-600 transition-colors;
+    @apply transition-colors;
   }
   
   /* Hover styles */
   .hover-dark-gray {
     @apply hover:text-gray-600 hover:bg-gray-800/10 dark:hover:bg-gray-700/50 transition-colors;
+  }
+
+  /* Farmly dark scope — override inherited colors */
+  .farmly-dark,
+  .farmly-dark * {
+    color: inherit;
+  }
+  .farmly-dark p,
+  .farmly-dark h1,
+  .farmly-dark h2,
+  .farmly-dark h3,
+  .farmly-dark h4,
+  .farmly-dark h5,
+  .farmly-dark h6,
+  .farmly-dark span,
+  .farmly-dark label {
+    color: inherit;
+  }
+  .farmly-dark a:hover,
+  .farmly-dark button:hover {
+    color: inherit;
   }
 }
 
@@ -237,7 +258,7 @@ button:focus {
 
 /* Ensure all text elements have the correct color */
 p, h1, h2, h3, h4, h5, h6, span, label {
-  @apply text-black hover:text-gray-600 transition-colors;
+  @apply text-foreground transition-colors;
 }
 
 /* Grid background pattern */
