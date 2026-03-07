@@ -293,7 +293,7 @@ const Farmly = () => {
             </div>
 
             {/* Tab content — light bg for inner components */}
-            <div className="p-4 bg-white rounded-b-lg text-foreground" style={{ color: 'initial' }}>
+            <div className="p-4 bg-white rounded-b-lg text-[#1E293B] [&_*]:text-inherit">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
