@@ -53,6 +53,7 @@ import { DecarboAgent } from "@/components/farmly/DecarboAgent";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
 import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
+import { FarmlyReport } from "@/components/farmly/FarmlyReport";
 import {
   emissionFactors as rawFactors,
   applyFilters,
