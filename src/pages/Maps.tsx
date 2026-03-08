@@ -161,7 +161,7 @@ export default function MapsPage() {
               </div>
             }
           >
-            <Map center={[0, 10]} zoom={1.5} theme="dark" className="absolute inset-0">
+            <Map center={[0, 10]} zoom={1.5} theme="light" className="absolute inset-0">
               <MapControls showZoom position="top-right" />
               {treeLossMarkers}
             </Map>
