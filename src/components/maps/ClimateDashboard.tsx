@@ -290,33 +290,78 @@ export default function ClimateDashboard() {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dailyByYear}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: "#6b7280", fontSize: 11 }}
-                tickLine={false}
-                axisLine={{ stroke: "#d1d5db" }}
-              />
-              <YAxis
-                tick={{ fill: "#6b7280", fontSize: 11 }}
-                tickLine={false}
-                axisLine={{ stroke: "#d1d5db" }}
-                domain={[-0.5, 2]}
-                unit="°C"
-              />
+              <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
+              <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[-0.5, 2]} unit="°C" />
               <Tooltip content={<ChartTooltip />} />
               <ReferenceLine y={1.5} stroke="#f59e0b" strokeDasharray="8 4" strokeWidth={1.5} />
               <Line type="monotone" dataKey="y2023" stroke="#94a3b8" strokeWidth={2} dot={false} name="2023" connectNulls />
               <Line type="monotone" dataKey="y2024" stroke="#f97316" strokeWidth={2} dot={false} name="2024" connectNulls />
               <Line type="monotone" dataKey="y2025" stroke="#ef4444" strokeWidth={2.5} dot={false} name="2025" connectNulls />
               <Line type="monotone" dataKey="y2026" stroke="#0ea5e9" strokeWidth={2.5} dot={{ r: 3, fill: "#0ea5e9" }} name="2026" connectNulls />
-              <Legend
-                wrapperStyle={{ fontSize: 11, color: "#6b7280" }}
-                iconType="line"
-              />
+              <Legend wrapperStyle={{ fontSize: 11, color: "#6b7280" }} iconType="line" />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
+        {/* ── Daily Global Mean Temperature (Absolute) by Year ── */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h3 className="text-base font-bold text-gray-900 mb-1">
+            Daily Global Mean Temperature
+          </h3>
+          <p className="text-xs text-gray-400 mb-4">Absolute temperature by year (°C)</p>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={dailyTempByYear}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
+              <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[11, 17]} unit="°C" />
+              <Tooltip content={<ChartTooltip />} />
+              <Line type="monotone" dataKey="t2023" stroke="#94a3b8" strokeWidth={2} dot={false} name="2023" connectNulls />
+              <Line type="monotone" dataKey="t2024" stroke="#f97316" strokeWidth={2} dot={false} name="2024" connectNulls />
+              <Line type="monotone" dataKey="t2025" stroke="#ef4444" strokeWidth={2.5} dot={false} name="2025" connectNulls />
+              <Line type="monotone" dataKey="t2026" stroke="#0ea5e9" strokeWidth={2.5} dot={{ r: 3, fill: "#0ea5e9" }} name="2026" connectNulls />
+              <Legend wrapperStyle={{ fontSize: 11, color: "#6b7280" }} iconType="line" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ── Long-term Global Mean Temperature (Absolute) ── */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-1">
+          Global Mean Temperature (Absolute)
+        </h3>
+        <p className="text-xs text-gray-400 mb-5">Monthly absolute temperature with 12-month rolling average</p>
+        <ResponsiveContainer width="100%" height={340}>
+          <ComposedChart data={absoluteTempChart}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: "#6b7280", fontSize: 11 }}
+              tickLine={false}
+              axisLine={{ stroke: "#d1d5db" }}
+              tickFormatter={(v: string) => {
+                const mo = v.substring(5, 7);
+                return mo === "01" ? v.substring(0, 4) : "";
+              }}
+              interval={11}
+            />
+            <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[12, 16]} unit="°C" />
+            <Tooltip content={<ChartTooltip />} />
+            <Line type="monotone" dataKey="absolute" stroke="#c0c4cc" strokeWidth={0.6} dot={false} name="Monthly Temp" isAnimationActive={false} />
+            <Line type="monotone" dataKey="rolling" stroke="#2563eb" strokeWidth={2.5} dot={false} name="12-month Average" isAnimationActive={false} />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <div className="flex items-center gap-6 mt-3 text-xs text-gray-500">
+          <span className="flex items-center gap-2">
+            <span className="w-6 h-[1px] bg-gray-400" /> Monthly Temperature
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-6 h-[2px] bg-blue-600 rounded" /> 12-month Average
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* ── Annual Projections ── */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h3 className="text-base font-bold text-gray-900 mb-1">
@@ -326,79 +371,54 @@ export default function ClimateDashboard() {
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={annualProjections}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="year"
-                tick={{ fill: "#6b7280", fontSize: 11 }}
-                tickLine={false}
-                axisLine={{ stroke: "#d1d5db" }}
-              />
-              <YAxis
-                tick={{ fill: "#6b7280", fontSize: 11 }}
-                tickLine={false}
-                axisLine={{ stroke: "#d1d5db" }}
-                domain={[0, 2]}
-                unit="°C"
-              />
+              <XAxis dataKey="year" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
+              <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[0, 2]} unit="°C" />
               <Tooltip content={<ChartTooltip />} />
               <ReferenceLine y={1.5} stroke="#f59e0b" strokeDasharray="8 4" strokeWidth={1.5} label={{ value: "1.5°C", fill: "#f59e0b", fontSize: 10, position: "right" }} />
-              <Area
-                type="monotone"
-                dataKey="anomaly"
-                fill="#dbeafe"
-                stroke="none"
-                fillOpacity={0.5}
-              />
-              <Line
-                type="monotone"
-                dataKey="anomaly"
-                stroke="#2563eb"
-                strokeWidth={2}
-                dot={false}
-                name="Annual Anomaly"
-                isAnimationActive={false}
-              />
+              <Area type="monotone" dataKey="anomaly" fill="#dbeafe" stroke="none" fillOpacity={0.5} />
+              <Line type="monotone" dataKey="anomaly" stroke="#2563eb" strokeWidth={2} dot={false} name="Annual Anomaly" isAnimationActive={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
-      </div>
 
-      {/* ── Continental Statistics Table ── */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Globe className="h-4 w-4 text-indigo-500" />
-          <h3 className="text-base font-bold text-gray-900">Continental Temperature Statistics</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left text-gray-500 font-semibold py-2.5 px-3">Region</th>
-                <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Mean (°C)</th>
-                <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Min (°C)</th>
-                <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Max (°C)</th>
-                <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Range</th>
-              </tr>
-            </thead>
-            <tbody>
-              {regionStats.map((r) => (
-                <tr key={r.region} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="py-2.5 px-3 font-medium text-gray-800">{r.region}</td>
-                  <td className="py-2.5 px-3 text-right">
-                    <span className={r.mean !== null && r.mean > 20 ? "text-red-500 font-semibold" : r.mean !== null && r.mean < 0 ? "text-blue-500 font-semibold" : "text-gray-700"}>
-                      {r.mean !== null ? `${r.mean.toFixed(1)}` : "—"}
-                    </span>
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-blue-500">{r.min !== null ? r.min.toFixed(0) : "—"}</td>
-                  <td className="py-2.5 px-3 text-right text-red-500">{r.max !== null ? r.max.toFixed(0) : "—"}</td>
-                  <td className="py-2.5 px-3 text-right text-gray-400">
-                    {r.min !== null && r.max !== null ? `${(r.max - r.min).toFixed(0)}°` : "—"}
-                  </td>
+        {/* ── Continental Statistics Table ── */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Globe className="h-4 w-4 text-indigo-500" />
+            <h3 className="text-base font-bold text-gray-900">Continental Temperature Statistics</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left text-gray-500 font-semibold py-2.5 px-3">Region</th>
+                  <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Mean (°C)</th>
+                  <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Min (°C)</th>
+                  <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Max (°C)</th>
+                  <th className="text-right text-gray-500 font-semibold py-2.5 px-3">Range</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {regionStats.map((r) => (
+                  <tr key={r.region} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="py-2.5 px-3 font-medium text-gray-800">{r.region}</td>
+                    <td className="py-2.5 px-3 text-right">
+                      <span className={r.mean !== null && r.mean > 20 ? "text-red-500 font-semibold" : r.mean !== null && r.mean < 0 ? "text-blue-500 font-semibold" : "text-gray-700"}>
+                        {r.mean !== null ? `${r.mean.toFixed(1)}` : "—"}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-blue-500">{r.min !== null ? r.min.toFixed(0) : "—"}</td>
+                    <td className="py-2.5 px-3 text-right text-red-500">{r.max !== null ? r.max.toFixed(0) : "—"}</td>
+                    <td className="py-2.5 px-3 text-right text-gray-400">
+                      {r.min !== null && r.max !== null ? `${(r.max - r.min).toFixed(0)}°` : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[10px] text-gray-300 mt-3">Data: Open-Meteo Climate & Forecast API • 30-day rolling statistics</p>
         </div>
-        <p className="text-[10px] text-gray-300 mt-3">Data: Open-Meteo Climate & Forecast API • 30-day rolling statistics</p>
       </div>
     </div>
   );
