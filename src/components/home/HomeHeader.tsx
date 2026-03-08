@@ -116,20 +116,13 @@ const HomeHeader = () => {
                   </Link>
                 )
               )}
-              <div className="border-t border-border mt-2 pt-3 flex gap-2">
+              <div className="border-t border-border mt-2 pt-3">
                 <Link
                   to="/login"
-                  className="flex-1 text-center px-4 py-2.5 text-[13px] font-medium text-foreground border border-border rounded-lg"
+                  className="block text-center px-4 py-2.5 text-[13px] font-medium text-foreground border border-border rounded-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Log in
-                </Link>
-                <Link
-                  to="/signup"
-                  className="flex-1 text-center px-4 py-2.5 text-[13px] font-semibold text-background bg-foreground rounded-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Get Started
                 </Link>
               </div>
             </nav>
