@@ -20,7 +20,12 @@ import {
   Download,
   Calendar,
   Filter,
-  X
+  X,
+  Factory,
+  Leaf,
+  Lightbulb,
+  Ship,
+  Recycle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";

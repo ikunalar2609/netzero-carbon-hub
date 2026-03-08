@@ -406,16 +406,15 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
       toast.error('Please calculate waste emissions first');
       return;
     }
-    await saveCalculation('diet', wasteData, { total: emissionsBreakdown.waste }, emissionsBreakdown.waste);
+    await saveCalculation('waste', wasteData, { total: emissionsBreakdown.waste }, emissionsBreakdown.waste);
   };
 
-  // Save current sea freight calculation
   const saveSeaFreightCalculation = async () => {
     if (!seaFreightResult || seaFreightResult.emissions.co2e <= 0) {
       toast.error('Please calculate sea freight emissions first');
       return;
     }
-    await saveCalculation('vehicle', seaFreightData, seaFreightResult, seaFreightResult.emissions.co2e);
+    await saveCalculation('sea', seaFreightData, seaFreightResult, seaFreightResult.emissions.co2e);
   };
 
   // Calculate Haversine distance as fallback for sea routes
