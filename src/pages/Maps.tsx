@@ -106,7 +106,7 @@ export default function MapsPage() {
               </div>
             }
           >
-            <Map center={region.center} zoom={region.zoom} theme="dark" className="absolute inset-0">
+            <Map center={region.center} zoom={region.zoom} theme="light" className="absolute inset-0">
               <MapControls showZoom position="top-right" />
               {fireMarkers}
             </Map>
