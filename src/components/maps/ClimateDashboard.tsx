@@ -46,6 +46,21 @@ const fallbackRegionStats: RegionStat[] = [
   { region: "Antarctica", mean: -7.3, min: -36, max: 6 },
 ];
 
+/* ── Blue-White-Red diverging color scale (matching Climate Brink) ── */
+const getHeatmapColor = (val: number): string => {
+  const v = Math.max(-0.5, Math.min(val, 2.2));
+  if (v <= 0) {
+    const t = (v + 0.5) / 0.5;
+    return `hsl(215, ${90 - t * 40}%, ${30 + t * 65}%)`;
+  } else if (v <= 0.8) {
+    const t = v / 0.8;
+    return `hsl(15, ${10 + t * 60}%, ${95 - t * 20}%)`;
+  } else {
+    const t = Math.min((v - 0.8) / 1.4, 1);
+    return `hsl(${5 - t * 5}, ${70 + t * 25}%, ${75 - t * 40}%)`;
+  }
+};
+
 /* ── Stat Card (light theme) ── */
 const StatCard = ({ label, value, sub }: { label: string; value: string; sub?: string }) => (
   <div className="bg-white rounded-lg border border-gray-200 p-4">
