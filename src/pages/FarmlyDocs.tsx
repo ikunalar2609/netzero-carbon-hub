@@ -69,109 +69,125 @@ const FarmlyDocs = () => {
   const [apiOpen, setApiOpen] = useState(isApiSection);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/farmly">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Farmly
-              </Button>
-            </Link>
-            <Separator orientation="vertical" className="h-6" />
-            <h1 className="text-xl font-semibold text-foreground">FarmlyAPI Documentation</h1>
-            <Badge variant="outline" className="text-xs">v2.0</Badge>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <a href="https://github.com/farmly-api" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                GitHub
-              </a>
-            </Button>
-          </div>
+    <div className="h-screen flex flex-col bg-[#4F46E5]">
+      {/* ═══ TOP NAV ═══ */}
+      <header className="h-[56px] bg-[#4F46E5] flex items-center px-5 shrink-0 z-20">
+        <div className="flex items-center gap-2.5 mr-6">
+          <Link to="/farmly">
+            <div className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
+                <Leaf className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-[16px] font-bold tracking-tight text-white">Farmly</span>
+            </div>
+          </Link>
+          <span className="text-[9px] font-bold tracking-widest px-2 py-[3px] rounded-full bg-white/20 text-white/90 leading-none">
+            DOCS
+          </span>
+          <span className="text-[10px] font-semibold px-2 py-1 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/20">
+            v2.0
+          </span>
         </div>
+
+        <nav className="hidden md:flex items-center gap-1 ml-2">
+          <Link to="/farmly" className="px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white/70 hover:text-white hover:bg-white/10 rounded-md transition-all flex items-center gap-1.5">
+            <ArrowLeft className="h-3 w-3" />
+            WORKSPACE
+          </Link>
+          <a href="https://github.com/farmly-api" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white/70 hover:text-white hover:bg-white/10 rounded-md transition-all flex items-center gap-1.5">
+            <ExternalLink className="h-3 w-3" />
+            GITHUB
+          </a>
+        </nav>
       </header>
 
-      <div className="max-w-7xl mx-auto flex">
-        {/* Sidebar Navigation */}
-        <aside className="w-64 shrink-0 border-r border-border sticky top-16 h-[calc(100vh-4rem)]">
-          <ScrollArea className="h-full py-6 px-4">
-            <nav className="space-y-1">
+      {/* ═══ BODY ═══ */}
+      <div className="flex flex-1 overflow-hidden bg-[#EEF2FF] rounded-t-2xl">
+        {/* ═══ LEFT SIDEBAR ═══ */}
+        <aside className="w-[220px] bg-white border-r border-gray-200 shrink-0 flex flex-col">
+          <div className="px-4 py-3 border-b border-gray-100">
+            <span className="text-[13px] font-semibold text-gray-800">Documentation</span>
+          </div>
+          <ScrollArea className="flex-1">
+            <div className="px-3 py-3 space-y-1">
               {/* Overview */}
-              <Button
-                variant={activeSection === "overview" ? "secondary" : "ghost"}
-                className="w-full justify-start"
+              <button
                 onClick={() => { setActiveSection("overview"); setSearchParams({ section: "overview" }); }}
+                className={`w-full flex items-center gap-2 px-3 py-2 text-[12px] font-medium rounded-lg transition-all ${
+                  activeSection === "overview" ? "bg-[#4F46E5] text-white" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
               >
-                <BookOpen className="h-4 w-4 mr-2" />
+                <BookOpen className="h-3.5 w-3.5" />
                 Overview
-              </Button>
+              </button>
 
               {/* API Dropdown */}
               <div>
-                <Button
-                  variant={isApiSection ? "secondary" : "ghost"}
-                  className="w-full justify-start"
+                <button
                   onClick={() => setApiOpen(!apiOpen)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-[12px] font-medium rounded-lg transition-all ${
+                    isApiSection ? "bg-[#4F46E5] text-white" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
-                  <Code className="h-4 w-4 mr-2" />
+                  <Code className="h-3.5 w-3.5" />
                   API
-                  {apiOpen ? <ChevronDown className="h-4 w-4 ml-auto" /> : <ChevronRight className="h-4 w-4 ml-auto" />}
-                </Button>
+                  {apiOpen ? <ChevronDown className="h-3.5 w-3.5 ml-auto" /> : <ChevronRight className="h-3.5 w-3.5 ml-auto" />}
+                </button>
                 {apiOpen && (
-                  <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
+                  <div className="ml-3 mt-1 space-y-0.5 border-l-2 border-gray-100 pl-3">
                     {apiSubSections.map((section) => (
-                      <Button
+                      <button
                         key={section.id}
-                        variant={activeSection === section.id ? "secondary" : "ghost"}
-                        className="w-full justify-start text-sm h-8"
                         onClick={() => { setActiveSection(section.id); setSearchParams({ section: section.id }); }}
+                        className={`w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-medium rounded-md transition-all ${
+                          activeSection === section.id ? "bg-[#4F46E5]/10 text-[#4F46E5] font-semibold" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                        }`}
                       >
-                        <section.icon className="h-3.5 w-3.5 mr-2" />
+                        <section.icon className="h-3 w-3" />
                         {section.label}
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Remaining top-level sections */}
+              {/* Remaining sections */}
               {sections.filter(s => s.id !== "overview").map((section) => (
-                <Button
+                <button
                   key={section.id}
-                  variant={activeSection === section.id ? "secondary" : "ghost"}
-                  className="w-full justify-start"
                   onClick={() => { setActiveSection(section.id); setSearchParams({ section: section.id }); }}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-[12px] font-medium rounded-lg transition-all ${
+                    activeSection === section.id ? "bg-[#4F46E5] text-white" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
-                  <section.icon className="h-4 w-4 mr-2" />
+                  <section.icon className="h-3.5 w-3.5" />
                   {section.label}
-                </Button>
+                </button>
               ))}
-            </nav>
+            </div>
           </ScrollArea>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 px-8 py-8">
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {activeSection === "overview" && <OverviewSection />}
-            {activeSection === "quickstart" && <QuickStartSection copyToClipboard={copyToClipboard} />}
-            {activeSection === "authentication" && <AuthenticationSection copyToClipboard={copyToClipboard} />}
-            {activeSection === "endpoints" && <EndpointsSection copyToClipboard={copyToClipboard} />}
-            {activeSection === "calculations" && <CalculationsSection />}
-            {activeSection === "emission-factors" && <EmissionFactorsSection />}
-            {activeSection === "cat" && <CATSection />}
-            {activeSection === "examples" && <ExamplesSection copyToClipboard={copyToClipboard} />}
-            {activeSection === "errors" && <ErrorsSection />}
-          </motion.div>
+        {/* ═══ MAIN CONTENT ═══ */}
+        <main className="flex-1 overflow-y-auto p-4">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden p-6">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.12 }}
+            >
+              {activeSection === "overview" && <OverviewSection />}
+              {activeSection === "quickstart" && <QuickStartSection copyToClipboard={copyToClipboard} />}
+              {activeSection === "authentication" && <AuthenticationSection copyToClipboard={copyToClipboard} />}
+              {activeSection === "endpoints" && <EndpointsSection copyToClipboard={copyToClipboard} />}
+              {activeSection === "calculations" && <CalculationsSection />}
+              {activeSection === "emission-factors" && <EmissionFactorsSection />}
+              {activeSection === "cat" && <CATSection />}
+              {activeSection === "examples" && <ExamplesSection copyToClipboard={copyToClipboard} />}
+              {activeSection === "errors" && <ErrorsSection />}
+            </motion.div>
+          </div>
         </main>
       </div>
     </div>

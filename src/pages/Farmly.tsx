@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -53,6 +53,7 @@ import { DecarboAgent } from "@/components/farmly/DecarboAgent";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
 import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
+import { FarmlyReport } from "@/components/farmly/FarmlyReport";
 import {
   emissionFactors as rawFactors,
   applyFilters,
@@ -69,9 +70,11 @@ const tabItems = [
   { id: "decarbo", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
   { id: "methodo", label: "METHODO AGENT", icon: Compass, color: "bg-[#8B5CF6] text-white" },
   { id: "history", label: "HISTORY", icon: History, color: "bg-[#64748B] text-white" },
+  { id: "report", label: "REPORT", icon: FileText, color: "bg-[#DC2626] text-white" },
 ];
 
 const Farmly = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("calculator");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
@@ -185,6 +188,9 @@ const Farmly = () => {
       case "COMMUNITY":
         window.open("https://farmly-carbon.lovable.app", "_blank");
         break;
+      case "DOCS":
+        navigate("/farmly/docs");
+        break;
     }
   };
 
@@ -203,7 +209,7 @@ const Farmly = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-1 ml-2">
-          {["SEARCH", "BENCHMARK", "IMPORT", "SETTINGS", "COMMUNITY"].map((item) => (
+          {["SEARCH", "BENCHMARK", "IMPORT", "SETTINGS", "COMMUNITY", "DOCS"].map((item) => (
             <button
               key={item}
               onClick={() => handleHeaderNav(item)}
@@ -557,6 +563,7 @@ const Farmly = () => {
                   {activeTab === "decarbo" && <DecarboAgent factors={filteredFactors} />}
                   {activeTab === "methodo" && <ClimateDataExplorer />}
                   {activeTab === "history" && <CalculationHistoryTable />}
+                  {activeTab === "report" && <FarmlyReport factors={filteredFactors} />}
                 </motion.div>
               </AnimatePresence>
             </div>
