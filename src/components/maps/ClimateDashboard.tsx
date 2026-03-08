@@ -97,6 +97,47 @@ const ChartTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+/* ── Color-coded tooltip showing only recent years (Climate Brink style) ── */
+const yearColorMap: Record<string, { bg: string; text: string }> = {
+  "2023": { bg: "#2563eb", text: "#ffffff" },
+  "2024": { bg: "#f97316", text: "#ffffff" },
+  "2025": { bg: "#dc2626", text: "#ffffff" },
+  "2026": { bg: "#7c3aed", text: "#ffffff" },
+};
+
+const RecentYearsTooltip = ({ active, payload, label, prefix, unit }: any) => {
+  if (!active || !payload?.length) return null;
+  const dataKey = prefix || "y";
+  const suffix = unit || "°C";
+  const recentYears = ["2023", "2024", "2025"];
+  const filtered = recentYears.map(yr => {
+    const key = `${dataKey}${yr}`;
+    const entry = payload.find((p: any) => p.dataKey === key);
+    return entry ? { year: yr, value: entry.value } : null;
+  }).filter(Boolean) as { year: string; value: number }[];
+
+  if (!filtered.length) return null;
+
+  return (
+    <div className="shadow-xl rounded-lg overflow-hidden text-sm min-w-[180px]" style={{ border: "1px solid #d1d5db" }}>
+      <div className="bg-gray-800 text-white px-3 py-1.5 font-semibold text-xs">{label}</div>
+      {filtered.map(({ year, value }) => {
+        const colors = yearColorMap[year];
+        return (
+          <div key={year} className="flex items-center justify-between gap-3 px-3 py-1.5" style={{ backgroundColor: colors.bg, color: colors.text }}>
+            <span className="font-bold text-xs">{year}</span>
+            <span className="font-semibold text-xs">
+              {value !== null && value !== undefined
+                ? `${suffix === "°C" && dataKey === "y" ? (value >= 0 ? "+" : "") : ""}${value.toFixed(2)}${suffix}`
+                : "—"}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 /* ── Rich tooltip for main anomaly chart (Climate Brink style) ── */
 const AnomalyChartTooltip = ({ active, payload, label, yearlyData }: any) => {
   if (!active || !payload?.length) return null;
@@ -406,7 +447,7 @@ export default function ClimateDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
               <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[-0.5, 2]} unit="°C" />
-              <Tooltip content={<ChartTooltip />} />
+              <Tooltip content={<RecentYearsTooltip prefix="y" unit="°C" />} />
               <ReferenceLine y={1.5} stroke="#f59e0b" strokeDasharray="8 4" strokeWidth={1.5} />
               {dailyByYear.allYears.filter(yr => yr < 2023).map(yr => (
                 <Line key={yr} type="monotone" dataKey={`y${yr}`} stroke="#d1d5db" strokeWidth={0.5} dot={false} name={String(yr)} connectNulls isAnimationActive={false} legendType="none" />
@@ -436,7 +477,7 @@ export default function ClimateDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
               <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[11, 17]} unit="°C" />
-              <Tooltip content={<ChartTooltip />} />
+              <Tooltip content={<RecentYearsTooltip prefix="t" unit="°C" />} />
               {dailyTempByYear.allYears.filter(yr => yr < 2023).map(yr => (
                 <Line key={yr} type="monotone" dataKey={`t${yr}`} stroke="#d1d5db" strokeWidth={0.5} dot={false} name={String(yr)} connectNulls isAnimationActive={false} legendType="none" />
               ))}
