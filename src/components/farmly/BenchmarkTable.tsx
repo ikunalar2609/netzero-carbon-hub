@@ -10,15 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Heart, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { Heart, ChevronDown, ChevronUp, ExternalLink, Calculator } from "lucide-react";
 import { type EmissionFactor } from "@/data/emissionFactors";
 
 interface BenchmarkTableProps {
   factors: EmissionFactor[];
   onToggleFavorite: (id: string) => void;
+  onUseInCalculator?: (factor: EmissionFactor) => void;
 }
 
-export const BenchmarkTable = ({ factors, onToggleFavorite }: BenchmarkTableProps) => {
+export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }: BenchmarkTableProps) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [sortField, setSortField] = useState<string>("name");
@@ -108,6 +109,9 @@ export const BenchmarkTable = ({ factors, onToggleFavorite }: BenchmarkTableProp
             >
               Source <SortIcon field="source" />
             </TableHead>
+            {onUseInCalculator && (
+              <TableHead className="font-semibold text-[11px] tracking-wide text-gray-600 w-[60px]">Use</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -168,6 +172,18 @@ export const BenchmarkTable = ({ factors, onToggleFavorite }: BenchmarkTableProp
                   {factor.source}
                 </Badge>
               </TableCell>
+              {onUseInCalculator && (
+                <TableCell className="py-3">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onUseInCalculator(factor); }}
+                    className="h-7 px-2 rounded-md bg-[#4F46E5]/10 text-[#4F46E5] hover:bg-[#4F46E5] hover:text-white text-[9px] font-bold tracking-wide transition-all flex items-center gap-1"
+                    title="Use this EF in Calculator"
+                  >
+                    <Calculator className="h-3 w-3" />
+                    USE
+                  </button>
+                </TableCell>
+              )}
             </motion.tr>
           ))}
           {sorted.length === 0 && (

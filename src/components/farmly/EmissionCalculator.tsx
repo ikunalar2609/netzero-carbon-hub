@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin, Save, Ship, Anchor } from "lucide-react";
+import { Calculator, Zap, Truck, Car, Plane, Factory, Recycle, TrendingDown, TrendingUp, Leaf, Info, Lightbulb, Target, AlertCircle, Loader2, MapPin, Save, Ship, Anchor, ArrowRight, Database } from "lucide-react";
 import { toast } from "sonner";
 import { useRegionDetection } from "@/hooks/useRegionDetection";
 import { useSeaRoute } from "@/hooks/useSeaRoute";
@@ -180,7 +180,14 @@ interface SeaFreightResult {
   waypoints?: string[];
 }
 
-export const EmissionCalculator = () => {
+import { type EmissionFactor } from "@/data/emissionFactors";
+
+interface EmissionCalculatorProps {
+  factors?: EmissionFactor[];
+  onSwitchToBenchmark?: () => void;
+}
+
+export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: EmissionCalculatorProps) => {
   const [activeTab, setActiveTab] = useState("transport");
   const [transportData, setTransportData] = useState<TransportData>({ 
     distance: 0, 
@@ -643,39 +650,72 @@ export const EmissionCalculator = () => {
     return insights;
   };
 
+  // Find matching benchmark emission factors for current calculation
+  const getMatchedBenchmarks = () => {
+    if (factors.length === 0) return [];
+    const tabCategoryMap: Record<string, string[]> = {
+      transport: ["Transportation"],
+      flight: ["Transportation"],
+      sea: ["Transportation"],
+      energy: ["Energy"],
+      waste: ["Waste"],
+    };
+    const categories = tabCategoryMap[activeTab] || [];
+    return factors.filter(f => categories.includes(f.category)).slice(0, 4);
+  };
+
+  const matchedBenchmarks = getMatchedBenchmarks();
+
   return (
     <TooltipProvider>
       <div className="space-y-4">
         {/* ── Summary Metric Strip ── */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
           {[
-            { label: "TOTAL", value: totalEmissions.toFixed(2), unit: "kg CO₂e", icon: Calculator, accent: "#4F46E5", trend: totalEmissions > 50 },
-            { label: "TRANSPORT", value: emissionsBreakdown.transport.toFixed(1), unit: "kg", icon: Car, accent: "#2563EB" },
-            { label: "FLIGHT", value: emissionsBreakdown.flight.toFixed(1), unit: "kg", icon: Plane, accent: "#8B5CF6" },
-            { label: "SEA FREIGHT", value: emissionsBreakdown.sea.toFixed(1), unit: "kg", icon: Ship, accent: "#0EA5E9" },
-            { label: "ENERGY & WASTE", value: (emissionsBreakdown.energy + emissionsBreakdown.waste).toFixed(1), unit: "kg", icon: Factory, accent: "#F97316" },
+            { label: "TOTAL", value: totalEmissions.toFixed(2), unit: "kg CO₂e", icon: Calculator, accent: "#4F46E5", gradient: "from-[#4F46E5]/8 to-[#4F46E5]/2", iconBg: "bg-[#4F46E5]/10", trend: totalEmissions > 50 },
+            { label: "TRANSPORT", value: emissionsBreakdown.transport.toFixed(1), unit: "kg", icon: Car, accent: "#2563EB", gradient: "from-[#2563EB]/8 to-[#2563EB]/2", iconBg: "bg-[#2563EB]/10" },
+            { label: "FLIGHT", value: emissionsBreakdown.flight.toFixed(1), unit: "kg", icon: Plane, accent: "#8B5CF6", gradient: "from-[#8B5CF6]/8 to-[#8B5CF6]/2", iconBg: "bg-[#8B5CF6]/10" },
+            { label: "SEA FREIGHT", value: emissionsBreakdown.sea.toFixed(1), unit: "kg", icon: Ship, accent: "#0EA5E9", gradient: "from-[#0EA5E9]/8 to-[#0EA5E9]/2", iconBg: "bg-[#0EA5E9]/10" },
+            { label: "ENERGY & WASTE", value: (emissionsBreakdown.energy + emissionsBreakdown.waste).toFixed(1), unit: "kg", icon: Factory, accent: "#F97316", gradient: "from-[#F97316]/8 to-[#F97316]/2", iconBg: "bg-[#F97316]/10" },
           ].map((card) => {
             const Icon = card.icon;
             return (
-              <div key={card.label} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">{card.label}</span>
-                  <Icon className="h-3.5 w-3.5" style={{ color: card.accent }} />
-                </div>
-                <div className="text-xl font-bold text-gray-900 leading-none">
-                  {card.value}
-                  <span className="text-[11px] font-medium text-gray-400 ml-1">{card.unit}</span>
-                </div>
-                {card.trend !== undefined && (
-                  <div className="flex items-center gap-1 mt-1">
-                    {card.trend ? (
-                      <><TrendingUp className="h-3 w-3 text-orange-500" /><span className="text-[10px] text-orange-500 font-medium">Above target</span></>
-                    ) : (
-                      <><TrendingDown className="h-3 w-3 text-emerald-500" /><span className="text-[10px] text-emerald-500 font-medium">On track</span></>
-                    )}
+              <motion.div
+                key={card.label}
+                whileHover={{ y: -2, scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-4 cursor-default`}
+              >
+                {/* Subtle decorative circle */}
+                <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[9px] font-extrabold tracking-[0.15em] text-gray-400 uppercase">{card.label}</span>
+                    <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center`}>
+                      <Icon className="h-3.5 w-3.5" style={{ color: card.accent }} />
+                    </div>
                   </div>
-                )}
-              </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-extrabold text-gray-900 tracking-tight leading-none">{card.value}</span>
+                    <span className="text-[10px] font-semibold text-gray-400">{card.unit}</span>
+                  </div>
+                  {card.trend !== undefined && (
+                    <div className="flex items-center gap-1 mt-2">
+                      {card.trend ? (
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-100/80">
+                          <TrendingUp className="h-3 w-3 text-orange-500" />
+                          <span className="text-[9px] text-orange-600 font-bold">Above target</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100/80">
+                          <TrendingDown className="h-3 w-3 text-emerald-500" />
+                          <span className="text-[9px] text-emerald-600 font-bold">On track</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             );
           })}
         </div>
@@ -1207,6 +1247,38 @@ export const EmissionCalculator = () => {
                   <span className="text-[11px] font-bold text-gray-800">Carbon Offset</span>
                 </div>
                 <p className="text-[10px] text-gray-500">Plant <span className="font-bold text-[#10B981]">{Math.ceil(totalEmissions / 22)} trees</span> to offset • Est. cost: <span className="font-bold">${(totalEmissions * 0.02).toFixed(2)}</span></p>
+              </div>
+            )}
+
+            {/* Matched Benchmark EFs */}
+            {matchedBenchmarks.length > 0 && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Database className="h-3.5 w-3.5 text-[#4F46E5]" />
+                    <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wide">Related EFs</span>
+                  </div>
+                  {onSwitchToBenchmark && (
+                    <button onClick={onSwitchToBenchmark} className="text-[10px] font-bold text-[#4F46E5] hover:underline flex items-center gap-0.5">
+                      VIEW ALL <ArrowRight className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  {matchedBenchmarks.map((ef) => (
+                    <div key={ef.id} className="p-2 rounded-md bg-[#4F46E5]/[0.03] border border-[#4F46E5]/10 hover:border-[#4F46E5]/25 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-medium text-gray-700 truncate max-w-[140px]">{ef.name}</span>
+                        <span className="text-[10px] font-bold text-[#4F46E5] ml-2 shrink-0">{ef.fe} kgCO₂e/{ef.unit}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[9px] text-gray-400">{ef.source}</span>
+                        <span className="text-[9px] text-gray-300">•</span>
+                        <span className="text-[9px] text-gray-400">{ef.scope.replace("scope", "Scope ")}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
