@@ -208,7 +208,7 @@ const Farmly = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-1 ml-2">
-          {["SEARCH", "BENCHMARK", "IMPORT", "SETTINGS", "COMMUNITY"].map((item) => (
+          {["SEARCH", "BENCHMARK", "IMPORT", "SETTINGS", "COMMUNITY", "DOCS"].map((item) => (
             <button
               key={item}
               onClick={() => handleHeaderNav(item)}
