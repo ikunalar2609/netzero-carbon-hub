@@ -47,10 +47,9 @@ const HomeHeader = () => {
                   href={link.to}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-secondary transition-all duration-200 flex items-center gap-1"
+                  className="px-3.5 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-secondary transition-all duration-200"
                 >
                   {link.label}
-                  <ExternalLink className="h-3 w-3 opacity-40" />
                 </a>
               ) : (
                 <Link
@@ -99,11 +98,10 @@ const HomeHeader = () => {
                     href={link.to}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-3 text-[14px] font-medium text-foreground hover:bg-secondary rounded-lg transition-colors flex items-center gap-2"
+                    className="px-4 py-3 text-[14px] font-medium text-foreground hover:bg-secondary rounded-lg transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
-                    <ExternalLink className="h-3.5 w-3.5 opacity-40" />
                   </a>
                 ) : (
                   <Link
