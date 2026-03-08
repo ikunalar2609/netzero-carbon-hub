@@ -269,8 +269,8 @@ const Index = () => {
             ].map((s) => (
               <div key={s.l} className="bg-card p-8 text-center">
                 <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{s.n}</div>
-                <div className="text-[13px] font-semibold text-foreground/70 mt-1">{s.l}</div>
-                <div className="text-[11px] text-foreground/40 mt-0.5">{s.d}</div>
+                <div className="text-[13px] font-semibold text-foreground/85 mt-1">{s.l}</div>
+                <div className="text-[11px] text-foreground/60 mt-0.5">{s.d}</div>
               </div>
             ))}
           </motion.div>
