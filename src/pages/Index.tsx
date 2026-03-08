@@ -14,6 +14,7 @@ import wwfLogo from "@/assets/logos/wwf-logo.png";
 import goldStandardLogo from "@/assets/logos/gold-standard-logo.png";
 import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 import farmlyDashboardScreenshot from "@/assets/farmly-dashboard-screenshot.png";
+import chartsCollage from "@/assets/charts-collage.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -410,6 +411,91 @@ const Index = () => {
               { n: "6", l: "Methodologies", d: "Flight, Sea, Vehicle, Energy, Waste, CAT" },
               { n: "50+", l: "Global Regions", d: "Across all continents" },
               { n: "< 50ms", l: "API Response", d: "RESTful endpoints" },
+            ].map((s) => (
+              <div key={s.l} className="bg-card p-8 text-center">
+                <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{s.n}</div>
+                <div className="text-[13px] font-semibold text-foreground/85 mt-1">{s.l}</div>
+                <div className="text-[11px] text-foreground/60 mt-0.5">{s.d}</div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ MAPS & CHARTS SHOWCASE ═══════════════ */}
+      <section className="py-28 px-6 bg-secondary/30">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-14"
+          >
+            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-4 block">
+              Environmental Intelligence
+            </span>
+            <h2 className="text-4xl md:text-[52px] font-bold text-foreground tracking-tight leading-[1.1] mb-5">
+              Maps & Climate Charts
+            </h2>
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
+              Real-time wildfire tracking, deforestation hotspots, temperature anomaly trends, and heatmaps — powered by NASA FIRMS, Berkeley Earth, and Global Forest Watch.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+            className="relative cursor-pointer group"
+            onClick={() => navigate("/maps")}
+          >
+            <div className="absolute -inset-4 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent rounded-3xl blur-2xl pointer-events-none" />
+            
+            <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl shadow-foreground/10 bg-card transition-transform duration-500 group-hover:scale-[1.01]">
+              <div className="h-10 bg-secondary border-b border-border flex items-center px-4 gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-destructive/30" />
+                  <div className="w-3 h-3 rounded-full bg-[hsl(45,80%,55%)]/40" />
+                  <div className="w-3 h-3 rounded-full bg-primary/30" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/70 font-mono">
+                    app.farmlycarbon.in/maps
+                  </div>
+                </div>
+              </div>
+              <img
+                src={chartsCollage}
+                alt="FarmlyCarbon Environmental Maps & Climate Charts — Wildfire tracking, temperature anomalies, deforestation heatmaps"
+                className="w-full h-auto"
+                loading="lazy"
+              />
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm shadow-xl flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  Explore Maps & Charts
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Quick stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border mt-12"
+          >
+            {[
+              { n: "5,000+", l: "Fire Detections", d: "Real-time NASA FIRMS" },
+              { n: "29", l: "Loss Hotspots", d: "Global deforestation" },
+              { n: "85+", l: "Years of Data", d: "Temperature anomalies" },
+              { n: "7", l: "Continent Stats", d: "Regional breakdowns" },
             ].map((s) => (
               <div key={s.l} className="bg-card p-8 text-center">
                 <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{s.n}</div>
