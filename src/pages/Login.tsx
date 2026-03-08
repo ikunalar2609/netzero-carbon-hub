@@ -46,7 +46,7 @@ const Login = () => {
     setError("");
     try {
       await login(values.email, values.password);
-      navigate("/dashboard");
+      navigate("/farmly");
     } catch (err: any) {
       setError(err?.message || "Invalid credentials");
     } finally {
