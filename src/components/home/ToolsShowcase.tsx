@@ -9,9 +9,9 @@ const sustainabilityFeatures = [
 ];
 
 const technicalFeatures = [
-  "RESTful API with <50ms response",
   "10,000+ verified emission factors",
-  "SDKs for Python & Node.js",
+  "Multi-column sorting & filtering",
+  "Detailed metadata per factor",
 ];
 
 export const ToolsShowcase = () => {
