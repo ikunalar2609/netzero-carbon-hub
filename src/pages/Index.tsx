@@ -390,7 +390,7 @@ const Index = () => {
                       <item.icon className="h-5 w-5 text-foreground" />
                     </div>
                     <div className="text-[15px] font-bold text-foreground">{item.label}</div>
-                    <div className="text-[11px] text-foreground/50">{item.sub}</div>
+                    <div className="text-[11px] text-foreground/70">{item.sub}</div>
                   </div>
                 ))}
               </div>
