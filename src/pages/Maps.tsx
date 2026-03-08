@@ -64,15 +64,12 @@ export default function MapsPage() {
         selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion}
         isLoading={isLoading}
         onNavClick={(item) => {
-          const targets: Record<string, string> = {
-            "MAPS": "section-maps",
-            "CHARTS": "section-charts",
-            "CLIMATE DATA": "section-charts",
-            "DOCS": "",
-          };
-          const id = targets[item];
-          if (id) {
-            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+          if (item === "MAPS") {
+            document.getElementById("section-maps")?.scrollIntoView({ behavior: "smooth" });
+          } else if (item === "CHARTS") {
+            document.getElementById("section-charts")?.scrollIntoView({ behavior: "smooth" });
+          } else if (item === "CLIMATE DATA") {
+            navigate("/maps/climate-data");
           } else if (item === "DOCS") {
             navigate("/maps/docs");
           }
