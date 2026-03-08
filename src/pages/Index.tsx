@@ -374,7 +374,7 @@ const Index = () => {
                 <br />
                 <span className="text-foreground/60">Simple integration.</span>
               </h2>
-              <p className="text-lg text-foreground/60 leading-relaxed mb-10">
+              <p className="text-lg text-foreground/80 leading-relaxed mb-10">
                 Integrate accurate carbon calculations directly into your supply chain, ERP, or sustainability software.
                 Get started in minutes with comprehensive documentation.
               </p>
