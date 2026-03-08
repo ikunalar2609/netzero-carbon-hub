@@ -14,6 +14,7 @@ import carbonIntegrityLogo from "@/assets/logos/carbon-integrity-logo.png";
 import wwfLogo from "@/assets/logos/wwf-logo.png";
 import goldStandardLogo from "@/assets/logos/gold-standard-logo.png";
 import farmlyLogo from "@/assets/farmly-carbon-logo.png";
+import farmlyDashboardScreenshot from "@/assets/farmly-dashboard-screenshot.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
