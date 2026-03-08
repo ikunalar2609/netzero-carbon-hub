@@ -43,6 +43,10 @@ export const defaultFilters: FarmlyFilters = {
   scope: [],
   methodology: [],
   region: [],
+  category: [],
+  sector: [],
+  dataType: [],
+  perimeter: [],
 };
 
 export const emissionFactors: EmissionFactor[] = [
