@@ -146,31 +146,37 @@ export const CalculationHistoryTable = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'flight':
-        return <Plane className="h-4 w-4" />;
-      case 'vehicle':
-        return <Car className="h-4 w-4" />;
-      case 'energy':
-        return <Zap className="h-4 w-4" />;
-      case 'diet':
-        return <Trash2 className="h-4 w-4" />;
-      default:
-        return <Car className="h-4 w-4" />;
+      case 'flight': return <Plane className="h-4 w-4" />;
+      case 'vehicle': return <Car className="h-4 w-4" />;
+      case 'energy': return <Zap className="h-4 w-4" />;
+      case 'waste': case 'diet': return <Recycle className="h-4 w-4" />;
+      case 'sea': return <Ship className="h-4 w-4" />;
+      case 'industry': return <Factory className="h-4 w-4" />;
+      case 'agriculture': return <Leaf className="h-4 w-4" />;
+      case 'digital': return <Lightbulb className="h-4 w-4" />;
+      default: return <Car className="h-4 w-4" />;
     }
   };
 
   const getTypeBadgeColor = (type: string) => {
     switch (type) {
-      case 'flight':
-        return 'bg-purple-100 text-purple-700 hover:bg-purple-100';
-      case 'vehicle':
-        return 'bg-blue-100 text-blue-700 hover:bg-blue-100';
-      case 'energy':
-        return 'bg-green-100 text-green-700 hover:bg-green-100';
-      case 'diet':
-        return 'bg-orange-100 text-orange-700 hover:bg-orange-100';
-      default:
-        return 'bg-gray-100 text-gray-700 hover:bg-gray-100';
+      case 'flight': return 'bg-purple-100 text-purple-700 hover:bg-purple-100';
+      case 'vehicle': return 'bg-blue-100 text-blue-700 hover:bg-blue-100';
+      case 'energy': return 'bg-green-100 text-green-700 hover:bg-green-100';
+      case 'waste': case 'diet': return 'bg-orange-100 text-orange-700 hover:bg-orange-100';
+      case 'sea': return 'bg-cyan-100 text-cyan-700 hover:bg-cyan-100';
+      case 'industry': return 'bg-red-100 text-red-700 hover:bg-red-100';
+      case 'agriculture': return 'bg-lime-100 text-lime-700 hover:bg-lime-100';
+      case 'digital': return 'bg-teal-100 text-teal-700 hover:bg-teal-100';
+      default: return 'bg-gray-100 text-gray-700 hover:bg-gray-100';
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'diet': return 'Waste';
+      case 'sea': return 'Sea Freight';
+      default: return type.charAt(0).toUpperCase() + type.slice(1);
     }
   };
 
@@ -182,8 +188,16 @@ export const CalculationHistoryTable = () => {
         return `${data.distance || 0} km | ${data.vehicle || data.fuelType || 'N/A'}`;
       case 'energy':
         return `${data.electricity || 0} kWh | ${data.gridType || 'mixed'}`;
-      case 'diet':
+      case 'waste': case 'diet':
         return `${data.amount || 0} kg | ${data.disposal || 'N/A'}`;
+      case 'sea':
+        return `${data.originPort || 'N/A'} → ${data.destinationPort || 'N/A'} | ${data.weight || 0}t`;
+      case 'industry':
+        return `${(data.product || '').replace(/-/g, ' ')} | ${data.quantity || 0} ${data.unit || 'units'}`;
+      case 'agriculture':
+        return `${(data.activity || '').replace(/-/g, ' ')} | ${data.quantity || 0} ${data.unit || 'units'}`;
+      case 'digital':
+        return `${(data.activity || '').replace(/-/g, ' ')} | ${data.quantity || 0} ${data.unit || 'units'}`;
       default:
         return JSON.stringify(data).slice(0, 50) + '...';
     }
