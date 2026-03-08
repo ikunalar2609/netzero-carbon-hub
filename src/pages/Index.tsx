@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
 import farmlyApiVideo from "@/assets/farmly-api-video.webm";
-import farmHeroBg from "@/assets/farm-hero-bg.jpg";
+import heroVisual from "@/assets/hero-visual.png";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
 import noaaLogo from "@/assets/logos/noaa-logo.png";
@@ -25,10 +25,6 @@ const fadeUp = {
   }),
 };
 
-const stagger = {
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
 const Index = () => {
   const navigate = useNavigate();
 
@@ -37,7 +33,7 @@ const Index = () => {
       <HomeHeader />
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[100vh] flex items-center overflow-hidden">
         {/* Mesh gradient background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--green-100)),transparent)]" />
@@ -51,92 +47,112 @@ const Index = () => {
           backgroundSize: "32px 32px",
         }} />
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center px-6 pt-28 pb-20">
-          <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
-            <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12px] font-semibold tracking-wide bg-primary/10 text-primary border border-primary/20 mb-8 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Now in Public Beta
-            </span>
-          </motion.div>
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-28 pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
+            <div>
+              <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
+                <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12px] font-semibold tracking-wide bg-primary/10 text-primary border border-primary/20 mb-8 backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  Now in Public Beta
+                </span>
+              </motion.div>
 
-          <motion.h1
-            custom={1}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="text-5xl sm:text-6xl md:text-[76px] font-bold text-foreground tracking-[-0.03em] leading-[1.05] mb-6"
-          >
-            Carbon management
-            <br />
-            <span className="bg-gradient-to-r from-primary to-[hsl(var(--brand-primary-light))] bg-clip-text text-transparent">
-              for agriculture
-            </span>
-          </motion.h1>
+              <motion.h1
+                custom={1}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="text-5xl sm:text-6xl md:text-[68px] font-bold text-foreground tracking-[-0.03em] leading-[1.05] mb-6"
+              >
+                Carbon management
+                <br />
+                <span className="bg-gradient-to-r from-primary to-[hsl(var(--brand-primary-light))] bg-clip-text text-transparent">
+                  for enterprises
+                </span>
+              </motion.h1>
 
-          <motion.p
-            custom={2}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            Track emissions, plan net-zero pathways, and access verified carbon markets.
-            The all-in-one platform trusted by agricultural operations worldwide.
-          </motion.p>
+              <motion.p
+                custom={2}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="text-lg md:text-xl text-foreground/70 max-w-xl mb-10 leading-relaxed"
+              >
+                Track Scope 1–3 emissions, plan net-zero pathways, and access verified carbon markets.
+                The all-in-one platform trusted by corporations and sustainability teams worldwide.
+              </motion.p>
 
-          <motion.div
-            custom={3}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col sm:flex-row gap-3 justify-center"
-          >
-            <Button
-              size="lg"
-              onClick={() => navigate("/signup")}
-              className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xl shadow-foreground/10 transition-all hover:shadow-2xl hover:-translate-y-0.5 group"
+              <motion.div
+                custom={3}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col sm:flex-row gap-3"
+              >
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/signup")}
+                  className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xl shadow-foreground/10 transition-all hover:shadow-2xl hover:-translate-y-0.5 group"
+                >
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => navigate("/farmly")}
+                  className="h-13 px-8 text-[15px] font-semibold rounded-xl border-border text-foreground hover:bg-secondary transition-all"
+                >
+                  <Play className="mr-2 h-4 w-4" />
+                  Live Demo
+                </Button>
+              </motion.div>
+
+              {/* Social proof row */}
+              <motion.div
+                custom={4}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="mt-12 flex flex-wrap items-center gap-6 text-[13px] text-foreground/50"
+              >
+                <span className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" /> SOC 2 Compliant
+                </span>
+                <span className="h-4 w-px bg-border" />
+                <span className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-primary" /> 1.2M+ tCO₂e tracked
+                </span>
+                <span className="h-4 w-px bg-border" />
+                <span className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-primary" /> 50+ regions
+                </span>
+              </motion.div>
+            </div>
+
+            {/* Right: Hero Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 40, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="hidden lg:block relative"
             >
-              Start Free Trial
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate("/farmly")}
-              className="h-13 px-8 text-[15px] font-semibold rounded-xl border-border text-foreground hover:bg-secondary transition-all"
-            >
-              <Play className="mr-2 h-4 w-4" />
-              Live Demo
-            </Button>
-          </motion.div>
-
-          {/* Social proof row */}
-          <motion.div
-            custom={4}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="mt-16 flex flex-wrap items-center justify-center gap-8 text-[13px] text-muted-foreground"
-          >
-            <span className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-primary" /> SOC 2 Compliant
-            </span>
-            <span className="h-4 w-px bg-border" />
-            <span className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-primary" /> 1.2M+ tCO₂e tracked
-            </span>
-            <span className="h-4 w-px bg-border" />
-            <span className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-primary" /> 50+ regions
-            </span>
-          </motion.div>
+              <div className="absolute -inset-8 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent rounded-3xl blur-3xl pointer-events-none" />
+              <img
+                src={heroVisual}
+                alt="FarmlyCarbon carbon data visualization with charts and analytics"
+                className="relative w-full h-auto rounded-2xl shadow-2xl shadow-foreground/10"
+              />
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ═══════════════ LOGO STRIP ═══════════════ */}
       <section className="py-16 px-6 border-y border-border bg-secondary/30">
         <div className="max-w-6xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground text-center mb-8">
+          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/40 text-center mb-8">
             Data Powered By Leading Institutions
           </p>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
@@ -151,7 +167,7 @@ const Index = () => {
                 key={logo.alt}
                 src={logo.src}
                 alt={logo.alt}
-                className="h-8 md:h-10 w-auto object-contain grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                className="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all duration-300"
               />
             ))}
           </div>
@@ -190,11 +206,9 @@ const Index = () => {
             viewport={{ once: true }}
             className="relative mb-20"
           >
-            {/* Glow behind */}
             <div className="absolute -inset-4 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent rounded-3xl blur-2xl pointer-events-none" />
             
             <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl shadow-foreground/10 bg-card">
-              {/* Browser chrome */}
               <div className="h-10 bg-secondary border-b border-border flex items-center px-4 gap-2">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-destructive/30" />
@@ -202,8 +216,8 @@ const Index = () => {
                   <div className="w-3 h-3 rounded-full bg-primary/30" />
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-muted-foreground font-mono">
-                    app.farmlycarbon.com/calculator
+                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/50 font-mono">
+                    app.farmlycarbon.in/calculator
                   </div>
                 </div>
               </div>
@@ -225,11 +239,11 @@ const Index = () => {
             className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-20"
           >
             {[
-              { icon: Truck, label: "Transport", color: "text-primary" },
+              { icon: Truck, label: "Transport", color: "text-emerald-600" },
               { icon: Plane, label: "Flight (ICAO)", color: "text-blue-600" },
               { icon: Ship, label: "Sea (IMO)", color: "text-cyan-600" },
               { icon: Zap, label: "Energy", color: "text-amber-600" },
-              { icon: Calculator, label: "Waste (IPCC)", color: "text-red-500" },
+              { icon: Calculator, label: "Waste (IPCC)", color: "text-rose-600" },
               { icon: Bot, label: "AI Agents", color: "text-violet-600" },
             ].map((f) => (
               <div key={f.label} className="flex items-center gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300 group">
@@ -263,8 +277,6 @@ const Index = () => {
         </div>
       </section>
 
-
-
       {/* ═══════════════ TWO-PANE CTA ═══════════════ */}
       <section className="relative w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -282,16 +294,16 @@ const Index = () => {
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight">
                 For sustainability
-                <br />professionals
+                <br />teams
               </h2>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
-                Stop spending weeks sourcing emission factors. Integrate carbon data into your existing workflows.
+              <p className="text-foreground/60 mb-8 leading-relaxed">
+                Streamline corporate carbon reporting. Automate Scope 1–3 data collection and generate compliance-ready reports in minutes.
               </p>
               <div className="space-y-3 mb-10">
-                {["Automated GHG reporting", "Scope 1–3 categorization", "Compliance-ready exports"].map((f) => (
+                {["Automated GHG inventory reports", "Scope 1–3 categorization engine", "CSRD & CDP-ready exports"].map((f) => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
-                    <span className="text-[14px] text-foreground/80">{f}</span>
+                    <span className="text-[14px] text-foreground/80 font-medium">{f}</span>
                   </div>
                 ))}
               </div>
@@ -299,7 +311,7 @@ const Index = () => {
                 onClick={() => navigate("/farmly")}
                 className="group inline-flex items-center gap-2 text-[14px] font-semibold text-foreground hover:text-primary transition-colors"
               >
-                Open Dashboard
+                Open Product
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
@@ -321,14 +333,14 @@ const Index = () => {
                 For technical
                 <br />teams
               </h2>
-              <p className="text-background/60 mb-8 leading-relaxed">
-                Access verified carbon data through our REST API. Built for scale, designed for simplicity.
+              <p className="text-background/55 mb-8 leading-relaxed">
+                Embed carbon intelligence into your products. Access verified emission factors through our API.
               </p>
               <div className="space-y-3 mb-10">
-                {["RESTful API with &lt;50ms response", "10,000+ emission factors", "SDKs for Python & Node.js"].map((f) => (
+                {["RESTful API with <50ms response", "10,000+ verified emission factors", "SDKs for Python & Node.js"].map((f) => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
-                    <span className="text-[14px] text-background/70" dangerouslySetInnerHTML={{ __html: f }} />
+                    <span className="text-[14px] text-background/70 font-medium">{f}</span>
                   </div>
                 ))}
               </div>
@@ -360,11 +372,11 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
                 Powerful API.
                 <br />
-                <span className="text-muted-foreground">Simple integration.</span>
+                <span className="text-foreground/40">Simple integration.</span>
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-10">
-                Integrate accurate carbon calculations directly into your applications.
-                Get started in minutes with comprehensive documentation and SDKs.
+              <p className="text-lg text-foreground/60 leading-relaxed mb-10">
+                Integrate accurate carbon calculations directly into your supply chain, ERP, or sustainability software.
+                Get started in minutes with comprehensive documentation.
               </p>
 
               <div className="flex items-center gap-8 mb-10">
@@ -378,7 +390,7 @@ const Index = () => {
                       <item.icon className="h-5 w-5 text-foreground" />
                     </div>
                     <div className="text-[15px] font-bold text-foreground">{item.label}</div>
-                    <div className="text-[11px] text-muted-foreground">{item.sub}</div>
+                    <div className="text-[11px] text-foreground/50">{item.sub}</div>
                   </div>
                 ))}
               </div>
@@ -404,7 +416,7 @@ const Index = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-[hsl(45,80%,60%)]" />
                   <div className="w-2.5 h-2.5 rounded-full bg-primary/40" />
-                  <span className="ml-3 text-[11px] text-muted-foreground font-mono">farmly-api-demo</span>
+                  <span className="ml-3 text-[11px] text-foreground/40 font-mono">farmly-api-demo</span>
                 </div>
                 <video
                   src={farmlyApiVideo}
@@ -436,11 +448,11 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
                 Science-backed
                 <br />
-                <span className="text-muted-foreground">credibility</span>
+                <span className="text-foreground/40">credibility</span>
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Base your climate strategy on credible science, not guesswork.
-                Align with the world's most robust carbon accounting standards.
+              <p className="text-lg text-foreground/60 leading-relaxed">
+                Base your corporate climate strategy on credible science, not guesswork.
+                Align with the world's most robust carbon accounting standards and reporting frameworks.
               </p>
             </motion.div>
 
@@ -461,12 +473,12 @@ const Index = () => {
               ].map((std) => (
                 <div
                   key={std.name}
-                  className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300 group"
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300"
                 >
-                  <div className="w-12 h-12 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all duration-300">
+                  <div className="w-12 h-12 flex items-center justify-center">
                     <img src={std.src} alt={std.name} className="w-full h-full object-contain" />
                   </div>
-                  <span className="text-[11px] font-semibold text-muted-foreground text-center leading-tight">
+                  <span className="text-[11px] font-bold text-foreground/60 text-center leading-tight">
                     {std.name}
                   </span>
                 </div>
@@ -492,8 +504,8 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
               Let's connect
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Whether it's about ideas, collaborations, or exploring FarmlyCarbon
+            <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+              Whether it's for enterprise deployment, API integration, or exploring FarmlyCarbon
               for your organization — pick a time that works.
             </p>
           </motion.div>
@@ -521,7 +533,6 @@ const Index = () => {
 
       {/* ═══════════════ FINAL CTA ═══════════════ */}
       <section className="py-32 px-6 bg-foreground relative overflow-hidden">
-        {/* Gradient orbs */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -538,8 +549,8 @@ const Index = () => {
             <span className="text-primary">carbon footprint?</span>
           </h2>
           <p className="text-lg text-background/50 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Join leading agricultural operations worldwide who trust FarmlyCarbon
-            to drive sustainability and unlock new revenue streams.
+            Join leading enterprises and sustainability teams worldwide who trust FarmlyCarbon
+            to drive decarbonization and unlock new revenue streams.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -580,46 +591,46 @@ const Index = () => {
                 <img src={farmlyLogo} alt="FarmlyCarbon" className="h-8 w-auto" />
                 <span className="text-[16px] font-bold text-foreground">FarmlyCarbon</span>
               </Link>
-              <p className="text-[13px] text-muted-foreground leading-relaxed max-w-xs">
-                Empowering agricultural operations with comprehensive carbon management for a sustainable future.
+              <p className="text-[13px] text-foreground/50 leading-relaxed max-w-xs">
+                Empowering enterprises with comprehensive carbon management tools for a net-zero future.
               </p>
             </div>
 
             <div>
-              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Platform</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Platform</h4>
               <div className="space-y-3">
-                <Link to="/farmly" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Product</Link>
-                <Link to="/maps" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Maps</Link>
-                <Link to="/farmly/docs" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
+                <Link to="/farmly" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Product</Link>
+                <Link to="/maps" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Maps</Link>
+                <Link to="/farmly/docs" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">API Docs</Link>
               </div>
             </div>
 
             <div>
-              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Resources</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Resources</h4>
               <div className="space-y-3">
-                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Blog</a>
-                <Link to="/login" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Log in</Link>
-                <Link to="/signup" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Sign Up</Link>
+                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Blog</a>
+                <Link to="/login" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Log in</Link>
+                <Link to="/signup" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Sign Up</Link>
               </div>
             </div>
 
             <div>
-              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Connect</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Connect</h4>
               <div className="space-y-3">
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Twitter</a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Instagram</a>
-                <span className="block text-[13px] text-muted-foreground">i.kunal.ar26@gmail.com</span>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Twitter</a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">LinkedIn</a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Instagram</a>
+                <span className="block text-[13px] text-foreground/50">i.kunal.ar26@gmail.com</span>
               </div>
             </div>
           </div>
 
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[12px] text-muted-foreground">© 2025 FarmlyCarbon. All rights reserved.</p>
+            <p className="text-[12px] text-foreground/40">© 2025 FarmlyCarbon. All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">Cookies</a>
+              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Terms</a>
+              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Cookies</a>
             </div>
           </div>
         </div>
