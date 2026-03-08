@@ -49,6 +49,9 @@ import {
   Database,
   ExternalLink,
   LogOut,
+  User,
+  Pencil,
+  Check,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
