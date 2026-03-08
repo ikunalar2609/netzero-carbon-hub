@@ -9,6 +9,7 @@ import { FireMarker, ForestMarker, TreeLossMarker } from "@/components/maps/MapM
 import MapCard from "@/components/maps/MapCard";
 import MapsHeader from "@/components/maps/MapsHeader";
 import StatsStrip from "@/components/maps/StatsStrip";
+import ClimateDashboard from "@/components/maps/ClimateDashboard";
 import { useState } from "react";
 
 /* -------------------- Main Component -------------------- */
@@ -222,6 +223,9 @@ export default function MapsPage() {
             </Map>
           </MapCard>
         </div>
+
+        {/* Climate Temperature Dashboard */}
+        <ClimateDashboard />
 
         {/* Footer */}
         <div className="bg-white/60 border border-gray-200/60 rounded-xl px-5 py-3 flex items-center justify-between">
