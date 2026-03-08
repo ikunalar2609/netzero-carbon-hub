@@ -372,7 +372,7 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
                 Powerful API.
                 <br />
-                <span className="text-foreground/40">Simple integration.</span>
+                <span className="text-foreground/60">Simple integration.</span>
               </h2>
               <p className="text-lg text-foreground/60 leading-relaxed mb-10">
                 Integrate accurate carbon calculations directly into your supply chain, ERP, or sustainability software.
