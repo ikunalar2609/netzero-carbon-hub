@@ -134,7 +134,7 @@ const Index = () => {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="hidden lg:block relative h-[520px]"
+              className="hidden lg:block relative h-[520px] -mt-8"
             >
               {/* Distressed grid background */}
               <svg className="absolute inset-0 w-full h-full rounded-3xl opacity-[0.07] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
