@@ -77,7 +77,7 @@ export const ToolsShowcase = () => {
             </div>
 
             <h2 className="text-3xl md:text-[40px] font-bold text-white mb-4 leading-[1.15] tracking-tight">
-              For technical
+              Benchmark
               <br />
               teams
             </h2>
