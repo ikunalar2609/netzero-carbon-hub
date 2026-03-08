@@ -746,7 +746,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
     <TooltipProvider>
       <div className="space-y-4">
         {/* ── Summary Metric Strip ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
           {[
             { label: "TOTAL", value: totalEmissions.toFixed(2), unit: "kg CO₂e", icon: Calculator, accent: "#4F46E5", gradient: "from-[#4F46E5]/8 to-[#4F46E5]/2", iconBg: "bg-[#4F46E5]/10", trend: totalEmissions > 50 },
             { label: "TRANSPORT", value: emissionsBreakdown.transport.toFixed(1), unit: "kg", icon: Car, accent: "#2563EB", gradient: "from-[#2563EB]/8 to-[#2563EB]/2", iconBg: "bg-[#2563EB]/10" },
