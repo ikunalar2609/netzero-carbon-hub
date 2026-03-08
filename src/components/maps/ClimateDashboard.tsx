@@ -354,7 +354,7 @@ export default function ClimateDashboard() {
               domain={[-0.5, 2]}
               unit="°C"
             />
-            <Tooltip content={<ChartTooltip />} />
+            <Tooltip content={<AnomalyChartTooltip yearlyData={yearlyData} />} />
             <ReferenceLine
               y={1.5}
               stroke="#f59e0b"
