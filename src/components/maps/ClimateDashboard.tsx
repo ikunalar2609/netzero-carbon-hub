@@ -144,36 +144,38 @@ export default function ClimateDashboard() {
     });
   }, [monthlyData]);
 
-  // Daily anomalies by year (using monthly data grouped by month-of-year for recent years)
+  // Daily anomalies by year — all historical years as gray + recent highlighted
   const dailyByYear = useMemo(() => {
-    const recentYears = [2023, 2024, 2025, 2026];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const result: any[] = months.map((m, i) => ({ month: m, monthNum: i + 1 }));
-
-    for (const yr of recentYears) {
+    const allYears = new Set<number>();
+    for (const d of monthlyData) allYears.add(parseInt(d.date.substring(0, 4)));
+    const sortedYears = [...allYears].sort();
+    for (const yr of sortedYears) {
       const yearData = monthlyData.filter(d => d.date.startsWith(String(yr)));
       result.forEach((row) => {
         const point = yearData.find(d => parseInt(d.date.substring(5, 7)) === row.monthNum);
         row[`y${yr}`] = point?.anomaly ?? null;
       });
     }
-    return result;
+    return { data: result, allYears: sortedYears };
   }, [monthlyData]);
 
-  // Daily Global Mean Temperature by year (absolute temps)
+  // Daily Global Mean Temperature by year — all historical as gray + recent highlighted
   const dailyTempByYear = useMemo(() => {
-    const recentYears = [2023, 2024, 2025, 2026];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const result: any[] = months.map((m, i) => ({ month: m, monthNum: i + 1 }));
-
-    for (const yr of recentYears) {
+    const allYears = new Set<number>();
+    for (const d of monthlyData) allYears.add(parseInt(d.date.substring(0, 4)));
+    const sortedYears = [...allYears].sort();
+    for (const yr of sortedYears) {
       const yearData = monthlyData.filter(d => d.date.startsWith(String(yr)));
       result.forEach((row) => {
         const point = yearData.find(d => parseInt(d.date.substring(5, 7)) === row.monthNum);
         row[`t${yr}`] = point?.absolute ?? null;
       });
     }
-    return result;
+    return { data: result, allYears: sortedYears };
   }, [monthlyData]);
 
   // Long-term absolute temperature chart with rolling average
@@ -330,17 +332,25 @@ export default function ClimateDashboard() {
           </h3>
           <p className="text-xs text-gray-400 mb-4">Year-by-year monthly comparison</p>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dailyByYear}>
+            <LineChart data={dailyByYear.data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
               <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[-0.5, 2]} unit="°C" />
               <Tooltip content={<ChartTooltip />} />
               <ReferenceLine y={1.5} stroke="#f59e0b" strokeDasharray="8 4" strokeWidth={1.5} />
-              <Line type="monotone" dataKey="y2023" stroke="#94a3b8" strokeWidth={2} dot={false} name="2023" connectNulls />
-              <Line type="monotone" dataKey="y2024" stroke="#f97316" strokeWidth={2} dot={false} name="2024" connectNulls />
-              <Line type="monotone" dataKey="y2025" stroke="#ef4444" strokeWidth={2.5} dot={false} name="2025" connectNulls />
-              <Line type="monotone" dataKey="y2026" stroke="#0ea5e9" strokeWidth={2.5} dot={{ r: 3, fill: "#0ea5e9" }} name="2026" connectNulls />
-              <Legend wrapperStyle={{ fontSize: 11, color: "#6b7280" }} iconType="line" />
+              {dailyByYear.allYears.filter(yr => yr < 2023).map(yr => (
+                <Line key={yr} type="monotone" dataKey={`y${yr}`} stroke="#d1d5db" strokeWidth={0.5} dot={false} name={String(yr)} connectNulls isAnimationActive={false} legendType="none" />
+              ))}
+              <Line type="monotone" dataKey="y2023" stroke="#2563eb" strokeWidth={2} dot={false} name="2023" connectNulls isAnimationActive={false} />
+              <Line type="monotone" dataKey="y2024" stroke="#f97316" strokeWidth={2} dot={false} name="2024" connectNulls isAnimationActive={false} />
+              <Line type="monotone" dataKey="y2025" stroke="#dc2626" strokeWidth={2.5} dot={false} name="2025" connectNulls isAnimationActive={false} />
+              <Line type="monotone" dataKey="y2026" stroke="#7c3aed" strokeWidth={2.5} dot={{ r: 3, fill: "#7c3aed" }} name="2026" connectNulls isAnimationActive={false} />
+              <Legend wrapperStyle={{ fontSize: 11, color: "#6b7280" }} iconType="line" payload={[
+                { value: "2023", type: "line", color: "#2563eb" },
+                { value: "2024", type: "line", color: "#f97316" },
+                { value: "2025", type: "line", color: "#dc2626" },
+                { value: "2026", type: "line", color: "#7c3aed" },
+              ]} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -352,16 +362,24 @@ export default function ClimateDashboard() {
           </h3>
           <p className="text-xs text-gray-400 mb-4">Absolute temperature by year (°C)</p>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dailyTempByYear}>
+            <LineChart data={dailyTempByYear.data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
               <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[11, 17]} unit="°C" />
               <Tooltip content={<ChartTooltip />} />
-              <Line type="monotone" dataKey="t2023" stroke="#94a3b8" strokeWidth={2} dot={false} name="2023" connectNulls />
-              <Line type="monotone" dataKey="t2024" stroke="#f97316" strokeWidth={2} dot={false} name="2024" connectNulls />
-              <Line type="monotone" dataKey="t2025" stroke="#ef4444" strokeWidth={2.5} dot={false} name="2025" connectNulls />
-              <Line type="monotone" dataKey="t2026" stroke="#0ea5e9" strokeWidth={2.5} dot={{ r: 3, fill: "#0ea5e9" }} name="2026" connectNulls />
-              <Legend wrapperStyle={{ fontSize: 11, color: "#6b7280" }} iconType="line" />
+              {dailyTempByYear.allYears.filter(yr => yr < 2023).map(yr => (
+                <Line key={yr} type="monotone" dataKey={`t${yr}`} stroke="#d1d5db" strokeWidth={0.5} dot={false} name={String(yr)} connectNulls isAnimationActive={false} legendType="none" />
+              ))}
+              <Line type="monotone" dataKey="t2023" stroke="#2563eb" strokeWidth={2} dot={false} name="2023" connectNulls isAnimationActive={false} />
+              <Line type="monotone" dataKey="t2024" stroke="#f97316" strokeWidth={2} dot={false} name="2024" connectNulls isAnimationActive={false} />
+              <Line type="monotone" dataKey="t2025" stroke="#dc2626" strokeWidth={2.5} dot={false} name="2025" connectNulls isAnimationActive={false} />
+              <Line type="monotone" dataKey="t2026" stroke="#7c3aed" strokeWidth={2.5} dot={{ r: 3, fill: "#7c3aed" }} name="2026" connectNulls isAnimationActive={false} />
+              <Legend wrapperStyle={{ fontSize: 11, color: "#6b7280" }} iconType="line" payload={[
+                { value: "2023", type: "line", color: "#2563eb" },
+                { value: "2024", type: "line", color: "#f97316" },
+                { value: "2025", type: "line", color: "#dc2626" },
+                { value: "2026", type: "line", color: "#7c3aed" },
+              ]} />
             </LineChart>
           </ResponsiveContainer>
         </div>
