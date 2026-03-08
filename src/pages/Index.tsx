@@ -154,10 +154,10 @@ const Index = () => {
         <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-6">
           Data Powered By Leading Institutions
         </p>
-        <div className="relative w-full max-w-5xl mx-auto">
+        <div className="relative w-full max-w-5xl mx-auto overflow-hidden">
           {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-[hsl(var(--secondary)/0.9)] to-transparent pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-[hsl(var(--secondary)/0.9)] to-transparent pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(var(--background)), transparent)' }} />
+          <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(var(--background)), transparent)' }} />
           <div className="flex animate-marquee">
             {[...Array(2)].map((_, setIdx) => (
               <div key={setIdx} className="flex items-center shrink-0">
