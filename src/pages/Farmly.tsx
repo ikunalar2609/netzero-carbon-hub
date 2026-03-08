@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
