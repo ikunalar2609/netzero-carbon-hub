@@ -191,7 +191,7 @@ export default function MapsPage() {
               </div>
             }
           >
-            <Map center={region.center} zoom={region.zoom} theme="dark" className="absolute inset-0">
+            <Map center={region.center} zoom={region.zoom} theme="light" className="absolute inset-0">
               <MapControls showZoom position="top-right" />
               <MapGridOverlay latSpacing={15} lonSpacing={15} color="rgba(255,255,255,0.12)" opacity={0.5} />
               <MapHeatmapLayer
