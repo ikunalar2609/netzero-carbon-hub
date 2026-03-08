@@ -79,7 +79,7 @@ export const ToolsShowcase = () => {
             <h2 className="text-3xl md:text-[40px] font-bold text-white mb-4 leading-[1.15] tracking-tight">
               Benchmark
               <br />
-              teams
+              emission factors
             </h2>
 
             <p className="text-[15px] text-white/50 leading-relaxed mb-10 max-w-sm">
