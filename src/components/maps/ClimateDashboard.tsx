@@ -271,9 +271,9 @@ export default function ClimateDashboard() {
               tickLine={false}
               axisLine={{ stroke: "#d1d5db" }}
               tickFormatter={(v: string) => {
-                const yr = v.substring(0, 4);
+                const yr = parseInt(v.substring(0, 4));
                 const mo = v.substring(5, 7);
-                return mo === "01" ? yr : "";
+                return mo === "01" && yr % 10 === 0 ? String(yr) : "";
               }}
               interval={11}
             />
@@ -400,8 +400,9 @@ export default function ClimateDashboard() {
               tickLine={false}
               axisLine={{ stroke: "#d1d5db" }}
               tickFormatter={(v: string) => {
+                const yr = parseInt(v.substring(0, 4));
                 const mo = v.substring(5, 7);
-                return mo === "01" ? v.substring(0, 4) : "";
+                return mo === "01" && yr % 10 === 0 ? String(yr) : "";
               }}
               interval={11}
             />
