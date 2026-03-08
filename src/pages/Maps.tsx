@@ -99,10 +99,10 @@ export default function MapsPage() {
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-400" /> FRP &lt; 20</span>
             </>}
             overlay={
-              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2.5 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 z-10">
-                <Flame className="h-3 w-3 text-red-400" />
+              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-700 text-[10px] px-2.5 py-1.5 rounded-lg border border-gray-200 flex items-center gap-1.5 z-10">
+                <Flame className="h-3 w-3 text-red-500" />
                 <span className="font-bold">{fireData.length}</span> fires •
-                <span className="text-red-400 font-bold">{highIntensityCount}</span> high
+                <span className="text-red-500 font-bold">{highIntensityCount}</span> high
               </div>
             }
           >
