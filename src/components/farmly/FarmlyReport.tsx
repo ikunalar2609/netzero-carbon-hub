@@ -224,12 +224,13 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {[
-          { label: "TOTAL EFs", value: String(totalEFs), icon: Leaf, accent: "from-[#4F46E5]/8 to-[#4F46E5]/3", iconBg: "bg-[#4F46E5]" },
-          { label: "AVG EF VALUE", value: `${avgEF} kgCO₂e`, icon: BarChart3, accent: "from-[#0EA5E9]/8 to-[#0EA5E9]/3", iconBg: "bg-[#0EA5E9]" },
-          { label: "SOURCES", value: String(Object.keys(sourceBreakdown).length), icon: Globe, accent: "from-[#10B981]/8 to-[#10B981]/3", iconBg: "bg-[#10B981]" },
-          { label: "CATEGORIES", value: String(Object.keys(categoryBreakdown).length), icon: Building2, accent: "from-[#F59E0B]/8 to-[#F59E0B]/3", iconBg: "bg-[#F59E0B]" },
+          { label: "CALCULATIONS", value: String(calculations.length), icon: Database, accent: "from-[#DC2626]/8 to-[#DC2626]/3", iconBg: "bg-[#DC2626]" },
+          { label: "TOTAL EMISSIONS", value: `${totalCalcEmissions.toFixed(1)} kg`, icon: BarChart3, accent: "from-[#4F46E5]/8 to-[#4F46E5]/3", iconBg: "bg-[#4F46E5]" },
+          { label: "TOTAL EFs", value: String(totalEFs), icon: Leaf, accent: "from-[#10B981]/8 to-[#10B981]/3", iconBg: "bg-[#10B981]" },
+          { label: "AVG EF VALUE", value: `${avgEF}`, icon: Globe, accent: "from-[#0EA5E9]/8 to-[#0EA5E9]/3", iconBg: "bg-[#0EA5E9]" },
+          { label: "CALC TYPES", value: String(Object.keys(calcCountByType).length), icon: Building2, accent: "from-[#F59E0B]/8 to-[#F59E0B]/3", iconBg: "bg-[#F59E0B]" },
           { label: "PERIOD", value: reportPeriod, icon: Calendar, accent: "from-[#8B5CF6]/8 to-[#8B5CF6]/3", iconBg: "bg-[#8B5CF6]" },
         ].map(({ label, value, icon: Icon, accent, iconBg }) => (
           <motion.div
@@ -249,23 +250,30 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
         ))}
       </div>
 
-      {/* Charts Row 1: Scope + Category */}
+      {/* Charts Row 1: Calculation Breakdown + Category */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white border border-gray-100 rounded-xl p-5">
-          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">SCOPE DISTRIBUTION</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie data={scopeData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
-                {scopeData.map((_, i) => <Cell key={i} fill={SCOPE_COLORS[i % SCOPE_COLORS.length]} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} />
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-            </PieChart>
-          </ResponsiveContainer>
+          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">
+            EMISSIONS BY CALCULATION TYPE
+            {calculations.length === 0 && <span className="text-gray-300 font-normal ml-2">(no data yet — save calculations first)</span>}
+          </h3>
+          {calcTypeData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie data={calcTypeData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
+                  {calcTypeData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Pie>
+                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} formatter={(value: number) => `${value.toFixed(2)} kgCO₂e`} />
+                <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[220px] flex items-center justify-center text-[11px] text-gray-400">Save calculations to see breakdown</div>
+          )}
         </div>
 
         <div className="bg-white border border-gray-100 rounded-xl p-5">
-          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">CATEGORY BREAKDOWN</h3>
+          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EF CATEGORY BREAKDOWN</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={categoryData} layout="vertical" margin={{ left: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
