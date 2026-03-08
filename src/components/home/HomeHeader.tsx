@@ -98,11 +98,10 @@ const HomeHeader = () => {
                     href={link.to}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-3 text-[14px] font-medium text-foreground hover:bg-secondary rounded-lg transition-colors flex items-center gap-2"
+                    className="px-4 py-3 text-[14px] font-medium text-foreground hover:bg-secondary rounded-lg transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
-                    <ExternalLink className="h-3.5 w-3.5 opacity-40" />
                   </a>
                 ) : (
                   <Link
