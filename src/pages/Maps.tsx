@@ -55,7 +55,7 @@ export default function MapsPage() {
   )), [dbTreeLoss]);
 
   return (
-    <div className="min-h-screen bg-[#EEF2FF]">
+    <div className="min-h-screen flex flex-col bg-[#4F46E5]">
       <MapsHeader
         days={days} setDays={setDays}
         satelliteSource={satelliteSource} setSatelliteSource={setSatelliteSource}
@@ -63,7 +63,8 @@ export default function MapsPage() {
         isLoading={isLoading}
       />
 
-      <main className="max-w-[1600px] mx-auto px-5 py-5 space-y-5">
+      <main className="flex-1 bg-[#EEF2FF] rounded-t-2xl">
+        <div className="max-w-[1600px] mx-auto px-5 py-5 space-y-5">
         <StatsStrip stats={stats} />
 
         {/* Maps Grid */}
