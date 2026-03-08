@@ -71,16 +71,6 @@ const HomeHeader = () => {
             >
               Log in
             </Link>
-            <Button
-              asChild
-              size="sm"
-              className="rounded-lg px-4 h-9 text-[13px] font-semibold bg-foreground hover:bg-foreground/90 text-background shadow-sm"
-            >
-              <Link to="/signup">
-                Get Started
-                <ChevronRight className="h-3.5 w-3.5 ml-1" />
-              </Link>
-            </Button>
           </div>
 
           <button

@@ -92,7 +92,7 @@ const Index = () => {
               >
                 <Button
                   size="lg"
-                  onClick={() => navigate("/signup")}
+                  onClick={() => navigate("/farmly")}
                   className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xl shadow-foreground/10 transition-all hover:shadow-2xl hover:-translate-y-0.5 group"
                 >
                   Start Free Trial
@@ -101,11 +101,10 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  onClick={() => navigate("/farmly")}
+                  onClick={() => navigate("/farmly/docs")}
                   className="h-13 px-8 text-[15px] font-semibold rounded-xl border-border text-foreground hover:bg-secondary transition-all"
                 >
-                  <Play className="mr-2 h-4 w-4" />
-                  Live Demo
+                  View Documentation
                 </Button>
               </motion.div>
 
