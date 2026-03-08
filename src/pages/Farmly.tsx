@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
