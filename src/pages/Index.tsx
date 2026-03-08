@@ -416,7 +416,7 @@ const Index = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-[hsl(45,80%,60%)]" />
                   <div className="w-2.5 h-2.5 rounded-full bg-primary/40" />
-                  <span className="ml-3 text-[11px] text-foreground/40 font-mono">farmly-api-demo</span>
+                  <span className="ml-3 text-[11px] text-foreground/60 font-mono">farmly-api-demo</span>
                 </div>
                 <video
                   src={farmlyApiVideo}
