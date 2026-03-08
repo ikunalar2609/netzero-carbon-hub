@@ -637,43 +637,57 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
   // Real-time calculation effect
   useEffect(() => {
     const calculateEmissions = () => {
-      // Transport calculations with IPCC methodology
       const transportResult = calculateVehicleEmissions(transportData);
       const transportEmissions = transportResult.total;
       setDetailedTransport(transportResult);
       
-      // Energy calculations with GHG Protocol Scope 1 & 2
       const energyResult = calculateEnergyEmissions(energyData);
       const energyEmissions = energyResult.total;
       setDetailedEnergy(energyResult);
       
-      // Waste calculations
-      const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : 2.5;
+      const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : wasteData.disposal === "incineration" ? 0.33 : 2.5;
       const wasteEmissions = wasteData.amount * wasteFactor;
       
-      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions + seaEmissions;
+      // Industry
+      const indEf = INDUSTRY_EF[industryData.product];
+      const indEmissions = indEf ? industryData.quantity * indEf.ef : 0;
+      setIndustryEmissions(indEmissions);
+      
+      // Agriculture
+      const agEf = AGRICULTURE_EF[agricultureData.activity];
+      const agEmissions = agEf ? agricultureData.quantity * agEf.ef : 0;
+      setAgricultureEmissions(agEmissions);
+      
+      // Digital
+      const digEf = DIGITAL_EF[digitalData.activity];
+      const digEmissions = digEf ? digitalData.quantity * digEf.ef : 0;
+      setDigitalEmissions(digEmissions);
+      
+      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions + seaEmissions + indEmissions + agEmissions + digEmissions;
       setTotalEmissions(total);
       setEmissionsBreakdown({
         transport: transportEmissions,
         energy: energyEmissions,
         waste: wasteEmissions,
         flight: flightEmissions,
-        sea: seaEmissions
+        sea: seaEmissions,
+        industry: indEmissions,
+        agriculture: agEmissions,
+        digital: digEmissions,
       });
       
-      // Update trend data
       if (total > 0) {
         const now = new Date();
         const timeLabel = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
         setTrendData(prev => {
           const updated = [...prev, { time: timeLabel, emissions: total }];
-          return updated.slice(-7); // Keep last 7 data points
+          return updated.slice(-7);
         });
       }
     };
     
     calculateEmissions();
-  }, [transportData, energyData, wasteData, flightEmissions, seaEmissions]);
+  }, [transportData, energyData, wasteData, flightEmissions, seaEmissions, industryData, agricultureData, digitalData]);
 
   const pieData = [
     { name: "Transport", value: emissionsBreakdown.transport, color: "#2563EB" },
