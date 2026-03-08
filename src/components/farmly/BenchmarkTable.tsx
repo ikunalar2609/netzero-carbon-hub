@@ -117,75 +117,162 @@ export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }:
         </TableHeader>
         <TableBody>
           {sorted.map((factor, index) => (
-            <motion.tr
-              key={factor.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: index * 0.015 }}
-              className="border-b border-gray-100 hover:bg-[#4F46E5]/[0.02] transition-colors cursor-pointer group"
-            >
-              <TableCell className="py-3">
-                <Checkbox
-                  checked={selectedRows.has(factor.id)}
-                  onCheckedChange={() => toggleRow(factor.id)}
-                  className="h-3.5 w-3.5 rounded border-gray-300 data-[state=checked]:bg-[#4F46E5] data-[state=checked]:border-[#4F46E5]"
-                />
-              </TableCell>
-              <TableCell className="py-3">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setExpandedRow(expandedRow === factor.id ? null : factor.id); }}
-                  className="text-gray-300 hover:text-gray-500 transition-colors"
-                >
-                  {expandedRow === factor.id ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                </button>
-              </TableCell>
-              <TableCell className="py-3">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onToggleFavorite(factor.id); }}
-                  className={`transition-colors ${factor.isFavorite ? "text-red-500" : "text-gray-300 hover:text-red-400"}`}
-                >
-                  <Heart className={`h-3.5 w-3.5 ${factor.isFavorite ? "fill-current" : ""}`} />
-                </button>
-              </TableCell>
-              <TableCell className="py-3">
-                <div>
-                  <span className="text-[12px] font-medium text-gray-800 group-hover:text-[#4F46E5] transition-colors">
-                    <span className="font-semibold text-[#4F46E5]">{factor.name.split(" ")[0]}</span>{" "}
-                    {factor.name.split(" ").slice(1).join(" ")}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="py-3">
-                <span className="text-[12px] font-semibold text-[#4F46E5]">
-                  {factor.fe} kgCO₂eq
-                </span>
-              </TableCell>
-              <TableCell className="py-3">
-                <span className="text-[11px] text-gray-500">{factor.unit}</span>
-              </TableCell>
-              <TableCell className="py-3">
-                <span className="text-[11px] text-gray-500 leading-tight block max-w-[160px]">
-                  {factor.perimeter}
-                </span>
-              </TableCell>
-              <TableCell className="py-3">
-                <Badge variant="outline" className={`text-[10px] font-medium border ${getSourceBadge(factor.source)}`}>
-                  {factor.source}
-                </Badge>
-              </TableCell>
-              {onUseInCalculator && (
+            <Fragment key={factor.id}>
+              <motion.tr
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: index * 0.015 }}
+                className="border-b border-gray-100 hover:bg-[#4F46E5]/[0.02] transition-colors cursor-pointer group"
+              >
+                <TableCell className="py-3">
+                  <Checkbox
+                    checked={selectedRows.has(factor.id)}
+                    onCheckedChange={() => toggleRow(factor.id)}
+                    className="h-3.5 w-3.5 rounded border-gray-300 data-[state=checked]:bg-[#4F46E5] data-[state=checked]:border-[#4F46E5]"
+                  />
+                </TableCell>
                 <TableCell className="py-3">
                   <button
-                    onClick={(e) => { e.stopPropagation(); onUseInCalculator(factor); }}
-                    className="h-7 px-2 rounded-md bg-[#4F46E5]/10 text-[#4F46E5] hover:bg-[#4F46E5] hover:text-white text-[9px] font-bold tracking-wide transition-all flex items-center gap-1"
-                    title="Use this EF in Calculator"
+                    onClick={(e) => { e.stopPropagation(); setExpandedRow(expandedRow === factor.id ? null : factor.id); }}
+                    className="text-gray-300 hover:text-gray-500 transition-colors"
                   >
-                    <Calculator className="h-3 w-3" />
-                    USE
+                    {expandedRow === factor.id ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                   </button>
                 </TableCell>
+                <TableCell className="py-3">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onToggleFavorite(factor.id); }}
+                    className={`transition-colors ${factor.isFavorite ? "text-red-500" : "text-gray-300 hover:text-red-400"}`}
+                  >
+                    <Heart className={`h-3.5 w-3.5 ${factor.isFavorite ? "fill-current" : ""}`} />
+                  </button>
+                </TableCell>
+                <TableCell className="py-3">
+                  <div>
+                    <span className="text-[12px] font-medium text-gray-800 group-hover:text-[#4F46E5] transition-colors">
+                      <span className="font-semibold text-[#4F46E5]">{factor.name.split(" ")[0]}</span>{" "}
+                      {factor.name.split(" ").slice(1).join(" ")}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="py-3">
+                  <span className="text-[12px] font-semibold text-[#4F46E5]">
+                    {factor.fe} kgCO₂eq
+                  </span>
+                </TableCell>
+                <TableCell className="py-3">
+                  <span className="text-[11px] text-gray-500">{factor.unit}</span>
+                </TableCell>
+                <TableCell className="py-3">
+                  <span className="text-[11px] text-gray-500 leading-tight block max-w-[160px]">
+                    {factor.perimeter}
+                  </span>
+                </TableCell>
+                <TableCell className="py-3">
+                  <Badge variant="outline" className={`text-[10px] font-medium border ${getSourceBadge(factor.source)}`}>
+                    {factor.source}
+                  </Badge>
+                </TableCell>
+                {onUseInCalculator && (
+                  <TableCell className="py-3">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onUseInCalculator(factor); }}
+                      className="h-7 px-2 rounded-md bg-[#4F46E5]/10 text-[#4F46E5] hover:bg-[#4F46E5] hover:text-white text-[9px] font-bold tracking-wide transition-all flex items-center gap-1"
+                      title="Use this EF in Calculator"
+                    >
+                      <Calculator className="h-3 w-3" />
+                      USE
+                    </button>
+                  </TableCell>
+                )}
+              </motion.tr>
+
+              {/* Inline expanded detail row */}
+              {expandedRow === factor.id && (
+                <tr>
+                  <td colSpan={onUseInCalculator ? 9 : 8} className="p-0">
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="border-b border-gray-200 bg-gray-50/50 px-6 py-5"
+                    >
+                      <div className="space-y-4">
+                        {/* Description */}
+                        <div>
+                          <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Description</h4>
+                          <p className="text-[12px] text-gray-700 leading-relaxed">{factor.description}</p>
+                        </div>
+
+                        <Separator className="bg-gray-200" />
+
+                        {/* Important Notes */}
+                        <div>
+                          <h4 className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
+                            Important Notes
+                          </h4>
+                          <p className="text-[12px] text-gray-700 leading-relaxed bg-amber-50/60 border border-amber-100 rounded-md px-3 py-2">{factor.notes}</p>
+                        </div>
+
+                        <Separator className="bg-gray-200" />
+
+                        {/* Metadata Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sector</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.sector}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sub-Sector</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.subSector}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Data Type</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.dataType}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Last Updated</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.lastUpdated}</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Methodology</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.methodology}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Scope</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.scope.replace("scope", "Scope ")}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Region</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.region}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Category</span>
+                            <p className="text-[12px] text-gray-700 mt-0.5">{factor.category}</p>
+                          </div>
+                        </div>
+
+                        {/* Source Link */}
+                        <div className="pt-1">
+                          <a
+                            href={factor.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#4F46E5] hover:text-[#3730A3] transition-colors underline underline-offset-2"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            View Original Source — {factor.source}
+                          </a>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </td>
+                </tr>
               )}
-            </motion.tr>
+            </Fragment>
           ))}
           {sorted.length === 0 && (
             <TableRow>
@@ -196,92 +283,6 @@ export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }:
           )}
         </TableBody>
       </Table>
-
-      {/* Expanded row detail */}
-      {expandedRow && (() => {
-        const factor = factors.find(f => f.id === expandedRow);
-        if (!factor) return null;
-        return (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border-t border-gray-100 bg-gray-50/50 px-6 py-5"
-          >
-            <div className="space-y-4">
-              {/* Description */}
-              <div>
-                <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Description</h4>
-                <p className="text-[12px] text-gray-700 leading-relaxed">{factor.description}</p>
-              </div>
-
-              <Separator className="bg-gray-200" />
-
-              {/* Important Notes */}
-              <div>
-                <h4 className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
-                  Important Notes
-                </h4>
-                <p className="text-[12px] text-gray-700 leading-relaxed bg-amber-50/60 border border-amber-100 rounded-md px-3 py-2">{factor.notes}</p>
-              </div>
-
-              <Separator className="bg-gray-200" />
-
-              {/* Metadata Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sector</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.sector}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sub-Sector</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.subSector}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Data Type</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.dataType}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Last Updated</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.lastUpdated}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Methodology</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.methodology}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Scope</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.scope.replace("scope", "Scope ")}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Region</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.region}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Category</span>
-                  <p className="text-[12px] text-gray-700 mt-0.5">{factor.category}</p>
-                </div>
-              </div>
-
-              {/* Source Link */}
-              <div className="pt-1">
-                <a
-                  href={factor.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#4F46E5] hover:text-[#3730A3] transition-colors"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  View Original Source — {factor.source}
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        );
-      })()}
     </div>
   );
 };
