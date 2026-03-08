@@ -72,7 +72,7 @@ export default function MapsPage() {
           if (id) {
             document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
           } else if (item === "DOCS") {
-            window.open("/maps/docs", "_blank");
+            navigate("/maps/docs");
           }
         }}
       />
