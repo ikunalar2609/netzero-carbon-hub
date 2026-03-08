@@ -474,10 +474,8 @@ const Index = () => {
               />
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm shadow-xl flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/80 backdrop-blur-sm text-foreground/70 px-5 py-2.5 rounded-lg text-sm font-medium border border-border/50">
                   Explore Maps & Charts
-                  <ArrowRight className="h-4 w-4" />
                 </div>
               </div>
             </div>
