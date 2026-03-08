@@ -154,10 +154,10 @@ export default function MapsPage() {
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-500" /> Moderate</span>
             </>}
             overlay={
-              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2.5 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 z-10">
-                <AlertTriangle className="h-3 w-3 text-orange-400" />
+              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-700 text-[10px] px-2.5 py-1.5 rounded-lg border border-gray-200 flex items-center gap-1.5 z-10">
+                <AlertTriangle className="h-3 w-3 text-orange-500" />
                 <span className="font-bold">{treeLossStats.total}</span> hotspots •
-                <span className="text-red-400 font-bold">{treeLossStats.critical}</span> critical
+                <span className="text-red-500 font-bold">{treeLossStats.critical}</span> critical
               </div>
             }
           >
