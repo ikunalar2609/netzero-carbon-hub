@@ -374,6 +374,68 @@ export default function ClimateDashboard() {
         </div>
       </div>
 
+      {/* ── Temperature Anomaly Heatmap (Year × Month) ── */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Thermometer className="h-4 w-4 text-red-500" />
+          <h3 className="text-lg font-bold text-gray-900">Temperature Anomaly Heatmap</h3>
+        </div>
+        <p className="text-xs text-gray-400 mb-4">Monthly anomaly vs preindustrial baseline (°C) • Blue = cooler, Red = warmer</p>
+        <div className="overflow-x-auto">
+          <div className="min-w-[700px]">
+            {/* Month headers */}
+            <div className="flex">
+              <div className="w-14 shrink-0" />
+              {["J","F","M","A","M","J","J","A","S","O","N","D"].map((m, i) => (
+                <div key={i} className="flex-1 text-center text-[10px] font-semibold text-gray-500 pb-1">{m}</div>
+              ))}
+            </div>
+            {/* Heatmap rows - show every 5th year for readability */}
+            {heatmapData.years.filter((_, i) => i % 3 === 0 || _ >= 2020).map(yr => (
+              <div key={yr} className="flex items-center">
+                <div className="w-14 shrink-0 text-[10px] font-semibold text-gray-500 text-right pr-2">{yr}</div>
+                {[1,2,3,4,5,6,7,8,9,10,11,12].map(mo => {
+                  const val = heatmapData.grid[yr]?.[mo];
+                  if (val === undefined) return <div key={mo} className="flex-1 h-5 m-[0.5px] rounded-sm bg-gray-100" />;
+                  // Color scale: blue (-0.5) → white (0) → orange (0.8) → red (1.5+)
+                  const norm = Math.max(-0.5, Math.min(val, 2));
+                  let bg: string;
+                  if (norm < 0) {
+                    const t = (norm + 0.5) / 0.5; // 0..1
+                    bg = `hsl(210, 80%, ${90 - t * 30}%)`;
+                  } else if (norm < 0.8) {
+                    const t = norm / 0.8;
+                    bg = `hsl(${45 - t * 15}, ${60 + t * 30}%, ${95 - t * 30}%)`;
+                  } else {
+                    const t = Math.min((norm - 0.8) / 0.7, 1);
+                    bg = `hsl(${30 - t * 30}, ${85 + t * 15}%, ${65 - t * 20}%)`;
+                  }
+                  return (
+                    <div
+                      key={mo}
+                      className="flex-1 h-5 m-[0.5px] rounded-sm relative group cursor-pointer"
+                      style={{ backgroundColor: bg }}
+                    >
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-gray-900 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+                        {yr}/{String(mo).padStart(2,"0")}: {val >= 0 ? "+" : ""}{val.toFixed(2)}°C
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+            {/* Color scale legend */}
+            <div className="flex items-center gap-2 mt-3">
+              <span className="text-[10px] text-gray-400">-0.5°C</span>
+              <div className="flex-1 h-3 rounded-full" style={{
+                background: "linear-gradient(to right, hsl(210,80%,75%), hsl(210,80%,90%), hsl(45,60%,95%), hsl(30,90%,65%), hsl(0,100%,45%))"
+              }} />
+              <span className="text-[10px] text-gray-400">+2.0°C</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* ── Annual Projections ── */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
