@@ -97,10 +97,10 @@ export const ToolsShowcase = () => {
             </div>
 
             <button
-              onClick={() => navigate("/farmly/docs")}
+              onClick={() => navigate("/farmly")}
               className="group inline-flex items-center gap-2 text-[14px] font-semibold text-primary hover:text-[hsl(var(--brand-primary-light))] transition-colors"
             >
-              View API Docs
+              Explore Benchmark
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
