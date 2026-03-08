@@ -185,8 +185,8 @@ export default function MapsPage() {
               </span>
             </>}
             overlay={
-              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2.5 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 z-10">
-                <MapPin className="h-3 w-3 text-purple-400" />
+              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-700 text-[10px] px-2.5 py-1.5 rounded-lg border border-gray-200 flex items-center gap-1.5 z-10">
+                <MapPin className="h-3 w-3 text-purple-500" />
                 Grid 15° × 15° • Composite view
               </div>
             }
