@@ -821,7 +821,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-1.5 px-3 py-2 text-[10px] font-bold tracking-wide rounded-t-md transition-all ${
+                      className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 text-[10px] font-bold tracking-wide rounded-t-md transition-all whitespace-nowrap ${
                         isActive ? "text-white shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                       }`}
                       style={isActive ? { backgroundColor: tab.accent } : {}}
