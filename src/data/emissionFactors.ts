@@ -28,6 +28,10 @@ export interface FarmlyFilters {
   scope: string[];
   methodology: string[];
   region: string[];
+  category: string[];
+  sector: string[];
+  dataType: string[];
+  perimeter: string[];
 }
 
 export const defaultFilters: FarmlyFilters = {
