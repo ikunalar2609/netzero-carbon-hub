@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Flame, AlertTriangle, TrendingDown, BarChart3, Satellite } from "lucide-react";
 import { Map, MapMarker, MapControls } from "@/components/ui/map";
 import { useMapData } from "@/hooks/useMapData";
