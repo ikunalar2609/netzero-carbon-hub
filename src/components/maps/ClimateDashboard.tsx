@@ -478,7 +478,75 @@ export default function ClimateDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* ── Daily Global Mean Temperature Heatmap ── */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Thermometer className="h-4 w-4 text-blue-500" />
+          <h3 className="text-lg font-bold text-gray-900">Daily Global Mean Temperature</h3>
+        </div>
+        <p className="text-xs text-gray-400 mb-4">Absolute monthly temperature — seasonal cycle with warming trend visible</p>
+        <div className="overflow-x-auto">
+          <div className="flex gap-3">
+            <div className="flex-1 min-w-[600px]">
+              {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map((mLabel, mi) => {
+                const mo = mi + 1;
+                return (
+                  <div key={mo} className="flex items-center">
+                    <div className="w-9 shrink-0 text-[11px] font-medium text-gray-600 text-right pr-2">{mLabel}</div>
+                    <div className="flex flex-1">
+                      {heatmapData.years.map(yr => {
+                        const val = heatmapData.absGrid[yr]?.[mo];
+                        if (val === undefined) return <div key={yr} className="flex-1 min-w-[5px] h-[22px]" style={{ backgroundColor: "#f3f4f6" }} />;
+                        const bg = getAbsTempColor(val);
+                        return (
+                          <div
+                            key={yr}
+                            className="flex-1 min-w-[5px] h-[22px] relative group cursor-crosshair"
+                            style={{ backgroundColor: bg }}
+                          >
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30 font-medium">
+                              {mLabel} {yr}: {val.toFixed(1)}°C
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="flex items-center mt-1">
+                <div className="w-9 shrink-0" />
+                <div className="flex flex-1">
+                  {heatmapData.years.map(yr => (
+                    <div key={yr} className="flex-1 min-w-[5px] text-center">
+                      {yr % 10 === 0 && <span className="text-[10px] text-gray-500 font-medium">{yr}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="text-center text-xs text-gray-400 mt-1">Year</p>
+            </div>
+
+            <div className="flex flex-col items-center shrink-0 w-20 pt-0">
+              <p className="text-[10px] text-gray-500 font-semibold mb-1 text-center leading-tight">Temperature<br/>(°C)</p>
+              <div className="flex items-stretch gap-1.5 flex-1">
+                <div className="w-4 rounded" style={{
+                  background: "linear-gradient(to bottom, hsl(0,95%,37%), hsl(5,80%,50%), hsl(10,70%,65%), hsl(15,50%,80%), hsl(0,0%,95%), hsl(210,45%,80%), hsl(215,70%,55%), hsl(215,85%,40%), hsl(215,90%,30%))"
+                }} />
+                <div className="flex flex-col justify-between text-[9px] text-gray-500 font-medium py-0.5">
+                  <span>17</span>
+                  <span>16</span>
+                  <span>15</span>
+                  <span>14</span>
+                  <span>13</span>
+                  <span>12</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
         {/* ── Annual Projections ── */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h3 className="text-base font-bold text-gray-900 mb-1">
