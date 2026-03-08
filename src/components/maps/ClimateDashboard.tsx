@@ -133,6 +133,32 @@ export default function ClimateDashboard() {
     return result;
   }, [monthlyData]);
 
+  // Daily Global Mean Temperature by year (absolute temps)
+  const dailyTempByYear = useMemo(() => {
+    const recentYears = [2023, 2024, 2025, 2026];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const result: any[] = months.map((m, i) => ({ month: m, monthNum: i + 1 }));
+
+    for (const yr of recentYears) {
+      const yearData = monthlyData.filter(d => d.date.startsWith(String(yr)));
+      result.forEach((row) => {
+        const point = yearData.find(d => parseInt(d.date.substring(5, 7)) === row.monthNum);
+        row[`t${yr}`] = point?.absolute ?? null;
+      });
+    }
+    return result;
+  }, [monthlyData]);
+
+  // Long-term absolute temperature chart with rolling average
+  const absoluteTempChart = useMemo(() => {
+    return monthlyData.map((d, i) => {
+      const start = Math.max(0, i - 11);
+      const slice = monthlyData.slice(start, i + 1);
+      const avg = slice.reduce((s, p) => s + p.absolute, 0) / slice.length;
+      return { date: d.date, absolute: d.absolute, rolling: parseFloat(avg.toFixed(2)) };
+    });
+  }, [monthlyData]);
+
   // Annual projections chart data
   const annualProjections = useMemo(() => {
     return yearlyData.map(d => ({
