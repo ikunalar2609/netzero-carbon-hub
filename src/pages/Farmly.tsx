@@ -251,9 +251,20 @@ const Farmly = () => {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               ref={searchInputRef}
-              placeholder="Search emission factors..."
+              placeholder="Search emission factors, categories, sectors..."
               value={filters.searchQuery}
-              onChange={(e) => setFilters(f => ({ ...f, searchQuery: e.target.value }))}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFilters(f => ({ ...f, searchQuery: val }));
+                if (val.length > 0 && activeTab !== "benchmark") {
+                  setActiveTab("benchmark");
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && filters.searchQuery.length > 0 && activeTab !== "benchmark") {
+                  setActiveTab("benchmark");
+                }
+              }}
               className="pl-10 pr-10 h-11 rounded-lg border-0 bg-white text-[14px] text-gray-900 shadow-lg focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-0 placeholder:text-gray-400"
             />
             {filters.searchQuery && (
@@ -263,7 +274,12 @@ const Farmly = () => {
             )}
           </div>
           <button
-            onClick={() => searchInputRef.current?.focus()}
+            onClick={() => {
+              searchInputRef.current?.focus();
+              if (filters.searchQuery.length > 0 && activeTab !== "benchmark") {
+                setActiveTab("benchmark");
+              }
+            }}
             className="h-11 px-6 bg-[#3730A3] hover:bg-[#312E81] text-white text-[12px] font-bold tracking-wider rounded-lg transition-colors shrink-0 shadow-lg"
           >
             SEARCH
