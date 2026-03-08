@@ -297,13 +297,12 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
 
   // Save calculation to database
   const saveCalculation = async (
-    type: 'flight' | 'vehicle' | 'energy' | 'diet',
+    type: string,
     inputData: any,
     resultData: any,
     totalEmissions: number
   ) => {
     try {
-      // Get current user for RLS
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -325,7 +324,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
         return false;
       }
       
-      toast.success('Calculation saved to history');
+      toast.success('Calculation saved to history & report');
       return true;
     } catch (err) {
       console.error('Error saving calculation:', err);
@@ -407,16 +406,15 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
       toast.error('Please calculate waste emissions first');
       return;
     }
-    await saveCalculation('diet', wasteData, { total: emissionsBreakdown.waste }, emissionsBreakdown.waste);
+    await saveCalculation('waste', wasteData, { total: emissionsBreakdown.waste }, emissionsBreakdown.waste);
   };
 
-  // Save current sea freight calculation
   const saveSeaFreightCalculation = async () => {
     if (!seaFreightResult || seaFreightResult.emissions.co2e <= 0) {
       toast.error('Please calculate sea freight emissions first');
       return;
     }
-    await saveCalculation('vehicle', seaFreightData, seaFreightResult, seaFreightResult.emissions.co2e);
+    await saveCalculation('sea', seaFreightData, seaFreightResult, seaFreightResult.emissions.co2e);
   };
 
   // Calculate Haversine distance as fallback for sea routes
@@ -1288,7 +1286,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Source" value={INDUSTRY_EF[industryData.product]?.source || 'N/A'} />
                             <ResultRow label="Quantity" value={`${industryData.quantity} ${INDUSTRY_EF[industryData.product]?.unit}`} />
                             <ResultTotal label="Total Industry" value={`${industryEmissions.toFixed(2)} kg CO₂e`} />
-                            <SaveButton onClick={async () => { await saveCalculation('vehicle', industryData, { total: industryEmissions }, industryEmissions); }} accent="#DC2626" />
+                            <SaveButton onClick={async () => { await saveCalculation('industry', { product: industryData.product, quantity: industryData.quantity, ef: INDUSTRY_EF[industryData.product]?.ef, source: INDUSTRY_EF[industryData.product]?.source }, { total: industryEmissions }, industryEmissions); }} accent="#DC2626" />
                           </ResultCard>
                         )}
                       </div>
@@ -1331,7 +1329,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Source" value={AGRICULTURE_EF[agricultureData.activity]?.source || 'N/A'} />
                             <ResultRow label="Quantity" value={`${agricultureData.quantity} ${AGRICULTURE_EF[agricultureData.activity]?.unit}`} />
                             <ResultTotal label="Total Agriculture" value={`${agricultureEmissions.toFixed(2)} kg CO₂e`} />
-                            <SaveButton onClick={async () => { await saveCalculation('vehicle', agricultureData, { total: agricultureEmissions }, agricultureEmissions); }} accent="#84CC16" />
+                            <SaveButton onClick={async () => { await saveCalculation('agriculture', { activity: agricultureData.activity, quantity: agricultureData.quantity, ef: AGRICULTURE_EF[agricultureData.activity]?.ef, source: AGRICULTURE_EF[agricultureData.activity]?.source }, { total: agricultureEmissions }, agricultureEmissions); }} accent="#84CC16" />
                           </ResultCard>
                         )}
                       </div>
@@ -1374,7 +1372,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Source" value={DIGITAL_EF[digitalData.activity]?.source || 'N/A'} />
                             <ResultRow label="Quantity" value={`${digitalData.quantity} ${DIGITAL_EF[digitalData.activity]?.unit}`} />
                             <ResultTotal label="Total Digital" value={`${digitalEmissions.toFixed(2)} kg CO₂e`} />
-                            <SaveButton onClick={async () => { await saveCalculation('vehicle', digitalData, { total: digitalEmissions }, digitalEmissions); }} accent="#06B6D4" />
+                            <SaveButton onClick={async () => { await saveCalculation('digital', { activity: digitalData.activity, quantity: digitalData.quantity, ef: DIGITAL_EF[digitalData.activity]?.ef, source: DIGITAL_EF[digitalData.activity]?.source }, { total: digitalEmissions }, digitalEmissions); }} accent="#06B6D4" />
                           </ResultCard>
                         )}
                       </div>

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Download,
@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Info,
+  Database,
 } from "lucide-react";
 import {
   PieChart,
@@ -32,19 +33,60 @@ import {
   Legend,
 } from "recharts";
 import { type EmissionFactor } from "@/data/emissionFactors";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface FarmlyReportProps {
   factors: EmissionFactor[];
 }
 
+interface CalcRecord {
+  id: string;
+  calculation_type: string;
+  input_data: any;
+  result_data: any;
+  total_emissions: number;
+  created_at: string;
+}
+
 export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
   const [reportPeriod, setReportPeriod] = useState("2024-Q4");
+  const [calculations, setCalculations] = useState<CalcRecord[]>([]);
+  const [loadingCalcs, setLoadingCalcs] = useState(true);
+
+  // Fetch actual calculation history
+  useEffect(() => {
+    const fetchCalcs = async () => {
+      setLoadingCalcs(true);
+      try {
+        const { data, error } = await supabase
+          .from('emission_calculations')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(500);
+        if (!error && data) setCalculations(data);
+      } catch {} finally { setLoadingCalcs(false); }
+    };
+    fetchCalcs();
+  }, []);
 
   // Derived data from factors for report
   const totalEFs = factors.length;
   const avgEF = factors.length > 0 ? (factors.reduce((s, f) => s + f.fe, 0) / factors.length).toFixed(3) : "0";
+
+  // Actual calculation stats
+  const totalCalcEmissions = calculations.reduce((s, c) => s + c.total_emissions, 0);
+  const calcsByType = calculations.reduce((acc, c) => {
+    acc[c.calculation_type] = (acc[c.calculation_type] || 0) + c.total_emissions;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const calcCountByType = calculations.reduce((acc, c) => {
+    acc[c.calculation_type] = (acc[c.calculation_type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   const scopeBreakdown = factors.reduce((acc, f) => {
     const scope = f.scope.replace("scope", "Scope ");
@@ -75,54 +117,52 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
   // Top emitters
   const topEmitters = [...factors].sort((a, b) => b.fe - a.fe).slice(0, 10);
 
-  // Trend data (simulated monthly)
-  const trendData = [
-    { month: "Jan", scope1: 120, scope2: 85, scope3: 210 },
-    { month: "Feb", scope1: 115, scope2: 82, scope3: 205 },
-    { month: "Mar", scope1: 110, scope2: 80, scope3: 198 },
-    { month: "Apr", scope1: 108, scope2: 78, scope3: 192 },
-    { month: "May", scope1: 105, scope2: 75, scope3: 188 },
-    { month: "Jun", scope1: 100, scope2: 72, scope3: 180 },
-    { month: "Jul", scope1: 98, scope2: 70, scope3: 175 },
-    { month: "Aug", scope1: 95, scope2: 68, scope3: 170 },
-    { month: "Sep", scope1: 92, scope2: 65, scope3: 165 },
-    { month: "Oct", scope1: 88, scope2: 62, scope3: 158 },
-    { month: "Nov", scope1: 85, scope2: 60, scope3: 152 },
-    { month: "Dec", scope1: 82, scope2: 58, scope3: 148 },
-  ];
+  // Real calculation type breakdown for pie chart
+  const TYPE_COLORS: Record<string, string> = {
+    flight: "#8B5CF6", vehicle: "#2563EB", energy: "#10B981", waste: "#F97316", diet: "#F97316",
+    sea: "#0EA5E9", industry: "#DC2626", agriculture: "#84CC16", digital: "#06B6D4",
+  };
+  const calcTypeData = Object.entries(calcsByType).map(([name, value]) => ({
+    name: name.charAt(0).toUpperCase() + name.slice(1),
+    value: Math.round(value * 100) / 100,
+    color: TYPE_COLORS[name] || "#64748B",
+  }));
+
+  // Monthly trend from real data
+  const monthlyTrend = calculations.reduce((acc, c) => {
+    const month = format(new Date(c.created_at), 'MMM yyyy');
+    acc[month] = (acc[month] || 0) + c.total_emissions;
+    return acc;
+  }, {} as Record<string, number>);
+  const trendData = Object.entries(monthlyTrend).reverse().slice(-12).map(([month, total]) => ({ month, total: Math.round(total * 100) / 100 }));
 
   const SCOPE_COLORS = ["#4F46E5", "#0EA5E9", "#F59E0B"];
   const CAT_COLORS = ["#4F46E5", "#0EA5E9", "#10B981", "#F59E0B", "#DC2626", "#8B5CF6", "#EC4899"];
 
   const handleDownload = () => {
-    // Generate CSV report
     const csvRows = [
       ["Farmly Carbon Emissions Report", "", "", ""],
       ["Generated", new Date().toISOString(), "", ""],
       ["Period", reportPeriod, "", ""],
+      ["Total Calculations", String(calculations.length), "", ""],
+      ["Total Emissions", `${totalCalcEmissions.toFixed(2)} kgCO₂e`, "", ""],
       ["Total Emission Factors", String(totalEFs), "", ""],
       ["Average EF Value", avgEF, "", ""],
+      ["", "", "", ""],
+      ["=== CALCULATION HISTORY ===", "", "", ""],
+      ["Type", "Emissions (kgCO₂e)", "Date", "Details"],
+      ...calculations.map(c => [c.calculation_type, String(c.total_emissions.toFixed(2)), format(new Date(c.created_at), 'yyyy-MM-dd HH:mm'), JSON.stringify(c.input_data)]),
+      ["", "", "", ""],
+      ["=== EMISSIONS BY CATEGORY ===", "", "", ""],
+      ...Object.entries(calcsByType).map(([k, v]) => [k, `${v.toFixed(2)} kgCO₂e`]),
       ["", "", "", ""],
       ["=== EMISSION FACTORS INVENTORY ===", "", "", ""],
       ["Name", "FE (kgCO₂e)", "Source", "Scope", "Category", "Region", "Perimeter"],
       ...factors.map(f => [f.name, String(f.fe), f.source, f.scope, f.category, f.region, f.perimeter]),
       ["", "", "", ""],
-      ["=== SCOPE BREAKDOWN ===", "", "", ""],
-      ...Object.entries(scopeBreakdown).map(([k, v]) => [k, String(v)]),
-      ["", "", "", ""],
-      ["=== CATEGORY BREAKDOWN ===", "", "", ""],
-      ...Object.entries(categoryBreakdown).map(([k, v]) => [k, String(v)]),
-      ["", "", "", ""],
-      ["=== SOURCE BREAKDOWN ===", "", "", ""],
-      ...Object.entries(sourceBreakdown).map(([k, v]) => [k, String(v)]),
-      ["", "", "", ""],
-      ["=== TOP 10 HIGHEST EMITTERS ===", "", "", ""],
-      ["Name", "FE (kgCO₂e)", "Source", "Category"],
-      ...topEmitters.map(f => [f.name, String(f.fe), f.source, f.category]),
-      ["", "", "", ""],
-      ["=== MONTHLY TREND (SIMULATED) ===", "", "", ""],
-      ["Month", "Scope 1 (tCO₂e)", "Scope 2 (tCO₂e)", "Scope 3 (tCO₂e)"],
-      ...trendData.map(d => [d.month, String(d.scope1), String(d.scope2), String(d.scope3)]),
+      ["=== MONTHLY TREND ===", "", "", ""],
+      ["Month", "Total Emissions (kgCO₂e)"],
+      ...trendData.map(d => [d.month, String(d.total)]),
     ];
 
     const csvContent = csvRows.map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
@@ -184,12 +224,13 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {[
-          { label: "TOTAL EFs", value: String(totalEFs), icon: Leaf, accent: "from-[#4F46E5]/8 to-[#4F46E5]/3", iconBg: "bg-[#4F46E5]" },
-          { label: "AVG EF VALUE", value: `${avgEF} kgCO₂e`, icon: BarChart3, accent: "from-[#0EA5E9]/8 to-[#0EA5E9]/3", iconBg: "bg-[#0EA5E9]" },
-          { label: "SOURCES", value: String(Object.keys(sourceBreakdown).length), icon: Globe, accent: "from-[#10B981]/8 to-[#10B981]/3", iconBg: "bg-[#10B981]" },
-          { label: "CATEGORIES", value: String(Object.keys(categoryBreakdown).length), icon: Building2, accent: "from-[#F59E0B]/8 to-[#F59E0B]/3", iconBg: "bg-[#F59E0B]" },
+          { label: "CALCULATIONS", value: String(calculations.length), icon: Database, accent: "from-[#DC2626]/8 to-[#DC2626]/3", iconBg: "bg-[#DC2626]" },
+          { label: "TOTAL EMISSIONS", value: `${totalCalcEmissions.toFixed(1)} kg`, icon: BarChart3, accent: "from-[#4F46E5]/8 to-[#4F46E5]/3", iconBg: "bg-[#4F46E5]" },
+          { label: "TOTAL EFs", value: String(totalEFs), icon: Leaf, accent: "from-[#10B981]/8 to-[#10B981]/3", iconBg: "bg-[#10B981]" },
+          { label: "AVG EF VALUE", value: `${avgEF}`, icon: Globe, accent: "from-[#0EA5E9]/8 to-[#0EA5E9]/3", iconBg: "bg-[#0EA5E9]" },
+          { label: "CALC TYPES", value: String(Object.keys(calcCountByType).length), icon: Building2, accent: "from-[#F59E0B]/8 to-[#F59E0B]/3", iconBg: "bg-[#F59E0B]" },
           { label: "PERIOD", value: reportPeriod, icon: Calendar, accent: "from-[#8B5CF6]/8 to-[#8B5CF6]/3", iconBg: "bg-[#8B5CF6]" },
         ].map(({ label, value, icon: Icon, accent, iconBg }) => (
           <motion.div
@@ -209,23 +250,30 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
         ))}
       </div>
 
-      {/* Charts Row 1: Scope + Category */}
+      {/* Charts Row 1: Calculation Breakdown + Category */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white border border-gray-100 rounded-xl p-5">
-          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">SCOPE DISTRIBUTION</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie data={scopeData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
-                {scopeData.map((_, i) => <Cell key={i} fill={SCOPE_COLORS[i % SCOPE_COLORS.length]} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} />
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-            </PieChart>
-          </ResponsiveContainer>
+          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">
+            EMISSIONS BY CALCULATION TYPE
+            {calculations.length === 0 && <span className="text-gray-300 font-normal ml-2">(no data yet — save calculations first)</span>}
+          </h3>
+          {calcTypeData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie data={calcTypeData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
+                  {calcTypeData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Pie>
+                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} formatter={(value: number) => `${value.toFixed(2)} kgCO₂e`} />
+                <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[220px] flex items-center justify-center text-[11px] text-gray-400">Save calculations to see breakdown</div>
+          )}
         </div>
 
         <div className="bg-white border border-gray-100 rounded-xl p-5">
-          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">CATEGORY BREAKDOWN</h3>
+          <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EF CATEGORY BREAKDOWN</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={categoryData} layout="vertical" margin={{ left: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -242,21 +290,21 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
 
       {/* Monthly Trend */}
       <div className="bg-white border border-gray-100 rounded-xl p-5">
-        <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EMISSIONS TREND (tCO₂e PER MONTH)</h3>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} />
-            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} />
-            <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="scope1" name="Scope 1" stroke="#4F46E5" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="scope2" name="Scope 2" stroke="#0EA5E9" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="scope3" name="Scope 3" stroke="#F59E0B" strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
-        </ResponsiveContainer>
+        <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EMISSIONS TREND (kgCO₂e PER MONTH)</h3>
+        {trendData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} formatter={(value: number) => `${value.toFixed(2)} kgCO₂e`} />
+              <Line type="monotone" dataKey="total" name="Total Emissions" stroke="#4F46E5" strokeWidth={2} dot={{ r: 3, fill: "#4F46E5" }} />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[260px] flex items-center justify-center text-[11px] text-gray-400">Save calculations to see monthly trends</div>
+        )}
       </div>
-
       {/* Charts Row 2: Source + Region */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white border border-gray-100 rounded-xl p-5">
