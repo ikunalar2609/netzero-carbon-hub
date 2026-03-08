@@ -73,6 +73,7 @@ const tabItems = [
 ];
 
 const Farmly = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("calculator");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
