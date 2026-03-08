@@ -40,34 +40,19 @@ export default function MapsPage() {
   const stats = useMemo(() => [
     { label: "ACTIVE FIRES", value: String(fireData.length), icon: Flame, accent: "#DC2626" },
     { label: "HIGH INTENSITY", value: String(highIntensityCount), icon: AlertTriangle, accent: "#F97316" },
-    { label: "FOREST RECORDS", value: String(forestData.length), icon: TreePine, accent: "#10B981" },
     { label: "LOSS HOTSPOTS", value: String(treeLossStats.total), icon: TrendingDown, accent: "#8B5CF6" },
     { label: "CRITICAL ZONES", value: String(treeLossStats.critical), icon: AlertTriangle, accent: "#DC2626" },
     { label: "AVG LOSS RATE", value: `${treeLossStats.avgLoss.toFixed(1)}%`, icon: BarChart3, accent: "#0EA5E9" },
-  ], [fireData.length, highIntensityCount, forestData.length, treeLossStats]);
+  ], [fireData.length, highIntensityCount, treeLossStats]);
 
   // Memoized marker arrays
   const fireMarkers = useMemo(() => fireData.map((f, i) => (
     <MapMarker key={i} longitude={f.longitude} latitude={f.latitude}><FireMarker fire={f} /></MapMarker>
   )), [fireData]);
 
-  const forestMarkers = useMemo(() => forestData.map((f, i) => (
-    <MapMarker key={i} longitude={f.longitude!} latitude={f.latitude!}><ForestMarker forest={f} /></MapMarker>
-  )), [forestData]);
-
   const treeLossMarkers = useMemo(() => dbTreeLoss.map((d, i) => (
     <MapMarker key={d.id || i} longitude={d.longitude} latitude={d.latitude}><TreeLossMarker data={d} /></MapMarker>
   )), [dbTreeLoss]);
-
-  // Memoized heatmap data
-  const forestHeatmapData = useMemo(() =>
-    forestData.map(f => ({ longitude: f.longitude || 0, latitude: f.latitude || 0, intensity: Math.min(f.gfc_extent_ha / 500000000, 1) })),
-    [forestData]
-  );
-
-  const lossHeatmapData = useMemo(() =>
-    dbTreeLoss.map(d => ({ longitude: d.longitude, latitude: d.latitude, intensity: Math.min(d.loss_percentage / 25, 1) })),
-    [dbTreeLoss]
   );
 
   return (
