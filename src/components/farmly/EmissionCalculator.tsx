@@ -734,6 +734,9 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
       sea: ["Transportation"],
       energy: ["Energy"],
       waste: ["Waste"],
+      industry: ["Industry"],
+      agriculture: ["Agriculture"],
+      digital: ["Digital"],
     };
     const categories = tabCategoryMap[activeTab] || [];
     return factors.filter(f => categories.includes(f.category)).slice(0, 4);
