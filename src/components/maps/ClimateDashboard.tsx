@@ -174,17 +174,19 @@ export default function ClimateDashboard() {
     });
   }, [monthlyData]);
 
-  // Heatmap data: year × month anomaly grid
+  // Heatmap data: year × month grids (anomaly + absolute)
   const heatmapData = useMemo(() => {
     const years: number[] = [];
     const grid: Record<number, Record<number, number>> = {};
+    const absGrid: Record<number, Record<number, number>> = {};
     for (const d of monthlyData) {
       const yr = parseInt(d.date.substring(0, 4));
       const mo = parseInt(d.date.substring(5, 7));
-      if (!grid[yr]) { grid[yr] = {}; years.push(yr); }
+      if (!grid[yr]) { grid[yr] = {}; absGrid[yr] = {}; years.push(yr); }
       grid[yr][mo] = d.anomaly;
+      absGrid[yr][mo] = d.absolute;
     }
-    return { years: [...new Set(years)].sort(), grid };
+    return { years: [...new Set(years)].sort(), grid, absGrid };
   }, [monthlyData]);
 
   // Annual projections chart data
