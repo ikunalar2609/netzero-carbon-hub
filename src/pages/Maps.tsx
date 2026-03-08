@@ -142,6 +142,7 @@ export default function MapsPage() {
             Real-time satellite data
           </div>
         </div>
+        </div>
       </main>
     </div>
   );
