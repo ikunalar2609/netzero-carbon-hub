@@ -431,6 +431,7 @@ const Farmly = () => {
                   {activeTab === "ef-agent" && <EFAgent factors={filteredFactors} />}
                   {activeTab === "decarbo" && <DecarboAgent factors={filteredFactors} />}
                   {activeTab === "methodo" && <ClimateDataExplorer />}
+                  {activeTab === "history" && <CalculationHistoryTable />}
                 </motion.div>
               </AnimatePresence>
             </div>
