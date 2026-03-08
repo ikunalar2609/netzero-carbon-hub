@@ -448,7 +448,7 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
                 Science-backed
                 <br />
-                <span className="text-foreground/40">credibility</span>
+                <span className="text-foreground/60">credibility</span>
               </h2>
               <p className="text-lg text-foreground/60 leading-relaxed">
                 Base your corporate climate strategy on credible science, not guesswork.
