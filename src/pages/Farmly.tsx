@@ -206,9 +206,7 @@ const Farmly = () => {
           onClick={(e) => { e.preventDefault(); navigate("/"); }}
           className="flex items-center gap-2.5 mr-6 cursor-pointer hover:opacity-90 transition-opacity"
         >
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
-            <Leaf className="h-4 w-4 text-white" />
-          </div>
+          <img src={farmlyLogo} alt="FarmlyCarbon" className="h-8 w-8 rounded-lg object-contain" />
           <span className="text-[16px] font-bold tracking-tight text-white">Farmly</span>
         </a>
         <span className="text-[9px] font-bold tracking-widest px-2 py-[3px] rounded-full bg-white/20 text-white/90 leading-none mr-4">
