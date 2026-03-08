@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Flame, AlertTriangle, TrendingDown, BarChart3, Satellite } from "lucide-react";
 import { Map, MapMarker, MapControls } from "@/components/ui/map";
 import { useMapData } from "@/hooks/useMapData";
@@ -61,6 +61,20 @@ export default function MapsPage() {
         satelliteSource={satelliteSource} setSatelliteSource={setSatelliteSource}
         selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion}
         isLoading={isLoading}
+        onNavClick={(item) => {
+          const targets: Record<string, string> = {
+            "MAPS": "section-maps",
+            "CHARTS": "section-charts",
+            "CLIMATE DATA": "section-charts",
+            "DOCS": "",
+          };
+          const id = targets[item];
+          if (id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+          } else if (item === "DOCS") {
+            window.open("/farmly/docs", "_blank");
+          }
+        }}
       />
 
       <main className="flex-1 bg-[#EEF2FF] rounded-t-2xl">
@@ -68,7 +82,7 @@ export default function MapsPage() {
         <StatsStrip stats={stats} />
 
         {/* Maps Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div id="section-maps" className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Wildfire */}
           <MapCard
             title="Wildfire Activity"
@@ -127,7 +141,9 @@ export default function MapsPage() {
         </div>
 
         {/* Climate Temperature Dashboard */}
-        <ClimateDashboard />
+        <div id="section-charts">
+          <ClimateDashboard />
+        </div>
 
         {/* Footer */}
         <div className="bg-white/60 border border-gray-200/60 rounded-xl px-5 py-3 flex items-center justify-between">
