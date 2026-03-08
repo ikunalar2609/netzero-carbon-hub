@@ -285,7 +285,11 @@ export const CalculationHistoryTable = () => {
                 <SelectItem value="flight">Flight</SelectItem>
                 <SelectItem value="vehicle">Vehicle</SelectItem>
                 <SelectItem value="energy">Energy</SelectItem>
-                <SelectItem value="diet">Waste</SelectItem>
+                <SelectItem value="waste">Waste</SelectItem>
+                <SelectItem value="sea">Sea Freight</SelectItem>
+                <SelectItem value="industry">Industry</SelectItem>
+                <SelectItem value="agriculture">Agriculture</SelectItem>
+                <SelectItem value="digital">Digital</SelectItem>
               </SelectContent>
             </Select>
           </div>
