@@ -49,7 +49,7 @@ const MapsHeader = React.memo(({
           <div className="h-5 w-px bg-gray-200" />
           <div className="flex items-center gap-2">
             <Globe className="h-4 w-4 text-emerald-600" />
-            <span className="text-[14px] font-extrabold text-gray-900 tracking-tight">Environmental Maps</span>
+            <span className="text-[14px] font-extrabold text-gray-900 tracking-tight">Environmental Maps and Charts</span>
           </div>
           {isLoading && (
             <span className="flex items-center gap-1 text-[10px] text-gray-400 ml-3">
