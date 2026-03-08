@@ -303,7 +303,7 @@ const Index = () => {
                 {["Automated GHG inventory reports", "Scope 1–3 categorization engine", "CSRD & CDP-ready exports"].map((f) => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
-                    <span className="text-[14px] text-foreground/80 font-medium">{f}</span>
+                    <span className="text-[14px] text-foreground font-medium">{f}</span>
                   </div>
                 ))}
               </div>
