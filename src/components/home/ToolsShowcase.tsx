@@ -2,114 +2,102 @@ import { motion } from "framer-motion";
 import { CheckCircle2, LayoutDashboard, Terminal, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+const leftFeatures = [
+  "Stop spending weeks sourcing and verifying emission factors",
+  "Integrate carbon data into existing workflows and spreadsheets",
+  "Focus on climate action, not data wrestling",
+];
+
+const rightFeatures = [
+  "Access verified carbon data through our REST API",
+  "Eliminate the cost of manual emission data management",
+  "Help customers measure emissions and reduce risk",
+];
+
 export const ToolsShowcase = () => {
   const navigate = useNavigate();
 
   return (
     <section className="relative w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
-        {/* Left Side - For Sustainability Professionals */}
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        {/* Left - Professionals */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
+          initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="bg-[#e8eaf6] px-8 md:px-16 py-16 md:py-24 flex flex-col justify-center"
+          className="bg-gray-50 px-8 md:px-16 py-20 md:py-28 flex flex-col justify-center"
         >
-          <div className="max-w-xl">
-            <div className="flex items-center gap-3 mb-6">
-              <LayoutDashboard className="h-8 w-8 text-[#1a237e]" />
-              <span className="text-[#1a237e] font-semibold uppercase tracking-wider text-sm">
-                MEASURE & REPORT
+          <div className="max-w-lg">
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="w-9 h-9 rounded-lg bg-gray-900 flex items-center justify-center">
+                <LayoutDashboard className="h-4.5 w-4.5 text-white" />
+              </div>
+              <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500">
+                Measure & Report
               </span>
             </div>
-            
-            <h2 className="text-4xl md:text-5xl font-light text-[#1a237e] mb-12">
-              For sustainability professionals
+
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-10 leading-tight">
+              For sustainability<br />professionals
             </h2>
-            
-            <div className="space-y-6 mb-12">
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-6 w-6 text-[#1a237e] flex-shrink-0 mt-1" />
-                <p className="text-[#3949ab] text-lg leading-relaxed">
-                  Stop spending weeks sourcing, managing, and verifying emission factors
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-6 w-6 text-[#1a237e] flex-shrink-0 mt-1" />
-                <p className="text-[#3949ab] text-lg leading-relaxed">
-                  Quickly integrate Farmly Data data into your existing workflows and spreadsheets
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-6 w-6 text-[#1a237e] flex-shrink-0 mt-1" />
-                <p className="text-[#3949ab] text-lg leading-relaxed">
-                  Focus on climate action, not data wrestling
-                </p>
-              </div>
+
+            <div className="space-y-5 mb-10">
+              {leftFeatures.map((f) => (
+                <div key={f} className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-[15px] text-gray-600 leading-relaxed">{f}</p>
+                </div>
+              ))}
             </div>
-            
+
             <button
               onClick={() => navigate("/dashboard")}
-              className="group inline-flex items-center gap-2 text-[#1a237e] font-medium text-lg hover:gap-4 transition-all duration-300"
+              className="group inline-flex items-center gap-2 text-[14px] font-semibold text-gray-900 hover:text-emerald-700 transition-colors"
             >
-              FarmlyCarbon Dashboard
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              Open Dashboard
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
         </motion.div>
 
-        {/* Right Side - For Technical Teams */}
+        {/* Right - Developers */}
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
+          initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="bg-[#0d1442] px-8 md:px-16 py-16 md:py-24 flex flex-col justify-center"
+          className="bg-gray-900 px-8 md:px-16 py-20 md:py-28 flex flex-col justify-center"
         >
-          <div className="max-w-xl">
-            <div className="flex items-center gap-3 mb-6">
-              <Terminal className="h-8 w-8 text-[#7c8aff]" />
-              <span className="text-[#7c8aff] font-semibold uppercase tracking-wider text-sm">
-                BUILD & INTEGRATE
+          <div className="max-w-lg">
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
+                <Terminal className="h-4.5 w-4.5 text-emerald-400" />
+              </div>
+              <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-gray-400">
+                Build & Integrate
               </span>
             </div>
-            
-            <h2 className="text-4xl md:text-5xl font-light text-[#7c8aff] mb-12">
-              For technical teams
+
+            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-10 leading-tight">
+              For technical<br />teams
             </h2>
-            
-            <div className="space-y-6 mb-12">
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-6 w-6 text-[#7c8aff] flex-shrink-0 mt-1" />
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Access verified carbon data through our REST API
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-6 w-6 text-[#7c8aff] flex-shrink-0 mt-1" />
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Eliminate the cost and complexity of manual emission data management
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-6 w-6 text-[#7c8aff] flex-shrink-0 mt-1" />
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Help customers measure their emissions and reduce risk
-                </p>
-              </div>
+
+            <div className="space-y-5 mb-10">
+              {rightFeatures.map((f) => (
+                <div key={f} className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-[15px] text-gray-300 leading-relaxed">{f}</p>
+                </div>
+              ))}
             </div>
-            
+
             <button
               onClick={() => navigate("/farmly")}
-              className="group inline-flex items-center gap-2 text-[#7c8aff] font-medium text-lg hover:gap-4 transition-all duration-300"
+              className="group inline-flex items-center gap-2 text-[14px] font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
             >
-              Farmly API for developers
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              Explore Farmly API
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
         </motion.div>

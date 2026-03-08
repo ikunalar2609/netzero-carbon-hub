@@ -1,108 +1,81 @@
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const metrics = [
-  {
-    number: "1.2M+",
-    description: "tCO₂e tracked across agricultural operations with verified emission reductions",
-    color: "text-blue-600"
-  },
-  {
-    number: "235+",
-    description: "verified carbon reduction projects spanning multiple continents and farm types",
-    color: "text-blue-600"
-  },
-  {
-    number: "50+",
-    description: "global regions ranging from large-scale operations to local sustainable farms",
-    color: "text-blue-600"
-  },
-  {
-    number: "12",
-    description: "data sources incl. NASA, IPCC, and NOAA for accurate climate modeling and tracking",
-    color: "text-blue-600"
-  }
+  { number: "1.2M+", label: "tCO₂e Tracked", desc: "Verified emission reductions across agricultural operations" },
+  { number: "235+", label: "Carbon Projects", desc: "Spanning multiple continents and farm types" },
+  { number: "50+", label: "Global Regions", desc: "From large-scale operations to local sustainable farms" },
+  { number: "12", label: "Data Sources", desc: "Including NASA, IPCC, and NOAA for accurate modeling" },
 ];
 
 export const FeaturesSection = () => {
-  return (
-    <section className="py-24 px-4 md:px-8 bg-white relative overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Left Column */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            <div>
-              <h2 className="text-4xl md:text-5xl font-medium text-[#1a1f71] mb-6">
-                Our data in numbers
-              </h2>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                All of FarmlyCarbon's emission factors are compliant with the GHG Protocol and 
-                expressed in CO2e (Carbon Dioxide Equivalent), taking into account Global Warming 
-                Potential in 100 years (GWP 100).
-              </p>
-            </div>
+  const navigate = useNavigate();
 
-            {/* Trust Badges Section */}
+  return (
+    <section className="py-28 px-4 md:px-8 bg-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="max-w-2xl mb-20"
+        >
+          <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-emerald-600 mb-3 block">
+            Platform Metrics
+          </span>
+          <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 leading-[1.1] mb-5">
+            Built on verified,<br />science-backed data
+          </h2>
+          <p className="text-lg text-gray-500 leading-relaxed">
+            All emission factors are GHG Protocol compliant and expressed in CO₂e,
+            accounting for Global Warming Potential over 100 years (GWP 100).
+          </p>
+        </motion.div>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
+          {metrics.map((m, i) => (
             <motion.div
+              key={m.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
               viewport={{ once: true }}
-              className="space-y-4"
+              className="bg-white p-8 lg:p-10"
             >
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>GHG Protocol Compliant</span>
+              <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 tracking-tight">
+                {m.number}
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span>IPCC Guidelines Certified</span>
+              <div className="text-[13px] font-semibold text-emerald-600 uppercase tracking-wide mb-2">
+                {m.label}
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span>Real-time Data Processing</span>
-              </div>
+              <p className="text-[14px] text-gray-400 leading-relaxed">
+                {m.desc}
+              </p>
             </motion.div>
-          </motion.div>
-
-          {/* Right Column - Metrics */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            {metrics.map((metric, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="border-t border-gray-200 pt-6"
-              >
-                <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0">
-                    <h3 className={`text-5xl md:text-6xl font-bold ${metric.color}`}>
-                      {metric.number}
-                    </h3>
-                  </div>
-                  <div className="flex-1 pt-2">
-                    <p className="text-gray-600 leading-relaxed">
-                      {metric.description}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+          ))}
         </div>
+
+        {/* Compliance badges */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true }}
+          className="mt-10 flex flex-wrap items-center gap-3"
+        >
+          {["GHG Protocol", "IPCC Guidelines", "ISO 14064", "SBTi Aligned"].map((tag) => (
+            <span
+              key={tag}
+              className="px-3.5 py-1.5 text-[11px] font-semibold tracking-wide rounded-full bg-gray-50 text-gray-500 border border-gray-100"
+            >
+              {tag}
+            </span>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
