@@ -626,11 +626,11 @@ const Index = () => {
           </div>
 
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[12px] text-foreground/40">© 2025 FarmlyCarbon. All rights reserved.</p>
+            <p className="text-[12px] text-foreground/60">© 2025 FarmlyCarbon. All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Cookies</a>
+              <a href="#" className="text-[12px] text-foreground/60 hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" className="text-[12px] text-foreground/60 hover:text-foreground transition-colors">Terms</a>
+              <a href="#" className="text-[12px] text-foreground/60 hover:text-foreground transition-colors">Cookies</a>
             </div>
           </div>
         </div>
