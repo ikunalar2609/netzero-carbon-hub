@@ -17,6 +17,8 @@ export interface EmissionFactor {
   dataType: string;     // Primary, Secondary, Default
   lastUpdated: string;
   isFavorite?: boolean;
+  sourceUrl: string;    // Hyperlink to the actual data source
+  notes: string;        // Important context, caveats, or usage guidance
 }
 
 export interface FarmlyFilters {
