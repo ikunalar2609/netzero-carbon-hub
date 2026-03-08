@@ -374,63 +374,76 @@ export default function ClimateDashboard() {
         </div>
       </div>
 
-      {/* ── Temperature Anomaly Heatmap (Year × Month) ── */}
+      {/* ── Temperature Anomaly Heatmap (Climate Brink style) ── */}
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-1">
           <Thermometer className="h-4 w-4 text-red-500" />
           <h3 className="text-lg font-bold text-gray-900">Temperature Anomaly Heatmap</h3>
         </div>
-        <p className="text-xs text-gray-400 mb-4">Monthly anomaly vs preindustrial baseline (°C) • Blue = cooler, Red = warmer</p>
+        <p className="text-xs text-gray-400 mb-4">Monthly anomaly vs preindustrial baseline — Blue = cooler, Red = warmer</p>
         <div className="overflow-x-auto">
-          <div className="min-w-[700px]">
-            {/* Month headers */}
-            <div className="flex">
-              <div className="w-14 shrink-0" />
-              {["J","F","M","A","M","J","J","A","S","O","N","D"].map((m, i) => (
-                <div key={i} className="flex-1 text-center text-[10px] font-semibold text-gray-500 pb-1">{m}</div>
-              ))}
-            </div>
-            {/* Heatmap rows - show every 5th year for readability */}
-            {heatmapData.years.filter((_, i) => i % 3 === 0 || _ >= 2020).map(yr => (
-              <div key={yr} className="flex items-center">
-                <div className="w-14 shrink-0 text-[10px] font-semibold text-gray-500 text-right pr-2">{yr}</div>
-                {[1,2,3,4,5,6,7,8,9,10,11,12].map(mo => {
-                  const val = heatmapData.grid[yr]?.[mo];
-                  if (val === undefined) return <div key={mo} className="flex-1 h-5 m-[0.5px] rounded-sm bg-gray-100" />;
-                  // Color scale: blue (-0.5) → white (0) → orange (0.8) → red (1.5+)
-                  const norm = Math.max(-0.5, Math.min(val, 2));
-                  let bg: string;
-                  if (norm < 0) {
-                    const t = (norm + 0.5) / 0.5; // 0..1
-                    bg = `hsl(210, 80%, ${90 - t * 30}%)`;
-                  } else if (norm < 0.8) {
-                    const t = norm / 0.8;
-                    bg = `hsl(${45 - t * 15}, ${60 + t * 30}%, ${95 - t * 30}%)`;
-                  } else {
-                    const t = Math.min((norm - 0.8) / 0.7, 1);
-                    bg = `hsl(${30 - t * 30}, ${85 + t * 15}%, ${65 - t * 20}%)`;
-                  }
-                  return (
-                    <div
-                      key={mo}
-                      className="flex-1 h-5 m-[0.5px] rounded-sm relative group cursor-pointer"
-                      style={{ backgroundColor: bg }}
-                    >
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-gray-900 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-                        {yr}/{String(mo).padStart(2,"0")}: {val >= 0 ? "+" : ""}{val.toFixed(2)}°C
-                      </div>
+          <div className="flex gap-3">
+            {/* Main heatmap grid */}
+            <div className="flex-1 min-w-[600px]">
+              {/* Month labels on Y-axis + cells */}
+              {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map((mLabel, mi) => {
+                const mo = mi + 1;
+                return (
+                  <div key={mo} className="flex items-center">
+                    <div className="w-9 shrink-0 text-[11px] font-medium text-gray-600 text-right pr-2">{mLabel}</div>
+                    <div className="flex flex-1">
+                      {heatmapData.years.map(yr => {
+                        const val = heatmapData.grid[yr]?.[mo];
+                        if (val === undefined) return <div key={yr} className="flex-1 min-w-[5px] h-[22px]" style={{ backgroundColor: "#f3f4f6" }} />;
+                        const bg = getHeatmapColor(val);
+                        return (
+                          <div
+                            key={yr}
+                            className="flex-1 min-w-[5px] h-[22px] relative group cursor-crosshair"
+                            style={{ backgroundColor: bg }}
+                          >
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30 font-medium">
+                              {mLabel} {yr}: {val >= 0 ? "+" : ""}{val.toFixed(2)}°C
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+              {/* Year labels on X-axis */}
+              <div className="flex items-center mt-1">
+                <div className="w-9 shrink-0" />
+                <div className="flex flex-1">
+                  {heatmapData.years.map((yr, i) => {
+                    const showLabel = yr % 10 === 0;
+                    return (
+                      <div key={yr} className="flex-1 min-w-[5px] text-center">
+                        {showLabel && <span className="text-[10px] text-gray-500 font-medium">{yr}</span>}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            ))}
-            {/* Color scale legend */}
-            <div className="flex items-center gap-2 mt-3">
-              <span className="text-[10px] text-gray-400">-0.5°C</span>
-              <div className="flex-1 h-3 rounded-full" style={{
-                background: "linear-gradient(to right, hsl(210,80%,75%), hsl(210,80%,90%), hsl(45,60%,95%), hsl(30,90%,65%), hsl(0,100%,45%))"
-              }} />
-              <span className="text-[10px] text-gray-400">+2.0°C</span>
+              <p className="text-center text-xs text-gray-400 mt-1">Year</p>
+            </div>
+
+            {/* Vertical color bar legend */}
+            <div className="flex flex-col items-center shrink-0 w-20 pt-0">
+              <p className="text-[10px] text-gray-500 font-semibold mb-1 text-center leading-tight">Temperature<br/>Anomaly (°C)</p>
+              <div className="flex items-stretch gap-1.5 flex-1">
+                <div className="w-4 rounded" style={{
+                  background: "linear-gradient(to bottom, hsl(0,85%,35%), hsl(10,80%,55%), hsl(20,75%,70%), hsl(30,60%,85%), hsl(0,0%,97%), hsl(210,50%,85%), hsl(210,70%,65%), hsl(215,80%,45%), hsl(220,90%,30%))"
+                }} />
+                <div className="flex flex-col justify-between text-[9px] text-gray-500 font-medium py-0.5">
+                  <span>2.0</span>
+                  <span>1.5</span>
+                  <span>1.0</span>
+                  <span>0.5</span>
+                  <span>0</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
