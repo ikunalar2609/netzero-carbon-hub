@@ -1249,6 +1249,38 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                 <p className="text-[10px] text-gray-500">Plant <span className="font-bold text-[#10B981]">{Math.ceil(totalEmissions / 22)} trees</span> to offset • Est. cost: <span className="font-bold">${(totalEmissions * 0.02).toFixed(2)}</span></p>
               </div>
             )}
+
+            {/* Matched Benchmark EFs */}
+            {matchedBenchmarks.length > 0 && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Database className="h-3.5 w-3.5 text-[#4F46E5]" />
+                    <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wide">Related EFs</span>
+                  </div>
+                  {onSwitchToBenchmark && (
+                    <button onClick={onSwitchToBenchmark} className="text-[10px] font-bold text-[#4F46E5] hover:underline flex items-center gap-0.5">
+                      VIEW ALL <ArrowRight className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  {matchedBenchmarks.map((ef) => (
+                    <div key={ef.id} className="p-2 rounded-md bg-[#4F46E5]/[0.03] border border-[#4F46E5]/10 hover:border-[#4F46E5]/25 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-medium text-gray-700 truncate max-w-[140px]">{ef.name}</span>
+                        <span className="text-[10px] font-bold text-[#4F46E5] ml-2 shrink-0">{ef.fe} kgCO₂e/{ef.unit}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[9px] text-gray-400">{ef.source}</span>
+                        <span className="text-[9px] text-gray-300">•</span>
+                        <span className="text-[9px] text-gray-400">{ef.scope.replace("scope", "Scope ")}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
