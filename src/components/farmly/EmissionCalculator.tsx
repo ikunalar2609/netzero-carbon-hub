@@ -1287,7 +1287,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Source" value={INDUSTRY_EF[industryData.product]?.source || 'N/A'} />
                             <ResultRow label="Quantity" value={`${industryData.quantity} ${INDUSTRY_EF[industryData.product]?.unit}`} />
                             <ResultTotal label="Total Industry" value={`${industryEmissions.toFixed(2)} kg CO₂e`} />
-                            <SaveButton onClick={async () => { await saveCalculation('vehicle', industryData, { total: industryEmissions }, industryEmissions); }} accent="#DC2626" />
+                            <SaveButton onClick={async () => { await saveCalculation('industry', { product: industryData.product, quantity: industryData.quantity, ef: INDUSTRY_EF[industryData.product]?.ef, source: INDUSTRY_EF[industryData.product]?.source }, { total: industryEmissions }, industryEmissions); }} accent="#DC2626" />
                           </ResultCard>
                         )}
                       </div>
