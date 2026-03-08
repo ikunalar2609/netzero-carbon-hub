@@ -19,7 +19,7 @@ const SelectFilter = React.memo(({ value, onChange, options }: {
   options: { value: string; label: string }[];
 }) => (
   <select
-    className="h-7 px-2 text-[10px] font-bold bg-white/10 border border-white/20 rounded-md text-white backdrop-blur-sm"
+    className="h-7 px-2 text-[10px] font-bold bg-gray-100 border border-gray-200 rounded-md text-gray-700"
     value={value}
     onChange={(e) => onChange(e.target.value)}
   >
