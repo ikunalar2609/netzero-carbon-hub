@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
-import { Flame, TreePine, AlertTriangle, Globe, MapPin, Leaf, TrendingDown, BarChart3, Satellite } from "lucide-react";
-import { Map, MapMarker, MapControls, MapHeatmapLayer, MapGridOverlay } from "@/components/ui/map";
+import { Flame, AlertTriangle, TrendingDown, BarChart3, Satellite } from "lucide-react";
+import { Map, MapMarker, MapControls } from "@/components/ui/map";
 import { useMapData } from "@/hooks/useMapData";
 import { useFireData } from "@/hooks/useFireData";
 import { useForestData } from "@/hooks/useForestData";
 import { REGIONS } from "@/components/maps/constants";
-import { FireMarker, ForestMarker, TreeLossMarker } from "@/components/maps/MapMarkers";
+import { FireMarker, TreeLossMarker } from "@/components/maps/MapMarkers";
 import MapCard from "@/components/maps/MapCard";
 import MapsHeader from "@/components/maps/MapsHeader";
 import StatsStrip from "@/components/maps/StatsStrip";
