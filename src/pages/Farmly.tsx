@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -49,6 +50,10 @@ import {
   Database,
   ExternalLink,
   LogOut,
+  User,
+  Pencil,
+  Check,
+  Mail,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
@@ -91,6 +96,9 @@ const Farmly = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
 
   // Settings state
   const [settingsState, setSettingsState] = useState({
@@ -202,6 +210,17 @@ const Farmly = () => {
     }
   };
 
+  const handleUpdateName = async () => {
+    if (!newName.trim()) return;
+    const { error } = await supabase.auth.updateUser({ data: { name: newName.trim() } });
+    if (error) {
+      toast.error("Failed to update name");
+    } else {
+      toast.success("Name updated");
+      setEditingName(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-[#4F46E5]">
       {/* ═══ TOP NAV ═══ */}
@@ -243,14 +262,82 @@ const Farmly = () => {
           <button onClick={() => setSettingsOpen(true)} className="p-2 rounded-md hover:bg-white/10 transition-colors">
             <Settings className="h-4 w-4 text-white/60" />
           </button>
-          <div className="flex items-center gap-2 ml-1 group relative">
-            <div className="w-7 h-7 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center cursor-pointer">
-              {userInitial}
-            </div>
-            <span className="hidden sm:block text-[11px] text-white/70 font-medium max-w-[100px] truncate">{userName}</span>
-            <button onClick={logout} className="p-1.5 rounded-md hover:bg-white/10 transition-colors" title="Sign out">
-              <LogOut className="h-3.5 w-3.5 text-white/50" />
+          <div className="flex items-center gap-2 ml-1 relative">
+            <button
+              onClick={() => { setProfileOpen(!profileOpen); setNewName(userName); setEditingName(false); }}
+              className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-white/10 transition-colors"
+            >
+              <div className="w-7 h-7 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center">
+                {userInitial}
+              </div>
+              <span className="hidden sm:block text-[11px] text-white/70 font-medium max-w-[100px] truncate">{userName}</span>
             </button>
+
+            {profileOpen && (
+              <>
+                <div className="fixed inset-0 z-30" onClick={() => setProfileOpen(false)} />
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 z-40 overflow-hidden">
+                  {/* User info header */}
+                  <div className="px-5 pt-5 pb-4 bg-gradient-to-br from-[#4F46E5] to-[#6366F1]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-white/20 text-white text-[18px] font-bold flex items-center justify-center border-2 border-white/30">
+                        {userInitial}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {editingName ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                              className="w-full bg-white/20 text-white text-[13px] font-semibold px-2 py-1 rounded border border-white/30 outline-none placeholder:text-white/40"
+                              placeholder="Your name"
+                              autoFocus
+                              onKeyDown={(e) => e.key === "Enter" && handleUpdateName()}
+                            />
+                            <button onClick={handleUpdateName} className="p-1 rounded hover:bg-white/20">
+                              <Check className="h-3.5 w-3.5 text-white" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-[14px] font-bold text-white truncate">{userName}</p>
+                            <button onClick={() => setEditingName(true)} className="p-0.5 rounded hover:bg-white/20">
+                              <Pencil className="h-3 w-3 text-white/60" />
+                            </button>
+                          </div>
+                        )}
+                        <p className="text-[11px] text-white/60 truncate mt-0.5">{user?.email}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className="px-5 py-3 space-y-2.5">
+                    <div className="flex items-center gap-2.5 text-[12px]">
+                      <User className="h-3.5 w-3.5 text-gray-400" />
+                      <span className="text-gray-500">Role:</span>
+                      <span className="text-gray-700 font-medium">Member</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-[12px]">
+                      <Mail className="h-3.5 w-3.5 text-gray-400" />
+                      <span className="text-gray-500">Email:</span>
+                      <span className="text-gray-700 font-medium truncate">{user?.email}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="border-t border-gray-100 px-3 py-2">
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[12px] font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="h-3.5 w-3.5" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
