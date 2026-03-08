@@ -33,7 +33,7 @@ const SelectFilter = React.memo(({ value, onChange, options }: {
 SelectFilter.displayName = "SelectFilter";
 
 const MapsHeader = React.memo(({
-  days, setDays, satelliteSource, setSatelliteSource, selectedRegion, setSelectedRegion, isLoading,
+  days, setDays, satelliteSource, setSatelliteSource, selectedRegion, setSelectedRegion, isLoading, onNavClick,
 }: MapsHeaderProps) => {
   const navigate = useNavigate();
 
