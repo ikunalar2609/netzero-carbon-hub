@@ -424,9 +424,21 @@ const Farmly = () => {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.12 }}
                 >
-                  {activeTab === "calculator" && <EmissionCalculator />}
+                  {activeTab === "calculator" && (
+                    <EmissionCalculator
+                      factors={filteredFactors}
+                      onSwitchToBenchmark={() => setActiveTab("benchmark")}
+                    />
+                  )}
                   {activeTab === "benchmark" && (
-                    <BenchmarkTable factors={filteredFactors} onToggleFavorite={toggleFavorite} />
+                    <BenchmarkTable
+                      factors={filteredFactors}
+                      onToggleFavorite={toggleFavorite}
+                      onUseInCalculator={(factor) => {
+                        setActiveTab("calculator");
+                        toast.info(`Loaded EF: ${factor.name} (${factor.fe} kgCO₂e/${factor.unit})`, { duration: 3000 });
+                      }}
+                    />
                   )}
                   {activeTab === "ef-agent" && <EFAgent factors={filteredFactors} />}
                   {activeTab === "decarbo" && <DecarboAgent factors={filteredFactors} />}
