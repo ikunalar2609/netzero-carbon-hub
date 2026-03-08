@@ -283,7 +283,7 @@ const Index = () => {
       </section>
 
       {/* ═══════════════ LOGO STRIP (Marquee) ═══════════════ */}
-      <section className="py-12 px-6 border-y border-border bg-background overflow-hidden">
+      <section className="py-12 px-6 bg-background overflow-hidden">
         <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-6">
           Data Powered By Leading Institutions
         </p>
