@@ -83,8 +83,8 @@ export const ToolsShowcase = () => {
             </h2>
 
             <p className="text-[15px] text-white/50 leading-relaxed mb-10 max-w-sm">
-              Embed carbon intelligence into your products. Access verified
-              emission factors through our API.
+              Browse and compare verified emission factors from DEFRA, IPCC, EPA
+              and more — filterable by category, region, and source.
             </p>
 
             <div className="space-y-4 mb-12">
