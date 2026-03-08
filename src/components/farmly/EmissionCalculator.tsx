@@ -804,7 +804,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
           <div className="lg:col-span-2 space-y-4">
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               {/* Inner tab bar */}
-              <div className="flex items-center gap-1 px-3 pt-3 pb-0 border-b border-gray-100">
+              <div className="flex items-center gap-1 px-3 pt-3 pb-0 border-b border-gray-100 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {[
                   { id: "transport", label: "TRANSPORT", icon: Truck, accent: "#2563EB" },
                   { id: "flight", label: "FLIGHT", icon: Plane, accent: "#8B5CF6" },
