@@ -200,23 +200,19 @@ const Farmly = () => {
     <div className="h-screen flex flex-col bg-[#4F46E5]">
       {/* ═══ TOP NAV ═══ */}
       <header className="h-[56px] bg-[#4F46E5] flex items-center px-5 shrink-0 z-20">
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-1 text-indigo-200 hover:text-white transition-colors text-[11px] font-semibold mr-4"
+        <a
+          href="/"
+          onClick={(e) => { e.preventDefault(); navigate("/"); }}
+          className="flex items-center gap-2.5 mr-6 cursor-pointer hover:opacity-90 transition-opacity"
         >
-          <ChevronRight className="h-3.5 w-3.5 rotate-180" />
-          HOME
-        </button>
-        <div className="h-5 w-px bg-white/20 mr-4" />
-        <div className="flex items-center gap-2.5 mr-6">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
             <Leaf className="h-4 w-4 text-white" />
           </div>
           <span className="text-[16px] font-bold tracking-tight text-white">Farmly</span>
-          <span className="text-[9px] font-bold tracking-widest px-2 py-[3px] rounded-full bg-white/20 text-white/90 leading-none">
-            Pro ▾
-          </span>
-        </div>
+        </a>
+        <span className="text-[9px] font-bold tracking-widest px-2 py-[3px] rounded-full bg-white/20 text-white/90 leading-none mr-4">
+          Pro ▾
+        </span>
 
         <nav className="hidden md:flex items-center gap-1 ml-2">
           {["SEARCH", "BENCHMARK", "IMPORT", "SETTINGS", "COMMUNITY", "DOCS"].map((item) => (
