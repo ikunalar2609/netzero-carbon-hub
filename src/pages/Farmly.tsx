@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { useAuth } from "@/context/AuthContext";
 import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
