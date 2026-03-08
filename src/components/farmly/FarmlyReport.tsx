@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Download,
@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Info,
+  Database,
 } from "lucide-react";
 import {
   PieChart,
@@ -32,19 +33,60 @@ import {
   Legend,
 } from "recharts";
 import { type EmissionFactor } from "@/data/emissionFactors";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface FarmlyReportProps {
   factors: EmissionFactor[];
 }
 
+interface CalcRecord {
+  id: string;
+  calculation_type: string;
+  input_data: any;
+  result_data: any;
+  total_emissions: number;
+  created_at: string;
+}
+
 export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
   const [reportPeriod, setReportPeriod] = useState("2024-Q4");
+  const [calculations, setCalculations] = useState<CalcRecord[]>([]);
+  const [loadingCalcs, setLoadingCalcs] = useState(true);
+
+  // Fetch actual calculation history
+  useEffect(() => {
+    const fetchCalcs = async () => {
+      setLoadingCalcs(true);
+      try {
+        const { data, error } = await supabase
+          .from('emission_calculations')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(500);
+        if (!error && data) setCalculations(data);
+      } catch {} finally { setLoadingCalcs(false); }
+    };
+    fetchCalcs();
+  }, []);
 
   // Derived data from factors for report
   const totalEFs = factors.length;
   const avgEF = factors.length > 0 ? (factors.reduce((s, f) => s + f.fe, 0) / factors.length).toFixed(3) : "0";
+
+  // Actual calculation stats
+  const totalCalcEmissions = calculations.reduce((s, c) => s + c.total_emissions, 0);
+  const calcsByType = calculations.reduce((acc, c) => {
+    acc[c.calculation_type] = (acc[c.calculation_type] || 0) + c.total_emissions;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const calcCountByType = calculations.reduce((acc, c) => {
+    acc[c.calculation_type] = (acc[c.calculation_type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   const scopeBreakdown = factors.reduce((acc, f) => {
     const scope = f.scope.replace("scope", "Scope ");
@@ -75,21 +117,24 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
   // Top emitters
   const topEmitters = [...factors].sort((a, b) => b.fe - a.fe).slice(0, 10);
 
-  // Trend data (simulated monthly)
-  const trendData = [
-    { month: "Jan", scope1: 120, scope2: 85, scope3: 210 },
-    { month: "Feb", scope1: 115, scope2: 82, scope3: 205 },
-    { month: "Mar", scope1: 110, scope2: 80, scope3: 198 },
-    { month: "Apr", scope1: 108, scope2: 78, scope3: 192 },
-    { month: "May", scope1: 105, scope2: 75, scope3: 188 },
-    { month: "Jun", scope1: 100, scope2: 72, scope3: 180 },
-    { month: "Jul", scope1: 98, scope2: 70, scope3: 175 },
-    { month: "Aug", scope1: 95, scope2: 68, scope3: 170 },
-    { month: "Sep", scope1: 92, scope2: 65, scope3: 165 },
-    { month: "Oct", scope1: 88, scope2: 62, scope3: 158 },
-    { month: "Nov", scope1: 85, scope2: 60, scope3: 152 },
-    { month: "Dec", scope1: 82, scope2: 58, scope3: 148 },
-  ];
+  // Real calculation type breakdown for pie chart
+  const TYPE_COLORS: Record<string, string> = {
+    flight: "#8B5CF6", vehicle: "#2563EB", energy: "#10B981", waste: "#F97316", diet: "#F97316",
+    sea: "#0EA5E9", industry: "#DC2626", agriculture: "#84CC16", digital: "#06B6D4",
+  };
+  const calcTypeData = Object.entries(calcsByType).map(([name, value]) => ({
+    name: name.charAt(0).toUpperCase() + name.slice(1),
+    value: Math.round(value * 100) / 100,
+    color: TYPE_COLORS[name] || "#64748B",
+  }));
+
+  // Monthly trend from real data
+  const monthlyTrend = calculations.reduce((acc, c) => {
+    const month = format(new Date(c.created_at), 'MMM yyyy');
+    acc[month] = (acc[month] || 0) + c.total_emissions;
+    return acc;
+  }, {} as Record<string, number>);
+  const trendData = Object.entries(monthlyTrend).reverse().slice(-12).map(([month, total]) => ({ month, total: Math.round(total * 100) / 100 }));
 
   const SCOPE_COLORS = ["#4F46E5", "#0EA5E9", "#F59E0B"];
   const CAT_COLORS = ["#4F46E5", "#0EA5E9", "#10B981", "#F59E0B", "#DC2626", "#8B5CF6", "#EC4899"];
