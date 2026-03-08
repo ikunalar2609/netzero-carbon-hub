@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Flame, AlertTriangle, TrendingDown, BarChart3, Satellite } from "lucide-react";
 import { Map, MapMarker, MapControls } from "@/components/ui/map";
 import { useMapData } from "@/hooks/useMapData";
@@ -14,6 +15,7 @@ import { useState } from "react";
 
 /* -------------------- Main Component -------------------- */
 export default function MapsPage() {
+  const navigate = useNavigate();
   const [days, setDays] = useState("1");
   const [satelliteSource, setSatelliteSource] = useState("VIIRS_SNPP_NRT");
   const [selectedRegion, setSelectedRegion] = useState("all");
@@ -72,7 +74,7 @@ export default function MapsPage() {
           if (id) {
             document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
           } else if (item === "DOCS") {
-            window.open("/maps/docs", "_blank");
+            navigate("/maps/docs");
           }
         }}
       />
