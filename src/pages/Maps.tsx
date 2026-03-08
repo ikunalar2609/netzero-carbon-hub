@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
- import { Link } from "react-router-dom";
- import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Flame, TreePine, AlertTriangle, Globe, Satellite, Clock, MapPin, Leaf, TrendingDown, BarChart3, RefreshCw } from "lucide-react";
 import { Map, MapMarker, MapControls, MapGeoJSONLayer, MapHeatmapLayer, MapGridOverlay } from "@/components/ui/map";
 import {
   parseForestExcel,
