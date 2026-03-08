@@ -48,6 +48,7 @@ import {
   Shield,
   Database,
   ExternalLink,
+  LogOut,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
