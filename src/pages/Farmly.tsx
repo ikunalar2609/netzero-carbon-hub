@@ -45,6 +45,7 @@ const tabItems = [
   { id: "ef-agent", label: "EF AGENT", icon: Bot, color: "bg-[#0EA5E9] text-white" },
   { id: "decarbo", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
   { id: "methodo", label: "METHODO AGENT", icon: Compass, color: "bg-[#8B5CF6] text-white" },
+  { id: "history", label: "HISTORY", icon: History, color: "bg-[#64748B] text-white" },
 ];
 
 const Farmly = () => {
