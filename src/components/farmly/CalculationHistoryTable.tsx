@@ -372,7 +372,7 @@ export const CalculationHistoryTable = () => {
                     <TableCell className="py-2.5">
                       <Badge className={`${getTypeBadgeColor(calc.calculation_type)} gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md`}>
                         {getTypeIcon(calc.calculation_type)}
-                        {calc.calculation_type.charAt(0).toUpperCase() + calc.calculation_type.slice(1)}
+                        {getTypeLabel(calc.calculation_type)}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-mono text-[11px] text-gray-600 py-2.5">
