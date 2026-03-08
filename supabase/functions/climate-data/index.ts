@@ -13,53 +13,74 @@ Deno.serve(async (req) => {
 
     if (type === 'global_temperature') {
       // Fetch ERA5-like global temperature data from Open-Meteo Climate API
-      // We use multiple coordinates to approximate global mean
+      // Multiple coordinates to approximate global mean
       const locations = [
-        { lat: 0, lon: 0, name: "Equatorial Atlantic" },
-        { lat: 45, lon: -90, name: "N. America" },
-        { lat: 50, lon: 10, name: "Europe" },
-        { lat: 30, lon: 100, name: "E. Asia" },
-        { lat: -20, lon: 25, name: "S. Africa" },
-        { lat: -35, lon: 150, name: "Oceania" },
-        { lat: -10, lon: -60, name: "S. America" },
-        { lat: 65, lon: 30, name: "N. Europe" },
+        { lat: 0, lon: 0 },
+        { lat: 45, lon: -90 },
+        { lat: 50, lon: 10 },
+        { lat: 30, lon: 100 },
+        { lat: -20, lon: 25 },
+        { lat: -35, lon: 150 },
+        { lat: -10, lon: -60 },
+        { lat: 65, lon: 30 },
       ];
 
       const promises = locations.map(loc =>
-        fetch(`https://climate-api.open-meteo.com/v1/climate?latitude=${loc.lat}&longitude=${loc.lon}&start_date=1950-01-01&end_date=2025-12-31&models=EC_Earth3P_HR&daily=temperature_2m_mean`)
+        fetch(`https://climate-api.open-meteo.com/v1/climate?latitude=${loc.lat}&longitude=${loc.lon}&start_date=1940-01-01&end_date=2025-12-31&models=EC_Earth3P_HR&daily=temperature_2m_mean`)
           .then(r => r.json())
           .catch(() => null)
       );
 
       const results = await Promise.all(promises);
       
-      // Process into yearly averages
+      // Process daily data into monthly averages for the long-term chart
+      const monthlyData: Record<string, number[]> = {};
       const yearlyData: Record<number, number[]> = {};
       
       for (const result of results) {
         if (!result?.daily?.time || !result?.daily?.temperature_2m_mean) continue;
-        const times = result.daily.time;
-        const temps = result.daily.temperature_2m_mean;
+        const times: string[] = result.daily.time;
+        const temps: (number | null)[] = result.daily.temperature_2m_mean;
         
         for (let i = 0; i < times.length; i++) {
           if (temps[i] === null) continue;
+          const yearMonth = times[i].substring(0, 7); // "YYYY-MM"
           const year = parseInt(times[i].substring(0, 4));
+          
+          if (!monthlyData[yearMonth]) monthlyData[yearMonth] = [];
+          monthlyData[yearMonth].push(temps[i]!);
+          
           if (!yearlyData[year]) yearlyData[year] = [];
-          yearlyData[year].push(temps[i]);
+          yearlyData[year].push(temps[i]!);
         }
       }
 
-      // Calculate anomaly relative to 1961-1990 baseline
-      const baselineYears = Object.entries(yearlyData)
-        .filter(([y]) => parseInt(y) >= 1961 && parseInt(y) <= 1990);
-      
-      let baselineAvg = 14.0; // fallback
-      if (baselineYears.length > 0) {
-        const allBaseline = baselineYears.flatMap(([, temps]) => temps);
-        baselineAvg = allBaseline.reduce((a, b) => a + b, 0) / allBaseline.length;
+      // Calculate baseline (1961-1990)
+      const baselineTemps: number[] = [];
+      for (const [ym, temps] of Object.entries(monthlyData)) {
+        const yr = parseInt(ym.substring(0, 4));
+        if (yr >= 1961 && yr <= 1990) {
+          baselineTemps.push(...temps);
+        }
       }
+      const baselineAvg = baselineTemps.length > 0
+        ? baselineTemps.reduce((a, b) => a + b, 0) / baselineTemps.length
+        : 14.0;
 
-      const anomalyData = Object.entries(yearlyData)
+      // Monthly anomaly data for the main chart
+      const monthlyAnomalies = Object.entries(monthlyData)
+        .map(([ym, temps]) => {
+          const avg = temps.reduce((a, b) => a + b, 0) / temps.length;
+          return {
+            date: ym,
+            anomaly: parseFloat((avg - baselineAvg).toFixed(3)),
+            absolute: parseFloat(avg.toFixed(2)),
+          };
+        })
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      // Yearly anomaly data
+      const yearlyAnomalies = Object.entries(yearlyData)
         .map(([year, temps]) => {
           const avg = temps.reduce((a, b) => a + b, 0) / temps.length;
           return {
@@ -72,14 +93,14 @@ Deno.serve(async (req) => {
 
       return new Response(JSON.stringify({
         success: true,
-        data: anomalyData,
+        monthly: monthlyAnomalies,
+        yearly: yearlyAnomalies,
         baseline: "1961-1990",
         baselineAvg: parseFloat(baselineAvg.toFixed(2)),
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (type === 'continental_stats') {
-      // Fetch current temperature for major regions
       const regions = [
         { name: "Africa", lat: 5, lon: 25 },
         { name: "Asia", lat: 35, lon: 100 },
