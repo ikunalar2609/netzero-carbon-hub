@@ -472,9 +472,9 @@ const Index = () => {
                 className="w-full h-auto"
                 loading="lazy"
               />
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/80 backdrop-blur-sm text-foreground/70 px-5 py-2.5 rounded-lg text-sm font-medium border border-border/50">
+              {/* Button on top bar area */}
+              <div className="absolute top-0 left-0 right-0 h-10 z-10 flex items-center justify-end pr-4">
+                <div className="bg-background/80 backdrop-blur-sm text-foreground/70 px-4 py-1 rounded-md text-[11px] font-medium border border-border/50">
                   Explore Maps & Charts
                 </div>
               </div>
