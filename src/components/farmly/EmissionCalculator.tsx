@@ -43,7 +43,59 @@ const DISTANCE_EF = {
   'electric': 0.053
 };
 
-// Electricity Grid Emission Factors (Scope 2 - Location-Based) - kgCO₂e/kWh
+// Industry emission factors (CBAM/ecoinvent/EPA)
+const INDUSTRY_EF: Record<string, { ef: number; unit: string; source: string }> = {
+  'steel-hot-rolled': { ef: 2.0, unit: 'kg product', source: 'CBAM' },
+  'steel-wire': { ef: 2.6, unit: 'kg product', source: 'CBAM' },
+  'aluminium-primary': { ef: 8.6, unit: 'kg product', source: 'ecoinvent' },
+  'copper-cathode': { ef: 3.5, unit: 'kg product', source: 'sustainalize' },
+  'cement-cem1': { ef: 0.87, unit: 'kg product', source: 'CBAM' },
+  'concrete-c30': { ef: 0.132, unit: 'kg product', source: 'sustainalize' },
+  'hdpe-granules': { ef: 1.89, unit: 'kg product', source: 'sustainalize' },
+  'polypropylene': { ef: 1.63, unit: 'kg product', source: 'sustainalize' },
+  'glass-bottles': { ef: 0.85, unit: 'kg product', source: 'sustainalize' },
+  'paper-uncoated': { ef: 1.09, unit: 'kg product', source: 'sustainalize' },
+  'li-battery-nmc': { ef: 73.0, unit: 'kWh capacity', source: 'ecoinvent' },
+  'cotton-textile': { ef: 5.2, unit: 'kg fabric', source: 'ecoinvent' },
+  'refrigerant-r410a': { ef: 2088.0, unit: 'kg leaked', source: 'EPA' },
+};
+
+// Agriculture emission factors
+const AGRICULTURE_EF: Record<string, { ef: number; unit: string; source: string }> = {
+  'nitrogen-fertilizer': { ef: 6.8, unit: 'kg N applied', source: 'IPCC AR6' },
+  'rice-flooded': { ef: 1.3, unit: 'm² cultivated', source: 'IPCC AR6' },
+  'beef-enteric': { ef: 27.0, unit: 'head/year', source: 'ecoinvent' },
+  'soybean': { ef: 0.35, unit: 'kg harvested', source: 'ecoinvent' },
+  'dairy-cow': { ef: 14.5, unit: 'head/year', source: 'IPCC AR6' },
+  'poultry': { ef: 0.02, unit: 'head/year', source: 'IPCC AR6' },
+  'wheat': { ef: 0.28, unit: 'kg harvested', source: 'ecoinvent' },
+  'corn-maize': { ef: 0.32, unit: 'kg harvested', source: 'ecoinvent' },
+};
+
+// Digital/Cloud emission factors
+const DIGITAL_EF: Record<string, { ef: number; unit: string; source: string }> = {
+  'cloud-ec2': { ef: 0.056, unit: 'instance-hour', source: 'sustainalize' },
+  'data-centre': { ef: 0.42, unit: 'kWh (PUE 1.2)', source: 'sustainalize' },
+  'email-send': { ef: 0.004, unit: 'email', source: 'ecoinvent' },
+  'video-stream-hd': { ef: 0.036, unit: 'hour streamed', source: 'IEA' },
+  'web-page-view': { ef: 0.0002, unit: 'page view', source: 'ecoinvent' },
+  'blockchain-tx': { ef: 0.4, unit: 'transaction', source: 'ecoinvent' },
+};
+
+interface IndustryData {
+  product: string;
+  quantity: number;
+}
+
+interface AgricultureData {
+  activity: string;
+  quantity: number;
+}
+
+interface DigitalData {
+  activity: string;
+  quantity: number;
+}
 // Source: DEFRA 2024, IEA, EPA
 const GRID_EF = {
   'grid-mixed': 0.25,      // Average global grid mix
