@@ -4,8 +4,10 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { lovable } from "@/integrations/lovable/index";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
   Lock,
   Mail,
