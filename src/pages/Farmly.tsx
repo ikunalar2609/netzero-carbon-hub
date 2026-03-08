@@ -79,6 +79,9 @@ const tabItems = [
 
 const Farmly = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const userInitial = user?.user_metadata?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "U";
+  const userName = user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
   const [activeTab, setActiveTab] = useState("calculator");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
