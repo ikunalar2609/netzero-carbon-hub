@@ -84,6 +84,7 @@ const Farmly = () => {
   // Dialogs
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   // Settings state
   const [settingsState, setSettingsState] = useState({
