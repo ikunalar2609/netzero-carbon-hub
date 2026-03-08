@@ -226,9 +226,12 @@ const Farmly = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1 ml-auto">
-          <button className="p-2 rounded-md hover:bg-white/10 transition-colors">
+        <div className="flex items-center gap-1 ml-auto relative">
+          <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="p-2 rounded-md hover:bg-white/10 transition-colors relative">
             <Bell className="h-4 w-4 text-white/60" />
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-400 border border-[#4F46E5]" />
+          </button>
+          <NotificationPanel open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
           </button>
           <button onClick={() => setSettingsOpen(true)} className="p-2 rounded-md hover:bg-white/10 transition-colors">
             <Settings className="h-4 w-4 text-white/60" />
