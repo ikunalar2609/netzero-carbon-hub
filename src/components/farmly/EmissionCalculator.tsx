@@ -1375,7 +1375,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                           </ResultCard>
                         )}
                       </div>
-                    )
+                    )}
                   </motion.div>
                 </AnimatePresence>
               </div>
