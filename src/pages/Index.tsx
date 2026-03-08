@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Code2, Database, Zap, ChevronRight, Globe, Shield, BarChart3, Leaf } from "lucide-react";
+import { ArrowRight, Code2, Database, Zap, Globe, Shield, BarChart3, Leaf, Play, Star, CheckCircle2 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
-import { FeaturesSection } from "@/components/home/FeaturesSection";
-import { ToolsShowcase } from "@/components/home/ToolsShowcase";
 import farmlyApiVideo from "@/assets/farmly-api-video.webm";
 import farmHeroBg from "@/assets/farm-hero-bg.jpg";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
@@ -15,39 +13,48 @@ import oxfordLogo from "@/assets/logos/oxford-logo.png";
 import carbonIntegrityLogo from "@/assets/logos/carbon-integrity-logo.png";
 import wwfLogo from "@/assets/logos/wwf-logo.png";
 import goldStandardLogo from "@/assets/logos/gold-standard-logo.png";
+import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
   }),
+};
+
+const stagger = {
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
 const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white antialiased">
+    <div className="min-h-screen bg-background antialiased overflow-x-hidden">
       <HomeHeader />
 
       {/* ═══════════════ HERO ═══════════════ */}
       <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
-        {/* Background */}
+        {/* Mesh gradient background */}
         <div className="absolute inset-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${farmHeroBg})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--green-100)),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(var(--green-50))/0.5,transparent)]" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6 pt-24 pb-20">
+        {/* Subtle grid */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)",
+          backgroundSize: "32px 32px",
+        }} />
+
+        <div className="relative z-10 max-w-5xl mx-auto text-center px-6 pt-28 pb-20">
           <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
-            <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12px] font-semibold tracking-wide bg-emerald-50 text-emerald-700 border border-emerald-100 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Agricultural Carbon Platform
+            <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12px] font-semibold tracking-wide bg-primary/10 text-primary border border-primary/20 mb-8 backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Now in Public Beta
             </span>
           </motion.div>
 
@@ -56,11 +63,13 @@ const Index = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 tracking-tight leading-[1.05] mb-6"
+            className="text-5xl sm:text-6xl md:text-[76px] font-bold text-foreground tracking-[-0.03em] leading-[1.05] mb-6"
           >
-            Measure, reduce &
+            Carbon management
             <br />
-            <span className="text-emerald-600">offset carbon</span>
+            <span className="bg-gradient-to-r from-primary to-[hsl(var(--brand-primary-light))] bg-clip-text text-transparent">
+              for agriculture
+            </span>
           </motion.h1>
 
           <motion.p
@@ -68,10 +77,10 @@ const Index = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            The all-in-one platform for agricultural carbon management.
             Track emissions, plan net-zero pathways, and access verified carbon markets.
+            The all-in-one platform trusted by agricultural operations worldwide.
           </motion.p>
 
           <motion.div
@@ -84,82 +93,320 @@ const Index = () => {
             <Button
               size="lg"
               onClick={() => navigate("/signup")}
-              className="h-12 px-7 text-[14px] font-semibold rounded-xl bg-gray-900 hover:bg-gray-800 text-white shadow-lg shadow-gray-900/10 transition-all hover:shadow-xl hover:-translate-y-0.5"
+              className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xl shadow-foreground/10 transition-all hover:shadow-2xl hover:-translate-y-0.5 group"
             >
               Start Free Trial
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
             </Button>
             <Button
               variant="outline"
               size="lg"
               onClick={() => navigate("/farmly")}
-              className="h-12 px-7 text-[14px] font-semibold rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 transition-all"
+              className="h-13 px-8 text-[15px] font-semibold rounded-xl border-border text-foreground hover:bg-secondary transition-all"
             >
-              Explore Platform
+              <Play className="mr-2 h-4 w-4" />
+              Live Demo
             </Button>
           </motion.div>
 
-          {/* Trust signals */}
+          {/* Social proof row */}
           <motion.div
             custom={4}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] text-gray-400"
+            className="mt-16 flex flex-wrap items-center justify-center gap-8 text-[13px] text-muted-foreground"
           >
             <span className="flex items-center gap-2">
-              <Shield className="h-3.5 w-3.5" /> SOC 2 Compliant
+              <Shield className="h-4 w-4 text-primary" /> SOC 2 Compliant
             </span>
+            <span className="h-4 w-px bg-border" />
             <span className="flex items-center gap-2">
-              <BarChart3 className="h-3.5 w-3.5" /> 1.2M+ tCO₂e tracked
+              <BarChart3 className="h-4 w-4 text-primary" /> 1.2M+ tCO₂e tracked
             </span>
+            <span className="h-4 w-px bg-border" />
             <span className="flex items-center gap-2">
-              <Globe className="h-3.5 w-3.5" /> 50+ regions
+              <Globe className="h-4 w-4 text-primary" /> 50+ regions
             </span>
           </motion.div>
         </div>
       </section>
 
-      {/* ═══════════════ FEATURES ═══════════════ */}
-      <FeaturesSection />
+      {/* ═══════════════ LOGO STRIP ═══════════════ */}
+      <section className="py-16 px-6 border-y border-border bg-secondary/30">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground text-center mb-8">
+            Data Powered By Leading Institutions
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+            {[
+              { src: nasaLogo, alt: "NASA" },
+              { src: ipccLogo, alt: "IPCC" },
+              { src: noaaLogo, alt: "NOAA" },
+              { src: sbtiLogo, alt: "SBTi" },
+              { src: goldStandardLogo, alt: "Gold Standard" },
+            ].map((logo) => (
+              <img
+                key={logo.alt}
+                src={logo.src}
+                alt={logo.alt}
+                className="h-8 md:h-10 w-auto object-contain grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* ═══════════════ TOOLS SHOWCASE ═══════════════ */}
-      <ToolsShowcase />
+      {/* ═══════════════ BENTO FEATURES ═══════════════ */}
+      <section className="py-28 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
+              Platform
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-5">
+              Everything you need to
+              <br />
+              <span className="text-muted-foreground">decarbonize agriculture</span>
+            </h2>
+          </motion.div>
 
-      {/* ═══════════════ API SECTION ═══════════════ */}
-      <section className="py-28 px-4 md:px-8 bg-gray-50">
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Large card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500 overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,hsl(var(--primary)/0.06),transparent_70%)] pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-2xl font-semibold text-foreground mb-3">Emission Tracking & Analytics</h3>
+                <p className="text-muted-foreground leading-relaxed max-w-lg mb-6">
+                  Real-time tracking across Scope 1, 2, and 3 emissions with automated data collection,
+                  AI-powered categorization, and interactive dashboards.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["GHG Protocol", "ISO 14064", "Automated Reports"].map((t) => (
+                    <span key={t} className="px-3 py-1 text-[11px] font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Small card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <Globe className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Global Maps</h3>
+              <p className="text-muted-foreground leading-relaxed text-[15px]">
+                Explore forest cover, fire hotspots, and deforestation data across 50+ regions with interactive 3D mapping.
+              </p>
+            </motion.div>
+
+            {/* Small card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              viewport={{ once: true }}
+              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <Leaf className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Carbon Offsets</h3>
+              <p className="text-muted-foreground leading-relaxed text-[15px]">
+                Access verified carbon markets and high-quality offset projects with transparent pricing and quality scoring.
+              </p>
+            </motion.div>
+
+            {/* Large card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500 overflow-hidden"
+            >
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-[radial-gradient(circle,hsl(var(--primary)/0.06),transparent_70%)] pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                  <Zap className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-2xl font-semibold text-foreground mb-3">Net Zero Planning</h3>
+                <p className="text-muted-foreground leading-relaxed max-w-lg mb-6">
+                  Model multiple decarbonization scenarios, set science-based targets, and track progress with
+                  milestone-driven roadmaps aligned to SBTi and Oxford Principles.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["SBTi Aligned", "Scenario Modeling", "Milestone Tracking"].map((t) => (
+                    <span key={t} className="px-3 py-1 text-[11px] font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Stats row */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+          >
+            {[
+              { n: "1.2M+", l: "tCO₂e Tracked" },
+              { n: "235+", l: "Carbon Projects" },
+              { n: "50+", l: "Global Regions" },
+              { n: "12", l: "Data Sources" },
+            ].map((s) => (
+              <div key={s.l}>
+                <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{s.n}</div>
+                <div className="text-[13px] text-muted-foreground mt-1">{s.l}</div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ TWO-PANE CTA ═══════════════ */}
+      <section className="relative w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          {/* Left - Professionals */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-secondary px-8 md:px-16 py-20 md:py-28 flex flex-col justify-center"
+          >
+            <div className="max-w-lg">
+              <div className="w-10 h-10 rounded-xl bg-foreground flex items-center justify-center mb-6">
+                <BarChart3 className="h-5 w-5 text-background" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight">
+                For sustainability
+                <br />professionals
+              </h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Stop spending weeks sourcing emission factors. Integrate carbon data into your existing workflows.
+              </p>
+              <div className="space-y-3 mb-10">
+                {["Automated GHG reporting", "Scope 1–3 categorization", "Compliance-ready exports"].map((f) => (
+                  <div key={f} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
+                    <span className="text-[14px] text-foreground/80">{f}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="group inline-flex items-center gap-2 text-[14px] font-semibold text-foreground hover:text-primary transition-colors"
+              >
+                Open Dashboard
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Right - Developers */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-foreground px-8 md:px-16 py-20 md:py-28 flex flex-col justify-center"
+          >
+            <div className="max-w-lg">
+              <div className="w-10 h-10 rounded-xl bg-background/10 flex items-center justify-center mb-6">
+                <Code2 className="h-5 w-5 text-primary" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-background mb-4 leading-tight tracking-tight">
+                For technical
+                <br />teams
+              </h2>
+              <p className="text-background/60 mb-8 leading-relaxed">
+                Access verified carbon data through our REST API. Built for scale, designed for simplicity.
+              </p>
+              <div className="space-y-3 mb-10">
+                {["RESTful API with &lt;50ms response", "10,000+ emission factors", "SDKs for Python & Node.js"].map((f) => (
+                  <div key={f} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
+                    <span className="text-[14px] text-background/70" dangerouslySetInnerHTML={{ __html: f }} />
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => navigate("/farmly/docs")}
+                className="group inline-flex items-center gap-2 text-[14px] font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                View API Docs
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ API DEMO ═══════════════ */}
+      <section className="py-28 px-6 bg-secondary/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Text */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-emerald-600 mb-3 block">
+              <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
                 Developer Tools
               </span>
-              <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 leading-[1.1] mb-5">
-                Powerful Farmly API
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
+                Powerful API.
+                <br />
+                <span className="text-muted-foreground">Simple integration.</span>
               </h2>
-              <p className="text-lg text-gray-500 leading-relaxed mb-10">
-                Integrate accurate carbon calculations directly into your applications
-                with our RESTful API. Built for scale, designed for simplicity.
+              <p className="text-lg text-muted-foreground leading-relaxed mb-10">
+                Integrate accurate carbon calculations directly into your applications.
+                Get started in minutes with comprehensive documentation and SDKs.
               </p>
 
-              <div className="flex items-center gap-6 mb-10">
+              <div className="flex items-center gap-8 mb-10">
                 {[
-                  { icon: Zap, label: "< 50ms", sub: "Response time" },
-                  { icon: Code2, label: "REST", sub: "API standard" },
-                  { icon: Database, label: "10K+", sub: "Emission factors" },
+                  { icon: Zap, label: "< 50ms", sub: "Latency" },
+                  { icon: Code2, label: "REST", sub: "API" },
+                  { icon: Database, label: "10K+", sub: "Factors" },
                 ].map((item) => (
                   <div key={item.label} className="text-center">
-                    <div className="w-12 h-12 rounded-xl bg-white border border-gray-100 flex items-center justify-center mx-auto mb-2 shadow-sm">
-                      <item.icon className="h-5 w-5 text-gray-700" />
+                    <div className="w-11 h-11 rounded-xl bg-card border border-border flex items-center justify-center mx-auto mb-2">
+                      <item.icon className="h-5 w-5 text-foreground" />
                     </div>
-                    <div className="text-[14px] font-bold text-gray-900">{item.label}</div>
-                    <div className="text-[11px] text-gray-400">{item.sub}</div>
+                    <div className="text-[15px] font-bold text-foreground">{item.label}</div>
+                    <div className="text-[11px] text-muted-foreground">{item.sub}</div>
                   </div>
                 ))}
               </div>
@@ -167,26 +414,25 @@ const Index = () => {
               <Button
                 size="lg"
                 onClick={() => navigate("/farmly/docs")}
-                className="h-12 px-7 text-[14px] font-semibold rounded-xl bg-gray-900 hover:bg-gray-800 text-white shadow-lg shadow-gray-900/10 group"
+                className="h-12 px-7 text-[14px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-lg group"
               >
-                View API Docs
+                Read the Docs
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </motion.div>
 
-            {/* Video */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="relative"
             >
-              <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-2xl shadow-gray-200/50 bg-white">
-                <div className="h-8 bg-gray-50 border-b border-gray-100 flex items-center gap-1.5 px-4">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-300" />
+              <div className="rounded-2xl overflow-hidden border border-border shadow-2xl shadow-foreground/5 bg-card">
+                <div className="h-9 bg-secondary border-b border-border flex items-center gap-1.5 px-4">
+                  <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[hsl(45,80%,60%)]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary/40" />
+                  <span className="ml-3 text-[11px] text-muted-foreground font-mono">farmly-api-demo</span>
                 </div>
                 <video
                   src={farmlyApiVideo}
@@ -199,38 +445,11 @@ const Index = () => {
               </div>
             </motion.div>
           </div>
-
-          {/* Data Sources */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="mt-24 text-center"
-          >
-            <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-8">
-              Data Powered By
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-12 md:gap-16">
-              {[
-                { src: nasaLogo, alt: "NASA" },
-                { src: ipccLogo, alt: "IPCC" },
-                { src: noaaLogo, alt: "NOAA" },
-              ].map((logo) => (
-                <img
-                  key={logo.alt}
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="h-12 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
-                />
-              ))}
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* ═══════════════ STANDARDS ═══════════════ */}
-      <section className="py-28 px-4 md:px-8 bg-white">
+      <section className="py-28 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -239,15 +458,17 @@ const Index = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-emerald-600 mb-3 block">
+              <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
                 Standards & Compliance
               </span>
-              <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 leading-[1.1] mb-5">
-                Science-backed<br />credibility
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
+                Science-backed
+                <br />
+                <span className="text-muted-foreground">credibility</span>
               </h2>
-              <p className="text-lg text-gray-500 leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 Base your climate strategy on credible science, not guesswork.
-                Align carbon offsetting with robust standards that fit your goals, budget, and impact targets.
+                Align with the world's most robust carbon accounting standards.
               </p>
             </motion.div>
 
@@ -256,7 +477,7 @@ const Index = () => {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="grid grid-cols-3 gap-4"
+              className="grid grid-cols-3 gap-3"
             >
               {[
                 { src: ipccLogo, name: "IPCC 1.5°C" },
@@ -268,12 +489,12 @@ const Index = () => {
               ].map((std) => (
                 <div
                   key={std.name}
-                  className="flex flex-col items-center gap-3 p-5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all duration-200"
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300 group"
                 >
-                  <div className="w-14 h-14 flex items-center justify-center">
+                  <div className="w-12 h-12 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all duration-300">
                     <img src={std.src} alt={std.name} className="w-full h-full object-contain" />
                   </div>
-                  <span className="text-[11px] font-semibold text-gray-500 text-center leading-tight">
+                  <span className="text-[11px] font-semibold text-muted-foreground text-center leading-tight">
                     {std.name}
                   </span>
                 </div>
@@ -284,7 +505,7 @@ const Index = () => {
       </section>
 
       {/* ═══════════════ BOOKING ═══════════════ */}
-      <section className="py-28 px-4 md:px-8 bg-gray-50">
+      <section className="py-28 px-6 bg-secondary/30">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -293,14 +514,15 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-emerald-600 mb-3 block">
+            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
               Book a Demo
             </span>
-            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
               Let's connect
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-              Whether it's about ideas, collaborations, or exploring FarmlyCarbon for your organization — pick a time that works.
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Whether it's about ideas, collaborations, or exploring FarmlyCarbon
+              for your organization — pick a time that works.
             </p>
           </motion.div>
 
@@ -310,7 +532,7 @@ const Index = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-xl shadow-gray-100/50 overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden">
               <iframe
                 src="https://cal.com/kunal-rahangdale-8dbab0/30min?overlayCalendar=true"
                 width="100%"
@@ -325,12 +547,11 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ═══════════════ CTA ═══════════════ */}
-      <section className="py-28 px-4 md:px-8 bg-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-          backgroundSize: "40px 40px",
-        }} />
+      {/* ═══════════════ FINAL CTA ═══════════════ */}
+      <section className="py-32 px-6 bg-foreground relative overflow-hidden">
+        {/* Gradient orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -339,12 +560,12 @@ const Index = () => {
           viewport={{ once: true }}
           className="max-w-4xl mx-auto text-center relative z-10"
         >
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-4xl md:text-6xl font-bold text-background mb-6 leading-tight tracking-tight">
             Ready to transform your
             <br />
-            <span className="text-emerald-400">carbon footprint?</span>
+            <span className="text-primary">carbon footprint?</span>
           </h2>
-          <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-background/50 mb-10 max-w-2xl mx-auto leading-relaxed">
             Join leading agricultural operations worldwide who trust FarmlyCarbon
             to drive sustainability and unlock new revenue streams.
           </p>
@@ -353,7 +574,7 @@ const Index = () => {
             <Button
               size="lg"
               onClick={() => navigate("/signup")}
-              className="h-12 px-8 text-[14px] font-semibold rounded-xl bg-white text-gray-900 hover:bg-gray-100 shadow-lg group"
+              className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-background text-foreground hover:bg-background/90 shadow-xl group"
             >
               Start Free Trial
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -362,76 +583,72 @@ const Index = () => {
               variant="outline"
               size="lg"
               onClick={() => navigate("/farmly")}
-              className="h-12 px-8 text-[14px] font-semibold rounded-xl border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all"
+              className="h-13 px-8 text-[15px] font-semibold rounded-xl border-background/20 text-background/80 hover:bg-background/10 hover:text-background transition-all"
             >
               Explore Platform
             </Button>
           </div>
 
-          <div className="mt-14 flex items-center justify-center gap-8 text-[13px] text-gray-500">
+          <div className="mt-14 flex flex-wrap items-center justify-center gap-6 text-[13px] text-background/40">
             <span>Enterprise Ready</span>
-            <span className="w-1 h-1 rounded-full bg-gray-600" />
+            <span className="w-1 h-1 rounded-full bg-background/20" />
             <span>SOC 2 Compliant</span>
-            <span className="w-1 h-1 rounded-full bg-gray-600" />
+            <span className="w-1 h-1 rounded-full bg-background/20" />
             <span>99.9% Uptime</span>
           </div>
         </motion.div>
       </section>
 
       {/* ═══════════════ FOOTER ═══════════════ */}
-      <footer className="bg-white border-t border-gray-100 py-16 px-4 md:px-8">
+      <footer className="bg-card border-t border-border py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
-            {/* Brand */}
             <div className="col-span-2 md:col-span-1">
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <Leaf className="h-6 w-6 text-emerald-600" />
-                <span className="text-[16px] font-bold text-gray-900">FarmlyCarbon</span>
+                <img src={farmlyLogo} alt="FarmlyCarbon" className="h-8 w-auto" />
+                <span className="text-[16px] font-bold text-foreground">FarmlyCarbon</span>
               </Link>
-              <p className="text-[13px] text-gray-400 leading-relaxed max-w-xs">
+              <p className="text-[13px] text-muted-foreground leading-relaxed max-w-xs">
                 Empowering agricultural operations with comprehensive carbon management for a sustainable future.
               </p>
             </div>
 
-            {/* Platform */}
             <div>
-              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-gray-400 mb-4">Platform</h4>
+              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Platform</h4>
               <div className="space-y-3">
-                <Link to="/farmly" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Farmly CAT</Link>
-                <Link to="/maps" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Maps</Link>
-                <Link to="/dashboard" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Dashboard</Link>
-                <Link to="/farmly/docs" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">API Docs</Link>
+                <Link to="/farmly" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Farmly CAT</Link>
+                <Link to="/maps" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Maps</Link>
+                <Link to="/dashboard" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Dashboard</Link>
+                <Link to="/farmly/docs" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
               </div>
             </div>
 
-            {/* Resources */}
             <div>
-              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-gray-400 mb-4">Resources</h4>
+              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Resources</h4>
               <div className="space-y-3">
-                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Blog</a>
-                <Link to="/login" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Log in</Link>
-                <Link to="/signup" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Sign Up</Link>
+                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Blog</a>
+                <Link to="/login" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Log in</Link>
+                <Link to="/signup" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Sign Up</Link>
               </div>
             </div>
 
-            {/* Connect */}
             <div>
-              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-gray-400 mb-4">Connect</h4>
+              <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Connect</h4>
               <div className="space-y-3">
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Twitter</a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">LinkedIn</a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Instagram</a>
-                <span className="block text-[13px] text-gray-400">i.kunal.ar26@gmail.com</span>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Twitter</a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Instagram</a>
+                <span className="block text-[13px] text-muted-foreground">i.kunal.ar26@gmail.com</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[12px] text-gray-400">© 2025 FarmlyCarbon. All rights reserved.</p>
+          <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-[12px] text-muted-foreground">© 2025 FarmlyCarbon. All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="text-[12px] text-gray-400 hover:text-gray-600 transition-colors">Privacy</a>
-              <a href="#" className="text-[12px] text-gray-400 hover:text-gray-600 transition-colors">Terms</a>
-              <a href="#" className="text-[12px] text-gray-400 hover:text-gray-600 transition-colors">Cookies</a>
+              <a href="#" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">Terms</a>
+              <a href="#" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">Cookies</a>
             </div>
           </div>
         </div>
