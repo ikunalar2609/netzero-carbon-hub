@@ -216,7 +216,7 @@ export const CalculationHistoryTable = () => {
   const avgEmissions = calculations.length > 0 ? totalEmissions / calculations.length : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
@@ -228,232 +228,155 @@ export const CalculationHistoryTable = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDelete} 
-              disabled={deleting}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-red-600 hover:bg-red-700">
               {deleting ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <motion.div
-          whileHover={{ y: -2 }}
-          className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
-          <div className="relative">
-            <div className="text-sm font-medium text-gray-500 mb-1">Total Calculations</div>
-            <div className="text-3xl font-bold text-gray-900">{calculations.length}</div>
+      {/* Summary Strip */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "TOTAL CALCULATIONS", value: calculations.length.toString(), accent: "#4F46E5" },
+          { label: "TOTAL EMISSIONS", value: `${totalEmissions.toFixed(1)}`, unit: "kg CO₂e", accent: "#10B981" },
+          { label: "AVG PER CALC", value: `${avgEmissions.toFixed(1)}`, unit: "kg CO₂e", accent: "#8B5CF6" },
+        ].map((card) => (
+          <div key={card.label} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+            <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">{card.label}</span>
+            <div className="text-xl font-bold text-gray-900 leading-none mt-1">
+              {card.value}
+              {card.unit && <span className="text-[11px] font-medium text-gray-400 ml-1">{card.unit}</span>}
+            </div>
           </div>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ y: -2 }}
-          className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent" />
-          <div className="relative">
-            <div className="text-sm font-medium text-gray-500 mb-1">Total Emissions</div>
-            <div className="text-3xl font-bold text-gray-900">{totalEmissions.toFixed(1)} <span className="text-lg text-gray-500">kg</span></div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ y: -2 }}
-          className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent" />
-          <div className="relative">
-            <div className="text-sm font-medium text-gray-500 mb-1">Avg. per Calculation</div>
-            <div className="text-3xl font-bold text-gray-900">{avgEmissions.toFixed(1)} <span className="text-lg text-gray-500">kg</span></div>
-          </div>
-        </motion.div>
+        ))}
       </div>
 
       {/* Filters and Actions */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-500" />
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Filter className="h-3.5 w-3.5 text-gray-400" />
             <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-[140px] rounded-xl">
-                <SelectValue placeholder="Filter by type" />
+              <SelectTrigger className="w-[120px] h-8 rounded-md border-gray-200 text-[11px]">
+                <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="flight">Flight</SelectItem>
                 <SelectItem value="vehicle">Vehicle</SelectItem>
                 <SelectItem value="energy">Energy</SelectItem>
-                <SelectItem value="diet">Diet/Waste</SelectItem>
+                <SelectItem value="diet">Waste</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Date Range Filter */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "rounded-xl justify-start text-left font-normal",
-                    !dateFrom && "text-muted-foreground"
-                  )}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
+                <Button variant="outline" size="sm" className={cn("h-8 rounded-md text-[11px] border-gray-200", !dateFrom && "text-gray-400")}>
+                  <Calendar className="mr-1.5 h-3 w-3" />
                   {dateFrom ? format(dateFrom, "MMM dd") : "From"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={dateFrom}
-                  onSelect={setDateFrom}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                />
+                <CalendarComponent mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className={cn("p-3 pointer-events-auto")} />
               </PopoverContent>
             </Popover>
-
-            <span className="text-gray-400">–</span>
-
+            <span className="text-[10px] text-gray-300">–</span>
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "rounded-xl justify-start text-left font-normal",
-                    !dateTo && "text-muted-foreground"
-                  )}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
+                <Button variant="outline" size="sm" className={cn("h-8 rounded-md text-[11px] border-gray-200", !dateTo && "text-gray-400")}>
+                  <Calendar className="mr-1.5 h-3 w-3" />
                   {dateTo ? format(dateTo, "MMM dd") : "To"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={dateTo}
-                  onSelect={setDateTo}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                />
+                <CalendarComponent mode="single" selected={dateTo} onSelect={setDateTo} initialFocus className={cn("p-3 pointer-events-auto")} />
               </PopoverContent>
             </Popover>
-
             {(dateFrom || dateTo) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearDateFilters}
-                className="rounded-xl h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+              <button onClick={clearDateFilters} className="h-7 w-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors">
+                <X className="h-3 w-3 text-gray-400" />
+              </button>
             )}
           </div>
         </div>
 
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={fetchCalculations}
-            className="rounded-xl"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={exportToCSV}
-            className="rounded-xl"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Export CSV
-          </Button>
+          <button onClick={fetchCalculations} className="h-8 px-3 rounded-md border border-gray-200 text-[10px] font-bold tracking-wide text-gray-600 hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
+            <RefreshCw className="h-3 w-3" /> REFRESH
+          </button>
+          <button onClick={exportToCSV} className="h-8 px-3 rounded-md border border-gray-200 text-[10px] font-bold tracking-wide text-gray-600 hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
+            <Download className="h-3 w-3" /> EXPORT CSV
+          </button>
         </div>
       </div>
 
       {/* Table */}
-      <Card className="rounded-2xl border-0 shadow-[0_8px_30px_rgba(0,0,0,0.06)] overflow-hidden">
-        <CardHeader className="bg-gray-50/50 border-b">
-          <CardTitle className="text-lg font-semibold text-gray-900">Calculation History</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
-            </div>
-          ) : calculations.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-              <Calendar className="h-12 w-12 mb-4 text-gray-300" />
-              <p className="text-lg font-medium">No calculations yet</p>
-              <p className="text-sm">Start calculating emissions to see your history here</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50/50">
-                    <TableHead className="font-semibold">Type</TableHead>
-                    <TableHead className="font-semibold">Details</TableHead>
-                    <TableHead className="font-semibold text-right">Emissions</TableHead>
-                    <TableHead className="font-semibold">Date</TableHead>
-                    <TableHead className="font-semibold w-[60px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {calculations.map((calc, index) => (
-                    <motion.tr
-                      key={calc.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.02 }}
-                      className="border-b hover:bg-gray-50/50 transition-colors"
-                    >
-                      <TableCell>
-                        <Badge className={`${getTypeBadgeColor(calc.calculation_type)} gap-1.5`}>
-                          {getTypeIcon(calc.calculation_type)}
-                          {calc.calculation_type.charAt(0).toUpperCase() + calc.calculation_type.slice(1)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-mono text-sm text-gray-600">
-                        {formatInputData(calc.calculation_type, calc.input_data)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <span className="font-semibold text-gray-900">{calc.total_emissions.toFixed(2)}</span>
-                        <span className="text-gray-500 ml-1">kg CO₂e</span>
-                      </TableCell>
-                      <TableCell className="text-gray-500">
-                        {format(new Date(calc.created_at), 'MMM dd, yyyy HH:mm')}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDeleteId(calc.id)}
-                          className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </motion.tr>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <RefreshCw className="h-5 w-5 animate-spin text-gray-300" />
+          </div>
+        ) : calculations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+            <Calendar className="h-8 w-8 mb-3 text-gray-300" />
+            <p className="text-[12px] font-semibold text-gray-500">No calculations yet</p>
+            <p className="text-[11px]">Use the Calculator tab to create your first calculation</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 border-b border-gray-200">
+                  <TableHead className="text-[10px] font-bold uppercase tracking-wider text-gray-500 py-2.5">Type</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-wider text-gray-500 py-2.5">Details</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-wider text-gray-500 py-2.5 text-right">Emissions</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-wider text-gray-500 py-2.5">Date</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-wider text-gray-500 py-2.5 w-[40px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {calculations.map((calc, index) => (
+                  <motion.tr
+                    key={calc.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors"
+                  >
+                    <TableCell className="py-2.5">
+                      <Badge className={`${getTypeBadgeColor(calc.calculation_type)} gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md`}>
+                        {getTypeIcon(calc.calculation_type)}
+                        {calc.calculation_type.charAt(0).toUpperCase() + calc.calculation_type.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-[11px] text-gray-600 py-2.5">
+                      {formatInputData(calc.calculation_type, calc.input_data)}
+                    </TableCell>
+                    <TableCell className="text-right py-2.5">
+                      <span className="font-semibold text-[12px] text-gray-900">{calc.total_emissions.toFixed(2)}</span>
+                      <span className="text-[10px] text-gray-400 ml-1">kg</span>
+                    </TableCell>
+                    <TableCell className="text-[11px] text-gray-500 py-2.5">
+                      {format(new Date(calc.created_at), 'MMM dd, HH:mm')}
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <button
+                        onClick={() => setDeleteId(calc.id)}
+                        className="h-7 w-7 rounded-md flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </TableCell>
+                  </motion.tr>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

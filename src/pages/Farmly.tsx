@@ -23,11 +23,13 @@ import {
   Table2,
   Sparkles,
   Calculator,
+  History,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
 import { DecarboAgent } from "@/components/farmly/DecarboAgent";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
+import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
 import {
   emissionFactors as rawFactors,
@@ -43,6 +45,7 @@ const tabItems = [
   { id: "ef-agent", label: "EF AGENT", icon: Bot, color: "bg-[#0EA5E9] text-white" },
   { id: "decarbo", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
   { id: "methodo", label: "METHODO AGENT", icon: Compass, color: "bg-[#8B5CF6] text-white" },
+  { id: "history", label: "HISTORY", icon: History, color: "bg-[#64748B] text-white" },
 ];
 
 const Farmly = () => {
@@ -428,6 +431,7 @@ const Farmly = () => {
                   {activeTab === "ef-agent" && <EFAgent factors={filteredFactors} />}
                   {activeTab === "decarbo" && <DecarboAgent factors={filteredFactors} />}
                   {activeTab === "methodo" && <ClimateDataExplorer />}
+                  {activeTab === "history" && <CalculationHistoryTable />}
                 </motion.div>
               </AnimatePresence>
             </div>
