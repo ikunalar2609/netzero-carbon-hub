@@ -30,6 +30,7 @@ import Signup from "@/pages/Signup";
 import Farmly from "@/pages/Farmly";
 import FarmlyDocs from "@/pages/FarmlyDocs";
 import Maps from "@/pages/Maps";
+import MapsDocs from "@/pages/MapsDocs";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ function App() {
                       
                       {/* Maps page */}
                       <Route path="/maps" element={<Maps />} />
+                      <Route path="/maps/docs" element={<MapsDocs />} />
                       
                       {/* Public routes */}
                       <Route element={<PublicRoute />}>
