@@ -624,7 +624,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               size="lg"
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/farmly")}
               className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-background text-foreground hover:bg-background/90 shadow-xl group"
             >
               Start Free Trial
@@ -634,7 +634,7 @@ const Index = () => {
               variant="outline"
               size="lg"
               onClick={() => navigate("/farmly")}
-              className="h-13 px-8 text-[15px] font-semibold rounded-xl border-background/20 text-background/80 hover:bg-background/10 hover:text-background transition-all"
+              className="h-13 px-8 text-[15px] font-semibold rounded-xl border-background/20 text-foreground hover:bg-background/10 hover:text-foreground transition-all"
             >
               Explore Platform
             </Button>
