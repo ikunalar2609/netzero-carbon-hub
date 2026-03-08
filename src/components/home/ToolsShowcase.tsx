@@ -77,14 +77,14 @@ export const ToolsShowcase = () => {
             </div>
 
             <h2 className="text-3xl md:text-[40px] font-bold text-white mb-4 leading-[1.15] tracking-tight">
-              For technical
+              Emission Factor
               <br />
-              teams
+              Benchmark
             </h2>
 
             <p className="text-[15px] text-white/50 leading-relaxed mb-10 max-w-sm">
-              Embed carbon intelligence into your products. Access verified
-              emission factors through our API.
+              Browse and compare 10,000+ verified emission factors with our
+              professional benchmark data grid. API is in the making.
             </p>
 
             <div className="space-y-4 mb-12">
@@ -97,10 +97,10 @@ export const ToolsShowcase = () => {
             </div>
 
             <button
-              onClick={() => navigate("/farmly/docs")}
+              onClick={() => navigate("/farmly")}
               className="group inline-flex items-center gap-2 text-[14px] font-semibold text-primary hover:text-[hsl(var(--brand-primary-light))] transition-colors"
             >
-              View API Docs
+              Explore Benchmark
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
