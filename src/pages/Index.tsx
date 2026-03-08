@@ -383,10 +383,8 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+
+
 
       {/* ═══════════════ TWO-PANE CTA ═══════════════ */}
       <section className="relative w-full">
