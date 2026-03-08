@@ -243,8 +243,14 @@ const Farmly = () => {
           <button onClick={() => setSettingsOpen(true)} className="p-2 rounded-md hover:bg-white/10 transition-colors">
             <Settings className="h-4 w-4 text-white/60" />
           </button>
-          <div className="w-7 h-7 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center ml-1">
-            F
+          <div className="flex items-center gap-2 ml-1 group relative">
+            <div className="w-7 h-7 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center cursor-pointer">
+              {userInitial}
+            </div>
+            <span className="hidden sm:block text-[11px] text-white/70 font-medium max-w-[100px] truncate">{userName}</span>
+            <button onClick={logout} className="p-1.5 rounded-md hover:bg-white/10 transition-colors" title="Sign out">
+              <LogOut className="h-3.5 w-3.5 text-white/50" />
+            </button>
           </div>
         </div>
       </header>
