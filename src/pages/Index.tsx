@@ -138,11 +138,24 @@ const Index = () => {
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="hidden lg:block relative h-[520px]"
             >
-              {/* Grid background */}
-              <div className="absolute inset-0 rounded-3xl opacity-[0.08]" style={{
-                backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-                backgroundSize: '40px 40px',
-              }} />
+              {/* Distressed grid background */}
+              <svg className="absolute inset-0 w-full h-full rounded-3xl opacity-[0.07] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                {/* Irregular vertical lines */}
+                {[28, 65, 110, 142, 188, 220, 270, 305, 360, 398, 440, 478].map((x, i) => (
+                  <line key={`v${i}`} x1={x} y1={i % 3 === 0 ? 20 : 0} x2={x + (i % 2 === 0 ? 2 : -1)} y2={i % 2 === 0 ? 520 : 490} stroke="currentColor" strokeWidth={i % 3 === 0 ? 0.8 : 1.2} opacity={0.5 + (i % 4) * 0.15} />
+                ))}
+                {/* Irregular horizontal lines */}
+                {[18, 55, 105, 148, 200, 248, 310, 355, 410, 460, 505].map((y, i) => (
+                  <line key={`h${i}`} x1={i % 2 === 0 ? 10 : 0} y1={y} x2={i % 3 === 0 ? 480 : 500} y2={y + (i % 2 === 0 ? 1 : -2)} stroke="currentColor" strokeWidth={i % 2 === 0 ? 1 : 0.7} opacity={0.4 + (i % 3) * 0.2} />
+                ))}
+                {/* Scattered dots at some intersections */}
+                {[
+                  [28,55],[110,148],[220,105],[305,248],[398,355],[440,200],
+                  [65,310],[188,460],[142,18],[270,410],[478,55],[360,505],
+                ].map(([cx, cy], i) => (
+                  <circle key={`d${i}`} cx={cx} cy={cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="currentColor" opacity={0.3 + (i % 4) * 0.1} />
+                ))}
+              </svg>
               {/* Glow backdrop */}
               <div className="absolute -inset-8 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent rounded-3xl blur-3xl pointer-events-none" />
 
