@@ -808,6 +808,9 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                   { id: "sea", label: "SEA", icon: Ship, accent: "#0EA5E9" },
                   { id: "energy", label: "ENERGY", icon: Zap, accent: "#10B981" },
                   { id: "waste", label: "WASTE", icon: Recycle, accent: "#F97316" },
+                  { id: "industry", label: "INDUSTRY", icon: Factory, accent: "#DC2626" },
+                  { id: "agriculture", label: "AGRI", icon: Leaf, accent: "#84CC16" },
+                  { id: "digital", label: "DIGITAL", icon: Lightbulb, accent: "#06B6D4" },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
