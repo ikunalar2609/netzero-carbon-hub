@@ -61,6 +61,18 @@ const getHeatmapColor = (val: number): string => {
   }
 };
 
+/* ── Absolute temp color scale: blue (11°C) → white (14°C) → red (17°C+) ── */
+const getAbsTempColor = (val: number): string => {
+  const v = Math.max(11, Math.min(val, 17.5));
+  const mid = 14.0;
+  if (v <= mid) {
+    const t = (v - 11) / (mid - 11); // 0 at 11 → 1 at 14
+    return `hsl(215, ${90 - t * 45}%, ${30 + t * 65}%)`;
+  } else {
+    const t = (v - mid) / (17.5 - mid); // 0 at 14 → 1 at 17.5
+    return `hsl(${10 - t * 10}, ${50 + t * 45}%, ${92 - t * 55}%)`;
+  }
+};
 /* ── Stat Card (light theme) ── */
 const StatCard = ({ label, value, sub }: { label: string; value: string; sub?: string }) => (
   <div className="bg-white rounded-lg border border-gray-200 p-4">
