@@ -597,7 +597,7 @@ const Index = () => {
             </div>
 
             <div>
-              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Platform</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/60 mb-4">Platform</h4>
               <div className="space-y-3">
                 <Link to="/farmly" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Product</Link>
                 <Link to="/maps" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Maps</Link>
