@@ -140,34 +140,29 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
   const CAT_COLORS = ["#4F46E5", "#0EA5E9", "#10B981", "#F59E0B", "#DC2626", "#8B5CF6", "#EC4899"];
 
   const handleDownload = () => {
-    // Generate CSV report
     const csvRows = [
       ["Farmly Carbon Emissions Report", "", "", ""],
       ["Generated", new Date().toISOString(), "", ""],
       ["Period", reportPeriod, "", ""],
+      ["Total Calculations", String(calculations.length), "", ""],
+      ["Total Emissions", `${totalCalcEmissions.toFixed(2)} kgCO₂e`, "", ""],
       ["Total Emission Factors", String(totalEFs), "", ""],
       ["Average EF Value", avgEF, "", ""],
+      ["", "", "", ""],
+      ["=== CALCULATION HISTORY ===", "", "", ""],
+      ["Type", "Emissions (kgCO₂e)", "Date", "Details"],
+      ...calculations.map(c => [c.calculation_type, String(c.total_emissions.toFixed(2)), format(new Date(c.created_at), 'yyyy-MM-dd HH:mm'), JSON.stringify(c.input_data)]),
+      ["", "", "", ""],
+      ["=== EMISSIONS BY CATEGORY ===", "", "", ""],
+      ...Object.entries(calcsByType).map(([k, v]) => [k, `${v.toFixed(2)} kgCO₂e`]),
       ["", "", "", ""],
       ["=== EMISSION FACTORS INVENTORY ===", "", "", ""],
       ["Name", "FE (kgCO₂e)", "Source", "Scope", "Category", "Region", "Perimeter"],
       ...factors.map(f => [f.name, String(f.fe), f.source, f.scope, f.category, f.region, f.perimeter]),
       ["", "", "", ""],
-      ["=== SCOPE BREAKDOWN ===", "", "", ""],
-      ...Object.entries(scopeBreakdown).map(([k, v]) => [k, String(v)]),
-      ["", "", "", ""],
-      ["=== CATEGORY BREAKDOWN ===", "", "", ""],
-      ...Object.entries(categoryBreakdown).map(([k, v]) => [k, String(v)]),
-      ["", "", "", ""],
-      ["=== SOURCE BREAKDOWN ===", "", "", ""],
-      ...Object.entries(sourceBreakdown).map(([k, v]) => [k, String(v)]),
-      ["", "", "", ""],
-      ["=== TOP 10 HIGHEST EMITTERS ===", "", "", ""],
-      ["Name", "FE (kgCO₂e)", "Source", "Category"],
-      ...topEmitters.map(f => [f.name, String(f.fe), f.source, f.category]),
-      ["", "", "", ""],
-      ["=== MONTHLY TREND (SIMULATED) ===", "", "", ""],
-      ["Month", "Scope 1 (tCO₂e)", "Scope 2 (tCO₂e)", "Scope 3 (tCO₂e)"],
-      ...trendData.map(d => [d.month, String(d.scope1), String(d.scope2), String(d.scope3)]),
+      ["=== MONTHLY TREND ===", "", "", ""],
+      ["Month", "Total Emissions (kgCO₂e)"],
+      ...trendData.map(d => [d.month, String(d.total)]),
     ];
 
     const csvContent = csvRows.map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
