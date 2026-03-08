@@ -73,7 +73,7 @@ export const ToolsShowcase = () => {
         >
           <div className="max-w-md">
             <div className="w-11 h-11 rounded-xl bg-white/8 flex items-center justify-center mb-8">
-              <Code2 className="h-5 w-5 text-primary" />
+              <BarChart3 className="h-5 w-5 text-primary" />
             </div>
 
             <h2 className="text-3xl md:text-[40px] font-bold text-white mb-4 leading-[1.15] tracking-tight">
