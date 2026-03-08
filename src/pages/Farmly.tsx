@@ -274,7 +274,12 @@ const Farmly = () => {
             )}
           </div>
           <button
-            onClick={() => searchInputRef.current?.focus()}
+            onClick={() => {
+              searchInputRef.current?.focus();
+              if (filters.searchQuery.length > 0 && activeTab !== "benchmark") {
+                setActiveTab("benchmark");
+              }
+            }}
             className="h-11 px-6 bg-[#3730A3] hover:bg-[#312E81] text-white text-[12px] font-bold tracking-wider rounded-lg transition-colors shrink-0 shadow-lg"
           >
             SEARCH
