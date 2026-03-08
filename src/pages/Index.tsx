@@ -138,6 +138,11 @@ const Index = () => {
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="hidden lg:block relative h-[520px]"
             >
+              {/* Grid background */}
+              <div className="absolute inset-0 rounded-3xl opacity-[0.08]" style={{
+                backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+                backgroundSize: '40px 40px',
+              }} />
               {/* Glow backdrop */}
               <div className="absolute -inset-8 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent rounded-3xl blur-3xl pointer-events-none" />
 
