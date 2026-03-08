@@ -58,6 +58,7 @@ function App() {
                       {/* Maps page */}
                       <Route path="/maps" element={<Maps />} />
                       <Route path="/maps/docs" element={<MapsDocs />} />
+                      <Route path="/maps/climate-data" element={<ClimateData />} />
                       
                       {/* Public routes */}
                       <Route element={<PublicRoute />}>
