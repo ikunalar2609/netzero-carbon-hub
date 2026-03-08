@@ -31,6 +31,7 @@ import Farmly from "@/pages/Farmly";
 import FarmlyDocs from "@/pages/FarmlyDocs";
 import Maps from "@/pages/Maps";
 import MapsDocs from "@/pages/MapsDocs";
+import ClimateData from "@/pages/ClimateData";
 
 const queryClient = new QueryClient();
 
