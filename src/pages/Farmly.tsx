@@ -563,6 +563,7 @@ const Farmly = () => {
                   {activeTab === "decarbo" && <DecarboAgent factors={filteredFactors} />}
                   {activeTab === "methodo" && <ClimateDataExplorer />}
                   {activeTab === "history" && <CalculationHistoryTable />}
+                  {activeTab === "report" && <FarmlyReport factors={filteredFactors} />}
                 </motion.div>
               </AnimatePresence>
             </div>
