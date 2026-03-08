@@ -150,17 +150,17 @@ const Index = () => {
       </section>
 
       {/* ═══════════════ LOGO STRIP (Marquee) ═══════════════ */}
-      <section className="py-14 px-6 border-y border-border bg-secondary/30 overflow-hidden">
-        <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-8">
+      <section className="py-12 px-6 border-y border-border bg-secondary/30 overflow-hidden">
+        <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-6">
           Data Powered By Leading Institutions
         </p>
-        <div className="relative w-full">
+        <div className="relative w-full max-w-5xl mx-auto">
           {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-secondary/80 to-transparent pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-secondary/80 to-transparent pointer-events-none" />
-          <div className="flex animate-marquee whitespace-nowrap">
+          <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-[hsl(var(--secondary)/0.9)] to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-[hsl(var(--secondary)/0.9)] to-transparent pointer-events-none" />
+          <div className="flex animate-marquee">
             {[...Array(2)].map((_, setIdx) => (
-              <div key={setIdx} className="flex items-center gap-16 md:gap-24 px-8 md:px-12">
+              <div key={setIdx} className="flex items-center shrink-0">
                 {[
                   { src: nasaLogo, name: "NASA" },
                   { src: ipccLogo, name: "IPCC" },
@@ -171,13 +171,13 @@ const Index = () => {
                   { src: wwfLogo, name: "WWF" },
                   { src: carbonIntegrityLogo, name: "Carbon Integrity" },
                 ].map((logo) => (
-                  <div key={`${setIdx}-${logo.name}`} className="flex items-center gap-3 shrink-0">
+                  <div key={`${setIdx}-${logo.name}`} className="flex items-center gap-2.5 shrink-0 mx-8 md:mx-12">
                     <img
                       src={logo.src}
                       alt={logo.name}
-                      className="h-8 md:h-10 w-auto object-contain"
+                      className="h-7 md:h-9 w-auto object-contain max-w-[40px]"
                     />
-                    <span className="text-sm md:text-base font-semibold text-foreground/80 tracking-wide">
+                    <span className="text-sm font-semibold text-foreground/80 whitespace-nowrap">
                       {logo.name}
                     </span>
                   </div>
