@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Code2, Database, Zap, Globe, Shield, BarChart3, Leaf, Play, CheckCircle2, Plane, Ship, Truck, Calculator, FileSpreadsheet, Bot, MapPin, Flame } from "lucide-react";
+import { ArrowRight, Code2, Database, Zap, Globe, Shield, BarChart3, Leaf, CheckCircle2, Plane, Ship, Truck, Calculator, FileSpreadsheet, Bot, MapPin, Flame } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
