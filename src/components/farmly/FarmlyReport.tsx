@@ -289,9 +289,6 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
       </div>
 
       {/* Monthly Trend */}
-      <div className="bg-white border border-gray-100 rounded-xl p-5">
-        <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EMISSIONS TREND (tCO₂e PER MONTH)</h3>
-      <div className="bg-white border border-gray-100 rounded-xl p-5">
         <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EMISSIONS TREND (kgCO₂e PER MONTH)</h3>
         {trendData.length > 0 ? (
           <ResponsiveContainer width="100%" height={260}>
