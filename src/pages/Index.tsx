@@ -478,7 +478,7 @@ const Index = () => {
                   <div className="w-12 h-12 flex items-center justify-center">
                     <img src={std.src} alt={std.name} className="w-full h-full object-contain" />
                   </div>
-                  <span className="text-[11px] font-bold text-foreground/60 text-center leading-tight">
+                  <span className="text-[11px] font-bold text-foreground/80 text-center leading-tight">
                     {std.name}
                   </span>
                 </div>
