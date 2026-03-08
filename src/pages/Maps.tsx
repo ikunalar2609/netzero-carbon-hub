@@ -9,6 +9,7 @@ import { FireMarker, ForestMarker, TreeLossMarker } from "@/components/maps/MapM
 import MapCard from "@/components/maps/MapCard";
 import MapsHeader from "@/components/maps/MapsHeader";
 import StatsStrip from "@/components/maps/StatsStrip";
+import ClimateDashboard from "@/components/maps/ClimateDashboard";
 import { useState } from "react";
 
 /* -------------------- Main Component -------------------- */
