@@ -694,7 +694,10 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
     { name: "Energy", value: emissionsBreakdown.energy, color: "#10B981" },
     { name: "Waste", value: emissionsBreakdown.waste, color: "#F97316" },
     { name: "Flight", value: emissionsBreakdown.flight, color: "#8B5CF6" },
-    { name: "Sea Freight", value: emissionsBreakdown.sea, color: "#0EA5E9" }
+    { name: "Sea Freight", value: emissionsBreakdown.sea, color: "#0EA5E9" },
+    { name: "Industry", value: emissionsBreakdown.industry, color: "#DC2626" },
+    { name: "Agriculture", value: emissionsBreakdown.agriculture, color: "#84CC16" },
+    { name: "Digital", value: emissionsBreakdown.digital, color: "#06B6D4" }
   ].filter(d => d.value > 0);
 
   const getInsights = () => {
