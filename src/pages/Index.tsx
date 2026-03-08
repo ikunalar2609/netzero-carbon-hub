@@ -677,10 +677,10 @@ const Index = () => {
             <div>
               <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/60 mb-4">Connect</h4>
               <div className="space-y-3">
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Twitter</a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">LinkedIn</a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Instagram</a>
-                <span className="block text-[13px] text-foreground/70">i.kunal.ar26@gmail.com</span>
+                <a href="https://x.com/farmlycarbon" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Twitter</a>
+                <a href="https://www.linkedin.com/company/farmly-carbon" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">LinkedIn</a>
+                <a href="https://www.instagram.com/farmlycarbon/" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Instagram</a>
+                <a href="mailto:carbonfarmly@gmail.com" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Email</a>
               </div>
             </div>
           </div>
