@@ -181,6 +181,8 @@ const TreeLossMarkerDB = ({ data }: { data: TreeLossFromDB }) => {
 
 /* -------------------- Main Component -------------------- */
 export default function MapsMinimal() {
+  const navigate = useNavigate();
+  const [activeMapTab, setActiveMapTab] = useState<"wildfire" | "forest" | "treeloss">("wildfire");
   const [fireData, setFireData] = useState<FireData[]>([]);
   const [forestData, setForestData] = useState<ForestData[]>([]);
   const [loadingFires, setLoadingFires] = useState(false);
