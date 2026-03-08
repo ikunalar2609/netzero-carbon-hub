@@ -206,13 +206,29 @@ export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }:
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-t border-gray-100 bg-gray-50/50 px-6 py-4"
+            className="border-t border-gray-100 bg-gray-50/50 px-6 py-5"
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* Description */}
               <div>
-                <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Description</h4>
+                <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Description</h4>
                 <p className="text-[12px] text-gray-700 leading-relaxed">{factor.description}</p>
               </div>
+
+              <Separator className="bg-gray-200" />
+
+              {/* Important Notes */}
+              <div>
+                <h4 className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  Important Notes
+                </h4>
+                <p className="text-[12px] text-gray-700 leading-relaxed bg-amber-50/60 border border-amber-100 rounded-md px-3 py-2">{factor.notes}</p>
+              </div>
+
+              <Separator className="bg-gray-200" />
+
+              {/* Metadata Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sector</span>
@@ -248,6 +264,19 @@ export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }:
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Category</span>
                   <p className="text-[12px] text-gray-700 mt-0.5">{factor.category}</p>
                 </div>
+              </div>
+
+              {/* Source Link */}
+              <div className="pt-1">
+                <a
+                  href={factor.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#4F46E5] hover:text-[#3730A3] transition-colors"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  View Original Source — {factor.source}
+                </a>
               </div>
             </div>
           </motion.div>
