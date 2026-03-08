@@ -38,6 +38,7 @@ import {
 } from "@/data/emissionFactors";
 
 const tabItems = [
+  { id: "calculator", label: "CALCULATOR", icon: Calculator, color: "bg-[#F59E0B] text-white" },
   { id: "benchmark", label: "BENCHMARK", icon: LayoutGrid, color: "bg-[#4F46E5] text-white" },
   { id: "ef-agent", label: "EF AGENT", icon: Bot, color: "bg-[#0EA5E9] text-white" },
   { id: "decarbo", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
