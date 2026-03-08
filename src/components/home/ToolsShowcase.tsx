@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CheckCircle2, BarChart3, Code2, ArrowRight } from "lucide-react";
+import { CheckCircle2, BarChart3, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const sustainabilityFeatures = [
@@ -9,9 +9,9 @@ const sustainabilityFeatures = [
 ];
 
 const technicalFeatures = [
-  "RESTful API with <50ms response",
   "10,000+ verified emission factors",
-  "SDKs for Python & Node.js",
+  "Exposed across 6 GHG categories",
+  "Region-specific & activity-based data",
 ];
 
 export const ToolsShowcase = () => {
@@ -73,18 +73,18 @@ export const ToolsShowcase = () => {
         >
           <div className="max-w-md">
             <div className="w-11 h-11 rounded-xl bg-white/8 flex items-center justify-center mb-8">
-              <Code2 className="h-5 w-5 text-primary" />
+              <BarChart3 className="h-5 w-5 text-primary" />
             </div>
 
             <h2 className="text-3xl md:text-[40px] font-bold text-white mb-4 leading-[1.15] tracking-tight">
-              For technical
+              Benchmark
               <br />
-              teams
+              emission factors
             </h2>
 
             <p className="text-[15px] text-white/50 leading-relaxed mb-10 max-w-sm">
-              Embed carbon intelligence into your products. Access verified
-              emission factors through our API.
+              Browse and compare verified emission factors from DEFRA, IPCC, EPA
+              and more — filterable by category, region, and source.
             </p>
 
             <div className="space-y-4 mb-12">
@@ -97,10 +97,10 @@ export const ToolsShowcase = () => {
             </div>
 
             <button
-              onClick={() => navigate("/farmly/docs")}
+              onClick={() => navigate("/farmly")}
               className="group inline-flex items-center gap-2 text-[14px] font-semibold text-primary hover:text-[hsl(var(--brand-primary-light))] transition-colors"
             >
-              View API Docs
+              Explore Benchmark
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
