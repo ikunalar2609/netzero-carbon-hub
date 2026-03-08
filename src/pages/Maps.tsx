@@ -61,6 +61,20 @@ export default function MapsPage() {
         satelliteSource={satelliteSource} setSatelliteSource={setSatelliteSource}
         selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion}
         isLoading={isLoading}
+        onNavClick={(item) => {
+          const targets: Record<string, string> = {
+            "MAPS": "section-maps",
+            "CHARTS": "section-charts",
+            "CLIMATE DATA": "section-charts",
+            "DOCS": "",
+          };
+          const id = targets[item];
+          if (id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+          } else if (item === "DOCS") {
+            window.open("/farmly/docs", "_blank");
+          }
+        }}
       />
 
       <main className="flex-1 bg-[#EEF2FF] rounded-t-2xl">
@@ -68,7 +82,7 @@ export default function MapsPage() {
         <StatsStrip stats={stats} />
 
         {/* Maps Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div id="section-maps" className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Wildfire */}
           <MapCard
             title="Wildfire Activity"
