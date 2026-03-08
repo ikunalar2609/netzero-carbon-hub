@@ -158,7 +158,7 @@ const Index = () => {
       </section>
 
       {/* ═══════════════ BENTO FEATURES ═══════════════ */}
-      <section className="py-28 px-6">
+      <section className="py-28 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -167,39 +167,47 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
+            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-4 block">
               Platform
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-5">
+            <h2 className="text-4xl md:text-[52px] font-bold text-foreground tracking-tight leading-[1.1] mb-5">
               Everything you need to
               <br />
-              <span className="text-muted-foreground">decarbonize agriculture</span>
+              decarbonize agriculture
             </h2>
+            <p className="text-lg text-foreground/60 max-w-2xl mx-auto leading-relaxed">
+              Six calculation methodologies, 10,000+ emission factors, and AI-powered agents — all in one workspace.
+            </p>
           </motion.div>
 
           {/* Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Large card */}
+
+            {/* ── Card 1: Emission Factor Database (wide) ── */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500 overflow-hidden"
+              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,hsl(var(--primary)/0.06),transparent_70%)] pointer-events-none" />
+              <div className="absolute top-0 right-0 w-72 h-72 bg-[radial-gradient(circle,hsl(var(--primary)/0.05),transparent_70%)] pointer-events-none" />
               <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                  <BarChart3 className="h-6 w-6 text-primary" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Database className="h-6 w-6 text-primary" />
+                  </div>
+                  <span className="text-[11px] font-bold tracking-wider uppercase text-primary bg-primary/8 px-2.5 py-1 rounded-md">Core</span>
                 </div>
-                <h3 className="text-2xl font-semibold text-foreground mb-3">Emission Tracking & Analytics</h3>
-                <p className="text-muted-foreground leading-relaxed max-w-lg mb-6">
-                  Real-time tracking across Scope 1, 2, and 3 emissions with automated data collection,
-                  AI-powered categorization, and interactive dashboards.
+                <h3 className="text-2xl font-bold text-foreground mb-3">10,000+ Emission Factors</h3>
+                <p className="text-foreground/60 leading-relaxed max-w-xl mb-6">
+                  Browse, search, and filter a comprehensive database of verified emission factors sourced from 
+                  DEFRA, IPCC AR6, GHG Protocol, and CBAM. Each factor includes scope classification (1/2/3), 
+                  perimeter (gate-to-gate, cradle-to-gate), methodology, and regional applicability.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {["GHG Protocol", "ISO 14064", "Automated Reports"].map((t) => (
-                    <span key={t} className="px-3 py-1 text-[11px] font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
+                  {["GHG Protocol", "IPCC AR6", "DEFRA 2024", "CBAM", "ISO 14064"].map((t) => (
+                    <span key={t} className="px-3 py-1.5 text-[11px] font-semibold rounded-full bg-foreground/5 text-foreground/70 border border-border">
                       {t}
                     </span>
                   ))}
@@ -207,63 +215,145 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Small card */}
+            {/* ── Card 2: Flight Emissions ── */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.08 }}
               viewport={{ once: true }}
-              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500"
+              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                <Globe className="h-6 w-6 text-primary" />
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
+                <Plane className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Global Maps</h3>
-              <p className="text-muted-foreground leading-relaxed text-[15px]">
-                Explore forest cover, fire hotspots, and deforestation data across 50+ regions with interactive 3D mapping.
+              <h3 className="text-xl font-bold text-foreground mb-3">Flight Emissions</h3>
+              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
+                ICAO-standard calculations with great-circle distance, aircraft RFI multipliers, cabin class factors, and real airport lookups (IATA codes).
               </p>
+              <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">ICAO Methodology</span>
             </motion.div>
 
-            {/* Small card */}
+            {/* ── Card 3: Sea Freight ── */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
+              transition={{ duration: 0.5, delay: 0.12 }}
               viewport={{ once: true }}
-              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500"
+              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                <Leaf className="h-6 w-6 text-primary" />
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-6">
+                <Ship className="h-6 w-6 text-cyan-600" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Carbon Offsets</h3>
-              <p className="text-muted-foreground leading-relaxed text-[15px]">
-                Access verified carbon markets and high-quality offset projects with transparent pricing and quality scoring.
+              <h3 className="text-xl font-bold text-foreground mb-3">Sea Route Calculator</h3>
+              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
+                IMO/GLEC-compliant maritime calculations. Select vessel type, fuel, and port-to-port routes with interactive sea route mapping.
               </p>
+              <span className="text-[11px] font-semibold text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md">IMO / GLEC</span>
             </motion.div>
 
-            {/* Large card */}
+            {/* ── Card 4: AI Agents (wide) ── */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.16 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden"
+            >
+              <div className="absolute bottom-0 right-0 w-72 h-72 bg-[radial-gradient(circle,hsl(var(--primary)/0.05),transparent_70%)] pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center">
+                    <Bot className="h-6 w-6 text-violet-600" />
+                  </div>
+                  <span className="text-[11px] font-bold tracking-wider uppercase text-violet-600 bg-violet-50 px-2.5 py-1 rounded-md">AI-Powered</span>
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-3">EF Agent & Decarbo Agent</h3>
+                <p className="text-foreground/60 leading-relaxed max-w-xl mb-6">
+                  Two purpose-built AI agents: <strong className="text-foreground/80">EF Agent</strong> finds the right emission factor for any activity 
+                  using natural language. <strong className="text-foreground/80">Decarbo Agent</strong> generates actionable decarbonization strategies 
+                  with cost estimates, timelines, and compliance alignment.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["Natural Language Search", "Strategy Generation", "Cost Analysis"].map((t) => (
+                    <span key={t} className="px-3 py-1.5 text-[11px] font-semibold rounded-full bg-foreground/5 text-foreground/70 border border-border">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ── Card 5: Carbon Accounting Template ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-lg transition-all duration-500 overflow-hidden"
+              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
             >
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-[radial-gradient(circle,hsl(var(--primary)/0.06),transparent_70%)] pointer-events-none" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                  <Zap className="h-6 w-6 text-primary" />
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-6">
+                <FileSpreadsheet className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3">Carbon Accounting (CAT)</h3>
+              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
+                Pre-built templates for vehicle, energy, and waste calculations using IPCC 2006 guidelines. Export-ready GHG inventory reports.
+              </p>
+              <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md">IPCC 2006</span>
+            </motion.div>
+
+            {/* ── Card 6: Global Maps ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.24 }}
+              viewport={{ once: true }}
+              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
+            >
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6">
+                <Globe className="h-6 w-6 text-emerald-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3">Interactive Maps</h3>
+              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
+                Visualize forest cover, NASA FIRMS fire data, tree loss hotspots, and deforestation trends across 50+ regions with 3D mapping.
+              </p>
+              <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">NASA FIRMS</span>
+            </motion.div>
+
+            {/* ── Card 7: Net Zero Planning ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.28 }}
+              viewport={{ once: true }}
+              className="lg:col-span-3 group relative rounded-2xl border border-border bg-foreground p-10 hover:shadow-xl transition-all duration-500 overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_60%_50%_at_20%_50%,hsl(var(--primary)/0.12),transparent)] pointer-events-none" />
+              <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-12 h-12 rounded-xl bg-background/10 flex items-center justify-center">
+                      <Zap className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="text-[11px] font-bold tracking-wider uppercase text-primary bg-primary/15 px-2.5 py-1 rounded-md">Roadmapping</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-background mb-3">Net Zero Planning & Scenarios</h3>
+                  <p className="text-background/55 leading-relaxed max-w-xl mb-6">
+                    Model aggressive, moderate, and conservative decarbonization pathways. Set milestones aligned to 
+                    SBTi Net Zero and Oxford Principles, track reduction levers (fleet electrification, renewables, supplier engagement), 
+                    and manage offset reliance with quality scoring.
+                  </p>
                 </div>
-                <h3 className="text-2xl font-semibold text-foreground mb-3">Net Zero Planning</h3>
-                <p className="text-muted-foreground leading-relaxed max-w-lg mb-6">
-                  Model multiple decarbonization scenarios, set science-based targets, and track progress with
-                  milestone-driven roadmaps aligned to SBTi and Oxford Principles.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {["SBTi Aligned", "Scenario Modeling", "Milestone Tracking"].map((t) => (
-                    <span key={t} className="px-3 py-1 text-[11px] font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
-                      {t}
-                    </span>
+                <div className="flex flex-wrap lg:flex-col gap-3 lg:min-w-[200px]">
+                  {[
+                    { label: "Scenario Comparison", icon: BarChart3 },
+                    { label: "Milestone Tracking", icon: CheckCircle2 },
+                    { label: "SBTi Aligned", icon: Shield },
+                    { label: "Offset Management", icon: Leaf },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2.5 text-background/70">
+                      <item.icon className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="text-[13px] font-medium">{item.label}</span>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -276,18 +366,23 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border"
           >
             {[
-              { n: "1.2M+", l: "tCO₂e Tracked" },
-              { n: "235+", l: "Carbon Projects" },
-              { n: "50+", l: "Global Regions" },
-              { n: "12", l: "Data Sources" },
+              { n: "10,000+", l: "Emission Factors", d: "Verified & categorized" },
+              { n: "6", l: "Methodologies", d: "Flight, Sea, Vehicle, Energy, Waste, CAT" },
+              { n: "50+", l: "Global Regions", d: "Across all continents" },
+              { n: "< 50ms", l: "API Response", d: "RESTful endpoints" },
             ].map((s) => (
-              <div key={s.l}>
+              <div key={s.l} className="bg-card p-8 text-center">
                 <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{s.n}</div>
-                <div className="text-[13px] text-muted-foreground mt-1">{s.l}</div>
+                <div className="text-[13px] font-semibold text-foreground/70 mt-1">{s.l}</div>
+                <div className="text-[11px] text-foreground/40 mt-0.5">{s.d}</div>
               </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
             ))}
           </motion.div>
         </div>
