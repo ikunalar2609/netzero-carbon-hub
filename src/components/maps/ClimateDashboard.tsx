@@ -477,7 +477,7 @@ export default function ClimateDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} />
               <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#d1d5db" }} domain={[11, 17]} unit="°C" />
-              <Tooltip content={<ChartTooltip />} />
+              <Tooltip content={<RecentYearsTooltip prefix="t" unit="°C" />} />
               {dailyTempByYear.allYears.filter(yr => yr < 2023).map(yr => (
                 <Line key={yr} type="monotone" dataKey={`t${yr}`} stroke="#d1d5db" strokeWidth={0.5} dot={false} name={String(yr)} connectNulls isAnimationActive={false} legendType="none" />
               ))}
