@@ -12,6 +12,7 @@ interface MapsHeaderProps {
   selectedRegion: string;
   setSelectedRegion: (v: string) => void;
   isLoading: boolean;
+  onNavClick?: (item: string) => void;
 }
 
 const SelectFilter = React.memo(({ value, onChange, options }: {
