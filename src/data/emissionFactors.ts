@@ -28,6 +28,10 @@ export interface FarmlyFilters {
   scope: string[];
   methodology: string[];
   region: string[];
+  category: string[];
+  sector: string[];
+  dataType: string[];
+  perimeter: string[];
 }
 
 export const defaultFilters: FarmlyFilters = {
@@ -39,13 +43,17 @@ export const defaultFilters: FarmlyFilters = {
   scope: [],
   methodology: [],
   region: [],
+  category: [],
+  sector: [],
+  dataType: [],
+  perimeter: [],
 };
 
 export const emissionFactors: EmissionFactor[] = [
   // Steel & Metal products
-  { id: "ef-001", name: "Steel alloy - bars rods hot-rolled coils", fe: 2.0, unit: "kg", perimeter: "Gate-to-gate (precursors included)", source: "CBAM", category: "Industry", scope: "scope1", methodology: "GHG Protocol", region: "Europe", description: "Producer's scope 1 and 2 emissions for steel bars/rods production", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Primary", lastUpdated: "2024-01-15" },
-  { id: "ef-002", name: "Steel other alloy - wire", fe: 2.6, unit: "kg", perimeter: "Gate-to-gate (precursors included)", source: "CBAM", category: "Industry", scope: "scope1", methodology: "GHG Protocol", region: "Europe", description: "Wire production from steel alloys", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Primary", lastUpdated: "2024-01-15" },
-  { id: "ef-003", name: "Steel other alloy - wire (cold drawn)", fe: 2.0, unit: "kg", perimeter: "Gate-to-gate (precursors included)", source: "CBAM", category: "Industry", scope: "scope1", methodology: "GHG Protocol", region: "Europe", description: "Cold drawn wire production from steel alloys", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Primary", lastUpdated: "2024-01-15" },
+  { id: "ef-001", name: "Steel alloy - bars rods hot-rolled coils", fe: 2.0, unit: "kg", perimeter: "Gate-to-gate", source: "CBAM", category: "Industry", scope: "scope1", methodology: "GHG Protocol", region: "Europe", description: "Producer's scope 1 and 2 emissions for steel bars/rods production", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Primary", lastUpdated: "2024-01-15" },
+  { id: "ef-002", name: "Steel other alloy - wire", fe: 2.6, unit: "kg", perimeter: "Gate-to-gate", source: "CBAM", category: "Industry", scope: "scope1", methodology: "GHG Protocol", region: "Europe", description: "Wire production from steel alloys", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Primary", lastUpdated: "2024-01-15" },
+  { id: "ef-003", name: "Steel other alloy - wire (cold drawn)", fe: 2.0, unit: "kg", perimeter: "Gate-to-gate", source: "CBAM", category: "Industry", scope: "scope1", methodology: "GHG Protocol", region: "Europe", description: "Cold drawn wire production from steel alloys", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Primary", lastUpdated: "2024-01-15" },
   { id: "ef-004", name: "Aluminium ingots - primary smelting", fe: 8.6, unit: "kg", perimeter: "Cradle-to-gate", source: "sustainalize", category: "Industry", scope: "scope1", methodology: "IPCC AR6", region: "Global", description: "Primary aluminium smelting including electrolysis", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Secondary", lastUpdated: "2023-11-20" },
   { id: "ef-005", name: "Copper cathode - electrolytic refining", fe: 3.5, unit: "kg", perimeter: "Gate-to-gate", source: "sustainalize", category: "Industry", scope: "scope2", methodology: "GHG Protocol", region: "Global", description: "Electrolytic copper refining process", sector: "Metalworking", subSector: "Metal and metal products", dataType: "Secondary", lastUpdated: "2023-10-05" },
 
@@ -83,12 +91,51 @@ export const emissionFactors: EmissionFactor[] = [
   { id: "ef-024", name: "Cloud Computing - AWS EC2 instance", fe: 0.056, unit: "unit", perimeter: "Cradle-to-gate", source: "sustainalize", category: "Digital", scope: "scope3", methodology: "GHG Protocol", region: "North America", description: "AWS EC2 compute instance per hour", sector: "Digital", subSector: "Cloud services", dataType: "Secondary", lastUpdated: "2023-12-01" },
   { id: "ef-025", name: "Data Centre - PUE 1.2 average", fe: 0.42, unit: "kgC", perimeter: "Gate-to-gate", source: "sustainalize", category: "Digital", scope: "scope2", methodology: "GHG Protocol", region: "Global", description: "Data centre electricity consumption per kWh (PUE=1.2)", sector: "Digital", subSector: "Data centres", dataType: "Secondary", lastUpdated: "2023-11-15" },
 
-  // Additional factors for volume
+  // Additional factors
   { id: "ef-026", name: "Glass bottles - clear soda lime", fe: 0.85, unit: "kg", perimeter: "Cradle-to-gate", source: "sustainalize", category: "Industry", scope: "scope3", methodology: "GHG Protocol", region: "Europe", description: "Clear soda lime glass bottle production", sector: "Manufacturing", subSector: "Glass", dataType: "Secondary", lastUpdated: "2023-07-25" },
   { id: "ef-027", name: "Paper - uncoated wood-free", fe: 1.09, unit: "kg", perimeter: "Cradle-to-gate", source: "sustainalize", category: "Industry", scope: "scope3", methodology: "GHG Protocol", region: "Europe", description: "Uncoated wood-free paper production", sector: "Manufacturing", subSector: "Paper and pulp", dataType: "Secondary", lastUpdated: "2023-06-10" },
   { id: "ef-028", name: "Hydrogen - grey (SMR)", fe: 9.3, unit: "kg", perimeter: "Cradle-to-gate", source: "CBAM", category: "Energy", scope: "scope1", methodology: "IPCC AR6", region: "Global", description: "Grey hydrogen via steam methane reforming", sector: "Energy", subSector: "Hydrogen production", dataType: "Primary", lastUpdated: "2024-01-05" },
   { id: "ef-029", name: "Electricity Grid - India average", fe: 0.708, unit: "kgC", perimeter: "Cradle-to-gate", source: "sustainalize", category: "Energy", scope: "scope2", methodology: "IPCC AR6", region: "Asia Pacific", description: "India average electricity grid emission factor", sector: "Energy", subSector: "Electricity generation", dataType: "Primary", lastUpdated: "2024-01-10" },
   { id: "ef-030", name: "Electricity Grid - China average", fe: 0.555, unit: "kgC", perimeter: "Cradle-to-gate", source: "sustainalize", category: "Energy", scope: "scope2", methodology: "IPCC AR6", region: "Asia Pacific", description: "China average electricity grid emission factor", sector: "Energy", subSector: "Electricity generation", dataType: "Primary", lastUpdated: "2024-01-10" },
+
+  // ═══ NEW SOURCES: EPA, ecoinvent, ICAO, IMO, GLEC ═══
+
+  // EPA factors
+  { id: "ef-031", name: "Gasoline - mobile combustion", fe: 2.31, unit: "unit", perimeter: "Well-to-wheel", source: "EPA", category: "Energy", scope: "scope1", methodology: "EPA GHG Inventory", region: "North America", description: "Gasoline mobile combustion per gallon (US EPA)", sector: "Energy", subSector: "Fuel combustion", dataType: "Primary", lastUpdated: "2024-04-01" },
+  { id: "ef-032", name: "Propane - stationary combustion", fe: 1.54, unit: "unit", perimeter: "Gate-to-gate", source: "EPA", category: "Energy", scope: "scope1", methodology: "EPA GHG Inventory", region: "North America", description: "Propane stationary combustion per gallon", sector: "Energy", subSector: "Fuel combustion", dataType: "Primary", lastUpdated: "2024-04-01" },
+  { id: "ef-033", name: "Electricity Grid - ERCOT (Texas)", fe: 0.397, unit: "kgC", perimeter: "Cradle-to-gate", source: "EPA", category: "Energy", scope: "scope2", methodology: "EPA eGRID", region: "North America", description: "ERCOT regional grid electricity factor", sector: "Energy", subSector: "Electricity generation", dataType: "Primary", lastUpdated: "2024-03-15" },
+  { id: "ef-034", name: "Refrigerant R-410A - leakage", fe: 2088.0, unit: "kg", perimeter: "Gate-to-gate", source: "EPA", category: "Industry", scope: "scope1", methodology: "EPA GHG Inventory", region: "Global", description: "Fugitive emissions from R-410A refrigerant", sector: "HVAC", subSector: "Refrigerants", dataType: "Primary", lastUpdated: "2024-02-20" },
+
+  // ecoinvent factors
+  { id: "ef-035", name: "Lithium-ion battery - NMC production", fe: 73.0, unit: "kg", perimeter: "Cradle-to-gate", source: "ecoinvent", category: "Industry", scope: "scope3", methodology: "ISO 14044", region: "Global", description: "NMC lithium-ion battery cell production per kWh capacity", sector: "Manufacturing", subSector: "Electronics", dataType: "Primary", lastUpdated: "2024-01-30" },
+  { id: "ef-036", name: "Cotton textile - woven fabric", fe: 5.2, unit: "kg", perimeter: "Cradle-to-gate", source: "ecoinvent", category: "Industry", scope: "scope3", methodology: "ISO 14044", region: "Asia Pacific", description: "Cotton woven fabric production", sector: "Manufacturing", subSector: "Textiles", dataType: "Primary", lastUpdated: "2023-12-10" },
+  { id: "ef-037", name: "Soybean - cultivation and harvest", fe: 0.35, unit: "kg", perimeter: "Cradle-to-gate", source: "ecoinvent", category: "Agriculture", scope: "scope1", methodology: "ISO 14044", region: "South America", description: "Soybean cultivation including land use change", sector: "Agriculture", subSector: "Crop production", dataType: "Primary", lastUpdated: "2023-11-01" },
+  { id: "ef-038", name: "Photovoltaic panel - monocrystalline", fe: 40.0, unit: "m²", perimeter: "Cradle-to-gate", source: "ecoinvent", category: "Energy", scope: "scope3", methodology: "ISO 14044", region: "Asia Pacific", description: "Monocrystalline PV panel manufacturing per m²", sector: "Energy", subSector: "Renewable equipment", dataType: "Primary", lastUpdated: "2024-02-15" },
+  { id: "ef-039", name: "Tap water - treatment and supply", fe: 0.000344, unit: "m³", perimeter: "Cradle-to-gate", source: "ecoinvent", category: "Waste", scope: "scope3", methodology: "ISO 14044", region: "Europe", description: "Municipal tap water treatment per m³", sector: "Utilities", subSector: "Water", dataType: "Primary", lastUpdated: "2023-09-01" },
+
+  // ICAO factors
+  { id: "ef-040", name: "Passenger Flight - domestic short-haul", fe: 0.255, unit: "kg", perimeter: "Well-to-wheel", source: "ICAO", category: "Transportation", scope: "scope3", methodology: "ICAO", region: "Global", description: "Domestic passenger flight per pax-km (economy)", sector: "Transport", subSector: "Air transport", dataType: "Primary", lastUpdated: "2024-03-01" },
+  { id: "ef-041", name: "Passenger Flight - international long-haul", fe: 0.148, unit: "kg", perimeter: "Well-to-wheel", source: "ICAO", category: "Transportation", scope: "scope3", methodology: "ICAO", region: "Global", description: "Long-haul international passenger flight per pax-km (economy)", sector: "Transport", subSector: "Air transport", dataType: "Primary", lastUpdated: "2024-03-01" },
+  { id: "ef-042", name: "Passenger Flight - medium-haul", fe: 0.187, unit: "kg", perimeter: "Well-to-wheel", source: "ICAO", category: "Transportation", scope: "scope3", methodology: "ICAO", region: "Global", description: "Medium-haul passenger flight per pax-km (economy)", sector: "Transport", subSector: "Air transport", dataType: "Primary", lastUpdated: "2024-03-01" },
+
+  // IMO factors
+  { id: "ef-043", name: "Bulk Carrier - Handysize", fe: 0.0078, unit: "kg", perimeter: "Well-to-wheel", source: "IMO", category: "Transportation", scope: "scope3", methodology: "IMO", region: "Global", description: "Handysize bulk carrier per tonne-km", sector: "Transport", subSector: "Sea transport", dataType: "Primary", lastUpdated: "2024-02-01" },
+  { id: "ef-044", name: "Tanker - Suezmax crude oil", fe: 0.005, unit: "kg", perimeter: "Well-to-wheel", source: "IMO", category: "Transportation", scope: "scope3", methodology: "IMO", region: "Global", description: "Suezmax crude oil tanker per tonne-km", sector: "Transport", subSector: "Sea transport", dataType: "Primary", lastUpdated: "2024-02-01" },
+  { id: "ef-045", name: "RoRo vessel - vehicle carrier", fe: 0.032, unit: "kg", perimeter: "Well-to-wheel", source: "IMO", category: "Transportation", scope: "scope3", methodology: "IMO", region: "Global", description: "Roll-on/roll-off vehicle carrier per tonne-km", sector: "Transport", subSector: "Sea transport", dataType: "Primary", lastUpdated: "2024-02-01" },
+
+  // GLEC factors
+  { id: "ef-046", name: "Road Freight - LTL Europe", fe: 0.062, unit: "kg", perimeter: "Well-to-wheel", source: "GLEC", category: "Transportation", scope: "scope3", methodology: "GLEC Framework", region: "Europe", description: "Less-than-truckload road freight per tonne-km (EU average)", sector: "Transport", subSector: "Road transport", dataType: "Primary", lastUpdated: "2024-01-15" },
+  { id: "ef-047", name: "Road Freight - FTL North America", fe: 0.071, unit: "kg", perimeter: "Well-to-wheel", source: "GLEC", category: "Transportation", scope: "scope3", methodology: "GLEC Framework", region: "North America", description: "Full truckload road freight per tonne-km (NA average)", sector: "Transport", subSector: "Road transport", dataType: "Primary", lastUpdated: "2024-01-15" },
+  { id: "ef-048", name: "Intermodal - rail+truck Europe", fe: 0.029, unit: "kg", perimeter: "Well-to-wheel", source: "GLEC", category: "Transportation", scope: "scope3", methodology: "GLEC Framework", region: "Europe", description: "Intermodal rail + last-mile truck per tonne-km", sector: "Transport", subSector: "Intermodal", dataType: "Primary", lastUpdated: "2024-01-15" },
+  { id: "ef-049", name: "Air Freight - belly cargo", fe: 0.602, unit: "kg", perimeter: "Well-to-wheel", source: "GLEC", category: "Transportation", scope: "scope3", methodology: "GLEC Framework", region: "Global", description: "Air freight belly cargo per tonne-km", sector: "Transport", subSector: "Air transport", dataType: "Secondary", lastUpdated: "2024-01-15" },
+
+  // Additional ecoinvent & EPA
+  { id: "ef-050", name: "Beef cattle - enteric fermentation", fe: 27.0, unit: "kg", perimeter: "Gate-to-gate", source: "ecoinvent", category: "Agriculture", scope: "scope1", methodology: "IPCC AR6", region: "Global", description: "Enteric fermentation methane from beef cattle per head per year", sector: "Agriculture", subSector: "Livestock", dataType: "Primary", lastUpdated: "2024-01-20" },
+  { id: "ef-051", name: "Electricity Grid - California", fe: 0.225, unit: "kgC", perimeter: "Cradle-to-gate", source: "EPA", category: "Energy", scope: "scope2", methodology: "EPA eGRID", region: "North America", description: "CAMX (California) electricity grid factor", sector: "Energy", subSector: "Electricity generation", dataType: "Primary", lastUpdated: "2024-03-15" },
+  { id: "ef-052", name: "Electricity Grid - Japan average", fe: 0.471, unit: "kgC", perimeter: "Cradle-to-gate", source: "IPCC", category: "Energy", scope: "scope2", methodology: "IPCC AR6", region: "Asia Pacific", description: "Japan average electricity grid emission factor", sector: "Energy", subSector: "Electricity generation", dataType: "Primary", lastUpdated: "2024-01-10" },
+  { id: "ef-053", name: "Electricity Grid - Brazil average", fe: 0.074, unit: "kgC", perimeter: "Cradle-to-gate", source: "IPCC", category: "Energy", scope: "scope2", methodology: "IPCC AR6", region: "South America", description: "Brazil average electricity grid (high hydro share)", sector: "Energy", subSector: "Electricity generation", dataType: "Primary", lastUpdated: "2024-01-10" },
+  { id: "ef-054", name: "LNG - liquefaction and transport", fe: 3.2, unit: "unit", perimeter: "Cradle-to-gate", source: "GLEC", category: "Energy", scope: "scope3", methodology: "GLEC Framework", region: "Global", description: "Liquefied natural gas upstream including transport per tonne", sector: "Energy", subSector: "Fuel combustion", dataType: "Secondary", lastUpdated: "2024-02-01" },
+  { id: "ef-055", name: "Waste incineration - mixed MSW", fe: 0.33, unit: "kg", perimeter: "Gate-to-gate", source: "EPA", category: "Waste", scope: "scope1", methodology: "EPA GHG Inventory", region: "North America", description: "Municipal solid waste incineration with energy recovery", sector: "Waste", subSector: "Incineration", dataType: "Primary", lastUpdated: "2024-04-01" },
 ];
 
 // Get unique values for filter options
@@ -99,50 +146,52 @@ export const getFilterOptions = () => {
   const methodologies = [...new Set(emissionFactors.map(ef => ef.methodology))];
   const regions = [...new Set(emissionFactors.map(ef => ef.region))];
   const categories = [...new Set(emissionFactors.map(ef => ef.category))];
+  const sectors = [...new Set(emissionFactors.map(ef => ef.sector))];
+  const dataTypes = [...new Set(emissionFactors.map(ef => ef.dataType))];
+  const perimeters = [...new Set(emissionFactors.map(ef => ef.perimeter))];
 
   const unitCounts: Record<string, number> = {};
   const sourceCounts: Record<string, number> = {};
-  
+  const categoryCounts: Record<string, number> = {};
+  const sectorCounts: Record<string, number> = {};
+  const dataTypeCounts: Record<string, number> = {};
+  const perimeterCounts: Record<string, number> = {};
+
   emissionFactors.forEach(ef => {
     unitCounts[ef.unit] = (unitCounts[ef.unit] || 0) + 1;
     sourceCounts[ef.source] = (sourceCounts[ef.source] || 0) + 1;
+    categoryCounts[ef.category] = (categoryCounts[ef.category] || 0) + 1;
+    sectorCounts[ef.sector] = (sectorCounts[ef.sector] || 0) + 1;
+    dataTypeCounts[ef.dataType] = (dataTypeCounts[ef.dataType] || 0) + 1;
+    perimeterCounts[ef.perimeter] = (perimeterCounts[ef.perimeter] || 0) + 1;
   });
 
-  return { units, sources, scopes, methodologies, regions, categories, unitCounts, sourceCounts };
+  return { units, sources, scopes, methodologies, regions, categories, sectors, dataTypes, perimeters, unitCounts, sourceCounts, categoryCounts, sectorCounts, dataTypeCounts, perimeterCounts };
 };
 
 // Apply filters to emission factors
 export const applyFilters = (factors: EmissionFactor[], filters: FarmlyFilters): EmissionFactor[] => {
   return factors.filter(ef => {
-    // Search
     if (filters.searchQuery) {
       const q = filters.searchQuery.toLowerCase();
       const matchesSearch = ef.name.toLowerCase().includes(q) ||
         ef.category.toLowerCase().includes(q) ||
         ef.sector.toLowerCase().includes(q) ||
         ef.description.toLowerCase().includes(q) ||
-        ef.source.toLowerCase().includes(q);
+        ef.source.toLowerCase().includes(q) ||
+        ef.perimeter.toLowerCase().includes(q);
       if (!matchesSearch) return false;
     }
-
-    // Favorites
     if (filters.favoritesOnly && !ef.isFavorite) return false;
-
-    // Units
     if (filters.units.length > 0 && !filters.units.includes(ef.unit)) return false;
-
-    // Sources
     if (filters.sources.length > 0 && !filters.sources.includes(ef.source)) return false;
-
-    // Scope
     if (filters.scope.length > 0 && !filters.scope.includes(ef.scope)) return false;
-
-    // Methodology
     if (filters.methodology.length > 0 && !filters.methodology.includes(ef.methodology)) return false;
-
-    // Region
     if (filters.region.length > 0 && !filters.region.includes(ef.region)) return false;
-
+    if (filters.category.length > 0 && !filters.category.includes(ef.category)) return false;
+    if (filters.sector.length > 0 && !filters.sector.includes(ef.sector)) return false;
+    if (filters.dataType.length > 0 && !filters.dataType.includes(ef.dataType)) return false;
+    if (filters.perimeter.length > 0 && !filters.perimeter.includes(ef.perimeter)) return false;
     return true;
   });
 };

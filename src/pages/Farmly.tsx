@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +7,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Search,
   X,
@@ -25,6 +38,14 @@ import {
   Sparkles,
   Calculator,
   History,
+  Upload,
+  Download,
+  FileText,
+  Globe,
+  Palette,
+  Shield,
+  Database,
+  ExternalLink,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
@@ -36,6 +57,7 @@ import {
   emissionFactors as rawFactors,
   applyFilters,
   getFilterOptions,
+  defaultFilters,
   type FarmlyFilters,
   type EmissionFactor,
 } from "@/data/emissionFactors";
@@ -53,18 +75,26 @@ const Farmly = () => {
   const [activeTab, setActiveTab] = useState("calculator");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Dialogs
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+
+  // Settings state
+  const [settingsState, setSettingsState] = useState({
+    defaultUnit: "kgCO2e",
+    defaultRegion: "Global",
+    autoSaveCalc: true,
+    showUncertainty: false,
+    compactView: false,
+    notifyUpdates: true,
+    gwpVersion: "AR6",
+    exportFormat: "csv",
+  });
 
   // Filters
-  const [filters, setFilters] = useState<FarmlyFilters>({
-    origin: "shared",
-    favoritesOnly: false,
-    units: [],
-    sources: [],
-    searchQuery: "",
-    scope: [],
-    methodology: [],
-    region: [],
-  });
+  const [filters, setFilters] = useState<FarmlyFilters>({ ...defaultFilters });
 
   // Favorites stored locally
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -77,13 +107,11 @@ const Farmly = () => {
     });
   };
 
-  // Add favorites to factors
   const factorsWithFavorites: EmissionFactor[] = useMemo(
     () => rawFactors.map(f => ({ ...f, isFavorite: favorites.has(f.id) })),
     [favorites]
   );
 
-  // Apply all filters
   const filteredFactors = useMemo(
     () => applyFilters(factorsWithFavorites, filters),
     [factorsWithFavorites, filters]
@@ -91,7 +119,6 @@ const Farmly = () => {
 
   const filterOptions = useMemo(() => getFilterOptions(), []);
 
-  // Sidebar filter sections
   const [filterSections, setFilterSections] = useState({
     origin: true,
     unit: true,
@@ -99,6 +126,10 @@ const Farmly = () => {
     scope: false,
     methodology: false,
     region: false,
+    category: false,
+    sector: false,
+    dataType: false,
+    perimeter: false,
   });
 
   const toggleFilterSection = (section: keyof typeof filterSections) => {
@@ -106,20 +137,11 @@ const Farmly = () => {
   };
 
   const resetFilters = () => {
-    setFilters({
-      origin: "shared",
-      favoritesOnly: false,
-      units: [],
-      sources: [],
-      searchQuery: "",
-      scope: [],
-      methodology: [],
-      region: [],
-    });
+    setFilters({ ...defaultFilters });
   };
 
   const toggleArrayFilter = (
-    key: "units" | "sources" | "scope" | "methodology" | "region",
+    key: "units" | "sources" | "scope" | "methodology" | "region" | "category" | "sector" | "dataType" | "perimeter",
     value: string
   ) => {
     setFilters(prev => {
@@ -137,8 +159,34 @@ const Farmly = () => {
     filters.scope.length,
     filters.methodology.length,
     filters.region.length,
+    filters.category.length,
+    filters.sector.length,
+    filters.dataType.length,
+    filters.perimeter.length,
     filters.favoritesOnly ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
+
+  // Header nav actions
+  const handleHeaderNav = (item: string) => {
+    switch (item) {
+      case "SEARCH":
+        searchInputRef.current?.focus();
+        searchInputRef.current?.scrollIntoView({ behavior: "smooth" });
+        break;
+      case "BENCHMARK":
+        setActiveTab("benchmark");
+        break;
+      case "IMPORT":
+        setImportOpen(true);
+        break;
+      case "SETTINGS":
+        setSettingsOpen(true);
+        break;
+      case "COMMUNITY":
+        window.open("https://farmly-carbon.lovable.app", "_blank");
+        break;
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col bg-[#4F46E5]">
@@ -156,13 +204,17 @@ const Farmly = () => {
 
         <nav className="hidden md:flex items-center gap-1 ml-2">
           {["SEARCH", "BENCHMARK", "IMPORT", "SETTINGS", "COMMUNITY"].map((item) => (
-            <Link
+            <button
               key={item}
-              to="/farmly"
-              className="px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white/70 hover:text-white hover:bg-white/10 rounded-md transition-all"
+              onClick={() => handleHeaderNav(item)}
+              className={`px-3 py-1.5 text-[11px] font-semibold tracking-wide rounded-md transition-all ${
+                (item === "BENCHMARK" && activeTab === "benchmark")
+                  ? "text-white bg-white/20"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              }`}
             >
               {item}
-            </Link>
+            </button>
           ))}
         </nav>
 
@@ -170,7 +222,7 @@ const Farmly = () => {
           <button className="p-2 rounded-md hover:bg-white/10 transition-colors">
             <Bell className="h-4 w-4 text-white/60" />
           </button>
-          <button className="p-2 rounded-md hover:bg-white/10 transition-colors">
+          <button onClick={() => setSettingsOpen(true)} className="p-2 rounded-md hover:bg-white/10 transition-colors">
             <Settings className="h-4 w-4 text-white/60" />
           </button>
           <div className="w-7 h-7 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center ml-1">
@@ -185,6 +237,7 @@ const Farmly = () => {
           <div className="relative flex-1 mr-2">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
+              ref={searchInputRef}
               placeholder="Search emission factors..."
               value={filters.searchQuery}
               onChange={(e) => setFilters(f => ({ ...f, searchQuery: e.target.value }))}
@@ -196,7 +249,10 @@ const Farmly = () => {
               </button>
             )}
           </div>
-          <button className="h-11 px-6 bg-[#3730A3] hover:bg-[#312E81] text-white text-[12px] font-bold tracking-wider rounded-lg transition-colors shrink-0 shadow-lg">
+          <button
+            onClick={() => searchInputRef.current?.focus()}
+            className="h-11 px-6 bg-[#3730A3] hover:bg-[#312E81] text-white text-[12px] font-bold tracking-wider rounded-lg transition-colors shrink-0 shadow-lg"
+          >
             SEARCH
           </button>
         </div>
@@ -308,6 +364,62 @@ const Farmly = () => {
                           label={s.replace("scope", "Scope ")}
                           checked={filters.scope.includes(s)}
                           onChange={() => toggleArrayFilter("scope", s)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Category */}
+                  <FilterSection title={`Category (${filterOptions.categories.length})`} isOpen={filterSections.category} onToggle={() => toggleFilterSection("category")}>
+                    <div className="space-y-1">
+                      {filterOptions.categories.map(c => (
+                        <FilterCheckbox
+                          key={c}
+                          label={`${c} (${filterOptions.categoryCounts[c]})`}
+                          checked={filters.category.includes(c)}
+                          onChange={() => toggleArrayFilter("category", c)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Sector */}
+                  <FilterSection title={`Sector (${filterOptions.sectors.length})`} isOpen={filterSections.sector} onToggle={() => toggleFilterSection("sector")}>
+                    <div className="space-y-1">
+                      {filterOptions.sectors.map(s => (
+                        <FilterCheckbox
+                          key={s}
+                          label={`${s} (${filterOptions.sectorCounts[s]})`}
+                          checked={filters.sector.includes(s)}
+                          onChange={() => toggleArrayFilter("sector", s)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Perimeter */}
+                  <FilterSection title={`Perimeter (${filterOptions.perimeters.length})`} isOpen={filterSections.perimeter} onToggle={() => toggleFilterSection("perimeter")}>
+                    <div className="space-y-1">
+                      {filterOptions.perimeters.map(p => (
+                        <FilterCheckbox
+                          key={p}
+                          label={`${p} (${filterOptions.perimeterCounts[p]})`}
+                          checked={filters.perimeter.includes(p)}
+                          onChange={() => toggleArrayFilter("perimeter", p)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Data Type */}
+                  <FilterSection title={`Data Type (${filterOptions.dataTypes.length})`} isOpen={filterSections.dataType} onToggle={() => toggleFilterSection("dataType")}>
+                    <div className="space-y-1">
+                      {filterOptions.dataTypes.map(d => (
+                        <FilterCheckbox
+                          key={d}
+                          label={`${d} (${filterOptions.dataTypeCounts[d]})`}
+                          checked={filters.dataType.includes(d)}
+                          onChange={() => toggleArrayFilter("dataType", d)}
                         />
                       ))}
                     </div>
@@ -451,6 +563,202 @@ const Farmly = () => {
           </div>
         </main>
       </div>
+
+      {/* ═══ SETTINGS DIALOG ═══ */}
+      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogContent className="max-w-lg bg-white border border-gray-200 shadow-xl rounded-xl p-0 gap-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-100">
+            <DialogTitle className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <Settings className="h-4 w-4 text-[#4F46E5]" />
+              WORKSPACE SETTINGS
+            </DialogTitle>
+          </DialogHeader>
+          <div className="px-6 py-5 space-y-5 max-h-[65vh] overflow-y-auto">
+            {/* General */}
+            <div>
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Globe className="h-3 w-3" /> General
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[12px] text-gray-700">Default unit</Label>
+                  <Select value={settingsState.defaultUnit} onValueChange={v => setSettingsState(s => ({ ...s, defaultUnit: v }))}>
+                    <SelectTrigger className="w-[140px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kgCO2e">kgCO₂e</SelectItem>
+                      <SelectItem value="tCO2e">tCO₂e</SelectItem>
+                      <SelectItem value="gCO2e">gCO₂e</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-[12px] text-gray-700">Default region</Label>
+                  <Select value={settingsState.defaultRegion} onValueChange={v => setSettingsState(s => ({ ...s, defaultRegion: v }))}>
+                    <SelectTrigger className="w-[140px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Global">Global</SelectItem>
+                      <SelectItem value="Europe">Europe</SelectItem>
+                      <SelectItem value="North America">North America</SelectItem>
+                      <SelectItem value="Asia Pacific">Asia Pacific</SelectItem>
+                      <SelectItem value="South America">South America</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-[12px] text-gray-700">GWP version</Label>
+                  <Select value={settingsState.gwpVersion} onValueChange={v => setSettingsState(s => ({ ...s, gwpVersion: v }))}>
+                    <SelectTrigger className="w-[140px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AR6">IPCC AR6 (2021)</SelectItem>
+                      <SelectItem value="AR5">IPCC AR5 (2014)</SelectItem>
+                      <SelectItem value="AR4">IPCC AR4 (2007)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Calculator */}
+            <div>
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Calculator className="h-3 w-3" /> Calculator
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-[12px] text-gray-700">Auto-save calculations</Label>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Save every result to history</p>
+                  </div>
+                  <Switch checked={settingsState.autoSaveCalc} onCheckedChange={v => setSettingsState(s => ({ ...s, autoSaveCalc: v }))} className="scale-75" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-[12px] text-gray-700">Show uncertainty ranges</Label>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Display ±% on emission factors</p>
+                  </div>
+                  <Switch checked={settingsState.showUncertainty} onCheckedChange={v => setSettingsState(s => ({ ...s, showUncertainty: v }))} className="scale-75" />
+                </div>
+              </div>
+            </div>
+
+            {/* Display */}
+            <div>
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Palette className="h-3 w-3" /> Display
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-[12px] text-gray-700">Compact view</Label>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Reduce spacing in tables</p>
+                  </div>
+                  <Switch checked={settingsState.compactView} onCheckedChange={v => setSettingsState(s => ({ ...s, compactView: v }))} className="scale-75" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-[12px] text-gray-700">Export format</Label>
+                  <Select value={settingsState.exportFormat} onValueChange={v => setSettingsState(s => ({ ...s, exportFormat: v }))}>
+                    <SelectTrigger className="w-[140px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="csv">CSV</SelectItem>
+                      <SelectItem value="xlsx">Excel (XLSX)</SelectItem>
+                      <SelectItem value="json">JSON</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Notifications */}
+            <div>
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Bell className="h-3 w-3" /> Notifications
+              </h4>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-[12px] text-gray-700">EF database updates</Label>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Get notified when new EFs are added</p>
+                </div>
+                <Switch checked={settingsState.notifyUpdates} onCheckedChange={v => setSettingsState(s => ({ ...s, notifyUpdates: v }))} className="scale-75" />
+              </div>
+            </div>
+
+            {/* Data Sources */}
+            <div>
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Database className="h-3 w-3" /> Active Data Sources
+              </h4>
+              <div className="grid grid-cols-2 gap-2">
+                {["CBAM", "DEFRA", "IPCC", "EPA", "ecoinvent", "ICAO", "IMO", "GLEC", "sustainalize"].map(src => (
+                  <div key={src} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100 bg-gray-50/50">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-[11px] font-medium text-gray-700">{src}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-2">
+            <button onClick={() => setSettingsOpen(false)} className="px-4 py-2 text-[11px] font-semibold text-gray-500 hover:text-gray-700 rounded-lg transition-colors">
+              CANCEL
+            </button>
+            <button onClick={() => { setSettingsOpen(false); toast.success("Settings saved"); }} className="px-4 py-2 text-[11px] font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] rounded-lg transition-colors">
+              SAVE CHANGES
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ═══ IMPORT DIALOG ═══ */}
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent className="max-w-md bg-white border border-gray-200 shadow-xl rounded-xl p-0 gap-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-100">
+            <DialogTitle className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <Upload className="h-4 w-4 text-[#4F46E5]" />
+              IMPORT DATA
+            </DialogTitle>
+          </DialogHeader>
+          <div className="px-6 py-5 space-y-4">
+            <p className="text-[12px] text-gray-500 leading-relaxed">
+              Import emission factors, calculation history, or custom datasets. Supported formats: CSV, XLSX, JSON.
+            </p>
+
+            {/* Upload zone */}
+            <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-[#4F46E5]/30 hover:bg-[#4F46E5]/[0.02] transition-all cursor-pointer">
+              <Upload className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+              <p className="text-[12px] font-semibold text-gray-600">Drop files here or click to browse</p>
+              <p className="text-[10px] text-gray-400 mt-1">CSV, XLSX, JSON up to 10MB</p>
+            </div>
+
+            {/* Quick import options */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Quick Import</h4>
+              {[
+                { label: "Import from DEFRA 2024 template", icon: FileText },
+                { label: "Import from EPA eGRID dataset", icon: Database },
+                { label: "Import from ecoinvent export", icon: Download },
+              ].map(({ label, icon: Icon }) => (
+                <button
+                  key={label}
+                  onClick={() => toast.info("Import template coming soon")}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-gray-100 hover:border-[#4F46E5]/20 hover:bg-[#4F46E5]/[0.02] transition-all text-left"
+                >
+                  <Icon className="h-3.5 w-3.5 text-[#4F46E5]" />
+                  <span className="text-[11px] font-medium text-gray-700">{label}</span>
+                  <ExternalLink className="h-3 w-3 text-gray-300 ml-auto" />
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-2">
+            <button onClick={() => setImportOpen(false)} className="px-4 py-2 text-[11px] font-semibold text-gray-500 hover:text-gray-700 rounded-lg transition-colors">
+              CANCEL
+            </button>
+            <button onClick={() => { setImportOpen(false); toast.success("Import started"); }} className="px-4 py-2 text-[11px] font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] rounded-lg transition-colors">
+              IMPORT
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
