@@ -209,6 +209,17 @@ const Farmly = () => {
     }
   };
 
+  const handleUpdateName = async () => {
+    if (!newName.trim()) return;
+    const { error } = await supabase.auth.updateUser({ data: { name: newName.trim() } });
+    if (error) {
+      toast.error("Failed to update name");
+    } else {
+      toast.success("Name updated");
+      setEditingName(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-[#4F46E5]">
       {/* ═══ TOP NAV ═══ */}
