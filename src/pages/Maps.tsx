@@ -15,6 +15,7 @@ import { useState } from "react";
 
 /* -------------------- Main Component -------------------- */
 export default function MapsPage() {
+  const navigate = useNavigate();
   const [days, setDays] = useState("1");
   const [satelliteSource, setSatelliteSource] = useState("VIIRS_SNPP_NRT");
   const [selectedRegion, setSelectedRegion] = useState("all");
