@@ -149,26 +149,40 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ═══════════════ LOGO STRIP ═══════════════ */}
-      <section className="py-16 px-6 border-y border-border bg-secondary/30">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-8">
-            Data Powered By Leading Institutions
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
-            {[
-              { src: nasaLogo, alt: "NASA" },
-              { src: ipccLogo, alt: "IPCC" },
-              { src: noaaLogo, alt: "NOAA" },
-              { src: sbtiLogo, alt: "SBTi" },
-              { src: goldStandardLogo, alt: "Gold Standard" },
-            ].map((logo) => (
-              <img
-                key={logo.alt}
-                src={logo.src}
-                alt={logo.alt}
-                className="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all duration-300"
-              />
+      {/* ═══════════════ LOGO STRIP (Marquee) ═══════════════ */}
+      <section className="py-14 px-6 border-y border-border bg-secondary/30 overflow-hidden">
+        <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-8">
+          Data Powered By Leading Institutions
+        </p>
+        <div className="relative w-full">
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-secondary/80 to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-secondary/80 to-transparent pointer-events-none" />
+          <div className="flex animate-marquee whitespace-nowrap">
+            {[...Array(2)].map((_, setIdx) => (
+              <div key={setIdx} className="flex items-center gap-16 md:gap-24 px-8 md:px-12">
+                {[
+                  { src: nasaLogo, name: "NASA" },
+                  { src: ipccLogo, name: "IPCC" },
+                  { src: noaaLogo, name: "NOAA" },
+                  { src: sbtiLogo, name: "SBTi" },
+                  { src: goldStandardLogo, name: "Gold Standard" },
+                  { src: oxfordLogo, name: "Oxford" },
+                  { src: wwfLogo, name: "WWF" },
+                  { src: carbonIntegrityLogo, name: "Carbon Integrity" },
+                ].map((logo) => (
+                  <div key={`${setIdx}-${logo.name}`} className="flex items-center gap-3 shrink-0">
+                    <img
+                      src={logo.src}
+                      alt={logo.name}
+                      className="h-8 md:h-10 w-auto object-contain"
+                    />
+                    <span className="text-sm md:text-base font-semibold text-foreground/80 tracking-wide">
+                      {logo.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             ))}
           </div>
         </div>
