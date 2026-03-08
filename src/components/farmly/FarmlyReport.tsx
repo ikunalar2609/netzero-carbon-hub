@@ -291,22 +291,22 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
       {/* Monthly Trend */}
       <div className="bg-white border border-gray-100 rounded-xl p-5">
         <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EMISSIONS TREND (tCO₂e PER MONTH)</h3>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} />
-            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} />
-            <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="scope1" name="Scope 1" stroke="#4F46E5" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="scope2" name="Scope 2" stroke="#0EA5E9" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="scope3" name="Scope 3" stroke="#F59E0B" strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="bg-white border border-gray-100 rounded-xl p-5">
+        <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">EMISSIONS TREND (kgCO₂e PER MONTH)</h3>
+        {trendData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} formatter={(value: number) => `${value.toFixed(2)} kgCO₂e`} />
+              <Line type="monotone" dataKey="total" name="Total Emissions" stroke="#4F46E5" strokeWidth={2} dot={{ r: 3, fill: "#4F46E5" }} />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[260px] flex items-center justify-center text-[11px] text-gray-400">Save calculations to see monthly trends</div>
+        )}
       </div>
-
-      {/* Charts Row 2: Source + Region */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white border border-gray-100 rounded-xl p-5">
           <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">SOURCE DISTRIBUTION</h3>
           <ResponsiveContainer width="100%" height={220}>
