@@ -474,14 +474,14 @@ const Index = () => {
                 <Code2 className="h-5 w-5 text-primary" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-background mb-4 leading-tight tracking-tight">
-                For technical
-                <br />teams
+                Emission Factor
+                <br />Benchmark
               </h2>
               <p className="text-background/55 mb-8 leading-relaxed">
-                Embed carbon intelligence into your products. Access verified emission factors through our API.
+                Browse and compare 10,000+ verified emission factors with our professional benchmark data grid. API is in the making.
               </p>
               <div className="space-y-3 mb-10">
-                {["RESTful API with <50ms response", "10,000+ verified emission factors", "SDKs for Python & Node.js"].map((f) => (
+                {["10,000+ verified emission factors", "Multi-column sorting & filtering", "Detailed metadata per factor"].map((f) => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
                     <span className="text-[14px] text-background/70 font-medium">{f}</span>
@@ -489,10 +489,10 @@ const Index = () => {
                 ))}
               </div>
               <button
-                onClick={() => navigate("/farmly/docs")}
+                onClick={() => navigate("/farmly")}
                 className="group inline-flex items-center gap-2 text-[14px] font-semibold text-primary hover:text-primary/80 transition-colors"
               >
-                View API Docs
+                Explore Benchmark
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
