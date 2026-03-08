@@ -216,7 +216,7 @@ const Index = () => {
                   <div className="w-3 h-3 rounded-full bg-primary/30" />
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/50 font-mono">
+                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/70 font-mono">
                     app.farmlycarbon.in/calculator
                   </div>
                 </div>
