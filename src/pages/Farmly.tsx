@@ -54,6 +54,7 @@ import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
 import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
 import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
 import { FarmlyReport } from "@/components/farmly/FarmlyReport";
+import { NotificationPanel } from "@/components/farmly/NotificationPanel";
 import {
   emissionFactors as rawFactors,
   applyFilters,
