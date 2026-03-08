@@ -115,7 +115,7 @@ const Index = () => {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                className="mt-12 flex flex-wrap items-center gap-6 text-[13px] text-foreground/50"
+                className="mt-12 flex flex-wrap items-center gap-6 text-[13px] text-foreground/70"
               >
                 <span className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-primary" /> SOC 2 Compliant
