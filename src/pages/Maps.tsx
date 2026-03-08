@@ -53,7 +53,6 @@ export default function MapsPage() {
   const treeLossMarkers = useMemo(() => dbTreeLoss.map((d, i) => (
     <MapMarker key={d.id || i} longitude={d.longitude} latitude={d.latitude}><TreeLossMarker data={d} /></MapMarker>
   )), [dbTreeLoss]);
-  );
 
   return (
     <div className="min-h-screen bg-[#EEF2FF]">
