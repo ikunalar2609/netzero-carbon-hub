@@ -504,7 +504,7 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
               Let's connect
             </h2>
-            <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
               Whether it's for enterprise deployment, API integration, or exploring FarmlyCarbon
               for your organization — pick a time that works.
             </p>
