@@ -27,6 +27,7 @@ import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
 import { DecarboAgent } from "@/components/farmly/DecarboAgent";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
+import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
 import {
   emissionFactors as rawFactors,
   applyFilters,
