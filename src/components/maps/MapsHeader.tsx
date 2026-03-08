@@ -62,6 +62,7 @@ const MapsHeader = React.memo(({
           {navItems.map((item) => (
             <button
               key={item}
+              onClick={() => onNavClick?.(item)}
               className={`px-3 py-1.5 text-[11px] font-semibold tracking-wide rounded-md transition-all ${
                 item === "MAPS"
                   ? "text-white bg-white/20"
