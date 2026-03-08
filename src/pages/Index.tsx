@@ -616,9 +616,8 @@ const Index = () => {
             <div>
               <h4 className="text-[12px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-4">Platform</h4>
               <div className="space-y-3">
-                <Link to="/farmly" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Farmly CAT</Link>
+                <Link to="/farmly" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Product</Link>
                 <Link to="/maps" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Maps</Link>
-                <Link to="/dashboard" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">Dashboard</Link>
                 <Link to="/farmly/docs" className="block text-[13px] text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
               </div>
             </div>
