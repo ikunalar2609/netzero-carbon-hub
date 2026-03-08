@@ -8,7 +8,6 @@ import farmlyLogo from "@/assets/farmly-carbon-logo.png";
 const navLinks = [
   { label: "Product", to: "/farmly" },
   { label: "Maps", to: "/maps" },
-  { label: "Dashboard", to: "/dashboard" },
   { label: "Docs", to: "/farmly/docs" },
   { label: "Blog", to: "https://idlerwritingeveryday.substack.com", external: true },
 ];
