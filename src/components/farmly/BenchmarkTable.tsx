@@ -10,12 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Heart, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { Heart, ChevronDown, ChevronUp, ExternalLink, Calculator } from "lucide-react";
 import { type EmissionFactor } from "@/data/emissionFactors";
 
 interface BenchmarkTableProps {
   factors: EmissionFactor[];
   onToggleFavorite: (id: string) => void;
+  onUseInCalculator?: (factor: EmissionFactor) => void;
 }
 
 export const BenchmarkTable = ({ factors, onToggleFavorite }: BenchmarkTableProps) => {
