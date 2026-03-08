@@ -630,14 +630,6 @@ const Index = () => {
               Start Free Trial
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate("/farmly")}
-              className="h-13 px-8 text-[15px] font-semibold rounded-xl border-background/20 text-foreground hover:bg-background/10 hover:text-foreground transition-all"
-            >
-              Explore Platform
-            </Button>
           </div>
 
           <div className="mt-14 flex flex-wrap items-center justify-center gap-6 text-[13px] text-background/40">
