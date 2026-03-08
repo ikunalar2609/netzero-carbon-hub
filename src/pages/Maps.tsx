@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
- import { Link } from "react-router-dom";
- import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Flame, TreePine, AlertTriangle, Globe, Satellite, Clock, MapPin, Leaf, TrendingDown, BarChart3, RefreshCw } from "lucide-react";
 import { Map, MapMarker, MapControls, MapGeoJSONLayer, MapHeatmapLayer, MapGridOverlay } from "@/components/ui/map";
 import {
   parseForestExcel,
@@ -181,6 +181,8 @@ const TreeLossMarkerDB = ({ data }: { data: TreeLossFromDB }) => {
 
 /* -------------------- Main Component -------------------- */
 export default function MapsMinimal() {
+  const navigate = useNavigate();
+  const [activeMapTab, setActiveMapTab] = useState<"wildfire" | "forest" | "treeloss">("wildfire");
   const [fireData, setFireData] = useState<FireData[]>([]);
   const [forestData, setForestData] = useState<ForestData[]>([]);
   const [loadingFires, setLoadingFires] = useState(false);
@@ -311,179 +313,230 @@ export default function MapsMinimal() {
 
   /* -------------------- UI -------------------- */
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center border-b border-gray-200 mb-6">
-        <div className="flex items-center gap-4">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Home</span>
-          </Link>
-          <div className="h-6 w-px bg-gray-300" />
-        <div>
-          <h1 className="text-2xl font-semibold">
-            Environmental Maps
-          </h1>
-          <p className="text-sm text-gray-600">
-            Wildfire, Natural Forest Cover, Global Forest Change 2000-2024
-          </p>
-        </div>
-        </div>
+    <div className="min-h-screen bg-[#EEF2FF] text-gray-900">
+      {/* ── Indigo Top Navigation ── */}
+      <header className="bg-[#4338CA] shadow-lg">
+        <div className="max-w-[1400px] mx-auto px-5 h-12 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-1.5 text-indigo-200 hover:text-white transition-colors text-[11px] font-medium"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              HOME
+            </button>
+            <div className="h-5 w-px bg-white/20" />
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-emerald-300" />
+              <span className="text-[14px] font-extrabold text-white tracking-tight">
+                Environmental Maps
+              </span>
+            </div>
+          </div>
 
-        <div className="flex gap-2 text-sm">
-          <select
-            className="border rounded px-2 py-1"
-            value={days}
-            onChange={(e) => setDays(e.target.value)}
-          >
-            <option value="1">24h</option>
-            <option value="2">48h</option>
-            <option value="7">7d</option>
-          </select>
-
-          <select
-            className="border rounded px-2 py-1"
-            value={satelliteSource}
-            onChange={(e) => setSatelliteSource(e.target.value)}
-          >
-            <option value="VIIRS_SNPP_NRT">VIIRS SNPP</option>
-            <option value="VIIRS_NOAA20_NRT">VIIRS NOAA-20</option>
-            <option value="MODIS_NRT">MODIS</option>
-          </select>
-
-          <select
-            className="border rounded px-2 py-1"
-            value={selectedRegion}
-            onChange={(e) => setSelectedRegion(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="asia">Asia</option>
-            <option value="africa">Africa</option>
-            <option value="europe">Europe</option>
-          </select>
+          <div className="flex items-center gap-2">
+            {/* Filters */}
+            <select
+              className="h-7 px-2 text-[10px] font-bold bg-white/10 border border-white/20 rounded-md text-white backdrop-blur-sm"
+              value={days}
+              onChange={(e) => setDays(e.target.value)}
+            >
+              <option value="1" className="text-gray-900">24 hours</option>
+              <option value="2" className="text-gray-900">48 hours</option>
+              <option value="7" className="text-gray-900">7 days</option>
+            </select>
+            <select
+              className="h-7 px-2 text-[10px] font-bold bg-white/10 border border-white/20 rounded-md text-white backdrop-blur-sm"
+              value={satelliteSource}
+              onChange={(e) => setSatelliteSource(e.target.value)}
+            >
+              <option value="VIIRS_SNPP_NRT" className="text-gray-900">VIIRS SNPP</option>
+              <option value="VIIRS_NOAA20_NRT" className="text-gray-900">VIIRS NOAA-20</option>
+              <option value="MODIS_NRT" className="text-gray-900">MODIS</option>
+            </select>
+            <select
+              className="h-7 px-2 text-[10px] font-bold bg-white/10 border border-white/20 rounded-md text-white backdrop-blur-sm"
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value)}
+            >
+              <option value="all" className="text-gray-900">Global</option>
+              <option value="asia" className="text-gray-900">Asia</option>
+              <option value="africa" className="text-gray-900">Africa</option>
+              <option value="europe" className="text-gray-900">Europe</option>
+              <option value="north-america" className="text-gray-900">N. America</option>
+              <option value="south-america" className="text-gray-900">S. America</option>
+              <option value="oceania" className="text-gray-900">Oceania</option>
+            </select>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 space-y-6 pb-12">
-        {/* Stats */}
-        <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <div className="bg-white border rounded p-3">
-            <div className="text-xs text-gray-500">Total Fires</div>
-            <div className="text-lg font-semibold">
-              {fireData.length}
-            </div>
-          </div>
-          <div className="bg-white border rounded p-3">
-            <div className="text-xs text-gray-500">High Intensity</div>
-            <div className="text-lg font-semibold text-red-600">
-              {fireData.filter((f) => f.frp > 50).length}
-            </div>
-          </div>
-          <div className="bg-white border rounded p-3">
-            <div className="text-xs text-gray-500">Forest Records</div>
-            <div className="text-lg font-semibold text-green-600">
-              {forestData.length}
-            </div>
-          </div>
-          <div className="bg-white border rounded p-3">
-            <div className="text-xs text-gray-500">Tree Loss Hotspots</div>
-            <div className="text-lg font-semibold text-orange-600">
-              {treeLossStats.total}
-            </div>
-          </div>
-          <div className="bg-white border rounded p-3">
-            <div className="text-xs text-gray-500">Avg Loss Rate</div>
-            <div className="text-lg font-semibold text-orange-500">
-              {treeLossStats.avgLoss.toFixed(1)}%
-            </div>
-          </div>
-        </section>
+      {/* ── Main Content ── */}
+      <main className="max-w-[1400px] mx-auto px-5 py-5 space-y-4">
+        {/* Summary Metric Strip */}
+        <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
+          {[
+            { label: "TOTAL FIRES", value: String(fireData.length), icon: Flame, accent: "#DC2626", gradient: "from-[#DC2626]/8 to-[#DC2626]/2", iconBg: "bg-[#DC2626]/10" },
+            { label: "HIGH INTENSITY", value: String(fireData.filter((f) => f.frp > 50).length), icon: AlertTriangle, accent: "#F97316", gradient: "from-[#F97316]/8 to-[#F97316]/2", iconBg: "bg-[#F97316]/10" },
+            { label: "FOREST RECORDS", value: String(forestData.length), icon: TreePine, accent: "#10B981", gradient: "from-[#10B981]/8 to-[#10B981]/2", iconBg: "bg-[#10B981]/10" },
+            { label: "LOSS HOTSPOTS", value: String(treeLossStats.total), icon: TrendingDown, accent: "#8B5CF6", gradient: "from-[#8B5CF6]/8 to-[#8B5CF6]/2", iconBg: "bg-[#8B5CF6]/10" },
+            { label: "AVG LOSS RATE", value: `${treeLossStats.avgLoss.toFixed(1)}%`, icon: BarChart3, accent: "#0EA5E9", gradient: "from-[#0EA5E9]/8 to-[#0EA5E9]/2", iconBg: "bg-[#0EA5E9]/10" },
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.label}
+                className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-3 cursor-default`}
+              >
+                <div className="absolute -right-2 -top-2 w-12 h-12 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[8px] font-extrabold tracking-[0.15em] text-gray-400 uppercase">{card.label}</span>
+                    <div className={`w-6 h-6 rounded-md ${card.iconBg} flex items-center justify-center`}>
+                      <Icon className="h-3 w-3" style={{ color: card.accent }} />
+                    </div>
+                  </div>
+                  <span className="text-xl font-extrabold text-gray-900 tracking-tight leading-none">{card.value}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-        {/* Fire Map */}
-        <section className="bg-white border rounded overflow-hidden">
-          <div className="p-3 border-b text-sm flex justify-between">
-            <span>🔥 Active Wildfires</span>
-            <span className="text-gray-500">
-              {loadingFires ? "Loading…" : `${fireData.length} points`}
-            </span>
-          </div>
-          <div className="h-80 relative">
-            <Map
-              center={[0, 20]}
-              zoom={1.8}
-              theme="dark"
-              className="absolute inset-0"
-            >
-              <MapControls showZoom position="top-right" />
-              {fireMarkers}
-            </Map>
-          </div>
-        </section>
+        {/* Main Card with Tabs */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          {/* Tab bar */}
+          <div className="px-4 pt-3 pb-0 flex items-center gap-2 border-b border-gray-100 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+            {[
+              { id: "wildfire" as const, label: "WILDFIRE", icon: Flame, color: "bg-[#DC2626] text-white" },
+              { id: "forest" as const, label: "FOREST COVER", icon: TreePine, color: "bg-[#10B981] text-white" },
+              { id: "treeloss" as const, label: "TREE LOSS", icon: AlertTriangle, color: "bg-[#F97316] text-white" },
+            ].map((tab) => {
+              const isActive = activeMapTab === tab.id;
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveMapTab(tab.id)}
+                  className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold tracking-wide rounded-t-lg transition-all whitespace-nowrap ${
+                    isActive ? `${tab.color} shadow-sm` : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {tab.label}
+                </button>
+              );
+            })}
 
-        {/* Forest Map */}
-        <section className="bg-white border rounded overflow-hidden">
-          <div className="p-3 border-b text-sm flex justify-between">
-            <span>🌲 Natural Forest Cover</span>
-            <span className="text-gray-500">
-              {loadingForest ? "Loading…" : `${forestData.length} records`}
-            </span>
+            <div className="flex-1" />
+            <div className="flex items-center gap-1.5 pb-2">
+              <span className="text-[9px] font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-1">
+                <Satellite className="h-3 w-3" />
+                {loadingFires || loadingForest || loadingMapData ? (
+                  <span className="flex items-center gap-1"><RefreshCw className="h-3 w-3 animate-spin" /> Loading…</span>
+                ) : "Live Data"}
+              </span>
+            </div>
           </div>
-          <div className="h-80 relative">
-            <Map
-              center={region.center}
-              zoom={region.zoom}
-              theme="light"
-              className="absolute inset-0"
-            >
-              <MapControls showZoom position="top-right" />
-              {forestMarkers}
-            </Map>
-          </div>
-          <div className="p-2 bg-gray-50 border-t flex gap-4 text-xs text-gray-600">
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-700"></span> &gt;50M ha</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span> &gt;10M ha</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-300"></span> &lt;10M ha</span>
-          </div>
-        </section>
 
-        {/* Global Forest Change - Simple */}
-        <section className="bg-white border rounded overflow-hidden">
-          <div className="p-3 border-b text-sm flex justify-between items-center">
-            <span>🌳 Global Forest Change 2000-2024</span>
-            <span className="text-gray-500">
-              {loadingMapData ? "Loading…" : `${treeLossStats.total} hotspots`}
-            </span>
-          </div>
-          <div className="h-80 relative">
-            <Map
-              center={[0, 20]}
-              zoom={1.5}
-              theme="dark"
-              className="absolute inset-0"
-            >
-              <MapControls showZoom position="top-right" />
-              {treeLossMarkers}
-            </Map>
-          </div>
-          <div className="p-2 bg-gray-50 border-t flex items-center justify-center gap-4 text-xs text-gray-600">
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-red-600"></span> Critical
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-orange-500"></span> High
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-yellow-500"></span> Moderate
-            </span>
-          </div>
-        </section>
+          {/* Map Content */}
+          <div className="relative">
+            {activeMapTab === "wildfire" && (
+              <div>
+                <div className="h-[480px] relative">
+                  <Map
+                    center={[0, 20]}
+                    zoom={1.8}
+                    theme="dark"
+                    className="absolute inset-0"
+                  >
+                    <MapControls showZoom position="top-right" />
+                    {fireMarkers}
+                  </Map>
+                  {/* Overlay info */}
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+                    <Flame className="h-3 w-3 text-red-400" />
+                    <span className="font-bold">{fireData.length}</span> active fires •
+                    <span className="text-red-400 font-bold">{fireData.filter((f) => f.frp > 50).length}</span> high intensity
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 bg-gray-50/80 border-t border-gray-100 flex items-center gap-5 text-[10px] text-gray-500 font-medium">
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500" /> FRP &gt; 50 MW</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-yellow-400" /> FRP 20-50 MW</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400" /> FRP &lt; 20 MW</span>
+                  <span className="ml-auto text-[9px] text-gray-300">Source: NASA FIRMS</span>
+                </div>
+              </div>
+            )}
 
-        <footer className="text-center text-xs text-black space-y-1">
-          <div>NASA FIRMS • Global Forest Watch • Hansen/UMD/Google/USGS/NASA Global Forest Change</div>
-          <div className="text-black">Data sources for scientific and educational purposes</div>
-        </footer>
+            {activeMapTab === "forest" && (
+              <div>
+                <div className="h-[480px] relative">
+                  <Map
+                    center={region.center}
+                    zoom={region.zoom}
+                    theme="light"
+                    className="absolute inset-0"
+                  >
+                    <MapControls showZoom position="top-right" />
+                    {forestMarkers}
+                  </Map>
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-700 text-[10px] px-3 py-1.5 rounded-lg border border-gray-200 flex items-center gap-2">
+                    <TreePine className="h-3 w-3 text-green-600" />
+                    <span className="font-bold">{forestData.length}</span> countries tracked
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 bg-gray-50/80 border-t border-gray-100 flex items-center gap-5 text-[10px] text-gray-500 font-medium">
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-700" /> &gt; 50M ha</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500" /> &gt; 10M ha</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-300" /> &lt; 10M ha</span>
+                  <span className="ml-auto text-[9px] text-gray-300">Source: Global Forest Watch</span>
+                </div>
+              </div>
+            )}
+
+            {activeMapTab === "treeloss" && (
+              <div>
+                <div className="h-[480px] relative">
+                  <Map
+                    center={[0, 20]}
+                    zoom={1.5}
+                    theme="dark"
+                    className="absolute inset-0"
+                  >
+                    <MapControls showZoom position="top-right" />
+                    {treeLossMarkers}
+                  </Map>
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+                    <AlertTriangle className="h-3 w-3 text-orange-400" />
+                    <span className="font-bold">{treeLossStats.total}</span> hotspots •
+                    <span className="text-red-400 font-bold">{treeLossStats.critical}</span> critical
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 bg-gray-50/80 border-t border-gray-100 flex items-center gap-5 text-[10px] text-gray-500 font-medium">
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-600" /> Critical (&gt;20%)</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-500" /> High (15-20%)</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-yellow-500" /> Moderate (&lt;15%)</span>
+                  <span className="ml-auto text-[9px] text-gray-300">Source: Hansen/UMD/Google/USGS/NASA</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-white/60 border border-gray-200/60 rounded-xl px-5 py-3 flex items-center justify-between">
+          <div>
+            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">FarmlyCarbon Environmental Intelligence</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">
+              NASA FIRMS • Global Forest Watch • Hansen/UMD/Google/USGS/NASA Global Forest Change 2000-2024
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 text-[9px] text-gray-300">
+            <Clock className="h-3 w-3" />
+            Real-time satellite data
+          </div>
+        </div>
       </main>
     </div>
   );
