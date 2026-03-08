@@ -19,7 +19,7 @@ interface BenchmarkTableProps {
   onUseInCalculator?: (factor: EmissionFactor) => void;
 }
 
-export const BenchmarkTable = ({ factors, onToggleFavorite }: BenchmarkTableProps) => {
+export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }: BenchmarkTableProps) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [sortField, setSortField] = useState<string>("name");
