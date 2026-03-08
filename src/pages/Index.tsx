@@ -3,7 +3,6 @@ import { ArrowRight, Code2, Database, Zap, Globe, Shield, BarChart3, Leaf, Check
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
-import farmlyApiVideo from "@/assets/farmly-api-video.webm";
 import heroVisual from "@/assets/hero-visual.png";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
