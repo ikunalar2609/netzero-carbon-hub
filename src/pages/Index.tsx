@@ -152,7 +152,7 @@ const Index = () => {
       {/* ═══════════════ LOGO STRIP ═══════════════ */}
       <section className="py-16 px-6 border-y border-border bg-secondary/30">
         <div className="max-w-6xl mx-auto">
-          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/40 text-center mb-8">
+          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-8">
             Data Powered By Leading Institutions
           </p>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
