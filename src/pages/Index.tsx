@@ -324,7 +324,7 @@ const Index = () => {
                 ))}
               </div>
               <button
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/farmly")}
                 className="group inline-flex items-center gap-2 text-[14px] font-semibold text-foreground hover:text-primary transition-colors"
               >
                 Open Dashboard
