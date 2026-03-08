@@ -1,17 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Calculator,
-  FileSpreadsheet,
-  Clock,
-  Compass,
   Search,
   X,
   ChevronDown,
@@ -21,61 +16,122 @@ import {
   Leaf,
   Settings,
   Bell,
-  BookOpen,
   RotateCcw,
-  Database,
-  Sparkles,
   LayoutGrid,
   Bot,
+  Compass,
   Table2,
+  Sparkles,
 } from "lucide-react";
+import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
+import { EFAgent } from "@/components/farmly/EFAgent";
+import { DecarboAgent } from "@/components/farmly/DecarboAgent";
 import { ClimateDataExplorer } from "@/components/farmly/ClimateDataExplorer";
-import { EmissionCalculator } from "@/components/farmly/EmissionCalculator";
-import { CalculationHistoryTable } from "@/components/farmly/CalculationHistoryTable";
-import { CarbonAccountingTemplate } from "@/components/farmly/CarbonAccountingTemplate";
+import {
+  emissionFactors as rawFactors,
+  applyFilters,
+  getFilterOptions,
+  type FarmlyFilters,
+  type EmissionFactor,
+} from "@/data/emissionFactors";
 
 const tabItems = [
-  { id: "calculator", label: "BENCHMARK", icon: LayoutGrid, color: "bg-[#4F46E5] text-white" },
-  { id: "template", label: "EF AGENT", icon: Bot, color: "bg-[#0EA5E9] text-white" },
-  { id: "history", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
-  { id: "explorer", label: "METHODO AGENT", icon: Compass, color: "bg-[#8B5CF6] text-white" },
+  { id: "benchmark", label: "BENCHMARK", icon: LayoutGrid, color: "bg-[#4F46E5] text-white" },
+  { id: "ef-agent", label: "EF AGENT", icon: Bot, color: "bg-[#0EA5E9] text-white" },
+  { id: "decarbo", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
+  { id: "methodo", label: "METHODO AGENT", icon: Compass, color: "bg-[#8B5CF6] text-white" },
 ];
 
 const Farmly = () => {
-  const [activeTab, setActiveTab] = useState("calculator");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("benchmark");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
 
+  // Filters
+  const [filters, setFilters] = useState<FarmlyFilters>({
+    origin: "shared",
+    favoritesOnly: false,
+    units: [],
+    sources: [],
+    searchQuery: "",
+    scope: [],
+    methodology: [],
+    region: [],
+  });
+
+  // Favorites stored locally
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+
+  const toggleFavorite = (id: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  // Add favorites to factors
+  const factorsWithFavorites: EmissionFactor[] = useMemo(
+    () => rawFactors.map(f => ({ ...f, isFavorite: favorites.has(f.id) })),
+    [favorites]
+  );
+
+  // Apply all filters
+  const filteredFactors = useMemo(
+    () => applyFilters(factorsWithFavorites, filters),
+    [factorsWithFavorites, filters]
+  );
+
+  const filterOptions = useMemo(() => getFilterOptions(), []);
+
+  // Sidebar filter sections
   const [filterSections, setFilterSections] = useState({
     origin: true,
     unit: true,
     source: true,
-  });
-  const [filters, setFilters] = useState({
-    sharedBase: true,
-    privateBase: false,
-    favoritesOnly: false,
-    kg: true,
-    kgC: false,
-    unit: false,
-    m2: false,
-    m3: false,
-    sustainalize: true,
-    cbam: true,
+    scope: false,
+    methodology: false,
+    region: false,
   });
 
   const toggleFilterSection = (section: keyof typeof filterSections) => {
-    setFilterSections((prev) => ({ ...prev, [section]: !prev[section] }));
+    setFilterSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
   const resetFilters = () => {
     setFilters({
-      sharedBase: true, privateBase: false, favoritesOnly: false,
-      kg: true, kgC: false, unit: false, m2: false, m3: false,
-      sustainalize: true, cbam: true,
+      origin: "shared",
+      favoritesOnly: false,
+      units: [],
+      sources: [],
+      searchQuery: "",
+      scope: [],
+      methodology: [],
+      region: [],
     });
   };
+
+  const toggleArrayFilter = (
+    key: "units" | "sources" | "scope" | "methodology" | "region",
+    value: string
+  ) => {
+    setFilters(prev => {
+      const arr = prev[key] as string[];
+      return {
+        ...prev,
+        [key]: arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value],
+      };
+    });
+  };
+
+  const activeFilterCount = [
+    filters.units.length,
+    filters.sources.length,
+    filters.scope.length,
+    filters.methodology.length,
+    filters.region.length,
+    filters.favoritesOnly ? 1 : 0,
+  ].reduce((a, b) => a + b, 0);
 
   return (
     <div className="h-screen flex flex-col bg-[#4F46E5]">
@@ -122,13 +178,13 @@ const Farmly = () => {
           <div className="relative flex-1 mr-2">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="steel"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search emission factors..."
+              value={filters.searchQuery}
+              onChange={(e) => setFilters(f => ({ ...f, searchQuery: e.target.value }))}
               className="pl-10 pr-10 h-11 rounded-lg border-0 bg-white text-[14px] text-gray-900 shadow-lg focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-0 placeholder:text-gray-400"
             />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2">
+            {filters.searchQuery && (
+              <button onClick={() => setFilters(f => ({ ...f, searchQuery: "" }))} className="absolute right-3 top-1/2 -translate-y-1/2">
                 <X className="h-4 w-4 text-gray-400" />
               </button>
             )}
@@ -141,7 +197,7 @@ const Farmly = () => {
 
       {/* ═══ BODY ═══ */}
       <div className="flex flex-1 overflow-hidden bg-[#EEF2FF] rounded-t-2xl">
-        {/* ═══ LEFT SIDEBAR — Light ═══ */}
+        {/* ═══ LEFT SIDEBAR ═══ */}
         <AnimatePresence>
           {sidebarOpen && (
             <motion.aside
@@ -152,7 +208,14 @@ const Farmly = () => {
               className="bg-white border-r border-gray-200 overflow-hidden shrink-0 flex flex-col"
             >
               <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-                <span className="text-[13px] font-semibold text-gray-800">Filters</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] font-semibold text-gray-800">Filters</span>
+                  {activeFilterCount > 0 && (
+                    <span className="text-[9px] font-bold bg-[#4F46E5] text-white px-1.5 py-0.5 rounded-full leading-none">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={resetFilters}
@@ -173,51 +236,101 @@ const Farmly = () => {
                   <FilterSection title="Origin" isOpen={filterSections.origin} onToggle={() => toggleFilterSection("origin")}>
                     <div className="space-y-2">
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="origin" checked={filters.sharedBase} onChange={() => setFilters(f => ({...f, sharedBase: true, privateBase: false}))} className="w-3.5 h-3.5 text-[#4F46E5] accent-[#4F46E5]" />
+                        <input type="radio" name="origin" checked={filters.origin === "shared"} onChange={() => setFilters(f => ({...f, origin: "shared"}))} className="w-3.5 h-3.5 accent-[#4F46E5]" />
                         <span className="text-[12px] text-gray-700">Shared base</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="origin" checked={filters.privateBase} onChange={() => setFilters(f => ({...f, sharedBase: false, privateBase: true}))} className="w-3.5 h-3.5 text-[#4F46E5] accent-[#4F46E5]" />
+                        <input type="radio" name="origin" checked={filters.origin === "private"} onChange={() => setFilters(f => ({...f, origin: "private"}))} className="w-3.5 h-3.5 accent-[#4F46E5]" />
                         <span className="text-[12px] text-gray-700">Private base</span>
                       </label>
                     </div>
                     <div className="mt-3 flex items-center justify-between">
-                      <Label className="text-[12px] text-gray-600">My favorites only <span className="text-gray-400">(0)</span></Label>
-                      <Switch checked={filters.favoritesOnly} onCheckedChange={(v) => setFilters(f => ({...f, favoritesOnly: v}))} className="scale-75" />
+                      <Label className="text-[12px] text-gray-600">
+                        My favorites only <span className="text-gray-400">({favorites.size})</span>
+                      </Label>
+                      <Switch
+                        checked={filters.favoritesOnly}
+                        onCheckedChange={(v) => setFilters(f => ({...f, favoritesOnly: v}))}
+                        className="scale-75"
+                      />
                     </div>
-                    <button className="mt-2 text-[11px] text-[#4F46E5] hover:underline font-medium">
-                      Expand All | Collapse All
-                    </button>
                   </FilterSection>
 
                   {/* Unit */}
-                  <FilterSection title="Unit" isOpen={filterSections.unit} onToggle={() => toggleFilterSection("unit")}>
-                    <div className="mb-2">
-                      <Input placeholder="Search unit..." className="h-7 text-[11px] rounded border-gray-200 bg-gray-50 text-gray-700 placeholder:text-gray-400" />
-                    </div>
-                    <div className="text-[10px] text-[#4F46E5] mb-1.5 font-medium cursor-pointer hover:underline">
-                      Select All | Deselect All
+                  <FilterSection title={`Unit (${filterOptions.units.length})`} isOpen={filterSections.unit} onToggle={() => toggleFilterSection("unit")}>
+                    <div className="text-[10px] text-[#4F46E5] mb-1.5 font-medium cursor-pointer hover:underline"
+                      onClick={() => setFilters(f => ({ ...f, units: f.units.length === filterOptions.units.length ? [] : [...filterOptions.units] }))}>
+                      {filters.units.length === filterOptions.units.length ? "Deselect All" : "Select All"}
                     </div>
                     <div className="space-y-1">
-                      <FilterCheckbox label="kg (29946)" checked={filters.kg} onChange={(v) => setFilters(f => ({...f, kg: !!v}))} />
-                      <FilterCheckbox label="kC (6705)" checked={filters.kgC} onChange={(v) => setFilters(f => ({...f, kgC: !!v}))} />
-                      <FilterCheckbox label="unit (844)" checked={filters.unit} onChange={(v) => setFilters(f => ({...f, unit: !!v}))} />
-                      <FilterCheckbox label="m² (815)" checked={filters.m2} onChange={(v) => setFilters(f => ({...f, m2: !!v}))} />
-                      <FilterCheckbox label="m³ (564)" checked={filters.m3} onChange={(v) => setFilters(f => ({...f, m3: !!v}))} />
+                      {filterOptions.units.map(u => (
+                        <FilterCheckbox
+                          key={u}
+                          label={`${u} (${filterOptions.unitCounts[u]})`}
+                          checked={filters.units.includes(u)}
+                          onChange={() => toggleArrayFilter("units", u)}
+                        />
+                      ))}
                     </div>
                   </FilterSection>
 
                   {/* Source */}
-                  <FilterSection title="Source" isOpen={filterSections.source} onToggle={() => toggleFilterSection("source")}>
-                    <div className="mb-2">
-                      <Input placeholder="Search source..." className="h-7 text-[11px] rounded border-gray-200 bg-gray-50 text-gray-700 placeholder:text-gray-400" />
-                    </div>
-                    <div className="text-[10px] text-[#4F46E5] mb-1.5 font-medium cursor-pointer hover:underline">
-                      Select All | Deselect All
+                  <FilterSection title={`Source (${filterOptions.sources.length})`} isOpen={filterSections.source} onToggle={() => toggleFilterSection("source")}>
+                    <div className="text-[10px] text-[#4F46E5] mb-1.5 font-medium cursor-pointer hover:underline"
+                      onClick={() => setFilters(f => ({ ...f, sources: f.sources.length === filterOptions.sources.length ? [] : [...filterOptions.sources] }))}>
+                      {filters.sources.length === filterOptions.sources.length ? "Deselect All" : "Select All"}
                     </div>
                     <div className="space-y-1">
-                      <FilterCheckbox label="sustainalize (23693)" checked={filters.sustainalize} onChange={(v) => setFilters(f => ({...f, sustainalize: !!v}))} />
-                      <FilterCheckbox label="CBAM (3726)" checked={filters.cbam} onChange={(v) => setFilters(f => ({...f, cbam: !!v}))} />
+                      {filterOptions.sources.map(s => (
+                        <FilterCheckbox
+                          key={s}
+                          label={`${s} (${filterOptions.sourceCounts[s]})`}
+                          checked={filters.sources.includes(s)}
+                          onChange={() => toggleArrayFilter("sources", s)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Scope */}
+                  <FilterSection title="Scope" isOpen={filterSections.scope} onToggle={() => toggleFilterSection("scope")}>
+                    <div className="space-y-1">
+                      {filterOptions.scopes.map(s => (
+                        <FilterCheckbox
+                          key={s}
+                          label={s.replace("scope", "Scope ")}
+                          checked={filters.scope.includes(s)}
+                          onChange={() => toggleArrayFilter("scope", s)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Methodology */}
+                  <FilterSection title="Methodology" isOpen={filterSections.methodology} onToggle={() => toggleFilterSection("methodology")}>
+                    <div className="space-y-1">
+                      {filterOptions.methodologies.map(m => (
+                        <FilterCheckbox
+                          key={m}
+                          label={m}
+                          checked={filters.methodology.includes(m)}
+                          onChange={() => toggleArrayFilter("methodology", m)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+
+                  {/* Region */}
+                  <FilterSection title="Region" isOpen={filterSections.region} onToggle={() => toggleFilterSection("region")}>
+                    <div className="space-y-1">
+                      {filterOptions.regions.map(r => (
+                        <FilterCheckbox
+                          key={r}
+                          label={r}
+                          checked={filters.region.includes(r)}
+                          onChange={() => toggleArrayFilter("region", r)}
+                        />
+                      ))}
                     </div>
                   </FilterSection>
                 </div>
@@ -237,7 +350,6 @@ const Farmly = () => {
             </button>
           )}
 
-          {/* Workspace card */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             {/* Tab bar */}
             <div className="px-4 pt-3 pb-0 flex items-center gap-2 border-b border-gray-100">
@@ -250,9 +362,7 @@ const Farmly = () => {
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold tracking-wide rounded-t-lg transition-all ${
-                        isActive
-                          ? `${tab.color} shadow-sm`
-                          : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                        isActive ? `${tab.color} shadow-sm` : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -262,33 +372,39 @@ const Farmly = () => {
                 })}
               </div>
 
-              {/* View toggle */}
-              <div className="flex items-center gap-1 mb-1 border border-gray-200 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setViewMode("table")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold transition-all ${
-                    viewMode === "table" ? "bg-[#4F46E5] text-white" : "text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  <Table2 className="h-3 w-3" />
-                  TABLE VIEW
-                </button>
-                <button
-                  onClick={() => setViewMode("detail")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold transition-all ${
-                    viewMode === "detail" ? "bg-[#4F46E5] text-white" : "text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  <LayoutGrid className="h-3 w-3" />
-                  DETAILED
-                </button>
-              </div>
+              {activeTab === "benchmark" && (
+                <div className="flex items-center gap-1 mb-1 border border-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => setViewMode("table")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold transition-all ${
+                      viewMode === "table" ? "bg-[#4F46E5] text-white" : "text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    <Table2 className="h-3 w-3" />
+                    TABLE VIEW
+                  </button>
+                  <button
+                    onClick={() => setViewMode("detail")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold transition-all ${
+                      viewMode === "detail" ? "bg-[#4F46E5] text-white" : "text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    <LayoutGrid className="h-3 w-3" />
+                    DETAILED
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Results count */}
             <div className="px-4 py-2 border-b border-gray-100 bg-gray-50/50">
               <span className="text-[12px] font-semibold text-gray-600">
-                29,932 results found
+                {filteredFactors.length.toLocaleString()} results found
+                {activeFilterCount > 0 && (
+                  <span className="text-gray-400 font-normal ml-1">
+                    ({activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""} active)
+                  </span>
+                )}
               </span>
             </div>
 
@@ -302,10 +418,12 @@ const Farmly = () => {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.12 }}
                 >
-                  {activeTab === "calculator" && <EmissionCalculator />}
-                  {activeTab === "template" && <CarbonAccountingTemplate />}
-                  {activeTab === "history" && <CalculationHistoryTable />}
-                  {activeTab === "explorer" && <ClimateDataExplorer />}
+                  {activeTab === "benchmark" && (
+                    <BenchmarkTable factors={filteredFactors} onToggleFavorite={toggleFavorite} />
+                  )}
+                  {activeTab === "ef-agent" && <EFAgent factors={filteredFactors} />}
+                  {activeTab === "decarbo" && <DecarboAgent factors={filteredFactors} />}
+                  {activeTab === "methodo" && <ClimateDataExplorer />}
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -361,7 +479,7 @@ const FilterCheckbox = ({
 }: {
   label: string;
   checked: boolean;
-  onChange: (checked: boolean | "indeterminate") => void;
+  onChange: () => void;
 }) => (
   <label className="flex items-center gap-2 py-0.5 cursor-pointer group">
     <Checkbox
