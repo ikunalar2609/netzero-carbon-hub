@@ -192,7 +192,7 @@ const Index = () => {
               <br />
               built for precision
             </h2>
-            <p className="text-lg text-foreground/60 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
               Six calculation methodologies, 10,000+ emission factors, AI-powered agents, and 
               interactive sustainability insights — all in one workspace.
             </p>
