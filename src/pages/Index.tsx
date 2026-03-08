@@ -296,7 +296,7 @@ const Index = () => {
                 For sustainability
                 <br />teams
               </h2>
-              <p className="text-foreground/60 mb-8 leading-relaxed">
+              <p className="text-foreground/80 mb-8 leading-relaxed">
                 Streamline corporate carbon reporting. Automate Scope 1–3 data collection and generate compliance-ready reports in minutes.
               </p>
               <div className="space-y-3 mb-10">
