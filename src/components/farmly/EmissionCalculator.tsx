@@ -43,7 +43,59 @@ const DISTANCE_EF = {
   'electric': 0.053
 };
 
-// Electricity Grid Emission Factors (Scope 2 - Location-Based) - kgCO₂e/kWh
+// Industry emission factors (CBAM/ecoinvent/EPA)
+const INDUSTRY_EF: Record<string, { ef: number; unit: string; source: string }> = {
+  'steel-hot-rolled': { ef: 2.0, unit: 'kg product', source: 'CBAM' },
+  'steel-wire': { ef: 2.6, unit: 'kg product', source: 'CBAM' },
+  'aluminium-primary': { ef: 8.6, unit: 'kg product', source: 'ecoinvent' },
+  'copper-cathode': { ef: 3.5, unit: 'kg product', source: 'sustainalize' },
+  'cement-cem1': { ef: 0.87, unit: 'kg product', source: 'CBAM' },
+  'concrete-c30': { ef: 0.132, unit: 'kg product', source: 'sustainalize' },
+  'hdpe-granules': { ef: 1.89, unit: 'kg product', source: 'sustainalize' },
+  'polypropylene': { ef: 1.63, unit: 'kg product', source: 'sustainalize' },
+  'glass-bottles': { ef: 0.85, unit: 'kg product', source: 'sustainalize' },
+  'paper-uncoated': { ef: 1.09, unit: 'kg product', source: 'sustainalize' },
+  'li-battery-nmc': { ef: 73.0, unit: 'kWh capacity', source: 'ecoinvent' },
+  'cotton-textile': { ef: 5.2, unit: 'kg fabric', source: 'ecoinvent' },
+  'refrigerant-r410a': { ef: 2088.0, unit: 'kg leaked', source: 'EPA' },
+};
+
+// Agriculture emission factors
+const AGRICULTURE_EF: Record<string, { ef: number; unit: string; source: string }> = {
+  'nitrogen-fertilizer': { ef: 6.8, unit: 'kg N applied', source: 'IPCC AR6' },
+  'rice-flooded': { ef: 1.3, unit: 'm² cultivated', source: 'IPCC AR6' },
+  'beef-enteric': { ef: 27.0, unit: 'head/year', source: 'ecoinvent' },
+  'soybean': { ef: 0.35, unit: 'kg harvested', source: 'ecoinvent' },
+  'dairy-cow': { ef: 14.5, unit: 'head/year', source: 'IPCC AR6' },
+  'poultry': { ef: 0.02, unit: 'head/year', source: 'IPCC AR6' },
+  'wheat': { ef: 0.28, unit: 'kg harvested', source: 'ecoinvent' },
+  'corn-maize': { ef: 0.32, unit: 'kg harvested', source: 'ecoinvent' },
+};
+
+// Digital/Cloud emission factors
+const DIGITAL_EF: Record<string, { ef: number; unit: string; source: string }> = {
+  'cloud-ec2': { ef: 0.056, unit: 'instance-hour', source: 'sustainalize' },
+  'data-centre': { ef: 0.42, unit: 'kWh (PUE 1.2)', source: 'sustainalize' },
+  'email-send': { ef: 0.004, unit: 'email', source: 'ecoinvent' },
+  'video-stream-hd': { ef: 0.036, unit: 'hour streamed', source: 'IEA' },
+  'web-page-view': { ef: 0.0002, unit: 'page view', source: 'ecoinvent' },
+  'blockchain-tx': { ef: 0.4, unit: 'transaction', source: 'ecoinvent' },
+};
+
+interface IndustryData {
+  product: string;
+  quantity: number;
+}
+
+interface AgricultureData {
+  activity: string;
+  quantity: number;
+}
+
+interface DigitalData {
+  activity: string;
+  quantity: number;
+}
 // Source: DEFRA 2024, IEA, EPA
 const GRID_EF = {
   'grid-mixed': 0.25,      // Average global grid mix
@@ -207,6 +259,9 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
     fuelUnit: 'kWh'
   });
   const [wasteData, setWasteData] = useState({ amount: 0, type: "mixed", disposal: "landfill" });
+  const [industryData, setIndustryData] = useState<IndustryData>({ product: 'steel-hot-rolled', quantity: 0 });
+  const [agricultureData, setAgricultureData] = useState<AgricultureData>({ activity: 'nitrogen-fertilizer', quantity: 0 });
+  const [digitalData, setDigitalData] = useState<DigitalData>({ activity: 'cloud-ec2', quantity: 0 });
   const [flightData, setFlightData] = useState<FlightData>({
     departureIata: '',
     arrivalIata: '',
@@ -229,8 +284,11 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
   const [seaLoading, setSeaLoading] = useState(false);
   const [flightEmissions, setFlightEmissions] = useState(0);
   const [seaEmissions, setSeaEmissions] = useState(0);
+  const [industryEmissions, setIndustryEmissions] = useState(0);
+  const [agricultureEmissions, setAgricultureEmissions] = useState(0);
+  const [digitalEmissions, setDigitalEmissions] = useState(0);
   const [totalEmissions, setTotalEmissions] = useState(0);
-  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0, sea: 0 });
+  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0, sea: 0, industry: 0, agriculture: 0, digital: 0 });
   const [detailedTransport, setDetailedTransport] = useState({ total: 0, co2: 0, ch4: 0, n2o: 0, wtt: 0 });
   const [detailedEnergy, setDetailedEnergy] = useState({ total: 0, scope2: 0, scope1: 0, method: 'location' as 'location' | 'market' });
   const [trendData, setTrendData] = useState<any[]>([]);
@@ -579,50 +637,67 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
   // Real-time calculation effect
   useEffect(() => {
     const calculateEmissions = () => {
-      // Transport calculations with IPCC methodology
       const transportResult = calculateVehicleEmissions(transportData);
       const transportEmissions = transportResult.total;
       setDetailedTransport(transportResult);
       
-      // Energy calculations with GHG Protocol Scope 1 & 2
       const energyResult = calculateEnergyEmissions(energyData);
       const energyEmissions = energyResult.total;
       setDetailedEnergy(energyResult);
       
-      // Waste calculations
-      const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : 2.5;
+      const wasteFactor = wasteData.disposal === "recycling" ? 0.1 : wasteData.disposal === "composting" ? 0.05 : wasteData.disposal === "incineration" ? 0.33 : 2.5;
       const wasteEmissions = wasteData.amount * wasteFactor;
       
-      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions + seaEmissions;
+      // Industry
+      const indEf = INDUSTRY_EF[industryData.product];
+      const indEmissions = indEf ? industryData.quantity * indEf.ef : 0;
+      setIndustryEmissions(indEmissions);
+      
+      // Agriculture
+      const agEf = AGRICULTURE_EF[agricultureData.activity];
+      const agEmissions = agEf ? agricultureData.quantity * agEf.ef : 0;
+      setAgricultureEmissions(agEmissions);
+      
+      // Digital
+      const digEf = DIGITAL_EF[digitalData.activity];
+      const digEmissions = digEf ? digitalData.quantity * digEf.ef : 0;
+      setDigitalEmissions(digEmissions);
+      
+      const total = transportEmissions + energyEmissions + wasteEmissions + flightEmissions + seaEmissions + indEmissions + agEmissions + digEmissions;
       setTotalEmissions(total);
       setEmissionsBreakdown({
         transport: transportEmissions,
         energy: energyEmissions,
         waste: wasteEmissions,
         flight: flightEmissions,
-        sea: seaEmissions
+        sea: seaEmissions,
+        industry: indEmissions,
+        agriculture: agEmissions,
+        digital: digEmissions,
       });
       
-      // Update trend data
       if (total > 0) {
         const now = new Date();
         const timeLabel = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
         setTrendData(prev => {
           const updated = [...prev, { time: timeLabel, emissions: total }];
-          return updated.slice(-7); // Keep last 7 data points
+          return updated.slice(-7);
         });
       }
     };
     
     calculateEmissions();
-  }, [transportData, energyData, wasteData, flightEmissions, seaEmissions]);
+  }, [transportData, energyData, wasteData, flightEmissions, seaEmissions, industryData, agricultureData, digitalData]);
 
   const pieData = [
     { name: "Transport", value: emissionsBreakdown.transport, color: "#2563EB" },
     { name: "Energy", value: emissionsBreakdown.energy, color: "#10B981" },
     { name: "Waste", value: emissionsBreakdown.waste, color: "#F97316" },
     { name: "Flight", value: emissionsBreakdown.flight, color: "#8B5CF6" },
-    { name: "Sea Freight", value: emissionsBreakdown.sea, color: "#0EA5E9" }
+    { name: "Sea Freight", value: emissionsBreakdown.sea, color: "#0EA5E9" },
+    { name: "Industry", value: emissionsBreakdown.industry, color: "#DC2626" },
+    { name: "Agriculture", value: emissionsBreakdown.agriculture, color: "#84CC16" },
+    { name: "Digital", value: emissionsBreakdown.digital, color: "#06B6D4" }
   ].filter(d => d.value > 0);
 
   const getInsights = () => {
@@ -659,6 +734,9 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
       sea: ["Transportation"],
       energy: ["Energy"],
       waste: ["Waste"],
+      industry: ["Industry"],
+      agriculture: ["Agriculture"],
+      digital: ["Digital"],
     };
     const categories = tabCategoryMap[activeTab] || [];
     return factors.filter(f => categories.includes(f.category)).slice(0, 4);
@@ -733,6 +811,9 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                   { id: "sea", label: "SEA", icon: Ship, accent: "#0EA5E9" },
                   { id: "energy", label: "ENERGY", icon: Zap, accent: "#10B981" },
                   { id: "waste", label: "WASTE", icon: Recycle, accent: "#F97316" },
+                  { id: "industry", label: "INDUSTRY", icon: Factory, accent: "#DC2626" },
+                  { id: "agriculture", label: "AGRI", icon: Leaf, accent: "#84CC16" },
+                  { id: "digital", label: "DIGITAL", icon: Lightbulb, accent: "#06B6D4" },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
@@ -1165,6 +1246,135 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Disposal" value={wasteData.disposal} />
                             <ResultTotal label="Total Waste" value={`${emissionsBreakdown.waste.toFixed(2)} kg CO₂e`} />
                             <SaveButton onClick={saveWasteCalculation} accent="#F97316" />
+                          </ResultCard>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ─── INDUSTRY FORM ─── */}
+                    {activeTab === "industry" && (
+                      <div className="space-y-3">
+                        <div className="p-3 rounded-md bg-[#DC2626]/5 border border-[#DC2626]/15">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Factory className="h-4 w-4 text-[#DC2626]" />
+                            <span className="text-[11px] font-bold text-gray-800">Industry & Manufacturing</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500">CBAM, ecoinvent & EPA emission factors for industrial products and processes.</p>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Product / Process</label>
+                          <Select value={industryData.product} onValueChange={(v) => setIndustryData({ ...industryData, product: v })}>
+                            <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(INDUSTRY_EF).map(([key, val]) => (
+                                <SelectItem key={key} value={key}>
+                                  {key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} ({val.ef} kgCO₂e/{val.unit})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                            Quantity ({INDUSTRY_EF[industryData.product]?.unit || 'units'})
+                            <Tooltip><TooltipTrigger><Info className="h-3 w-3 text-gray-400" /></TooltipTrigger><TooltipContent>Amount of product manufactured or process quantity</TooltipContent></Tooltip>
+                          </label>
+                          <Input type="number" value={industryData.quantity || ''} onChange={(e) => setIndustryData({ ...industryData, quantity: Number(e.target.value) })} placeholder="e.g., 1000" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                        </div>
+                        {industryEmissions > 0 && (
+                          <ResultCard accent="#DC2626">
+                            <ResultRow label="Product" value={industryData.product.replace(/-/g, ' ')} />
+                            <ResultRow label="EF" value={`${INDUSTRY_EF[industryData.product]?.ef} kgCO₂e/${INDUSTRY_EF[industryData.product]?.unit}`} />
+                            <ResultRow label="Source" value={INDUSTRY_EF[industryData.product]?.source || 'N/A'} />
+                            <ResultRow label="Quantity" value={`${industryData.quantity} ${INDUSTRY_EF[industryData.product]?.unit}`} />
+                            <ResultTotal label="Total Industry" value={`${industryEmissions.toFixed(2)} kg CO₂e`} />
+                            <SaveButton onClick={async () => { await saveCalculation('vehicle', industryData, { total: industryEmissions }, industryEmissions); }} accent="#DC2626" />
+                          </ResultCard>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ─── AGRICULTURE FORM ─── */}
+                    {activeTab === "agriculture" && (
+                      <div className="space-y-3">
+                        <div className="p-3 rounded-md bg-[#84CC16]/10 border border-[#84CC16]/20">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Leaf className="h-4 w-4 text-[#84CC16]" />
+                            <span className="text-[11px] font-bold text-gray-800">Agriculture & Land Use</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500">IPCC AR6 & ecoinvent factors for crops, livestock, and fertilizers.</p>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Activity</label>
+                          <Select value={agricultureData.activity} onValueChange={(v) => setAgricultureData({ ...agricultureData, activity: v })}>
+                            <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(AGRICULTURE_EF).map(([key, val]) => (
+                                <SelectItem key={key} value={key}>
+                                  {key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} ({val.ef} kgCO₂e/{val.unit})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                            Quantity ({AGRICULTURE_EF[agricultureData.activity]?.unit || 'units'})
+                            <Tooltip><TooltipTrigger><Info className="h-3 w-3 text-gray-400" /></TooltipTrigger><TooltipContent>Amount of activity (e.g., kg fertilizer applied, number of heads)</TooltipContent></Tooltip>
+                          </label>
+                          <Input type="number" value={agricultureData.quantity || ''} onChange={(e) => setAgricultureData({ ...agricultureData, quantity: Number(e.target.value) })} placeholder="e.g., 500" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                        </div>
+                        {agricultureEmissions > 0 && (
+                          <ResultCard accent="#84CC16">
+                            <ResultRow label="Activity" value={agricultureData.activity.replace(/-/g, ' ')} />
+                            <ResultRow label="EF" value={`${AGRICULTURE_EF[agricultureData.activity]?.ef} kgCO₂e/${AGRICULTURE_EF[agricultureData.activity]?.unit}`} />
+                            <ResultRow label="Source" value={AGRICULTURE_EF[agricultureData.activity]?.source || 'N/A'} />
+                            <ResultRow label="Quantity" value={`${agricultureData.quantity} ${AGRICULTURE_EF[agricultureData.activity]?.unit}`} />
+                            <ResultTotal label="Total Agriculture" value={`${agricultureEmissions.toFixed(2)} kg CO₂e`} />
+                            <SaveButton onClick={async () => { await saveCalculation('vehicle', agricultureData, { total: agricultureEmissions }, agricultureEmissions); }} accent="#84CC16" />
+                          </ResultCard>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ─── DIGITAL FORM ─── */}
+                    {activeTab === "digital" && (
+                      <div className="space-y-3">
+                        <div className="p-3 rounded-md bg-[#06B6D4]/5 border border-[#06B6D4]/15">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Lightbulb className="h-4 w-4 text-[#06B6D4]" />
+                            <span className="text-[11px] font-bold text-gray-800">Digital & Cloud Services</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500">Emission factors for cloud computing, streaming, data centres, and digital activities.</p>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Activity</label>
+                          <Select value={digitalData.activity} onValueChange={(v) => setDigitalData({ ...digitalData, activity: v })}>
+                            <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(DIGITAL_EF).map(([key, val]) => (
+                                <SelectItem key={key} value={key}>
+                                  {key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} ({val.ef} kgCO₂e/{val.unit})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                            Quantity ({DIGITAL_EF[digitalData.activity]?.unit || 'units'})
+                            <Tooltip><TooltipTrigger><Info className="h-3 w-3 text-gray-400" /></TooltipTrigger><TooltipContent>Number of units consumed (e.g., instance-hours, emails sent)</TooltipContent></Tooltip>
+                          </label>
+                          <Input type="number" value={digitalData.quantity || ''} onChange={(e) => setDigitalData({ ...digitalData, quantity: Number(e.target.value) })} placeholder="e.g., 10000" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                        </div>
+                        {digitalEmissions > 0 && (
+                          <ResultCard accent="#06B6D4">
+                            <ResultRow label="Activity" value={digitalData.activity.replace(/-/g, ' ')} />
+                            <ResultRow label="EF" value={`${DIGITAL_EF[digitalData.activity]?.ef} kgCO₂e/${DIGITAL_EF[digitalData.activity]?.unit}`} />
+                            <ResultRow label="Source" value={DIGITAL_EF[digitalData.activity]?.source || 'N/A'} />
+                            <ResultRow label="Quantity" value={`${digitalData.quantity} ${DIGITAL_EF[digitalData.activity]?.unit}`} />
+                            <ResultTotal label="Total Digital" value={`${digitalEmissions.toFixed(2)} kg CO₂e`} />
+                            <SaveButton onClick={async () => { await saveCalculation('vehicle', digitalData, { total: digitalEmissions }, digitalEmissions); }} accent="#06B6D4" />
                           </ResultCard>
                         )}
                       </div>
