@@ -141,7 +141,9 @@ export default function MapsPage() {
         </div>
 
         {/* Climate Temperature Dashboard */}
-        <ClimateDashboard />
+        <div id="section-charts">
+          <ClimateDashboard />
+        </div>
 
         {/* Footer */}
         <div className="bg-white/60 border border-gray-200/60 rounded-xl px-5 py-3 flex items-center justify-between">
