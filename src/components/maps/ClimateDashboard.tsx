@@ -144,36 +144,38 @@ export default function ClimateDashboard() {
     });
   }, [monthlyData]);
 
-  // Daily anomalies by year (using monthly data grouped by month-of-year for recent years)
+  // Daily anomalies by year — all historical years as gray + recent highlighted
   const dailyByYear = useMemo(() => {
-    const recentYears = [2023, 2024, 2025, 2026];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const result: any[] = months.map((m, i) => ({ month: m, monthNum: i + 1 }));
-
-    for (const yr of recentYears) {
+    const allYears = new Set<number>();
+    for (const d of monthlyData) allYears.add(parseInt(d.date.substring(0, 4)));
+    const sortedYears = [...allYears].sort();
+    for (const yr of sortedYears) {
       const yearData = monthlyData.filter(d => d.date.startsWith(String(yr)));
       result.forEach((row) => {
         const point = yearData.find(d => parseInt(d.date.substring(5, 7)) === row.monthNum);
         row[`y${yr}`] = point?.anomaly ?? null;
       });
     }
-    return result;
+    return { data: result, allYears: sortedYears };
   }, [monthlyData]);
 
-  // Daily Global Mean Temperature by year (absolute temps)
+  // Daily Global Mean Temperature by year — all historical as gray + recent highlighted
   const dailyTempByYear = useMemo(() => {
-    const recentYears = [2023, 2024, 2025, 2026];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const result: any[] = months.map((m, i) => ({ month: m, monthNum: i + 1 }));
-
-    for (const yr of recentYears) {
+    const allYears = new Set<number>();
+    for (const d of monthlyData) allYears.add(parseInt(d.date.substring(0, 4)));
+    const sortedYears = [...allYears].sort();
+    for (const yr of sortedYears) {
       const yearData = monthlyData.filter(d => d.date.startsWith(String(yr)));
       result.forEach((row) => {
         const point = yearData.find(d => parseInt(d.date.substring(5, 7)) === row.monthNum);
         row[`t${yr}`] = point?.absolute ?? null;
       });
     }
-    return result;
+    return { data: result, allYears: sortedYears };
   }, [monthlyData]);
 
   // Long-term absolute temperature chart with rolling average
