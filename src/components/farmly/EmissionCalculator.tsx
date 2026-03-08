@@ -760,7 +760,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                 key={card.label}
                 whileHover={{ y: -2, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-4 cursor-default`}
+                className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-3 cursor-default`}
               >
                 {/* Subtle decorative circle */}
                 <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
