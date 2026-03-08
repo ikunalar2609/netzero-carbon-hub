@@ -1373,7 +1373,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Source" value={DIGITAL_EF[digitalData.activity]?.source || 'N/A'} />
                             <ResultRow label="Quantity" value={`${digitalData.quantity} ${DIGITAL_EF[digitalData.activity]?.unit}`} />
                             <ResultTotal label="Total Digital" value={`${digitalEmissions.toFixed(2)} kg CO₂e`} />
-                            <SaveButton onClick={async () => { await saveCalculation('vehicle', digitalData, { total: digitalEmissions }, digitalEmissions); }} accent="#06B6D4" />
+                            <SaveButton onClick={async () => { await saveCalculation('digital', { activity: digitalData.activity, quantity: digitalData.quantity, ef: DIGITAL_EF[digitalData.activity]?.ef, source: DIGITAL_EF[digitalData.activity]?.source }, { total: digitalEmissions }, digitalEmissions); }} accent="#06B6D4" />
                           </ResultCard>
                         )}
                       </div>
