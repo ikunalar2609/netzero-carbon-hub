@@ -1330,7 +1330,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                             <ResultRow label="Source" value={AGRICULTURE_EF[agricultureData.activity]?.source || 'N/A'} />
                             <ResultRow label="Quantity" value={`${agricultureData.quantity} ${AGRICULTURE_EF[agricultureData.activity]?.unit}`} />
                             <ResultTotal label="Total Agriculture" value={`${agricultureEmissions.toFixed(2)} kg CO₂e`} />
-                            <SaveButton onClick={async () => { await saveCalculation('vehicle', agricultureData, { total: agricultureEmissions }, agricultureEmissions); }} accent="#84CC16" />
+                            <SaveButton onClick={async () => { await saveCalculation('agriculture', { activity: agricultureData.activity, quantity: agricultureData.quantity, ef: AGRICULTURE_EF[agricultureData.activity]?.ef, source: AGRICULTURE_EF[agricultureData.activity]?.source }, { total: agricultureEmissions }, agricultureEmissions); }} accent="#84CC16" />
                           </ResultCard>
                         )}
                       </div>
