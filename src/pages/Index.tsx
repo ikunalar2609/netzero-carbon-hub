@@ -450,7 +450,7 @@ const Index = () => {
                 <br />
                 <span className="text-foreground/60">credibility</span>
               </h2>
-              <p className="text-lg text-foreground/60 leading-relaxed">
+              <p className="text-lg text-foreground/80 leading-relaxed">
                 Base your corporate climate strategy on credible science, not guesswork.
                 Align with the world's most robust carbon accounting standards and reporting frameworks.
               </p>
