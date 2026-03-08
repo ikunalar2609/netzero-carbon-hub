@@ -591,7 +591,7 @@ const Index = () => {
                 <img src={farmlyLogo} alt="FarmlyCarbon" className="h-8 w-auto" />
                 <span className="text-[16px] font-bold text-foreground">FarmlyCarbon</span>
               </Link>
-              <p className="text-[13px] text-foreground/50 leading-relaxed max-w-xs">
+              <p className="text-[13px] text-foreground/70 leading-relaxed max-w-xs">
                 Empowering enterprises with comprehensive carbon management tools for a net-zero future.
               </p>
             </div>
