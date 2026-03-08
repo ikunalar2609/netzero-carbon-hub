@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Flame, AlertTriangle, TrendingDown, BarChart3, Satellite } from "lucide-react";
 import { Map, MapMarker, MapControls } from "@/components/ui/map";
 import { useMapData } from "@/hooks/useMapData";
