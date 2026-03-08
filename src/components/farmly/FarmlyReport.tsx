@@ -307,6 +307,8 @@ export const FarmlyReport = ({ factors }: FarmlyReportProps) => {
           <div className="h-[260px] flex items-center justify-center text-[11px] text-gray-400">Save calculations to see monthly trends</div>
         )}
       </div>
+      {/* Charts Row 2: Source + Region */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white border border-gray-100 rounded-xl p-5">
           <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-4">SOURCE DISTRIBUTION</h3>
           <ResponsiveContainer width="100%" height={220}>
