@@ -100,6 +100,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.8" },
         },
+        "marquee": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -108,6 +112,7 @@ export default {
         "fade-out": "fade-out 0.3s ease-out",
         "slide-up": "slide-up 0.4s ease-out",
         "pulse-gentle": "pulse-gentle 2s ease-in-out infinite",
+        "marquee": "marquee 30s linear infinite",
       },
       boxShadow: {
         'glass': '0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.05)',
