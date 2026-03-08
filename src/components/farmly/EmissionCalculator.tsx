@@ -259,6 +259,9 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
     fuelUnit: 'kWh'
   });
   const [wasteData, setWasteData] = useState({ amount: 0, type: "mixed", disposal: "landfill" });
+  const [industryData, setIndustryData] = useState<IndustryData>({ product: 'steel-hot-rolled', quantity: 0 });
+  const [agricultureData, setAgricultureData] = useState<AgricultureData>({ activity: 'nitrogen-fertilizer', quantity: 0 });
+  const [digitalData, setDigitalData] = useState<DigitalData>({ activity: 'cloud-ec2', quantity: 0 });
   const [flightData, setFlightData] = useState<FlightData>({
     departureIata: '',
     arrivalIata: '',
@@ -281,8 +284,11 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
   const [seaLoading, setSeaLoading] = useState(false);
   const [flightEmissions, setFlightEmissions] = useState(0);
   const [seaEmissions, setSeaEmissions] = useState(0);
+  const [industryEmissions, setIndustryEmissions] = useState(0);
+  const [agricultureEmissions, setAgricultureEmissions] = useState(0);
+  const [digitalEmissions, setDigitalEmissions] = useState(0);
   const [totalEmissions, setTotalEmissions] = useState(0);
-  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0, sea: 0 });
+  const [emissionsBreakdown, setEmissionsBreakdown] = useState({ transport: 0, energy: 0, waste: 0, flight: 0, sea: 0, industry: 0, agriculture: 0, digital: 0 });
   const [detailedTransport, setDetailedTransport] = useState({ total: 0, co2: 0, ch4: 0, n2o: 0, wtt: 0 });
   const [detailedEnergy, setDetailedEnergy] = useState({ total: 0, scope2: 0, scope1: 0, method: 'location' as 'location' | 'market' });
   const [trendData, setTrendData] = useState<any[]>([]);
