@@ -187,6 +187,9 @@ const Farmly = () => {
       case "COMMUNITY":
         window.open("https://farmly-carbon.lovable.app", "_blank");
         break;
+      case "DOCS":
+        navigate("/farmly/docs");
+        break;
     }
   };
 
