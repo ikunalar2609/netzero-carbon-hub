@@ -71,16 +71,6 @@ const HomeHeader = () => {
             >
               Log in
             </Link>
-            <Button
-              asChild
-              size="sm"
-              className="rounded-lg px-4 h-9 text-[13px] font-semibold bg-foreground hover:bg-foreground/90 text-background shadow-sm"
-            >
-              <Link to="/signup">
-                Get Started
-                <ChevronRight className="h-3.5 w-3.5 ml-1" />
-              </Link>
-            </Button>
           </div>
 
           <button
@@ -126,20 +116,13 @@ const HomeHeader = () => {
                   </Link>
                 )
               )}
-              <div className="border-t border-border mt-2 pt-3 flex gap-2">
+              <div className="border-t border-border mt-2 pt-3">
                 <Link
                   to="/login"
-                  className="flex-1 text-center px-4 py-2.5 text-[13px] font-medium text-foreground border border-border rounded-lg"
+                  className="block text-center px-4 py-2.5 text-[13px] font-medium text-foreground border border-border rounded-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Log in
-                </Link>
-                <Link
-                  to="/signup"
-                  className="flex-1 text-center px-4 py-2.5 text-[13px] font-semibold text-background bg-foreground rounded-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Get Started
                 </Link>
               </div>
             </nav>

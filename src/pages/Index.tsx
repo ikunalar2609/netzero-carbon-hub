@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Code2, Database, Zap, Globe, Shield, BarChart3, Leaf, Play, CheckCircle2, Plane, Ship, Truck, Calculator, FileSpreadsheet, Bot, MapPin, Flame } from "lucide-react";
+import { ArrowRight, Code2, Database, Zap, Globe, Shield, BarChart3, Leaf, CheckCircle2, Plane, Ship, Truck, Calculator, FileSpreadsheet, Bot, MapPin, Flame } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import HomeHeader from "@/components/home/HomeHeader";
-import farmlyApiVideo from "@/assets/farmly-api-video.webm";
 import heroVisual from "@/assets/hero-visual.png";
 import nasaLogo from "@/assets/logos/nasa-logo.svg";
 import ipccLogo from "@/assets/logos/ipcc-logo.png";
@@ -92,7 +91,7 @@ const Index = () => {
               >
                 <Button
                   size="lg"
-                  onClick={() => navigate("/signup")}
+                  onClick={() => navigate("/farmly")}
                   className="h-13 px-8 text-[15px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xl shadow-foreground/10 transition-all hover:shadow-2xl hover:-translate-y-0.5 group"
                 >
                   Start Free Trial
@@ -101,11 +100,10 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  onClick={() => navigate("/farmly")}
+                  onClick={() => navigate("/farmly/docs")}
                   className="h-13 px-8 text-[15px] font-semibold rounded-xl border-border text-foreground hover:bg-secondary transition-all"
                 >
-                  <Play className="mr-2 h-4 w-4" />
-                  Live Demo
+                  View Documentation
                 </Button>
               </motion.div>
 
@@ -505,79 +503,123 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ═══════════════ API DEMO ═══════════════ */}
+      {/* ═══════════════ CALCULATION METHODOLOGIES ═══════════════ */}
       <section className="py-28 px-6 bg-secondary/30">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
-                Developer Tools
-              </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
-                Powerful API.
-                <br />
-                <span className="text-foreground/60">Simple integration.</span>
-              </h2>
-              <p className="text-lg text-foreground/80 leading-relaxed mb-10">
-                Integrate accurate carbon calculations directly into your supply chain, ERP, or sustainability software.
-                Get started in minutes with comprehensive documentation.
-              </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-3 block">
+              Calculation Engine
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
+              Six methodologies.
+              <br />
+              <span className="text-foreground/60">One platform.</span>
+            </h2>
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
+              Each calculation mode is built on internationally recognized standards — GHG Protocol, ICAO, IMO, IPCC, and DEFRA — ensuring audit-grade accuracy.
+            </p>
+          </motion.div>
 
-              <div className="flex items-center gap-8 mb-10">
-                {[
-                  { icon: Zap, label: "< 50ms", sub: "Latency" },
-                  { icon: Code2, label: "REST", sub: "API" },
-                  { icon: Database, label: "10K+", sub: "Factors" },
-                ].map((item) => (
-                  <div key={item.label} className="text-center">
-                    <div className="w-11 h-11 rounded-xl bg-card border border-border flex items-center justify-center mx-auto mb-2">
-                      <item.icon className="h-5 w-5 text-foreground" />
-                    </div>
-                    <div className="text-[15px] font-bold text-foreground">{item.label}</div>
-                    <div className="text-[11px] text-foreground/70">{item.sub}</div>
-                  </div>
-                ))}
-              </div>
-
-              <Button
-                size="lg"
-                onClick={() => navigate("/farmly/docs")}
-                className="h-12 px-7 text-[14px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-lg group"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                icon: Truck,
+                title: "Road Transport",
+                standard: "GHG Protocol",
+                desc: "Calculate emissions for freight and passenger vehicles using DEFRA conversion factors. Supports vehicle type, fuel, load factor, and distance-based inputs.",
+                formula: "Distance × EF × Load Factor",
+                color: "text-emerald-600",
+                bg: "bg-emerald-50 dark:bg-emerald-950/30",
+              },
+              {
+                icon: Plane,
+                title: "Aviation (ICAO)",
+                standard: "ICAO Carbon Calculator",
+                desc: "Passenger and freight flight emissions using ICAO's methodology with great-circle distance, aircraft type, cabin class multipliers, and radiative forcing index.",
+                formula: "GCD × (1+CF) × EF × RFI × Class",
+                color: "text-blue-600",
+                bg: "bg-blue-50 dark:bg-blue-950/30",
+              },
+              {
+                icon: Ship,
+                title: "Maritime (IMO)",
+                standard: "IMO Fourth GHG Study",
+                desc: "Sea freight emissions by vessel type (container, bulk, tanker, RoRo) using IMO default factors with port-to-port distance via actual shipping lanes.",
+                formula: "Distance × Cargo × EF(vessel)",
+                color: "text-cyan-600",
+                bg: "bg-cyan-50 dark:bg-cyan-950/30",
+              },
+              {
+                icon: Zap,
+                title: "Energy & Fuels",
+                standard: "DEFRA / IPCC AR6",
+                desc: "Scope 1 & 2 calculations for electricity, natural gas, diesel, and other fuels. Region-specific grid factors for 50+ countries from EPA eGRID and EEA data.",
+                formula: "Consumption × Grid EF",
+                color: "text-amber-600",
+                bg: "bg-amber-50 dark:bg-amber-950/30",
+              },
+              {
+                icon: Calculator,
+                title: "Waste & Water",
+                standard: "IPCC AR6 Guidelines",
+                desc: "Waste disposal emissions covering landfill, incineration, composting, and wastewater treatment with methane recovery adjustments.",
+                formula: "Mass × Disposal EF",
+                color: "text-rose-600",
+                bg: "bg-rose-50 dark:bg-rose-950/30",
+              },
+              {
+                icon: FileSpreadsheet,
+                title: "Carbon Accounting (CAT)",
+                standard: "GHG Protocol Corporate",
+                desc: "Full organizational carbon accounting template with Scope 1–3 categorization, supplier data integration, and automated report generation for CSRD and CDP.",
+                formula: "Σ Activity Data × EF",
+                color: "text-violet-600",
+                bg: "bg-violet-50 dark:bg-violet-950/30",
+              },
+            ].map((method, index) => (
+              <motion.div
+                key={method.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                viewport={{ once: true }}
+                className={`rounded-2xl border border-border bg-card p-6 hover:border-primary/20 hover:shadow-lg transition-all duration-300 group`}
               >
-                Read the Docs
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="rounded-2xl overflow-hidden border border-border shadow-2xl shadow-foreground/5 bg-card">
-                <div className="h-9 bg-secondary border-b border-border flex items-center gap-1.5 px-4">
-                  <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[hsl(45,80%,60%)]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary/40" />
-                  <span className="ml-3 text-[11px] text-foreground/60 font-mono">farmly-api-demo</span>
+                <div className={`w-10 h-10 rounded-xl ${method.bg} flex items-center justify-center mb-4`}>
+                  <method.icon className={`h-5 w-5 ${method.color}`} />
                 </div>
-                <video
-                  src={farmlyApiVideo}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-auto"
-                />
-              </div>
-            </motion.div>
+                <h3 className="text-[16px] font-bold text-foreground mb-1">{method.title}</h3>
+                <span className="text-[11px] font-semibold text-primary/80 uppercase tracking-wide">{method.standard}</span>
+                <p className="text-[13px] text-foreground/70 leading-relaxed mt-3 mb-4">{method.desc}</p>
+                <div className="px-3 py-2 rounded-lg bg-secondary/80 border border-border">
+                  <span className="text-[11px] font-mono text-foreground/60">{method.formula}</span>
+                </div>
+              </motion.div>
+            ))}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
+          >
+            <Button
+              size="lg"
+              onClick={() => navigate("/farmly/docs?section=calculations")}
+              className="h-12 px-7 text-[14px] font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-lg group"
+            >
+              Read Full Methodology Docs
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </motion.div>
         </div>
       </section>
 
