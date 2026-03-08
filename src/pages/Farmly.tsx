@@ -47,6 +47,7 @@ const Farmly = () => {
   const [activeTab, setActiveTab] = useState("benchmark");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
+  const [calcPanelOpen, setCalcPanelOpen] = useState(true);
 
   // Filters
   const [filters, setFilters] = useState<FarmlyFilters>({
