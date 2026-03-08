@@ -77,7 +77,7 @@ const Index = () => {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                className="text-lg md:text-xl text-foreground/70 max-w-xl mb-10 leading-relaxed"
+                className="text-lg md:text-xl text-foreground/85 max-w-xl mb-10 leading-relaxed"
               >
                 Track Scope 1–3 emissions, plan net-zero pathways, and access verified carbon markets.
                 The all-in-one platform trusted by corporations and sustainability teams worldwide.
