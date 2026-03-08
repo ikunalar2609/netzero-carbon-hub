@@ -131,19 +131,136 @@ const Index = () => {
               </motion.div>
             </div>
 
-            {/* Right: Hero Image */}
+            {/* Right: Animated Hero Visual */}
             <motion.div
-              initial={{ opacity: 0, x: 40, scale: 0.95 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="hidden lg:block relative"
+              className="hidden lg:block relative h-[520px]"
             >
-              <div className="absolute -inset-8 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent rounded-3xl blur-3xl pointer-events-none" />
-              <img
-                src={heroVisual}
-                alt="FarmlyCarbon carbon data visualization with charts and analytics"
-                className="relative w-full h-auto rounded-2xl shadow-2xl shadow-foreground/10"
-              />
+              {/* Glow backdrop */}
+              <div className="absolute -inset-8 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent rounded-3xl blur-3xl pointer-events-none" />
+
+              {/* Floating card 1 – Emissions Overview */}
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-4 left-0 w-[260px] bg-card border border-border rounded-xl p-4 shadow-xl z-10"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] font-semibold text-foreground/60 uppercase tracking-wider">Total Emissions</span>
+                  <span className="text-[10px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">Live</span>
+                </div>
+                <div className="text-3xl font-bold text-foreground mb-1">24,830</div>
+                <div className="text-[12px] text-foreground/60">tCO₂e this quarter</div>
+                <div className="mt-3 flex items-end gap-[3px] h-10">
+                  {[40, 55, 35, 60, 50, 70, 45, 65, 55, 75, 50, 60].map((h, i) => (
+                    <motion.div
+                      key={i}
+                      className="flex-1 rounded-sm bg-primary/70"
+                      initial={{ height: 0 }}
+                      animate={{ height: `${h}%` }}
+                      transition={{ duration: 0.6, delay: 0.8 + i * 0.08, ease: "easeOut" }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Floating card 2 – Scope Breakdown */}
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute top-8 right-0 w-[220px] bg-card border border-border rounded-xl p-4 shadow-xl z-10"
+              >
+                <span className="text-[11px] font-semibold text-foreground/60 uppercase tracking-wider">Scope Breakdown</span>
+                <div className="mt-3 space-y-2.5">
+                  {[
+                    { label: "Scope 1", value: 32, color: "bg-primary" },
+                    { label: "Scope 2", value: 24, color: "bg-[hsl(var(--brand-primary-light))]" },
+                    { label: "Scope 3", value: 44, color: "bg-accent" },
+                  ].map((scope) => (
+                    <div key={scope.label}>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-foreground/80 font-medium">{scope.label}</span>
+                        <span className="text-foreground font-bold">{scope.value}%</span>
+                      </div>
+                      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                        <motion.div
+                          className={`h-full rounded-full ${scope.color}`}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${scope.value}%` }}
+                          transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Floating card 3 – Reduction Target */}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute bottom-16 left-8 w-[240px] bg-card border border-border rounded-xl p-4 shadow-xl z-10"
+              >
+                <span className="text-[11px] font-semibold text-foreground/60 uppercase tracking-wider">Net-Zero Progress</span>
+                <div className="mt-3 flex items-center gap-4">
+                  {/* Circular progress */}
+                  <div className="relative w-16 h-16 shrink-0">
+                    <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                      <circle cx="18" cy="18" r="15.9" fill="none" stroke="hsl(var(--secondary))" strokeWidth="3" />
+                      <motion.circle
+                        cx="18" cy="18" r="15.9" fill="none"
+                        stroke="hsl(var(--primary))" strokeWidth="3"
+                        strokeDasharray="100" strokeLinecap="round"
+                        initial={{ strokeDashoffset: 100 }}
+                        animate={{ strokeDashoffset: 32 }}
+                        transition={{ duration: 1.5, delay: 1.4, ease: "easeOut" }}
+                      />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-foreground">68%</span>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-foreground">2040</div>
+                    <div className="text-[11px] text-foreground/60">Target year</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Floating card 4 – AI Insight */}
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute bottom-4 right-4 w-[200px] bg-card border border-border rounded-xl p-3 shadow-xl z-10"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center">
+                    <Bot className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-foreground/70">AI Insight</span>
+                </div>
+                <p className="text-[11px] text-foreground/80 leading-relaxed">
+                  Fleet electrification could reduce Scope 1 by <span className="font-bold text-primary">18%</span> by 2028.
+                </p>
+              </motion.div>
+
+              {/* Animated connection lines */}
+              <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                <motion.line
+                  x1="130" y1="180" x2="260" y2="100"
+                  stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="4 4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.3 }}
+                  transition={{ duration: 1, delay: 1.8 }}
+                />
+                <motion.line
+                  x1="240" y1="300" x2="320" y2="220"
+                  stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="4 4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.25 }}
+                  transition={{ duration: 1, delay: 2.2 }}
+                />
+              </svg>
             </motion.div>
           </div>
         </div>
