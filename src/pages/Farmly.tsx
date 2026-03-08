@@ -22,6 +22,7 @@ import {
   Compass,
   Table2,
   Sparkles,
+  Calculator,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
