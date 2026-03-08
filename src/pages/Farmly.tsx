@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,7 @@ import {
 } from "@/data/emissionFactors";
 
 const tabItems = [
+  { id: "calculator", label: "CALCULATOR", icon: Calculator, color: "bg-[#F59E0B] text-white" },
   { id: "benchmark", label: "BENCHMARK", icon: LayoutGrid, color: "bg-[#4F46E5] text-white" },
   { id: "ef-agent", label: "EF AGENT", icon: Bot, color: "bg-[#0EA5E9] text-white" },
   { id: "decarbo", label: "DECARBO AGENT", icon: Sparkles, color: "bg-[#10B981] text-white" },
@@ -45,10 +46,9 @@ const tabItems = [
 ];
 
 const Farmly = () => {
-  const [activeTab, setActiveTab] = useState("benchmark");
+  const [activeTab, setActiveTab] = useState("calculator");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "detail">("table");
-  const [calcPanelOpen, setCalcPanelOpen] = useState(true);
 
   // Filters
   const [filters, setFilters] = useState<FarmlyFilters>({
@@ -421,6 +421,7 @@ const Farmly = () => {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.12 }}
                 >
+                  {activeTab === "calculator" && <EmissionCalculator />}
                   {activeTab === "benchmark" && (
                     <BenchmarkTable factors={filteredFactors} onToggleFavorite={toggleFavorite} />
                   )}
@@ -432,52 +433,6 @@ const Farmly = () => {
             </div>
           </div>
         </main>
-
-        {/* ═══ RIGHT PANEL — CALCULATOR ═══ */}
-        <AnimatePresence>
-          {calcPanelOpen && (
-            <motion.aside
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 420, opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="bg-white border-l border-gray-200 overflow-hidden shrink-0 flex flex-col"
-            >
-              <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-[#4F46E5]/10 flex items-center justify-center">
-                    <Calculator className="h-3.5 w-3.5 text-[#4F46E5]" />
-                  </div>
-                  <span className="text-[13px] font-semibold text-gray-800">Calculator</span>
-                </div>
-                <button
-                  onClick={() => setCalcPanelOpen(false)}
-                  className="p-1 rounded hover:bg-gray-100 transition-colors"
-                >
-                  <X className="h-3.5 w-3.5 text-gray-400" />
-                </button>
-              </div>
-              <ScrollArea className="flex-1">
-                <div className="p-0">
-                  <EmissionCalculator />
-                </div>
-              </ScrollArea>
-            </motion.aside>
-          )}
-        </AnimatePresence>
-
-        {/* Calc panel toggle when closed */}
-        {!calcPanelOpen && (
-          <div className="bg-[#EEF2FF] flex items-start pt-4 pr-2">
-            <button
-              onClick={() => setCalcPanelOpen(true)}
-              className="p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
-              title="Open Calculator"
-            >
-              <Calculator className="h-4 w-4 text-[#4F46E5]" />
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
