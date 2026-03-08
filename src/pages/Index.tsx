@@ -186,7 +186,7 @@ const Index = () => {
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute top-8 right-0 w-[220px] bg-card border border-border rounded-xl p-4 shadow-xl z-10"
+                className="absolute top-20 right-0 w-[220px] bg-card border border-border rounded-xl p-4 shadow-xl z-10"
               >
                 <span className="text-[11px] font-semibold text-foreground/60 uppercase tracking-wider">Scope Breakdown</span>
                 <div className="mt-3 space-y-2.5">
