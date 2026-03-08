@@ -97,6 +97,76 @@ const ChartTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+/* ── Rich tooltip for main anomaly chart (Climate Brink style) ── */
+const AnomalyChartTooltip = ({ active, payload, label, yearlyData }: any) => {
+  if (!active || !payload?.length) return null;
+
+  const dateStr = label || payload[0]?.payload?.date || "";
+  const yr = parseInt(dateStr?.substring?.(0, 4) || "0");
+  const moNum = parseInt(dateStr?.substring?.(5, 7) || "0");
+  const monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthLabel = monthNames[moNum] || "";
+
+  const anomalyVal = payload.find((p: any) => p.dataKey === "anomaly")?.value;
+  const rollingVal = payload.find((p: any) => p.dataKey === "rolling")?.value;
+
+  // Compute 2025 annual mean, 2026 YTD, 2026 prediction from yearlyData
+  const y2025 = yearlyData?.find((d: any) => d.year === 2025);
+  const y2026 = yearlyData?.find((d: any) => d.year === 2026);
+
+  return (
+    <div className="shadow-xl rounded-lg overflow-hidden text-sm min-w-[200px]" style={{ border: "1px solid #d1d5db" }}>
+      {/* Header */}
+      <div className="bg-gray-800 text-white px-3 py-2 font-semibold">
+        {monthLabel} {yr}
+      </div>
+      {/* Anomaly line */}
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 border-b border-gray-200">
+        <span className="w-4 h-[2px] bg-gray-400 shrink-0" />
+        <span className="text-gray-600 text-xs">{dateStr}</span>
+        <span className="ml-auto font-semibold text-gray-800 text-xs">
+          Anomaly: {anomalyVal !== undefined ? `${anomalyVal >= 0 ? "+" : ""}${anomalyVal.toFixed(2)}°C` : "—"}
+        </span>
+      </div>
+      {/* Rolling average line */}
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 border-b border-gray-200">
+        <span className="w-4 h-[2px] bg-red-600 shrink-0 rounded" />
+        <span className="text-gray-600 text-xs">{dateStr}</span>
+        <span className="ml-auto font-semibold text-red-700 text-xs">
+          365-day avg: {rollingVal !== undefined ? `${rollingVal >= 0 ? "+" : ""}${rollingVal.toFixed(2)}°C` : "—"}
+        </span>
+      </div>
+      {/* 2025 annual */}
+      {y2025 && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white">
+          <span className="font-bold text-xs">2025</span>
+          <span className="ml-auto font-semibold text-xs">
+            Anomaly: {y2025.anomaly >= 0 ? "+" : ""}{y2025.anomaly.toFixed(2)}°C
+          </span>
+        </div>
+      )}
+      {/* 2026 YTD */}
+      {y2026 && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500 text-white">
+          <span className="font-bold text-xs">2026 YTD</span>
+          <span className="ml-auto font-semibold text-xs">
+            Anomaly: {y2026.anomaly >= 0 ? "+" : ""}{y2026.anomaly.toFixed(2)}°C
+          </span>
+        </div>
+      )}
+      {/* 2026 Prediction */}
+      {y2026 && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-b-lg">
+          <span className="font-bold text-xs">2026 Prediction</span>
+          <span className="ml-auto font-semibold text-xs">
+            {y2026.anomaly >= 0 ? "+" : ""}{y2026.anomaly.toFixed(2)}°C (±0.13°C)
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 /* ── Main Component ── */
 export default function ClimateDashboard() {
   const [monthlyData, setMonthlyData] = useState<MonthlyPoint[]>([]);
@@ -284,7 +354,7 @@ export default function ClimateDashboard() {
               domain={[-0.5, 2]}
               unit="°C"
             />
-            <Tooltip content={<ChartTooltip />} />
+            <Tooltip content={<AnomalyChartTooltip yearlyData={yearlyData} />} />
             <ReferenceLine
               y={1.5}
               stroke="#f59e0b"
