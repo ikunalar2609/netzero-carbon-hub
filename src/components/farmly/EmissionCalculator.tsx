@@ -297,13 +297,12 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
 
   // Save calculation to database
   const saveCalculation = async (
-    type: 'flight' | 'vehicle' | 'energy' | 'diet',
+    type: string,
     inputData: any,
     resultData: any,
     totalEmissions: number
   ) => {
     try {
-      // Get current user for RLS
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -325,7 +324,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
         return false;
       }
       
-      toast.success('Calculation saved to history');
+      toast.success('Calculation saved to history & report');
       return true;
     } catch (err) {
       console.error('Error saving calculation:', err);
