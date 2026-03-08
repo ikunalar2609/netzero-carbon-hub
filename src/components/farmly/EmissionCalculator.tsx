@@ -763,17 +763,17 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                 className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-3 cursor-default`}
               >
                 {/* Subtle decorative circle */}
-                <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
+                <div className="absolute -right-2 -top-2 w-12 h-12 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
                 <div className="relative">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-extrabold tracking-[0.15em] text-gray-400 uppercase">{card.label}</span>
-                    <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center`}>
-                      <Icon className="h-3.5 w-3.5" style={{ color: card.accent }} />
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[8px] font-extrabold tracking-[0.15em] text-gray-400 uppercase">{card.label}</span>
+                    <div className={`w-6 h-6 rounded-md ${card.iconBg} flex items-center justify-center`}>
+                      <Icon className="h-3 w-3" style={{ color: card.accent }} />
                     </div>
                   </div>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-extrabold text-gray-900 tracking-tight leading-none">{card.value}</span>
-                    <span className="text-[10px] font-semibold text-gray-400">{card.unit}</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-extrabold text-gray-900 tracking-tight leading-none">{card.value}</span>
+                    <span className="text-[9px] font-semibold text-gray-400">{card.unit}</span>
                   </div>
                   {card.trend !== undefined && (
                     <div className="flex items-center gap-1 mt-2">
