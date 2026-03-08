@@ -53,6 +53,7 @@ import {
   User,
   Pencil,
   Check,
+  Mail,
 } from "lucide-react";
 import { BenchmarkTable } from "@/components/farmly/BenchmarkTable";
 import { EFAgent } from "@/components/farmly/EFAgent";
