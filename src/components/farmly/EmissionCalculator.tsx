@@ -746,7 +746,7 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
     <TooltipProvider>
       <div className="space-y-4">
         {/* ── Summary Metric Strip ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
           {[
             { label: "TOTAL", value: totalEmissions.toFixed(2), unit: "kg CO₂e", icon: Calculator, accent: "#4F46E5", gradient: "from-[#4F46E5]/8 to-[#4F46E5]/2", iconBg: "bg-[#4F46E5]/10", trend: totalEmissions > 50 },
             { label: "TRANSPORT", value: emissionsBreakdown.transport.toFixed(1), unit: "kg", icon: Car, accent: "#2563EB", gradient: "from-[#2563EB]/8 to-[#2563EB]/2", iconBg: "bg-[#2563EB]/10" },
@@ -760,20 +760,20 @@ export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: Emissi
                 key={card.label}
                 whileHover={{ y: -2, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-4 cursor-default`}
+                className={`relative overflow-hidden bg-gradient-to-br ${card.gradient} border border-gray-200/60 rounded-xl p-3 cursor-default`}
               >
                 {/* Subtle decorative circle */}
-                <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
+                <div className="absolute -right-2 -top-2 w-12 h-12 rounded-full opacity-[0.07]" style={{ backgroundColor: card.accent }} />
                 <div className="relative">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-extrabold tracking-[0.15em] text-gray-400 uppercase">{card.label}</span>
-                    <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center`}>
-                      <Icon className="h-3.5 w-3.5" style={{ color: card.accent }} />
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[8px] font-extrabold tracking-[0.15em] text-gray-400 uppercase">{card.label}</span>
+                    <div className={`w-6 h-6 rounded-md ${card.iconBg} flex items-center justify-center`}>
+                      <Icon className="h-3 w-3" style={{ color: card.accent }} />
                     </div>
                   </div>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-extrabold text-gray-900 tracking-tight leading-none">{card.value}</span>
-                    <span className="text-[10px] font-semibold text-gray-400">{card.unit}</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-extrabold text-gray-900 tracking-tight leading-none">{card.value}</span>
+                    <span className="text-[9px] font-semibold text-gray-400">{card.unit}</span>
                   </div>
                   {card.trend !== undefined && (
                     <div className="flex items-center gap-1 mt-2">
