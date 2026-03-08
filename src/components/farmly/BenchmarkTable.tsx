@@ -173,6 +173,18 @@ export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }:
                   {factor.source}
                 </Badge>
               </TableCell>
+              {onUseInCalculator && (
+                <TableCell className="py-3">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onUseInCalculator(factor); }}
+                    className="h-7 px-2 rounded-md bg-[#4F46E5]/10 text-[#4F46E5] hover:bg-[#4F46E5] hover:text-white text-[9px] font-bold tracking-wide transition-all flex items-center gap-1"
+                    title="Use this EF in Calculator"
+                  >
+                    <Calculator className="h-3 w-3" />
+                    USE
+                  </button>
+                </TableCell>
+              )}
             </motion.tr>
           ))}
           {sorted.length === 0 && (
