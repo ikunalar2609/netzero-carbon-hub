@@ -547,6 +547,7 @@ export default function ClimateDashboard() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* ── Annual Projections ── */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h3 className="text-base font-bold text-gray-900 mb-1">
