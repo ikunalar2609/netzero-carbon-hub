@@ -28,8 +28,10 @@ const StatCard = React.memo(({ label, value, icon: Icon, accent }: StatItem) => 
 StatCard.displayName = "StatCard";
 
 const StatsStrip = React.memo(({ stats }: StatsStripProps) => (
-  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-    {stats.map((s) => <StatCard key={s.label} {...s} />)}
+  <div className="flex justify-center">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 w-full max-w-4xl">
+      {stats.map((s) => <StatCard key={s.label} {...s} />)}
+    </div>
   </div>
 ));
 StatsStrip.displayName = "StatsStrip";
