@@ -26,9 +26,9 @@ export const PublicRoute = () => {
     return null;
   }
 
-  // If authenticated, redirect to dashboard
+  // If authenticated, redirect to product page
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/farmly" />;
   }
 
   // If not authenticated, render children

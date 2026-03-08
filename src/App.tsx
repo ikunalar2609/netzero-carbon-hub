@@ -50,8 +50,7 @@ function App() {
                       {/* Public landing page */}
                       <Route path="/" element={<Index />} />
                       
-                      {/* Farmly pages */}
-                      <Route path="/farmly" element={<Farmly />} />
+                      {/* Farmly docs - public */}
                       <Route path="/farmly/docs" element={<FarmlyDocs />} />
                       
                       {/* Maps page */}
@@ -65,6 +64,7 @@ function App() {
                       
                       {/* Protected routes */}
                       <Route element={<ProtectedRoute />}>
+                        <Route path="/farmly" element={<Farmly />} />
                         <Route path="/dashboard" element={<Layout />}>
                           <Route index element={<Dashboard />} />
                           <Route path="emissions" element={<EmissionsTracker />} />
