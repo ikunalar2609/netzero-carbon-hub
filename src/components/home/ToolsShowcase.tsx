@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CheckCircle2, BarChart3, Code2, ArrowRight } from "lucide-react";
+import { CheckCircle2, BarChart3, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const sustainabilityFeatures = [
