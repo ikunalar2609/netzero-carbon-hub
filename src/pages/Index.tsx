@@ -157,7 +157,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ═══════════════ BENTO FEATURES ═══════════════ */}
+      {/* ═══════════════ PRODUCT SHOWCASE ═══════════════ */}
       <section className="py-28 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -165,200 +165,78 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-20"
+            className="text-center mb-16"
           >
             <span className="text-[12px] font-semibold tracking-[0.15em] uppercase text-primary mb-4 block">
-              Platform
+              Product
             </span>
             <h2 className="text-4xl md:text-[52px] font-bold text-foreground tracking-tight leading-[1.1] mb-5">
-              Everything you need to
+              The carbon calculator
               <br />
-              decarbonize agriculture
+              built for precision
             </h2>
             <p className="text-lg text-foreground/60 max-w-2xl mx-auto leading-relaxed">
-              Six calculation methodologies, 10,000+ emission factors, and AI-powered agents — all in one workspace.
+              Six calculation methodologies, 10,000+ emission factors, AI-powered agents, and 
+              interactive sustainability insights — all in one workspace.
             </p>
           </motion.div>
 
-          {/* Bento Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            {/* ── Card 1: Emission Factor Database (wide) ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-72 h-72 bg-[radial-gradient(circle,hsl(var(--primary)/0.05),transparent_70%)] pointer-events-none" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Database className="h-6 w-6 text-primary" />
+          {/* Dashboard Screenshot */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+            className="relative mb-20"
+          >
+            {/* Glow behind */}
+            <div className="absolute -inset-4 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent rounded-3xl blur-2xl pointer-events-none" />
+            
+            <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl shadow-foreground/10 bg-card">
+              {/* Browser chrome */}
+              <div className="h-10 bg-secondary border-b border-border flex items-center px-4 gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-destructive/30" />
+                  <div className="w-3 h-3 rounded-full bg-[hsl(45,80%,55%)]/40" />
+                  <div className="w-3 h-3 rounded-full bg-primary/30" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-muted-foreground font-mono">
+                    app.farmlycarbon.com/calculator
                   </div>
-                  <span className="text-[11px] font-bold tracking-wider uppercase text-primary bg-primary/8 px-2.5 py-1 rounded-md">Core</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-3">10,000+ Emission Factors</h3>
-                <p className="text-foreground/60 leading-relaxed max-w-xl mb-6">
-                  Browse, search, and filter a comprehensive database of verified emission factors sourced from 
-                  DEFRA, IPCC AR6, GHG Protocol, and CBAM. Each factor includes scope classification (1/2/3), 
-                  perimeter (gate-to-gate, cradle-to-gate), methodology, and regional applicability.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {["GHG Protocol", "IPCC AR6", "DEFRA 2024", "CBAM", "ISO 14064"].map((t) => (
-                    <span key={t} className="px-3 py-1.5 text-[11px] font-semibold rounded-full bg-foreground/5 text-foreground/70 border border-border">
-                      {t}
-                    </span>
-                  ))}
                 </div>
               </div>
-            </motion.div>
+              <img
+                src={farmlyDashboardScreenshot}
+                alt="FarmlyCarbon Calculator Dashboard — Transport, Flight, Sea, Energy emission calculations with filters and sustainability insights"
+                className="w-full h-auto"
+                loading="lazy"
+              />
+            </div>
+          </motion.div>
 
-            {/* ── Card 2: Flight Emissions ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.08 }}
-              viewport={{ once: true }}
-              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
-            >
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
-                <Plane className="h-6 w-6 text-blue-600" />
+          {/* Feature pills row */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-20"
+          >
+            {[
+              { icon: Truck, label: "Transport", color: "text-primary" },
+              { icon: Plane, label: "Flight (ICAO)", color: "text-blue-600" },
+              { icon: Ship, label: "Sea (IMO)", color: "text-cyan-600" },
+              { icon: Zap, label: "Energy", color: "text-amber-600" },
+              { icon: Calculator, label: "Waste (IPCC)", color: "text-red-500" },
+              { icon: Bot, label: "AI Agents", color: "text-violet-600" },
+            ].map((f) => (
+              <div key={f.label} className="flex items-center gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300 group">
+                <f.icon className={`h-5 w-5 ${f.color} flex-shrink-0`} />
+                <span className="text-[13px] font-semibold text-foreground">{f.label}</span>
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-3">Flight Emissions</h3>
-              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
-                ICAO-standard calculations with great-circle distance, aircraft RFI multipliers, cabin class factors, and real airport lookups (IATA codes).
-              </p>
-              <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">ICAO Methodology</span>
-            </motion.div>
-
-            {/* ── Card 3: Sea Freight ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.12 }}
-              viewport={{ once: true }}
-              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
-            >
-              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-6">
-                <Ship className="h-6 w-6 text-cyan-600" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-3">Sea Route Calculator</h3>
-              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
-                IMO/GLEC-compliant maritime calculations. Select vessel type, fuel, and port-to-port routes with interactive sea route mapping.
-              </p>
-              <span className="text-[11px] font-semibold text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md">IMO / GLEC</span>
-            </motion.div>
-
-            {/* ── Card 4: AI Agents (wide) ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.16 }}
-              viewport={{ once: true }}
-              className="lg:col-span-2 group relative rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <div className="absolute bottom-0 right-0 w-72 h-72 bg-[radial-gradient(circle,hsl(var(--primary)/0.05),transparent_70%)] pointer-events-none" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center">
-                    <Bot className="h-6 w-6 text-violet-600" />
-                  </div>
-                  <span className="text-[11px] font-bold tracking-wider uppercase text-violet-600 bg-violet-50 px-2.5 py-1 rounded-md">AI-Powered</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-3">EF Agent & Decarbo Agent</h3>
-                <p className="text-foreground/60 leading-relaxed max-w-xl mb-6">
-                  Two purpose-built AI agents: <strong className="text-foreground/80">EF Agent</strong> finds the right emission factor for any activity 
-                  using natural language. <strong className="text-foreground/80">Decarbo Agent</strong> generates actionable decarbonization strategies 
-                  with cost estimates, timelines, and compliance alignment.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {["Natural Language Search", "Strategy Generation", "Cost Analysis"].map((t) => (
-                    <span key={t} className="px-3 py-1.5 text-[11px] font-semibold rounded-full bg-foreground/5 text-foreground/70 border border-border">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* ── Card 5: Carbon Accounting Template ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
-            >
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-6">
-                <FileSpreadsheet className="h-6 w-6 text-amber-600" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-3">Carbon Accounting (CAT)</h3>
-              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
-                Pre-built templates for vehicle, energy, and waste calculations using IPCC 2006 guidelines. Export-ready GHG inventory reports.
-              </p>
-              <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md">IPCC 2006</span>
-            </motion.div>
-
-            {/* ── Card 6: Global Maps ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.24 }}
-              viewport={{ once: true }}
-              className="group rounded-2xl border border-border bg-card p-10 hover:border-primary/30 hover:shadow-xl transition-all duration-500"
-            >
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6">
-                <Globe className="h-6 w-6 text-emerald-600" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-3">Interactive Maps</h3>
-              <p className="text-foreground/60 leading-relaxed text-[15px] mb-4">
-                Visualize forest cover, NASA FIRMS fire data, tree loss hotspots, and deforestation trends across 50+ regions with 3D mapping.
-              </p>
-              <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">NASA FIRMS</span>
-            </motion.div>
-
-            {/* ── Card 7: Net Zero Planning ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.28 }}
-              viewport={{ once: true }}
-              className="lg:col-span-3 group relative rounded-2xl border border-border bg-foreground p-10 hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_60%_50%_at_20%_50%,hsl(var(--primary)/0.12),transparent)] pointer-events-none" />
-              <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-12 h-12 rounded-xl bg-background/10 flex items-center justify-center">
-                      <Zap className="h-6 w-6 text-primary" />
-                    </div>
-                    <span className="text-[11px] font-bold tracking-wider uppercase text-primary bg-primary/15 px-2.5 py-1 rounded-md">Roadmapping</span>
-                  </div>
-                  <h3 className="text-2xl font-bold text-background mb-3">Net Zero Planning & Scenarios</h3>
-                  <p className="text-background/55 leading-relaxed max-w-xl mb-6">
-                    Model aggressive, moderate, and conservative decarbonization pathways. Set milestones aligned to 
-                    SBTi Net Zero and Oxford Principles, track reduction levers (fleet electrification, renewables, supplier engagement), 
-                    and manage offset reliance with quality scoring.
-                  </p>
-                </div>
-                <div className="flex flex-wrap lg:flex-col gap-3 lg:min-w-[200px]">
-                  {[
-                    { label: "Scenario Comparison", icon: BarChart3 },
-                    { label: "Milestone Tracking", icon: CheckCircle2 },
-                    { label: "SBTi Aligned", icon: Shield },
-                    { label: "Offset Management", icon: Leaf },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-2.5 text-background/70">
-                      <item.icon className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-[13px] font-medium">{item.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </div>
+            ))}
+          </motion.div>
 
           {/* Stats row */}
           <motion.div
@@ -366,10 +244,10 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border"
+            className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border"
           >
             {[
-              { n: "10,000+", l: "Emission Factors", d: "Verified & categorized" },
+              { n: "10,000+", l: "Emission Factors", d: "DEFRA, IPCC, CBAM, EPA" },
               { n: "6", l: "Methodologies", d: "Flight, Sea, Vehicle, Energy, Waste, CAT" },
               { n: "50+", l: "Global Regions", d: "Across all continents" },
               { n: "< 50ms", l: "API Response", d: "RESTful endpoints" },
