@@ -77,7 +77,7 @@ const Index = () => {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                className="text-lg md:text-xl text-foreground/70 max-w-xl mb-10 leading-relaxed"
+                className="text-lg md:text-xl text-foreground/85 max-w-xl mb-10 leading-relaxed"
               >
                 Track Scope 1–3 emissions, plan net-zero pathways, and access verified carbon markets.
                 The all-in-one platform trusted by corporations and sustainability teams worldwide.
@@ -115,7 +115,7 @@ const Index = () => {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                className="mt-12 flex flex-wrap items-center gap-6 text-[13px] text-foreground/50"
+                className="mt-12 flex flex-wrap items-center gap-6 text-[13px] text-foreground/70"
               >
                 <span className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-primary" /> SOC 2 Compliant
@@ -152,7 +152,7 @@ const Index = () => {
       {/* ═══════════════ LOGO STRIP ═══════════════ */}
       <section className="py-16 px-6 border-y border-border bg-secondary/30">
         <div className="max-w-6xl mx-auto">
-          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/40 text-center mb-8">
+          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/60 text-center mb-8">
             Data Powered By Leading Institutions
           </p>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
@@ -192,7 +192,7 @@ const Index = () => {
               <br />
               built for precision
             </h2>
-            <p className="text-lg text-foreground/60 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
               Six calculation methodologies, 10,000+ emission factors, AI-powered agents, and 
               interactive sustainability insights — all in one workspace.
             </p>
@@ -216,7 +216,7 @@ const Index = () => {
                   <div className="w-3 h-3 rounded-full bg-primary/30" />
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/50 font-mono">
+                  <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/70 font-mono">
                     app.farmlycarbon.in/calculator
                   </div>
                 </div>
@@ -269,8 +269,8 @@ const Index = () => {
             ].map((s) => (
               <div key={s.l} className="bg-card p-8 text-center">
                 <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{s.n}</div>
-                <div className="text-[13px] font-semibold text-foreground/70 mt-1">{s.l}</div>
-                <div className="text-[11px] text-foreground/40 mt-0.5">{s.d}</div>
+                <div className="text-[13px] font-semibold text-foreground/85 mt-1">{s.l}</div>
+                <div className="text-[11px] text-foreground/60 mt-0.5">{s.d}</div>
               </div>
             ))}
           </motion.div>
@@ -296,14 +296,14 @@ const Index = () => {
                 For sustainability
                 <br />teams
               </h2>
-              <p className="text-foreground/60 mb-8 leading-relaxed">
+              <p className="text-foreground/80 mb-8 leading-relaxed">
                 Streamline corporate carbon reporting. Automate Scope 1–3 data collection and generate compliance-ready reports in minutes.
               </p>
               <div className="space-y-3 mb-10">
                 {["Automated GHG inventory reports", "Scope 1–3 categorization engine", "CSRD & CDP-ready exports"].map((f) => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle2 className="h-4.5 w-4.5 text-primary flex-shrink-0" />
-                    <span className="text-[14px] text-foreground/80 font-medium">{f}</span>
+                    <span className="text-[14px] text-foreground font-medium">{f}</span>
                   </div>
                 ))}
               </div>
@@ -372,9 +372,9 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
                 Powerful API.
                 <br />
-                <span className="text-foreground/40">Simple integration.</span>
+                <span className="text-foreground/60">Simple integration.</span>
               </h2>
-              <p className="text-lg text-foreground/60 leading-relaxed mb-10">
+              <p className="text-lg text-foreground/80 leading-relaxed mb-10">
                 Integrate accurate carbon calculations directly into your supply chain, ERP, or sustainability software.
                 Get started in minutes with comprehensive documentation.
               </p>
@@ -390,7 +390,7 @@ const Index = () => {
                       <item.icon className="h-5 w-5 text-foreground" />
                     </div>
                     <div className="text-[15px] font-bold text-foreground">{item.label}</div>
-                    <div className="text-[11px] text-foreground/50">{item.sub}</div>
+                    <div className="text-[11px] text-foreground/70">{item.sub}</div>
                   </div>
                 ))}
               </div>
@@ -416,7 +416,7 @@ const Index = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-[hsl(45,80%,60%)]" />
                   <div className="w-2.5 h-2.5 rounded-full bg-primary/40" />
-                  <span className="ml-3 text-[11px] text-foreground/40 font-mono">farmly-api-demo</span>
+                  <span className="ml-3 text-[11px] text-foreground/60 font-mono">farmly-api-demo</span>
                 </div>
                 <video
                   src={farmlyApiVideo}
@@ -448,9 +448,9 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1] mb-5">
                 Science-backed
                 <br />
-                <span className="text-foreground/40">credibility</span>
+                <span className="text-foreground/60">credibility</span>
               </h2>
-              <p className="text-lg text-foreground/60 leading-relaxed">
+              <p className="text-lg text-foreground/80 leading-relaxed">
                 Base your corporate climate strategy on credible science, not guesswork.
                 Align with the world's most robust carbon accounting standards and reporting frameworks.
               </p>
@@ -478,7 +478,7 @@ const Index = () => {
                   <div className="w-12 h-12 flex items-center justify-center">
                     <img src={std.src} alt={std.name} className="w-full h-full object-contain" />
                   </div>
-                  <span className="text-[11px] font-bold text-foreground/60 text-center leading-tight">
+                  <span className="text-[11px] font-bold text-foreground/80 text-center leading-tight">
                     {std.name}
                   </span>
                 </div>
@@ -504,7 +504,7 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
               Let's connect
             </h2>
-            <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
               Whether it's for enterprise deployment, API integration, or exploring FarmlyCarbon
               for your organization — pick a time that works.
             </p>
@@ -591,46 +591,46 @@ const Index = () => {
                 <img src={farmlyLogo} alt="FarmlyCarbon" className="h-8 w-auto" />
                 <span className="text-[16px] font-bold text-foreground">FarmlyCarbon</span>
               </Link>
-              <p className="text-[13px] text-foreground/50 leading-relaxed max-w-xs">
+              <p className="text-[13px] text-foreground/70 leading-relaxed max-w-xs">
                 Empowering enterprises with comprehensive carbon management tools for a net-zero future.
               </p>
             </div>
 
             <div>
-              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Platform</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/60 mb-4">Platform</h4>
               <div className="space-y-3">
-                <Link to="/farmly" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Product</Link>
-                <Link to="/maps" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Maps</Link>
-                <Link to="/farmly/docs" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">API Docs</Link>
+                <Link to="/farmly" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Product</Link>
+                <Link to="/maps" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Maps</Link>
+                <Link to="/farmly/docs" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">API Docs</Link>
               </div>
             </div>
 
             <div>
-              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Resources</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/60 mb-4">Resources</h4>
               <div className="space-y-3">
-                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Blog</a>
-                <Link to="/login" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Log in</Link>
-                <Link to="/signup" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Sign Up</Link>
+                <a href="https://idlerwritingeveryday.substack.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Blog</a>
+                <Link to="/login" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Log in</Link>
+                <Link to="/signup" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Sign Up</Link>
               </div>
             </div>
 
             <div>
-              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/40 mb-4">Connect</h4>
+              <h4 className="text-[12px] font-bold tracking-[0.1em] uppercase text-foreground/60 mb-4">Connect</h4>
               <div className="space-y-3">
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Twitter</a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">LinkedIn</a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/60 hover:text-foreground transition-colors">Instagram</a>
-                <span className="block text-[13px] text-foreground/50">i.kunal.ar26@gmail.com</span>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Twitter</a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">LinkedIn</a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="block text-[13px] text-foreground/80 hover:text-foreground transition-colors">Instagram</a>
+                <span className="block text-[13px] text-foreground/70">i.kunal.ar26@gmail.com</span>
               </div>
             </div>
           </div>
 
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[12px] text-foreground/40">© 2025 FarmlyCarbon. All rights reserved.</p>
+            <p className="text-[12px] text-foreground/60">© 2025 FarmlyCarbon. All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="text-[12px] text-foreground/40 hover:text-foreground transition-colors">Cookies</a>
+              <a href="#" className="text-[12px] text-foreground/60 hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" className="text-[12px] text-foreground/60 hover:text-foreground transition-colors">Terms</a>
+              <a href="#" className="text-[12px] text-foreground/60 hover:text-foreground transition-colors">Cookies</a>
             </div>
           </div>
         </div>
