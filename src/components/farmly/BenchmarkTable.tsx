@@ -109,6 +109,10 @@ export const BenchmarkTable = ({ factors, onToggleFavorite, onUseInCalculator }:
             >
               Source <SortIcon field="source" />
             </TableHead>
+            {onUseInCalculator && (
+              <TableHead className="font-semibold text-[11px] tracking-wide text-gray-600 w-[60px]">Use</TableHead>
+            )}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
