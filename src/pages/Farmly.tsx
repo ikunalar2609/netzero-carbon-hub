@@ -482,7 +482,7 @@ const Farmly = () => {
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             {/* Tab bar */}
             <div className="px-4 pt-3 pb-0 flex items-center gap-2 border-b border-gray-100">
-              <div className="flex items-center gap-2 flex-1">
+              <div className="flex items-center gap-2 flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {tabItems.map((tab) => {
                   const isActive = activeTab === tab.id;
                   const Icon = tab.icon;
@@ -490,7 +490,7 @@ const Farmly = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold tracking-wide rounded-t-lg transition-all ${
+                      className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold tracking-wide rounded-t-lg transition-all whitespace-nowrap ${
                         isActive ? `${tab.color} shadow-sm` : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                       }`}
                     >
