@@ -645,224 +645,109 @@ export const EmissionCalculator = () => {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gradient-to-br from-[#F9FAFB] via-white to-[#F0F9FF] p-4 md:p-8">
-        <div className="max-w-[1440px] mx-auto">
-          {/* Header */}
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-[#1E293B] mb-2">
-              Emission Calculator Dashboard
-            </h1>
-            <p className="text-[#475569]">Track and optimize your carbon footprint in real-time</p>
-          </motion.div>
-
-          {/* Summary Cards */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6"
-          >
-            {/* Total Emissions Card */}
-            <motion.div 
-              whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 to-transparent" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[#475569]">Total Emissions</span>
-                  <Calculator className="h-5 w-5 text-[#2563EB]" />
+      <div className="space-y-4">
+        {/* ── Summary Metric Strip ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          {[
+            { label: "TOTAL", value: totalEmissions.toFixed(2), unit: "kg CO₂e", icon: Calculator, accent: "#4F46E5", trend: totalEmissions > 50 },
+            { label: "TRANSPORT", value: emissionsBreakdown.transport.toFixed(1), unit: "kg", icon: Car, accent: "#2563EB" },
+            { label: "FLIGHT", value: emissionsBreakdown.flight.toFixed(1), unit: "kg", icon: Plane, accent: "#8B5CF6" },
+            { label: "SEA FREIGHT", value: emissionsBreakdown.sea.toFixed(1), unit: "kg", icon: Ship, accent: "#0EA5E9" },
+            { label: "ENERGY & WASTE", value: (emissionsBreakdown.energy + emissionsBreakdown.waste).toFixed(1), unit: "kg", icon: Factory, accent: "#F97316" },
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
+              <div key={card.label} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">{card.label}</span>
+                  <Icon className="h-3.5 w-3.5" style={{ color: card.accent }} />
                 </div>
-                <div className="text-3xl font-bold text-[#1E293B] mb-1">
-                  {totalEmissions.toFixed(2)}
-                  <span className="text-lg text-[#475569] ml-1">kg CO₂e</span>
+                <div className="text-xl font-bold text-gray-900 leading-none">
+                  {card.value}
+                  <span className="text-[11px] font-medium text-gray-400 ml-1">{card.unit}</span>
                 </div>
-                <div className="flex items-center gap-1 text-xs">
-                  {totalEmissions > 50 ? (
-                    <>
-                      <TrendingUp className="h-3 w-3 text-orange-500" />
-                      <span className="text-orange-500">Above target</span>
-                    </>
-                  ) : (
-                    <>
-                      <TrendingDown className="h-3 w-3 text-[#10B981]" />
-                      <span className="text-[#10B981]">On track</span>
-                    </>
-                  )}
-                </div>
+                {card.trend !== undefined && (
+                  <div className="flex items-center gap-1 mt-1">
+                    {card.trend ? (
+                      <><TrendingUp className="h-3 w-3 text-orange-500" /><span className="text-[10px] text-orange-500 font-medium">Above target</span></>
+                    ) : (
+                      <><TrendingDown className="h-3 w-3 text-emerald-500" /><span className="text-[10px] text-emerald-500 font-medium">On track</span></>
+                    )}
+                  </div>
+                )}
               </div>
-            </motion.div>
+            );
+          })}
+        </div>
 
-            {/* Transport Emissions Card */}
-            <motion.div 
-              whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 to-transparent" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[#475569]">Transport</span>
-                  <Car className="h-5 w-5 text-[#10B981]" />
-                </div>
-                <div className="text-3xl font-bold text-[#1E293B] mb-1">
-                  {emissionsBreakdown.transport.toFixed(1)}
-                  <span className="text-lg text-[#475569] ml-1">kg</span>
-                </div>
-                <div className="text-xs text-[#475569]">
-                  {totalEmissions > 0 ? `${((emissionsBreakdown.transport / totalEmissions) * 100).toFixed(0)}% of total` : '0% of total'}
-                </div>
+        {/* ── Main Layout: Forms + Sidebar ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Left: Calculator Forms */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              {/* Inner tab bar */}
+              <div className="flex items-center gap-1 px-3 pt-3 pb-0 border-b border-gray-100">
+                {[
+                  { id: "transport", label: "TRANSPORT", icon: Truck, accent: "#2563EB" },
+                  { id: "flight", label: "FLIGHT", icon: Plane, accent: "#8B5CF6" },
+                  { id: "sea", label: "SEA", icon: Ship, accent: "#0EA5E9" },
+                  { id: "energy", label: "ENERGY", icon: Zap, accent: "#10B981" },
+                  { id: "waste", label: "WASTE", icon: Recycle, accent: "#F97316" },
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-1.5 px-3 py-2 text-[10px] font-bold tracking-wide rounded-t-md transition-all ${
+                        isActive ? "text-white shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                      }`}
+                      style={isActive ? { backgroundColor: tab.accent } : {}}
+                    >
+                      <Icon className="h-3 w-3" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
               </div>
-            </motion.div>
 
-            {/* Flight Emissions Card */}
-            <motion.div 
-              whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/5 to-transparent" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[#475569]">Flight</span>
-                  <Plane className="h-5 w-5 text-[#8B5CF6]" />
-                </div>
-                <div className="text-3xl font-bold text-[#1E293B] mb-1">
-                  {emissionsBreakdown.flight.toFixed(1)}
-                  <span className="text-lg text-[#475569] ml-1">kg</span>
-                </div>
-                <div className="text-xs text-[#475569]">
-                  {totalEmissions > 0 ? `${((emissionsBreakdown.flight / totalEmissions) * 100).toFixed(0)}% of total` : '0% of total'}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Sea Freight Emissions Card */}
-            <motion.div 
-              whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9]/5 to-transparent" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[#475569]">Sea Freight</span>
-                  <Ship className="h-5 w-5 text-[#0EA5E9]" />
-                </div>
-                <div className="text-3xl font-bold text-[#1E293B] mb-1">
-                  {emissionsBreakdown.sea.toFixed(1)}
-                  <span className="text-lg text-[#475569] ml-1">kg</span>
-                </div>
-                <div className="text-xs text-[#475569]">
-                  {totalEmissions > 0 ? `${((emissionsBreakdown.sea / totalEmissions) * 100).toFixed(0)}% of total` : '0% of total'}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Energy + Waste Combined Card */}
-            <motion.div 
-              whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/5 to-transparent" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[#475569]">Energy & Waste</span>
-                  <Factory className="h-5 w-5 text-[#F97316]" />
-                </div>
-                <div className="text-3xl font-bold text-[#1E293B] mb-1">
-                  {(emissionsBreakdown.energy + emissionsBreakdown.waste).toFixed(1)}
-                  <span className="text-lg text-[#475569] ml-1">kg</span>
-                </div>
-                <div className="text-xs text-[#475569]">
-                  Energy: {emissionsBreakdown.energy.toFixed(1)}kg | Waste: {emissionsBreakdown.waste.toFixed(1)}kg
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Main Dashboard Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Input Forms */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Input Forms Card */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 via-transparent to-[#10B981]/5" />
-                <div className="relative p-6">
-                  <h2 className="text-xl font-bold text-[#1E293B] mb-4">Calculate Emissions</h2>
-                  
-                  <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className="grid w-full grid-cols-5 mb-6 bg-[#F9FAFB]/50 backdrop-blur-sm">
-                      <TabsTrigger value="transport" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
-                        <Truck className="h-4 w-4 mr-2" />
-                        Transport
-                      </TabsTrigger>
-                      <TabsTrigger value="flight" className="data-[state=active]:bg-white data-[state=active]:text-[#8B5CF6]">
-                        <Plane className="h-4 w-4 mr-2" />
-                        Flight
-                      </TabsTrigger>
-                      <TabsTrigger value="sea" className="data-[state=active]:bg-white data-[state=active]:text-[#0EA5E9]">
-                        <Ship className="h-4 w-4 mr-2" />
-                        Sea
-                      </TabsTrigger>
-                      <TabsTrigger value="energy" className="data-[state=active]:bg-white data-[state=active]:text-[#10B981]">
-                        <Zap className="h-4 w-4 mr-2" />
-                        Energy
-                      </TabsTrigger>
-                      <TabsTrigger value="waste" className="data-[state=active]:bg-white data-[state=active]:text-[#F97316]">
-                        <Recycle className="h-4 w-4 mr-2" />
-                        Waste
-                      </TabsTrigger>
-                    </TabsList>
-
-                    {/* Transport Form */}
-                    <TabsContent value="transport" className="space-y-4 mt-0">
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              {/* Form Content */}
+              <div className="p-4">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.1 }}
+                  >
+                    {/* ─── TRANSPORT FORM ─── */}
+                    {activeTab === "transport" && (
+                      <div className="space-y-3">
                         <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Calculation Method</Label>
-                          <Select 
-                            value={transportData.calculationMethod} 
-                            onValueChange={(v: 'fuel' | 'distance') => setTransportData({ ...transportData, calculationMethod: v })}
-                          >
-                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                              <SelectValue />
-                            </SelectTrigger>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Calculation Method</label>
+                          <Select value={transportData.calculationMethod} onValueChange={(v: 'fuel' | 'distance') => setTransportData({ ...transportData, calculationMethod: v })}>
+                            <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="fuel">Fuel-Based (IPCC Tier 1 & 2)</SelectItem>
                               <SelectItem value="distance">Distance-Based (Tier 2)</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
-
                         <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1.5">
                             Distance (km)
-                            <Tooltip>
-                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Total distance traveled</TooltipContent>
-                            </Tooltip>
-                          </Label>
-                          <Input 
-                            type="number" 
-                            value={transportData.distance || ''}
-                            onChange={(e) => setTransportData({ ...transportData, distance: Number(e.target.value) })}
-                            placeholder="e.g., 1000"
-                            className="rounded-xl border-[#E5E7EB] focus:border-[#2563EB] focus:ring-[#2563EB] transition-all"
-                          />
+                            <Tooltip><TooltipTrigger><Info className="h-3 w-3 text-gray-400" /></TooltipTrigger><TooltipContent>Total distance traveled</TooltipContent></Tooltip>
+                          </label>
+                          <Input type="number" value={transportData.distance || ''} onChange={(e) => setTransportData({ ...transportData, distance: Number(e.target.value) })} placeholder="e.g., 1000" className="h-9 rounded-md border-gray-200 text-[12px]" />
                         </div>
-
                         {transportData.calculationMethod === 'fuel' ? (
                           <>
                             <div>
-                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
+                              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Fuel Type</label>
                               <Select value={transportData.fuelType} onValueChange={(v) => setTransportData({ ...transportData, fuelType: v })}>
-                                <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                  <SelectValue />
-                                </SelectTrigger>
+                                <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="petrol">Petrol (2.34 kgCO₂/L)</SelectItem>
                                   <SelectItem value="diesel">Diesel (2.68 kgCO₂/L)</SelectItem>
@@ -871,476 +756,168 @@ export const EmissionCalculator = () => {
                               </Select>
                             </div>
                             <div>
-                              <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
+                              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1.5">
                                 Fuel Economy (L/100km)
-                                <Tooltip>
-                                  <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                  <TooltipContent>Vehicle fuel consumption rate</TooltipContent>
-                                </Tooltip>
-                              </Label>
-                              <Input 
-                                type="number" 
-                                step="0.1"
-                                value={transportData.fuelEconomy || ''}
-                                onChange={(e) => setTransportData({ ...transportData, fuelEconomy: Number(e.target.value) })}
-                                placeholder="e.g., 7.0"
-                                className="rounded-xl border-[#E5E7EB] focus:border-[#2563EB] focus:ring-[#2563EB] transition-all"
-                              />
+                                <Tooltip><TooltipTrigger><Info className="h-3 w-3 text-gray-400" /></TooltipTrigger><TooltipContent>Vehicle fuel consumption rate</TooltipContent></Tooltip>
+                              </label>
+                              <Input type="number" step="0.1" value={transportData.fuelEconomy || ''} onChange={(e) => setTransportData({ ...transportData, fuelEconomy: Number(e.target.value) })} placeholder="e.g., 7.0" className="h-9 rounded-md border-gray-200 text-[12px]" />
                             </div>
                           </>
                         ) : (
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Vehicle Type</Label>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Vehicle Type</label>
                             <Select value={transportData.vehicle} onValueChange={(v) => setTransportData({ ...transportData, vehicle: v })}>
-                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                <SelectValue />
-                              </SelectTrigger>
+                              <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="small-petrol">Small Petrol Car (0.180 kg/km)</SelectItem>
-                                <SelectItem value="medium-petrol">Medium Petrol Car (0.220 kg/km)</SelectItem>
-                                <SelectItem value="large-petrol">Large Petrol Car (0.280 kg/km)</SelectItem>
-                                <SelectItem value="small-diesel">Small Diesel Car (0.165 kg/km)</SelectItem>
-                                <SelectItem value="medium-diesel">Medium Diesel Car (0.220 kg/km)</SelectItem>
-                                <SelectItem value="large-diesel">Large Diesel Car (0.270 kg/km)</SelectItem>
+                                <SelectItem value="small-petrol">Small Petrol (0.180 kg/km)</SelectItem>
+                                <SelectItem value="medium-petrol">Medium Petrol (0.220 kg/km)</SelectItem>
+                                <SelectItem value="large-petrol">Large Petrol (0.280 kg/km)</SelectItem>
+                                <SelectItem value="small-diesel">Small Diesel (0.165 kg/km)</SelectItem>
+                                <SelectItem value="medium-diesel">Medium Diesel (0.220 kg/km)</SelectItem>
+                                <SelectItem value="large-diesel">Large Diesel (0.270 kg/km)</SelectItem>
                                 <SelectItem value="motorcycle">Motorcycle (0.080 kg/km)</SelectItem>
-                                <SelectItem value="bus-per-passenger">Bus (per passenger) (0.105 kg/km)</SelectItem>
-                                <SelectItem value="train-per-passenger">Train (per passenger) (0.041 kg/km)</SelectItem>
-                                <SelectItem value="electric">Electric Vehicle (0.053 kg/km)</SelectItem>
+                                <SelectItem value="bus-per-passenger">Bus/passenger (0.105 kg/km)</SelectItem>
+                                <SelectItem value="train-per-passenger">Train/passenger (0.041 kg/km)</SelectItem>
+                                <SelectItem value="electric">Electric (0.053 kg/km)</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                         )}
+                        <label className="flex items-center gap-2 py-1 cursor-pointer">
+                          <input type="checkbox" checked={transportData.includeWTW} onChange={(e) => setTransportData({ ...transportData, includeWTW: e.target.checked })} className="rounded border-gray-300 h-3.5 w-3.5" />
+                          <span className="text-[11px] font-medium text-gray-700">Include Well-to-Wheel (WTW)</span>
+                        </label>
 
-                        <div className="flex items-center space-x-2 pt-2">
-                          <input
-                            type="checkbox"
-                            id="wtw"
-                            checked={transportData.includeWTW}
-                            onChange={(e) => setTransportData({ ...transportData, includeWTW: e.target.checked })}
-                            className="rounded border-[#E5E7EB] text-[#2563EB] focus:ring-[#2563EB]"
-                          />
-                          <Label htmlFor="wtw" className="text-sm font-medium text-[#1E293B] flex items-center gap-2">
-                            Include Well-to-Wheel (WTW) emissions
-                            <Tooltip>
-                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Add upstream fuel production emissions</TooltipContent>
-                            </Tooltip>
-                          </Label>
-                        </div>
-
-                        {/* Emission breakdown display */}
                         {detailedTransport.total > 0 && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-[#2563EB]/5 to-transparent border border-[#2563EB]/20"
-                          >
-                            <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Emission Breakdown</h4>
-                            <div className="space-y-1 text-xs text-[#475569]">
-                              <div className="flex justify-between">
-                                <span>CO₂ (Tank-to-Wheel):</span>
-                                <span className="font-mono">{detailedTransport.co2.toFixed(2)} kg</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>CH₄ (as CO₂e, GWP={GWP_CH4}):</span>
-                                <span className="font-mono">{detailedTransport.ch4.toFixed(2)} kg</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>N₂O (as CO₂e, GWP={GWP_N2O}):</span>
-                                <span className="font-mono">{detailedTransport.n2o.toFixed(2)} kg</span>
-                              </div>
-                              {transportData.includeWTW && (
-                                <div className="flex justify-between text-[#F97316]">
-                                  <span>Well-to-Tank (WTT):</span>
-                                  <span className="font-mono">{detailedTransport.wtt.toFixed(2)} kg</span>
-                                </div>
-                              )}
-                              <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
-                                <span>Total CO₂e {transportData.includeWTW ? '(WTW)' : '(TTW)'}:</span>
-                                <span className="font-mono">{detailedTransport.total.toFixed(2)} kg</span>
-                              </div>
-                            </div>
-                            <Button 
-                              onClick={saveTransportCalculation}
-                              className="w-full mt-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8]"
-                              size="sm"
-                            >
-                              <Save className="h-4 w-4 mr-2" />
-                              Save to History
-                            </Button>
-                          </motion.div>
+                          <ResultCard accent="#2563EB">
+                            <ResultRow label="CO₂ (Tank-to-Wheel)" value={`${detailedTransport.co2.toFixed(2)} kg`} />
+                            <ResultRow label={`CH₄ (GWP=${GWP_CH4})`} value={`${detailedTransport.ch4.toFixed(2)} kg`} />
+                            <ResultRow label={`N₂O (GWP=${GWP_N2O})`} value={`${detailedTransport.n2o.toFixed(2)} kg`} />
+                            {transportData.includeWTW && <ResultRow label="Well-to-Tank" value={`${detailedTransport.wtt.toFixed(2)} kg`} accent />}
+                            <ResultTotal label={`Total CO₂e ${transportData.includeWTW ? '(WTW)' : '(TTW)'}`} value={`${detailedTransport.total.toFixed(2)} kg`} />
+                            <SaveButton onClick={saveTransportCalculation} accent="#2563EB" />
+                          </ResultCard>
                         )}
-                      </motion.div>
-                    </TabsContent>
+                      </div>
+                    )}
 
-                    {/* Energy Form */}
-                    <TabsContent value="energy" className="space-y-4 mt-0">
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                        {/* Electricity Section (Scope 2) */}
-                        <div className="space-y-4 p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20">
-                          <h4 className="text-sm font-semibold text-[#1E293B] flex items-center gap-2">
-                            <Zap className="h-4 w-4 text-[#10B981]" />
-                            Electricity (Scope 2)
-                          </h4>
-
+                    {/* ─── FLIGHT FORM ─── */}
+                    {activeTab === "flight" && (
+                      <div className="space-y-3">
+                        <div className="p-3 rounded-md bg-[#8B5CF6]/5 border border-[#8B5CF6]/15">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Plane className="h-4 w-4 text-[#8B5CF6]" />
+                            <span className="text-[11px] font-bold text-gray-800">Flight Emissions Calculator</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500">ICAO/DEFRA emission factors with real airport coordinates.</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Electricity Consumption (kWh)
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Total electricity consumed</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <Input 
-                              type="number" 
-                              value={energyData.electricity || ''}
-                              onChange={(e) => setEnergyData({ ...energyData, electricity: Number(e.target.value) })}
-                              placeholder="e.g., 5000"
-                              className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
-                            />
-                          </div>
-
-                          <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Calculation Method</Label>
-                            <Select 
-                              value={energyData.electricityMethod} 
-                              onValueChange={(v: 'location' | 'market') => setEnergyData({ ...energyData, electricityMethod: v })}
-                            >
-                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="location">Location-Based (Regional Grid)</SelectItem>
-                                <SelectItem value="market">Market-Based (Supplier/RECs)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          {energyData.electricityMethod === 'location' ? (
-                            <div>
-                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Grid Type</Label>
-                              <Select value={energyData.gridType} onValueChange={(v) => setEnergyData({ ...energyData, gridType: v })}>
-                                <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="grid-mixed">Global Average (0.25 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="grid-uk">UK Grid (0.193 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="grid-us">US Grid (0.386 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="grid-eu">EU Grid (0.295 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="grid-china">China Grid (0.555 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="grid-india">India Grid (0.708 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="coal-heavy">Coal-Heavy Grid (0.82 kgCO₂e/kWh)</SelectItem>
-                                  <SelectItem value="gas-heavy">Gas-Heavy Grid (0.49 kgCO₂e/kWh)</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="flex items-center space-x-2">
-                                <input
-                                  type="checkbox"
-                                  id="renewable-certs"
-                                  checked={energyData.hasRenewableCerts}
-                                  onChange={(e) => setEnergyData({ ...energyData, hasRenewableCerts: e.target.checked })}
-                                  className="rounded border-[#E5E7EB] text-[#10B981] focus:ring-[#10B981]"
-                                />
-                                <Label htmlFor="renewable-certs" className="text-sm font-medium text-[#1E293B] flex items-center gap-2">
-                                  Have Renewable Certificates (RECs/REGOs/GoOs)
-                                  <Tooltip>
-                                    <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                    <TooltipContent>Zero emissions with valid certificates</TooltipContent>
-                                  </Tooltip>
-                                </Label>
-                              </div>
-
-                              {!energyData.hasRenewableCerts && (
-                                <div>
-                                  <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                                    Supplier Emission Factor (kgCO₂e/kWh)
-                                    <Tooltip>
-                                      <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                      <TooltipContent>Optional: Your supplier's specific emission factor</TooltipContent>
-                                    </Tooltip>
-                                  </Label>
-                                  <Input 
-                                    type="number" 
-                                    step="0.001"
-                                    value={energyData.supplierEF || ''}
-                                    onChange={(e) => setEnergyData({ ...energyData, supplierEF: e.target.value ? Number(e.target.value) : undefined })}
-                                    placeholder="e.g., 0.15"
-                                    className="rounded-xl border-[#E5E7EB] focus:border-[#10B981] focus:ring-[#10B981] transition-all"
-                                  />
-                                </div>
-                              )}
-                            </>
-                          )}
-                        </div>
-
-                        {/* Stationary Fuel Section (Scope 1) */}
-                        <div className="space-y-4 p-4 rounded-xl bg-gradient-to-br from-[#F97316]/5 to-transparent border border-[#F97316]/20">
-                          <h4 className="text-sm font-semibold text-[#1E293B] flex items-center gap-2">
-                            <Factory className="h-4 w-4 text-[#F97316]" />
-                            Stationary Fuel Combustion (Scope 1)
-                          </h4>
-
-                          <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
-                            <Select value={energyData.fuelType} onValueChange={(v) => setEnergyData({ ...energyData, fuelType: v })}>
-                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="diesel">Diesel (2.68 kgCO₂/L)</SelectItem>
-                                <SelectItem value="lpg">LPG (1.51 kgCO₂/L)</SelectItem>
-                                <SelectItem value="natural-gas">Natural Gas (0.202 kgCO₂/kWh)</SelectItem>
-                                <SelectItem value="fuel-oil">Fuel Oil (3.18 kgCO₂/L)</SelectItem>
-                                <SelectItem value="coal">Coal (94.6 kgCO₂/GJ)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="col-span-1">
-                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Amount</Label>
-                              <Input 
-                                type="number" 
-                                value={energyData.fuelAmount || ''}
-                                onChange={(e) => setEnergyData({ ...energyData, fuelAmount: Number(e.target.value) })}
-                                placeholder="e.g., 1000"
-                                className="rounded-xl border-[#E5E7EB] focus:border-[#F97316] focus:ring-[#F97316] transition-all"
-                              />
-                            </div>
-                            <div className="col-span-1">
-                              <Label className="text-sm font-medium text-[#1E293B] mb-2">Unit</Label>
-                              <Select value={energyData.fuelUnit} onValueChange={(v: 'L' | 'kWh' | 'GJ') => setEnergyData({ ...energyData, fuelUnit: v })}>
-                                <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="L">Liters (L)</SelectItem>
-                                  <SelectItem value="kWh">Kilowatt-hours (kWh)</SelectItem>
-                                  <SelectItem value="GJ">Gigajoules (GJ)</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Energy Emission Breakdown */}
-                        {detailedEnergy.total > 0 && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20"
-                          >
-                            <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Energy Emission Breakdown</h4>
-                            <div className="space-y-1 text-xs text-[#475569]">
-                              <div className="flex justify-between">
-                                <span>Scope 2 (Electricity - {detailedEnergy.method === 'location' ? 'Location-Based' : 'Market-Based'}):</span>
-                                <span className="font-mono">{detailedEnergy.scope2.toFixed(2)} kg CO₂e</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Scope 1 (Stationary Fuel):</span>
-                                <span className="font-mono">{detailedEnergy.scope1.toFixed(2)} kg CO₂</span>
-                              </div>
-                              <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
-                                <span>Total Energy Emissions:</span>
-                                <span className="font-mono">{detailedEnergy.total.toFixed(2)} kg CO₂e</span>
-                              </div>
-                            </div>
-                            <Button 
-                              onClick={saveEnergyCalculation}
-                              className="w-full mt-3 rounded-xl bg-[#10B981] hover:bg-[#059669]"
-                              size="sm"
-                            >
-                              <Save className="h-4 w-4 mr-2" />
-                              Save to History
-                            </Button>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    </TabsContent>
-
-                    {/* Waste Form */}
-                    <TabsContent value="waste" className="space-y-4 mt-0">
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                            Waste Amount (kg/month)
-                            <Tooltip>
-                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Monthly household waste</TooltipContent>
-                            </Tooltip>
-                          </Label>
-                          <Input 
-                            type="number" 
-                            value={wasteData.amount || ''}
-                            onChange={(e) => setWasteData({ ...wasteData, amount: Number(e.target.value) })}
-                            placeholder="e.g., 100"
-                            className="rounded-xl border-[#E5E7EB] focus:border-[#F97316] focus:ring-[#F97316] transition-all"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Waste Type</Label>
-                          <Select value={wasteData.type} onValueChange={(v) => setWasteData({ ...wasteData, type: v })}>
-                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="mixed">Mixed Waste</SelectItem>
-                              <SelectItem value="organic">Organic</SelectItem>
-                              <SelectItem value="plastic">Plastic</SelectItem>
-                              <SelectItem value="paper">Paper</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Disposal Method</Label>
-                          <Select value={wasteData.disposal} onValueChange={(v) => setWasteData({ ...wasteData, disposal: v })}>
-                            <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="landfill">Landfill</SelectItem>
-                              <SelectItem value="recycling">Recycling</SelectItem>
-                              <SelectItem value="composting">Composting</SelectItem>
-                              <SelectItem value="incineration">Incineration</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {/* Waste Emission Display */}
-                        {emissionsBreakdown.waste > 0 && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-4 rounded-xl bg-gradient-to-br from-[#F97316]/5 to-transparent border border-[#F97316]/20"
-                          >
-                            <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Waste Emission Summary</h4>
-                            <div className="space-y-1 text-xs text-[#475569]">
-                              <div className="flex justify-between">
-                                <span>Waste Type:</span>
-                                <span className="font-mono capitalize">{wasteData.type}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Disposal Method:</span>
-                                <span className="font-mono capitalize">{wasteData.disposal}</span>
-                              </div>
-                              <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
-                                <span>Total Waste Emissions:</span>
-                                <span className="font-mono">{emissionsBreakdown.waste.toFixed(2)} kg CO₂e</span>
-                              </div>
-                            </div>
-                            <Button 
-                              onClick={saveWasteCalculation}
-                              className="w-full mt-3 rounded-xl bg-[#F97316] hover:bg-[#EA580C]"
-                              size="sm"
-                            >
-                              <Save className="h-4 w-4 mr-2" />
-                              Save to History
-                            </Button>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    </TabsContent>
-
-                    {/* Sea Freight Form */}
-                    <TabsContent value="sea" className="space-y-4 mt-0">
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                        {/* Sea Freight Calculator Header */}
-                        <div className="p-4 rounded-xl bg-gradient-to-br from-[#0EA5E9]/10 to-[#0EA5E9]/5 border border-[#0EA5E9]/20">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Ship className="h-5 w-5 text-[#0EA5E9]" />
-                            <h4 className="text-sm font-semibold text-[#1E293B]">Sea Freight Emissions Calculator</h4>
-                          </div>
-                          <p className="text-xs text-[#475569]">
-                            Calculate maritime freight emissions using IMO/GLEC Framework and IPCC methodologies.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Origin Port
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Search by port name or code</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <PortSearch
-                              value={seaFreightData.originPort?.code || ''}
-                              onChange={(port) => setSeaFreightData({ ...seaFreightData, originPort: port })}
-                              placeholder="Search origin port..."
-                            />
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Departure</label>
+                            <AirportSearch value={flightData.departureIata} onChange={(iata) => setFlightData({ ...flightData, departureIata: iata })} placeholder="Search city..." />
                           </div>
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Destination Port
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Search by port name or code</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <PortSearch
-                              value={seaFreightData.destinationPort?.code || ''}
-                              onChange={(port) => setSeaFreightData({ ...seaFreightData, destinationPort: port })}
-                              placeholder="Search destination port..."
-                            />
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Arrival</label>
+                            <AirportSearch value={flightData.arrivalIata} onChange={(iata) => setFlightData({ ...flightData, arrivalIata: iata })} placeholder="Search city..." />
                           </div>
                         </div>
-
-                        {/* Sea Route Map */}
-                        <SeaRouteMap
-                          origin={seaFreightData.originPort || undefined}
-                          destination={seaFreightData.destinationPort || undefined}
-                          distanceKm={seaFreightResult?.distance}
-                          routeGeometry={seaFreightResult?.routeGeometry}
-                          waypoints={seaFreightResult?.waypoints}
+                        <FlightRouteMap
+                          departure={flightResult ? { iata: flightResult.route.departure.iata, name: flightResult.route.departure.name, lat: flightResult.route.departure.coordinates.latitude, lon: flightResult.route.departure.coordinates.longitude } : undefined}
+                          arrival={flightResult ? { iata: flightResult.route.arrival.iata, name: flightResult.route.arrival.name, lat: flightResult.route.arrival.coordinates.latitude, lon: flightResult.route.arrival.coordinates.longitude } : undefined}
+                          distanceKm={flightResult?.distance.km}
                         />
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Passengers</label>
+                          <Input type="number" min={1} value={flightData.passengers || ''} onChange={(e) => setFlightData({ ...flightData, passengers: Math.max(1, Number(e.target.value)) })} placeholder="1" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                        </div>
+                        <label className="flex items-center gap-2 py-1 cursor-pointer">
+                          <input type="checkbox" checked={flightData.includeRF} onChange={(e) => setFlightData({ ...flightData, includeRF: e.target.checked })} className="rounded border-gray-300 h-3.5 w-3.5" />
+                          <span className="text-[11px] font-medium text-gray-700">Include non-CO₂ effects (RF ×1.9)</span>
+                        </label>
+                        <button onClick={calculateFlightEmissions} disabled={flightLoading} className="w-full h-9 rounded-md bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-[11px] font-bold tracking-wide transition-colors flex items-center justify-center gap-2">
+                          {flightLoading ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Calculating...</> : <><Calculator className="h-3.5 w-3.5" /> CALCULATE FLIGHT</>}
+                        </button>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {flightResult && (
+                          <div className="space-y-3 mt-2">
+                            <div className="p-3 rounded-md bg-[#8B5CF6]/5 border border-[#8B5CF6]/15">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="text-center">
+                                  <div className="text-sm font-bold text-[#8B5CF6]">{flightResult.route.departure.iata}</div>
+                                  <div className="text-[10px] text-gray-500 max-w-[100px] truncate">{flightResult.route.departure.city}</div>
+                                </div>
+                                <div className="flex-1 flex items-center justify-center px-3">
+                                  <div className="h-px flex-1 bg-[#8B5CF6]/30" /><Plane className="h-4 w-4 text-[#8B5CF6] mx-1.5 rotate-90" /><div className="h-px flex-1 bg-[#8B5CF6]/30" />
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-sm font-bold text-[#8B5CF6]">{flightResult.route.arrival.iata}</div>
+                                  <div className="text-[10px] text-gray-500 max-w-[100px] truncate">{flightResult.route.arrival.city}</div>
+                                </div>
+                              </div>
+                              <div className="text-center text-[11px] text-gray-500">{flightResult.distance.km.toLocaleString()} km ({flightResult.distance.miles.toLocaleString()} mi)</div>
+                            </div>
+                            <ResultCard accent="#8B5CF6">
+                              <ResultRow label="Category" value={flightResult.emissions.category} />
+                              <ResultRow label="EF" value={`${flightResult.emissions.emissionFactor} kg CO₂/km`} />
+                              <ResultRow label="CO₂/passenger" value={`${flightResult.emissions.co2PerPassenger.toFixed(2)} kg`} />
+                              {flightData.includeRF && flightResult.emissions.co2ePerPassenger && (
+                                <ResultRow label="CO₂e/passenger (RF)" value={`${flightResult.emissions.co2ePerPassenger.toFixed(2)} kg`} accent />
+                              )}
+                              <ResultTotal label={`Total ${flightData.includeRF ? 'CO₂e' : 'CO₂'}`} value={`${(flightData.includeRF ? flightResult.emissions.totalCo2e : flightResult.emissions.totalCo2)?.toFixed(2)} kg`} />
+                            </ResultCard>
+                            <div className="p-2 rounded-md bg-gray-50 border border-gray-200">
+                              <p className="text-[10px] text-gray-500"><strong>Methodology:</strong> {flightResult.methodology.distanceCalculation} • {flightResult.methodology.emissionFactors}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ─── SEA FREIGHT FORM ─── */}
+                    {activeTab === "sea" && (
+                      <div className="space-y-3">
+                        <div className="p-3 rounded-md bg-[#0EA5E9]/5 border border-[#0EA5E9]/15">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Ship className="h-4 w-4 text-[#0EA5E9]" />
+                            <span className="text-[11px] font-bold text-gray-800">Sea Freight Emissions Calculator</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500">IMO/GLEC Framework and IPCC methodologies.</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Cargo Weight (tonnes)
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Total cargo weight in metric tonnes</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <Input 
-                              type="number" 
-                              min={0}
-                              value={seaFreightData.cargoWeight || ''}
-                              onChange={(e) => setSeaFreightData({ ...seaFreightData, cargoWeight: Number(e.target.value) })}
-                              placeholder="e.g., 20"
-                              className="rounded-xl border-[#E5E7EB] focus:border-[#0EA5E9] focus:ring-[#0EA5E9] transition-all"
-                            />
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Origin Port</label>
+                            <PortSearch value={seaFreightData.originPort?.code || ''} onChange={(port) => setSeaFreightData({ ...seaFreightData, originPort: port })} placeholder="Search port..." />
                           </div>
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Ship Type</Label>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Destination Port</label>
+                            <PortSearch value={seaFreightData.destinationPort?.code || ''} onChange={(port) => setSeaFreightData({ ...seaFreightData, destinationPort: port })} placeholder="Search port..." />
+                          </div>
+                        </div>
+                        <SeaRouteMap origin={seaFreightData.originPort || undefined} destination={seaFreightData.destinationPort || undefined} distanceKm={seaFreightResult?.distance} routeGeometry={seaFreightResult?.routeGeometry} waypoints={seaFreightResult?.waypoints} />
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Cargo Weight (t)</label>
+                            <Input type="number" min={0} value={seaFreightData.cargoWeight || ''} onChange={(e) => setSeaFreightData({ ...seaFreightData, cargoWeight: Number(e.target.value) })} placeholder="e.g., 20" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Ship Type</label>
                             <Select value={seaFreightData.shipType} onValueChange={(v) => setSeaFreightData({ ...seaFreightData, shipType: v })}>
-                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                <SelectValue />
-                              </SelectTrigger>
+                              <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="container">Container Ship (0.015 kgCO₂/t-km)</SelectItem>
-                                <SelectItem value="bulk-carrier">Bulk Carrier (0.008 kgCO₂/t-km)</SelectItem>
-                                <SelectItem value="oil-tanker">Oil/Chemical Tanker (0.011 kgCO₂/t-km)</SelectItem>
-                                <SelectItem value="ro-ro">Ro-Ro (0.022 kgCO₂/t-km)</SelectItem>
-                                <SelectItem value="general-cargo">General Cargo (0.018 kgCO₂/t-km)</SelectItem>
+                                <SelectItem value="container">Container Ship</SelectItem>
+                                <SelectItem value="bulk-carrier">Bulk Carrier</SelectItem>
+                                <SelectItem value="oil-tanker">Oil/Chemical Tanker</SelectItem>
+                                <SelectItem value="ro-ro">Ro-Ro</SelectItem>
+                                <SelectItem value="general-cargo">General Cargo</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Fuel Type</Label>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Fuel Type</label>
                             <Select value={seaFreightData.fuelType} onValueChange={(v) => setSeaFreightData({ ...seaFreightData, fuelType: v })}>
-                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                <SelectValue />
-                              </SelectTrigger>
+                              <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="hfo">Heavy Fuel Oil (HFO)</SelectItem>
                                 <SelectItem value="mgo">Marine Gas Oil (MGO)</SelectItem>
@@ -1349,498 +926,320 @@ export const EmissionCalculator = () => {
                             </Select>
                           </div>
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2">Calculation Method</Label>
-                            <Select 
-                              value={seaFreightData.calculationMethod} 
-                              onValueChange={(v: 'tonne-km' | 'fuel-based') => setSeaFreightData({ ...seaFreightData, calculationMethod: v })}
-                            >
-                              <SelectTrigger className="rounded-xl border-[#E5E7EB]">
-                                <SelectValue />
-                              </SelectTrigger>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Calc Method</label>
+                            <Select value={seaFreightData.calculationMethod} onValueChange={(v: 'tonne-km' | 'fuel-based') => setSeaFreightData({ ...seaFreightData, calculationMethod: v })}>
+                              <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="tonne-km">Tonne-Kilometre (GLEC/IPCC)</SelectItem>
-                                <SelectItem value="fuel-based">Fuel-Based (IMO Tier 2)</SelectItem>
+                                <SelectItem value="tonne-km">Tonne-km (GLEC/IPCC)</SelectItem>
+                                <SelectItem value="fuel-based">Fuel-Based (IMO)</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                         </div>
-
                         {seaFreightData.calculationMethod === 'fuel-based' && (
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Fuel Consumed (tonnes)
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Actual fuel consumption for the voyage</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <Input 
-                              type="number" 
-                              min={0}
-                              step={0.1}
-                              value={seaFreightData.fuelConsumed || ''}
-                              onChange={(e) => setSeaFreightData({ ...seaFreightData, fuelConsumed: Number(e.target.value) })}
-                              placeholder="e.g., 150"
-                              className="rounded-xl border-[#E5E7EB] focus:border-[#0EA5E9] focus:ring-[#0EA5E9] transition-all"
-                            />
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Fuel Consumed (tonnes)</label>
+                            <Input type="number" min={0} step={0.1} value={seaFreightData.fuelConsumed || ''} onChange={(e) => setSeaFreightData({ ...seaFreightData, fuelConsumed: Number(e.target.value) })} placeholder="e.g., 150" className="h-9 rounded-md border-gray-200 text-[12px]" />
                           </div>
                         )}
+                        <button onClick={calculateSeaFreightEmissions} disabled={seaLoading} className="w-full h-9 rounded-md bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-[11px] font-bold tracking-wide transition-colors flex items-center justify-center gap-2">
+                          {seaLoading ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Calculating...</> : <><Calculator className="h-3.5 w-3.5" /> CALCULATE SEA FREIGHT</>}
+                        </button>
 
-                        <Button 
-                          onClick={calculateSeaFreightEmissions}
-                          disabled={seaLoading}
-                          className="w-full bg-[#0EA5E9] hover:bg-[#0284C7] text-white rounded-xl py-3"
-                        >
-                          {seaLoading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Calculating...
-                            </>
-                          ) : (
-                            <>
-                              <Calculator className="h-4 w-4 mr-2" />
-                              Calculate Sea Freight Emissions
-                            </>
-                          )}
-                        </Button>
-
-                        {/* Sea Freight Result Display */}
                         {seaFreightResult && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-4 space-y-4"
-                          >
-                            {/* Route Info */}
-                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#0EA5E9]/5 to-transparent border border-[#0EA5E9]/20">
-                              <h4 className="text-sm font-semibold text-[#1E293B] mb-3 flex items-center gap-2">
-                                <Anchor className="h-4 w-4 text-[#0EA5E9]" />
-                                Route Details
-                              </h4>
+                          <div className="space-y-3 mt-2">
+                            <div className="p-3 rounded-md bg-[#0EA5E9]/5 border border-[#0EA5E9]/15">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="text-center">
-                                  <div className="text-lg font-bold text-[#0EA5E9]">{seaFreightData.originPort?.code}</div>
-                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{seaFreightData.originPort?.city}</div>
+                                  <div className="text-sm font-bold text-[#0EA5E9]">{seaFreightData.originPort?.code}</div>
+                                  <div className="text-[10px] text-gray-500 truncate max-w-[100px]">{seaFreightData.originPort?.city}</div>
                                 </div>
-                                <div className="flex-1 flex items-center justify-center px-4">
-                                  <div className="h-px flex-1 bg-[#0EA5E9]/30"></div>
-                                  <Ship className="h-5 w-5 text-[#0EA5E9] mx-2" />
-                                  <div className="h-px flex-1 bg-[#0EA5E9]/30"></div>
+                                <div className="flex-1 flex items-center justify-center px-3">
+                                  <div className="h-px flex-1 bg-[#0EA5E9]/30" /><Ship className="h-4 w-4 text-[#0EA5E9] mx-1.5" /><div className="h-px flex-1 bg-[#0EA5E9]/30" />
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-lg font-bold text-[#0EA5E9]">{seaFreightData.destinationPort?.code}</div>
-                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{seaFreightData.destinationPort?.city}</div>
+                                  <div className="text-sm font-bold text-[#0EA5E9]">{seaFreightData.destinationPort?.code}</div>
+                                  <div className="text-[10px] text-gray-500 truncate max-w-[100px]">{seaFreightData.destinationPort?.city}</div>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-2 gap-4 mt-3 text-center">
-                                <div>
-                                  <span className="text-xs text-[#475569]">Distance</span>
-                                  <div className="text-sm font-semibold text-[#1E293B]">{seaFreightResult.distance.toLocaleString()} km</div>
-                                </div>
-                                <div>
-                                  <span className="text-xs text-[#475569]">Tonne-km</span>
-                                  <div className="text-sm font-semibold text-[#1E293B]">{seaFreightResult.tonneKm.toLocaleString()}</div>
-                                </div>
+                              <div className="grid grid-cols-2 gap-3 mt-2 text-center">
+                                <div><span className="text-[10px] text-gray-500">Distance</span><div className="text-[12px] font-semibold text-gray-800">{seaFreightResult.distance.toLocaleString()} km</div></div>
+                                <div><span className="text-[10px] text-gray-500">Tonne-km</span><div className="text-[12px] font-semibold text-gray-800">{seaFreightResult.tonneKm.toLocaleString()}</div></div>
                               </div>
                             </div>
-
-                            {/* Emissions Breakdown */}
-                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20">
-                              <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Emissions Breakdown</h4>
-                              <div className="space-y-1 text-xs text-[#475569]">
-                                <div className="flex justify-between">
-                                  <span>Ship Type:</span>
-                                  <span className="font-medium text-[#1E293B] capitalize">{seaFreightData.shipType.replace('-', ' ')}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Method:</span>
-                                  <span className="font-medium text-[#1E293B]">{seaFreightResult.method === 'tonne-km' ? 'Tonne-km (GLEC)' : 'Fuel-based (IMO)'}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>CO₂:</span>
-                                  <span className="font-mono">{seaFreightResult.emissions.co2.toFixed(2)} kg</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>CH₄ (as CO₂e):</span>
-                                  <span className="font-mono">{seaFreightResult.emissions.ch4.toFixed(2)} kg</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>N₂O (as CO₂e):</span>
-                                  <span className="font-mono">{seaFreightResult.emissions.n2o.toFixed(2)} kg</span>
-                                </div>
-                                <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
-                                  <span>Total CO₂e:</span>
-                                  <span className="font-mono text-[#0EA5E9]">{seaFreightResult.emissions.co2e.toFixed(2)} kg</span>
-                                </div>
-                              </div>
-                              <Button 
-                                onClick={saveSeaFreightCalculation}
-                                className="w-full mt-3 rounded-xl bg-[#0EA5E9] hover:bg-[#0284C7]"
-                                size="sm"
-                              >
-                                <Save className="h-4 w-4 mr-2" />
-                                Save to History
-                              </Button>
-                            </div>
-
-                            {/* Methodology Note */}
-                            <div className="p-3 rounded-lg bg-[#F0F9FF] border border-[#BAE6FD]">
-                              <p className="text-xs text-[#0369A1] leading-relaxed">
-                                <strong>Methodology:</strong> IPCC 2006 Transport Guidelines, IMO GHG Study, GHG Protocol Scope 3 (Category 4), GLEC Framework. Emission factors are versioned and auditable.
-                              </p>
-                            </div>
-
-                            {/* Alternative Route Comparison */}
+                            <ResultCard accent="#0EA5E9">
+                              <ResultRow label="Ship Type" value={seaFreightData.shipType.replace('-', ' ')} />
+                              <ResultRow label="Method" value={seaFreightResult.method === 'tonne-km' ? 'Tonne-km (GLEC)' : 'Fuel-based (IMO)'} />
+                              <ResultRow label="CO₂" value={`${seaFreightResult.emissions.co2.toFixed(2)} kg`} />
+                              <ResultRow label="CH₄ (CO₂e)" value={`${seaFreightResult.emissions.ch4.toFixed(2)} kg`} />
+                              <ResultRow label="N₂O (CO₂e)" value={`${seaFreightResult.emissions.n2o.toFixed(2)} kg`} />
+                              <ResultTotal label="Total CO₂e" value={`${seaFreightResult.emissions.co2e.toFixed(2)} kg`} />
+                              <SaveButton onClick={saveSeaFreightCalculation} accent="#0EA5E9" />
+                            </ResultCard>
                             <RouteComparison
                               origin={seaFreightData.originPort}
                               destination={seaFreightData.destinationPort}
                               cargoWeight={seaFreightData.cargoWeight}
                               shipType={seaFreightData.shipType}
-                              primaryRoute={seaFreightResult ? {
-                                name: seaFreightResult.waypoints.length > 0 ? `Via ${seaFreightResult.waypoints[0]}` : 'Direct',
-                                distance: seaFreightResult.distance,
-                                waypoints: seaFreightResult.waypoints || [],
-                                geometry: seaFreightResult.routeGeometry || [],
-                                co2: seaFreightResult.emissions.co2e,
-                                estimatedDays: Math.round((seaFreightResult.distance / 1.852) / (15 * 24)),
-                              } : undefined}
+                              primaryRoute={seaFreightResult ? { name: seaFreightResult.waypoints.length > 0 ? `Via ${seaFreightResult.waypoints[0]}` : 'Direct', distance: seaFreightResult.distance, waypoints: seaFreightResult.waypoints || [], geometry: seaFreightResult.routeGeometry || [], co2: seaFreightResult.emissions.co2e, estimatedDays: Math.round((seaFreightResult.distance / 1.852) / (15 * 24)) } : undefined}
                               calculateRoute={calculateSeaRoute}
                               emissionFactor={SHIP_EF[seaFreightData.shipType as keyof typeof SHIP_EF] || 0.015}
                             />
-                          </motion.div>
+                          </div>
                         )}
-                      </motion.div>
-                    </TabsContent>
+                      </div>
+                    )}
 
-                    <TabsContent value="flight" className="space-y-4 mt-0">
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                        {/* Flight Calculator Header */}
-                        <div className="p-4 rounded-xl bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/5 border border-[#8B5CF6]/20">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Plane className="h-5 w-5 text-[#8B5CF6]" />
-                            <h4 className="text-sm font-semibold text-[#1E293B]">Flight Emissions Calculator</h4>
-                          </div>
-                          <p className="text-xs text-[#475569]">
-                            Calculate carbon emissions using real airport coordinates and ICAO/DEFRA emission factors.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* ─── ENERGY FORM ─── */}
+                    {activeTab === "energy" && (
+                      <div className="space-y-4">
+                        {/* Scope 2 */}
+                        <div className="p-3 rounded-md bg-[#10B981]/5 border border-[#10B981]/15 space-y-3">
+                          <div className="flex items-center gap-2"><Zap className="h-3.5 w-3.5 text-[#10B981]" /><span className="text-[11px] font-bold text-gray-800">Electricity (Scope 2)</span></div>
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Departure Airport
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Search by city name or IATA code</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <AirportSearch
-                              value={flightData.departureIata}
-                              onChange={(iata) => setFlightData({ ...flightData, departureIata: iata })}
-                              placeholder="Search departure city..."
-                            />
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Consumption (kWh)</label>
+                            <Input type="number" value={energyData.electricity || ''} onChange={(e) => setEnergyData({ ...energyData, electricity: Number(e.target.value) })} placeholder="e.g., 5000" className="h-9 rounded-md border-gray-200 text-[12px]" />
                           </div>
                           <div>
-                            <Label className="text-sm font-medium text-[#1E293B] mb-2 flex items-center gap-2">
-                              Arrival Airport
-                              <Tooltip>
-                                <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                                <TooltipContent>Search by city name or IATA code</TooltipContent>
-                              </Tooltip>
-                            </Label>
-                            <AirportSearch
-                              value={flightData.arrivalIata}
-                              onChange={(iata) => setFlightData({ ...flightData, arrivalIata: iata })}
-                              placeholder="Search arrival city..."
-                            />
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Method</label>
+                            <Select value={energyData.electricityMethod} onValueChange={(v: 'location' | 'market') => setEnergyData({ ...energyData, electricityMethod: v })}>
+                              <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="location">Location-Based</SelectItem>
+                                <SelectItem value="market">Market-Based</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
-                        </div>
-
-                        {/* Flight Route Map */}
-                        <FlightRouteMap
-                          departure={flightResult ? {
-                            iata: flightResult.route.departure.iata,
-                            name: flightResult.route.departure.name,
-                            lat: flightResult.route.departure.coordinates.latitude,
-                            lon: flightResult.route.departure.coordinates.longitude,
-                          } : undefined}
-                          arrival={flightResult ? {
-                            iata: flightResult.route.arrival.iata,
-                            name: flightResult.route.arrival.name,
-                            lat: flightResult.route.arrival.coordinates.latitude,
-                            lon: flightResult.route.arrival.coordinates.longitude,
-                          } : undefined}
-                          distanceKm={flightResult?.distance.km}
-                        />
-
-                        <div>
-                          <Label className="text-sm font-medium text-[#1E293B] mb-2">Number of Passengers</Label>
-                          <Input 
-                            type="number" 
-                            min={1}
-                            value={flightData.passengers || ''}
-                            onChange={(e) => setFlightData({ ...flightData, passengers: Math.max(1, Number(e.target.value)) })}
-                            placeholder="1"
-                            className="rounded-xl border-[#E5E7EB] focus:border-[#8B5CF6] focus:ring-[#8B5CF6] transition-all"
-                          />
-                        </div>
-
-                        <div className="flex items-center space-x-2 pt-2">
-                          <input
-                            type="checkbox"
-                            id="include-rf"
-                            checked={flightData.includeRF}
-                            onChange={(e) => setFlightData({ ...flightData, includeRF: e.target.checked })}
-                            className="rounded border-[#E5E7EB] text-[#8B5CF6] focus:ring-[#8B5CF6]"
-                          />
-                          <Label htmlFor="include-rf" className="text-sm font-medium text-[#1E293B] flex items-center gap-2">
-                            Include non-CO₂ effects (RF multiplier: 1.9x)
-                            <Tooltip>
-                              <TooltipTrigger><Info className="h-3.5 w-3.5 text-[#475569]" /></TooltipTrigger>
-                              <TooltipContent>Includes contrails, NOx, and water vapor effects</TooltipContent>
-                            </Tooltip>
-                          </Label>
-                        </div>
-
-                        <Button 
-                          onClick={calculateFlightEmissions}
-                          disabled={flightLoading}
-                          className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl py-3"
-                        >
-                          {flightLoading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Calculating...
-                            </>
+                          {energyData.electricityMethod === 'location' ? (
+                            <div>
+                              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Grid Type</label>
+                              <Select value={energyData.gridType} onValueChange={(v) => setEnergyData({ ...energyData, gridType: v })}>
+                                <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="grid-mixed">Global Average (0.25)</SelectItem>
+                                  <SelectItem value="grid-uk">UK (0.193)</SelectItem>
+                                  <SelectItem value="grid-us">US (0.386)</SelectItem>
+                                  <SelectItem value="grid-eu">EU (0.295)</SelectItem>
+                                  <SelectItem value="grid-china">China (0.555)</SelectItem>
+                                  <SelectItem value="grid-india">India (0.708)</SelectItem>
+                                  <SelectItem value="coal-heavy">Coal-Heavy (0.82)</SelectItem>
+                                  <SelectItem value="gas-heavy">Gas-Heavy (0.49)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                           ) : (
                             <>
-                              <Calculator className="h-4 w-4 mr-2" />
-                              Calculate Flight Emissions
+                              <label className="flex items-center gap-2 py-1 cursor-pointer">
+                                <input type="checkbox" checked={energyData.hasRenewableCerts} onChange={(e) => setEnergyData({ ...energyData, hasRenewableCerts: e.target.checked })} className="rounded border-gray-300 h-3.5 w-3.5" />
+                                <span className="text-[11px] font-medium text-gray-700">Renewable Certificates (RECs/REGOs)</span>
+                              </label>
+                              {!energyData.hasRenewableCerts && (
+                                <div>
+                                  <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Supplier EF (kgCO₂e/kWh)</label>
+                                  <Input type="number" step="0.001" value={energyData.supplierEF || ''} onChange={(e) => setEnergyData({ ...energyData, supplierEF: e.target.value ? Number(e.target.value) : undefined })} placeholder="e.g., 0.15" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                                </div>
+                              )}
                             </>
                           )}
-                        </Button>
-
-                        {/* Flight Result Display */}
-                        {flightResult && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-4 space-y-4"
-                          >
-                            {/* Route Info */}
-                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#8B5CF6]/5 to-transparent border border-[#8B5CF6]/20">
-                              <h4 className="text-sm font-semibold text-[#1E293B] mb-3 flex items-center gap-2">
-                                <MapPin className="h-4 w-4 text-[#8B5CF6]" />
-                                Route Details
-                              </h4>
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="text-center">
-                                  <div className="text-lg font-bold text-[#8B5CF6]">{flightResult.route.departure.iata}</div>
-                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{flightResult.route.departure.name}</div>
-                                </div>
-                                <div className="flex-1 flex items-center justify-center px-4">
-                                  <div className="h-px flex-1 bg-[#8B5CF6]/30"></div>
-                                  <Plane className="h-5 w-5 text-[#8B5CF6] mx-2 transform rotate-90" />
-                                  <div className="h-px flex-1 bg-[#8B5CF6]/30"></div>
-                                </div>
-                                <div className="text-center">
-                                  <div className="text-lg font-bold text-[#8B5CF6]">{flightResult.route.arrival.iata}</div>
-                                  <div className="text-xs text-[#475569] max-w-[120px] truncate">{flightResult.route.arrival.name}</div>
-                                </div>
-                              </div>
-                              <div className="text-center mt-3">
-                                <span className="text-sm text-[#475569]">Distance: </span>
-                                <span className="text-sm font-semibold text-[#1E293B]">{flightResult.distance.km.toLocaleString()} km</span>
-                                <span className="text-xs text-[#475569] ml-2">({flightResult.distance.miles.toLocaleString()} miles)</span>
-                              </div>
+                        </div>
+                        {/* Scope 1 */}
+                        <div className="p-3 rounded-md bg-[#F97316]/5 border border-[#F97316]/15 space-y-3">
+                          <div className="flex items-center gap-2"><Factory className="h-3.5 w-3.5 text-[#F97316]" /><span className="text-[11px] font-bold text-gray-800">Stationary Fuel (Scope 1)</span></div>
+                          <div>
+                            <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Fuel Type</label>
+                            <Select value={energyData.fuelType} onValueChange={(v) => setEnergyData({ ...energyData, fuelType: v })}>
+                              <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="natural-gas">Natural Gas</SelectItem>
+                                <SelectItem value="diesel">Diesel</SelectItem>
+                                <SelectItem value="lpg">LPG</SelectItem>
+                                <SelectItem value="fuel-oil">Fuel Oil</SelectItem>
+                                <SelectItem value="coal">Coal</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Amount</label>
+                              <Input type="number" value={energyData.fuelAmount || ''} onChange={(e) => setEnergyData({ ...energyData, fuelAmount: Number(e.target.value) })} placeholder="e.g., 1000" className="h-9 rounded-md border-gray-200 text-[12px]" />
                             </div>
-
-                            {/* Emissions Breakdown */}
-                            <div className="p-4 rounded-xl bg-gradient-to-br from-[#10B981]/5 to-transparent border border-[#10B981]/20">
-                              <h4 className="text-sm font-semibold text-[#1E293B] mb-2">Emissions Breakdown</h4>
-                              <div className="space-y-1 text-xs text-[#475569]">
-                                <div className="flex justify-between">
-                                  <span>Flight Category:</span>
-                                  <span className="font-medium text-[#1E293B]">{flightResult.emissions.category}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Emission Factor:</span>
-                                  <span className="font-mono">{flightResult.emissions.emissionFactor} kg CO₂/km</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>CO₂ per Passenger:</span>
-                                  <span className="font-mono">{flightResult.emissions.co2PerPassenger.toFixed(2)} kg</span>
-                                </div>
-                                {flightData.includeRF && flightResult.emissions.co2ePerPassenger && (
-                                  <div className="flex justify-between text-[#8B5CF6]">
-                                    <span>CO₂e per Passenger (with RF):</span>
-                                    <span className="font-mono">{flightResult.emissions.co2ePerPassenger.toFixed(2)} kg</span>
-                                  </div>
-                                )}
-                                <div className="flex justify-between pt-2 border-t border-[#E5E7EB] font-semibold text-[#1E293B]">
-                                  <span>Total {flightData.includeRF ? 'CO₂e' : 'CO₂'} ({flightResult.emissions.passengers} passenger{flightResult.emissions.passengers > 1 ? 's' : ''}):</span>
-                                  <span className="font-mono text-[#8B5CF6]">
-                                    {(flightData.includeRF ? flightResult.emissions.totalCo2e : flightResult.emissions.totalCo2)?.toFixed(2)} kg
-                                  </span>
-                                </div>
-                              </div>
+                            <div>
+                              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Unit</label>
+                              <Select value={energyData.fuelUnit} onValueChange={(v: 'L' | 'kWh' | 'GJ') => setEnergyData({ ...energyData, fuelUnit: v })}>
+                                <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="L">Liters</SelectItem>
+                                  <SelectItem value="kWh">kWh</SelectItem>
+                                  <SelectItem value="GJ">GJ</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
+                          </div>
+                        </div>
 
-                            {/* Methodology */}
-                            <div className="p-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
-                              <h5 className="text-xs font-semibold text-[#475569] mb-1">Methodology</h5>
-                              <p className="text-xs text-[#64748B]">
-                                {flightResult.methodology.distanceCalculation} • {flightResult.methodology.emissionFactors}
-                              </p>
-                              <p className="text-xs text-[#64748B] mt-1 italic">
-                                {flightResult.methodology.rfExplanation}
-                              </p>
-                            </div>
-
-                            {/* Inspirational Message */}
-                            <div className="p-3 rounded-lg bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/5 border border-[#10B981]/20 text-center">
-                              <p className="text-xs text-[#475569] italic">
-                                "Flying connects worlds — but it also leaves a footprint. By understanding our impact, we take the first small step toward flying smarter, lighter, and greener."
-                              </p>
-                            </div>
-                          </motion.div>
+                        {detailedEnergy.total > 0 && (
+                          <ResultCard accent="#10B981">
+                            <ResultRow label={`Scope 2 (${detailedEnergy.method === 'location' ? 'Location' : 'Market'})`} value={`${detailedEnergy.scope2.toFixed(2)} kg CO₂e`} />
+                            <ResultRow label="Scope 1 (Fuel)" value={`${detailedEnergy.scope1.toFixed(2)} kg CO₂`} />
+                            <ResultTotal label="Total Energy" value={`${detailedEnergy.total.toFixed(2)} kg CO₂e`} />
+                            <SaveButton onClick={saveEnergyCalculation} accent="#10B981" />
+                          </ResultCard>
                         )}
-                      </motion.div>
-                    </TabsContent>
-                  </Tabs>
-                </div>
-              </motion.div>
-
-              {/* Charts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Trend Chart */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 to-transparent" />
-                  <div className="relative">
-                    <h3 className="text-sm font-semibold text-[#1E293B] mb-4">Emission Trend</h3>
-                    {trendData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={180}>
-                        <LineChart data={trendData}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                          <XAxis dataKey="time" tick={{ fontSize: 11, fill: "#475569" }} />
-                          <YAxis tick={{ fontSize: 11, fill: "#475569" }} />
-                          <Line type="monotone" dataKey="emissions" stroke="#2563EB" strokeWidth={2} dot={{ fill: "#2563EB", r: 3 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <div className="h-[180px] flex items-center justify-center text-sm text-[#475569]">
-                        Start entering data to see trends
                       </div>
                     )}
-                  </div>
-                </motion.div>
 
-                {/* Breakdown Pie Chart */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 to-transparent" />
-                  <div className="relative">
-                    <h3 className="text-sm font-semibold text-[#1E293B] mb-4">Emissions Breakdown</h3>
-                    {totalEmissions > 0 ? (
-                      <ResponsiveContainer width="100%" height={180}>
-                        <PieChart>
-                          <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3}>
-                            {pieData.map((entry, index) => (
-                              <Cell key={index} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Legend wrapperStyle={{ fontSize: '11px' }} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <div className="h-[180px] flex items-center justify-center text-sm text-[#475569]">
-                        No data to display
+                    {/* ─── WASTE FORM ─── */}
+                    {activeTab === "waste" && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Waste Amount (kg/month)</label>
+                          <Input type="number" value={wasteData.amount || ''} onChange={(e) => setWasteData({ ...wasteData, amount: Number(e.target.value) })} placeholder="e.g., 100" className="h-9 rounded-md border-gray-200 text-[12px]" />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Waste Type</label>
+                          <Select value={wasteData.type} onValueChange={(v) => setWasteData({ ...wasteData, type: v })}>
+                            <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="mixed">Mixed</SelectItem>
+                              <SelectItem value="organic">Organic</SelectItem>
+                              <SelectItem value="plastic">Plastic</SelectItem>
+                              <SelectItem value="paper">Paper</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide mb-1 block">Disposal Method</label>
+                          <Select value={wasteData.disposal} onValueChange={(v) => setWasteData({ ...wasteData, disposal: v })}>
+                            <SelectTrigger className="h-9 rounded-md border-gray-200 text-[12px]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="landfill">Landfill</SelectItem>
+                              <SelectItem value="recycling">Recycling</SelectItem>
+                              <SelectItem value="composting">Composting</SelectItem>
+                              <SelectItem value="incineration">Incineration</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {emissionsBreakdown.waste > 0 && (
+                          <ResultCard accent="#F97316">
+                            <ResultRow label="Waste Type" value={wasteData.type} />
+                            <ResultRow label="Disposal" value={wasteData.disposal} />
+                            <ResultTotal label="Total Waste" value={`${emissionsBreakdown.waste.toFixed(2)} kg CO₂e`} />
+                            <SaveButton onClick={saveWasteCalculation} accent="#F97316" />
+                          </ResultCard>
+                        )}
                       </div>
                     )}
-                  </div>
-                </motion.div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
 
-            {/* Right Column - Insights */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-white/70 border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.06)] p-6 h-fit"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 via-transparent to-[#F97316]/5" />
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-4">
-                  <Lightbulb className="h-5 w-5 text-[#F97316]" />
-                  <h3 className="text-lg font-bold text-[#1E293B]">Sustainability Insights</h3>
-                </div>
-                
-                <div className="space-y-3">
-                  {getInsights().map((insight, idx) => {
-                    const InsightIcon = insight.icon;
-                    const colors = {
-                      warning: 'bg-orange-50 border-orange-200 text-orange-700',
-                      tip: 'bg-blue-50 border-blue-200 text-blue-700',
-                      info: 'bg-purple-50 border-purple-200 text-purple-700',
-                      success: 'bg-green-50 border-green-200 text-green-700'
-                    };
-                    return (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                        className={`p-4 rounded-xl border backdrop-blur-sm ${colors[insight.type as keyof typeof colors]}`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <InsightIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                          <p className="text-sm leading-relaxed">{insight.text}</p>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-
-                  {getInsights().length === 0 && (
-                    <div className="text-center py-8 text-sm text-[#475569]">
-                      <Leaf className="h-8 w-8 mx-auto mb-2 text-[#10B981]" />
-                      Enter your data to receive personalized sustainability insights
-                    </div>
-                  )}
-                </div>
-
-                {/* Offset Info */}
-                {totalEmissions > 10 && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 p-4 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/5 border border-[#10B981]/20"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <Leaf className="h-4 w-4 text-[#10B981]" />
-                      <span className="text-sm font-semibold text-[#1E293B]">Carbon Offset</span>
-                    </div>
-                    <p className="text-xs text-[#475569] mb-2">
-                      Plant <span className="font-bold text-[#10B981]">{Math.ceil(totalEmissions / 22)} trees</span> to offset your emissions
-                    </p>
-                    <p className="text-xs text-[#475569]">
-                      Estimated cost: <span className="font-bold">${(totalEmissions * 0.02).toFixed(2)}</span>
-                    </p>
-                  </motion.div>
+            {/* Charts Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="text-[11px] font-bold text-gray-600 uppercase tracking-wide mb-3">Emission Trend</h3>
+                {trendData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={160}>
+                    <LineChart data={trendData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                      <XAxis dataKey="time" tick={{ fontSize: 10, fill: "#9CA3AF" }} />
+                      <YAxis tick={{ fontSize: 10, fill: "#9CA3AF" }} />
+                      <Line type="monotone" dataKey="emissions" stroke="#4F46E5" strokeWidth={2} dot={{ fill: "#4F46E5", r: 2.5 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[160px] flex items-center justify-center text-[11px] text-gray-400">Enter data to see trends</div>
                 )}
               </div>
-            </motion.div>
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="text-[11px] font-bold text-gray-600 uppercase tracking-wide mb-3">Breakdown</h3>
+                {totalEmissions > 0 ? (
+                  <ResponsiveContainer width="100%" height={160}>
+                    <PieChart>
+                      <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={60} paddingAngle={3}>
+                        {pieData.map((entry, index) => (<Cell key={index} fill={entry.color} />))}
+                      </Pie>
+                      <Legend wrapperStyle={{ fontSize: '10px' }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[160px] flex items-center justify-center text-[11px] text-gray-400">No data</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Insights */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 h-fit">
+            <div className="flex items-center gap-2 mb-3">
+              <Lightbulb className="h-4 w-4 text-[#F59E0B]" />
+              <h3 className="text-[11px] font-bold text-gray-600 uppercase tracking-wide">Sustainability Insights</h3>
+            </div>
+            <div className="space-y-2">
+              {getInsights().map((insight, idx) => {
+                const InsightIcon = insight.icon;
+                const colors: Record<string, string> = {
+                  warning: 'bg-orange-50 border-orange-200 text-orange-700',
+                  tip: 'bg-blue-50 border-blue-200 text-blue-700',
+                  info: 'bg-purple-50 border-purple-200 text-purple-700',
+                  success: 'bg-green-50 border-green-200 text-green-700'
+                };
+                return (
+                  <div key={idx} className={`p-3 rounded-md border ${colors[insight.type] || ''}`}>
+                    <div className="flex items-start gap-2">
+                      <InsightIcon className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                      <p className="text-[11px] leading-relaxed">{insight.text}</p>
+                    </div>
+                  </div>
+                );
+              })}
+              {getInsights().length === 0 && (
+                <div className="text-center py-6 text-[11px] text-gray-400">
+                  <Leaf className="h-6 w-6 mx-auto mb-2 text-[#10B981]/40" />
+                  Enter data for insights
+                </div>
+              )}
+            </div>
+            {totalEmissions > 10 && (
+              <div className="mt-4 p-3 rounded-md bg-[#10B981]/5 border border-[#10B981]/15">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Leaf className="h-3.5 w-3.5 text-[#10B981]" />
+                  <span className="text-[11px] font-bold text-gray-800">Carbon Offset</span>
+                </div>
+                <p className="text-[10px] text-gray-500">Plant <span className="font-bold text-[#10B981]">{Math.ceil(totalEmissions / 22)} trees</span> to offset • Est. cost: <span className="font-bold">${(totalEmissions * 0.02).toFixed(2)}</span></p>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </TooltipProvider>
   );
 };
+
+/* ─── Shared Sub-components ─── */
+
+const ResultCard = ({ accent, children }: { accent: string; children: React.ReactNode }) => (
+  <div className="p-3 rounded-md border space-y-1" style={{ borderColor: `${accent}30`, backgroundColor: `${accent}08` }}>
+    {children}
+  </div>
+);
+
+const ResultRow = ({ label, value, accent }: { label: string; value: string; accent?: boolean }) => (
+  <div className="flex justify-between text-[11px]">
+    <span className={accent ? "text-orange-600" : "text-gray-500"}>{label}</span>
+    <span className="font-mono text-gray-800">{value}</span>
+  </div>
+);
+
+const ResultTotal = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex justify-between text-[11px] pt-1.5 mt-1 border-t border-gray-200 font-semibold">
+    <span className="text-gray-800">{label}</span>
+    <span className="font-mono text-gray-900">{value}</span>
+  </div>
+);
+
+const SaveButton = ({ onClick, accent }: { onClick: () => void; accent: string }) => (
+  <button onClick={onClick} className="w-full mt-2 h-8 rounded-md text-white text-[10px] font-bold tracking-wide flex items-center justify-center gap-1.5 transition-opacity hover:opacity-90" style={{ backgroundColor: accent }}>
+    <Save className="h-3 w-3" /> SAVE TO HISTORY
+  </button>
+);
