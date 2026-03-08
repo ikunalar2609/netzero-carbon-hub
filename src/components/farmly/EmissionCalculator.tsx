@@ -180,7 +180,14 @@ interface SeaFreightResult {
   waypoints?: string[];
 }
 
-export const EmissionCalculator = () => {
+import { type EmissionFactor } from "@/data/emissionFactors";
+
+interface EmissionCalculatorProps {
+  factors?: EmissionFactor[];
+  onSwitchToBenchmark?: () => void;
+}
+
+export const EmissionCalculator = ({ factors = [], onSwitchToBenchmark }: EmissionCalculatorProps) => {
   const [activeTab, setActiveTab] = useState("transport");
   const [transportData, setTransportData] = useState<TransportData>({ 
     distance: 0, 
