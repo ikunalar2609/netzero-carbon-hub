@@ -31,15 +31,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isInitialLoad = true;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Handle Google OAuth sign-in redirect
-        if (event === "SIGNED_IN" && session) {
-          // Use setTimeout to avoid blocking the auth state change
+        // Only redirect on actual new sign-in (not page reload)
+        if (event === "SIGNED_IN" && session && !isInitialLoad) {
           setTimeout(() => {
             // Upsert profile for OAuth users
             supabase.from("profiles").upsert({
@@ -57,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      isInitialLoad = false;
     });
 
     return () => subscription.unsubscribe();
