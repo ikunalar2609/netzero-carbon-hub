@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,23 +16,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail, User, Phone, Globe } from "lucide-react";
+
+const COUNTRIES = [
+  "India", "United States", "United Kingdom", "Canada", "Australia",
+  "Germany", "France", "Japan", "Brazil", "South Africa",
+  "China", "Singapore", "UAE", "Netherlands", "Sweden",
+  "Norway", "Denmark", "Finland", "Switzerland", "New Zealand",
+  "Mexico", "Indonesia", "Thailand", "South Korea", "Italy",
+  "Spain", "Portugal", "Ireland", "Belgium", "Austria",
+];
 
 const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z
-    .string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
+  firstName: z.string().min(1, { message: "First name is required" }).max(50),
+  lastName: z.string().min(1, { message: "Last name is required" }).max(50),
+  mobile: z.string().min(6, { message: "Valid mobile number required" }).max(20),
+  country: z.string().min(1, { message: "Country is required" }),
+  email: z.string().min(1, { message: "Email is required" }).email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -46,7 +55,10 @@ const Signup = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
+      mobile: "",
+      country: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -56,9 +68,15 @@ const Signup = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      await signup(values.name, values.email, values.password);
+      await signup(
+        values.firstName,
+        values.lastName,
+        values.email,
+        values.password,
+        values.mobile,
+        values.country
+      );
     } catch (error) {
-      // Error is handled in useAuth
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -75,7 +93,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-muted/40">
+    <div className="flex items-center justify-center min-h-screen bg-muted/40 py-8">
       <div className="w-full max-w-md px-4">
         <Card className="w-full">
           <CardHeader className="space-y-1 text-center">
@@ -86,27 +104,38 @@ const Signup = () => {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Enter your name"
-                            className="pl-10"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                            <Input placeholder="First name" className="pl-10" {...field} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Last name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="email"
@@ -116,17 +145,53 @@ const Signup = () => {
                       <FormControl>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Enter your email"
-                            className="pl-10"
-                            {...field}
-                          />
+                          <Input placeholder="Enter your email" className="pl-10" {...field} />
                         </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="mobile"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mobile Number</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                            <Input placeholder="+91..." className="pl-10" {...field} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {COUNTRIES.map((c) => (
+                              <SelectItem key={c} value={c}>{c}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="password"
@@ -136,12 +201,7 @@ const Signup = () => {
                       <FormControl>
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="password"
-                            placeholder="Create a password"
-                            className="pl-10"
-                            {...field}
-                          />
+                          <Input type="password" placeholder="Create a password" className="pl-10" {...field} />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -157,23 +217,14 @@ const Signup = () => {
                       <FormControl>
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="password"
-                            placeholder="Confirm your password"
-                            className="pl-10"
-                            {...field}
-                          />
+                          <Input type="password" placeholder="Confirm your password" className="pl-10" {...field} />
                         </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isLoading}
-                >
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Create account"}
                 </Button>
 
@@ -205,10 +256,7 @@ const Signup = () => {
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Already have an account? </span>
-              <Link
-                to="/login"
-                className="underline underline-offset-4 hover:text-primary"
-              >
+              <Link to="/login" className="underline underline-offset-4 hover:text-primary">
                 Sign in
               </Link>
             </div>
