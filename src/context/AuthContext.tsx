@@ -9,7 +9,7 @@ type AuthContextType = {
   session: Session | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (firstName: string, lastName: string, email: string, password: string, mobile: string, country: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 };
@@ -31,16 +31,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+
+        // Handle Google OAuth sign-in redirect
+        if (event === "SIGNED_IN" && session) {
+          // Use setTimeout to avoid blocking the auth state change
+          setTimeout(() => {
+            // Upsert profile for OAuth users
+            supabase.from("profiles").upsert({
+              user_id: session.user.id,
+              first_name: session.user.user_metadata?.full_name?.split(" ")[0] || session.user.user_metadata?.first_name || "",
+              last_name: session.user.user_metadata?.full_name?.split(" ").slice(1).join(" ") || session.user.user_metadata?.last_name || "",
+            }, { onConflict: "user_id" }).then(() => {});
+            navigate("/farmly");
+          }, 0);
+        }
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -53,18 +65,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
           throw new Error("Invalid email or password");
         }
         throw error;
       }
-
       setUser(data.user);
       setSession(data.session);
       toast.success("Logged in successfully");
@@ -78,18 +85,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
+  const signup = async (firstName: string, lastName: string, email: string, password: string, mobile: string, country: string) => {
     setLoading(true);
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            name: name,
+            first_name: firstName,
+            last_name: lastName,
+            name: `${firstName} ${lastName}`,
           },
         },
       });
@@ -102,9 +111,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
+        // Update the profile with mobile and country (trigger creates the row)
+        await supabase.from("profiles").update({
+          mobile,
+          country,
+        }).eq("user_id", data.user.id);
+
         setUser(data.user);
         setSession(data.session);
-        toast.success("Account created successfully");
+        toast.success("Account created! Please check your email to verify your account.");
         navigate("/farmly");
       }
     } catch (error) {
@@ -120,7 +135,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
       setUser(null);
       setSession(null);
       toast.success("Logged out successfully");

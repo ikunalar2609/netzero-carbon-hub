@@ -227,6 +227,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          country: string | null
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          mobile: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          mobile?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          mobile?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reduction_levers: {
         Row: {
           category: string
