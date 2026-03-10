@@ -38,24 +38,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/context/AuthContext";
-
-const getStandardsCompliance = async (userId: string): Promise<StandardCompliance[]> => {
-  const { data, error } = await supabase.from("standards_compliance").select("*").eq("user_id", userId);
-  if (error) throw error;
-  return (data || []).map((d: any) => ({ id: d.id, title: d.standard, description: "", status: d.status }));
-};
-
-const createStandardCompliance = async (standard: Omit<StandardCompliance, "id">, userId: string) => {
-  const { error } = await supabase.from("standards_compliance").insert({ standard: standard.title, status: standard.status, user_id: userId });
-  if (error) throw error;
-};
-
-const deleteStandardCompliance = async (id: string) => {
-  const { error } = await supabase.from("standards_compliance").delete().eq("id", id);
-  if (error) throw error;
-};
+import { createStandardCompliance, getStandardsCompliance, deleteStandardCompliance } from "@/services/appwrite";
 
 // Define the StandardCompliance type
 export interface StandardCompliance {
@@ -74,8 +57,6 @@ const formSchema = z.object({
 export const StandardsCompliance = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { user } = useAuth();
-  const userId = user?.id || "";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,14 +69,13 @@ export const StandardsCompliance = () => {
 
   // Fetch standards
   const { data: standards = [], isLoading } = useQuery({
-    queryKey: ['standards', userId],
-    queryFn: () => getStandardsCompliance(userId),
-    enabled: !!userId,
+    queryKey: ['standards'],
+    queryFn: getStandardsCompliance,
   });
 
   // Add standard mutation
   const addStandardMutation = useMutation({
-    mutationFn: (standard: z.infer<typeof formSchema>) => createStandardCompliance(standard as Omit<StandardCompliance, "id">, userId),
+    mutationFn: (standard: z.infer<typeof formSchema>) => createStandardCompliance(standard as Omit<StandardCompliance, "id">),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['standards'] });
       setIsFormOpen(false);

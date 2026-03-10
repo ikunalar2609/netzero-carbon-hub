@@ -7,7 +7,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnimatePresence } from "@/components/AnimatePresence";
 import { DarkModeProvider } from "@/context/DarkModeContext";
 import { AuthProvider } from "@/context/AuthContext";
-
+import { AppwriteProvider } from "@/context/AppwriteContext";
 import { ClimateProvider } from "@/context/ClimateContext";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 
@@ -26,12 +26,12 @@ import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 import Farmly from "@/pages/Farmly";
 import FarmlyDocs from "@/pages/FarmlyDocs";
 import Maps from "@/pages/Maps";
 import MapsDocs from "@/pages/MapsDocs";
 import ClimateData from "@/pages/ClimateData";
-import ResetPassword from "@/pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +42,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <AppwriteProvider>
             <ClimateProvider>
               <BrowserRouter>
                 <AuthProvider>
@@ -59,13 +60,10 @@ function App() {
                       <Route path="/maps/docs" element={<MapsDocs />} />
                       <Route path="/maps/climate-data" element={<ClimateData />} />
                       
-                      {/* Reset password - public */}
-                      <Route path="/reset-password" element={<ResetPassword />} />
-                      
                       {/* Public routes */}
                       <Route element={<PublicRoute />}>
                         <Route path="/login" element={<Login />} />
-                        <Route path="/signup" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
                       </Route>
                       
                       {/* Protected routes */}
@@ -88,6 +86,7 @@ function App() {
                 </AuthProvider>
               </BrowserRouter>
             </ClimateProvider>
+          </AppwriteProvider>
         </TooltipProvider>
       </DarkModeProvider>
     </QueryClientProvider>

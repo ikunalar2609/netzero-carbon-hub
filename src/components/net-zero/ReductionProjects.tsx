@@ -20,21 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { ProjectForm } from "./ProjectForm";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/context/AuthContext";
-
-const getReductionProjects = async (): Promise<ReductionProject[]> => {
-  // These are managed locally via Supabase reduction_levers table or static data
-  return [];
-};
-
-const createReductionProject = async (_project: Omit<ReductionProject, "id">) => {
-  // Placeholder - projects managed via reduction_levers
-};
-
-const deleteReductionProject = async (_id: string) => {
-  // Placeholder
-};
+import { createReductionProject, deleteReductionProject, getReductionProjects } from "@/services/appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Define the ReductionProject type
