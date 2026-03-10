@@ -113,11 +113,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
-        // Update the profile with mobile and country (trigger creates the row)
-        await supabase.from("profiles").update({
-          mobile,
-          country,
-        }).eq("user_id", data.user.id);
+        // Wait a moment for the trigger to create the profile row, then update it
+        setTimeout(async () => {
+          await supabase.from("profiles").update({
+            mobile,
+            country,
+          }).eq("user_id", data.user!.id);
+        }, 1000);
 
         setUser(data.user);
         setSession(data.session);
