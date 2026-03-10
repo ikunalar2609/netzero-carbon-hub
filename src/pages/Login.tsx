@@ -19,6 +19,7 @@ import {
 import {
   Lock,
   Mail,
+  Leaf,
   ArrowRight,
   BarChart3,
   Globe,
@@ -182,6 +183,9 @@ const Login = () => {
 
         <div className="relative z-10">
           <div className="flex items-center gap-2.5 mb-2">
+            <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center backdrop-blur-sm">
+              <Leaf className="h-5 w-5 text-white" />
+            </div>
             <span className="text-[22px] font-extrabold text-white tracking-tight">
               Farmly<span className="text-emerald-300">Carbon</span>
             </span>
@@ -222,6 +226,9 @@ const Login = () => {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="w-full max-w-[420px]">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#4338CA] flex items-center justify-center">
+              <Leaf className="h-4 w-4 text-white" />
+            </div>
             <span className="text-[20px] font-extrabold text-gray-900 tracking-tight">
               Farmly<span className="text-[#4338CA]">Carbon</span>
             </span>
