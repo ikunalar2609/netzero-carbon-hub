@@ -47,7 +47,6 @@
     "@turf/meta": "^7.3.1",
     "@turf/point-to-line-distance": "^7.3.1",
     "@turf/rhumb-distance": "^7.3.1",
-    "appwrite": "^11.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",

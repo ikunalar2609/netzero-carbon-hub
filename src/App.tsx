@@ -7,7 +7,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnimatePresence } from "@/components/AnimatePresence";
 import { DarkModeProvider } from "@/context/DarkModeContext";
 import { AuthProvider } from "@/context/AuthContext";
-import { AppwriteProvider } from "@/context/AppwriteContext";
+
 import { ClimateProvider } from "@/context/ClimateContext";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 
@@ -42,7 +42,6 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <AppwriteProvider>
             <ClimateProvider>
               <BrowserRouter>
                 <AuthProvider>
@@ -89,7 +88,6 @@ function App() {
                 </AuthProvider>
               </BrowserRouter>
             </ClimateProvider>
-          </AppwriteProvider>
         </TooltipProvider>
       </DarkModeProvider>
     </QueryClientProvider>
