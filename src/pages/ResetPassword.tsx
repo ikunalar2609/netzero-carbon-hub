@@ -80,9 +80,6 @@ const ResetPassword = () => {
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FC] px-6">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-[400px]">
         <div className="flex items-center gap-2 justify-center mb-6">
-          <div className="w-8 h-8 rounded-lg bg-[#4338CA] flex items-center justify-center">
-            <Leaf className="h-4 w-4 text-white" />
-          </div>
           <span className="text-[20px] font-extrabold text-gray-900 tracking-tight">
             Farmly<span className="text-[#4338CA]">Carbon</span>
           </span>
