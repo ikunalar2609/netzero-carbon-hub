@@ -74,6 +74,8 @@ const formSchema = z.object({
 export const StandardsCompliance = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const userId = user?.id || "";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,13 +88,14 @@ export const StandardsCompliance = () => {
 
   // Fetch standards
   const { data: standards = [], isLoading } = useQuery({
-    queryKey: ['standards'],
-    queryFn: getStandardsCompliance,
+    queryKey: ['standards', userId],
+    queryFn: () => getStandardsCompliance(userId),
+    enabled: !!userId,
   });
 
   // Add standard mutation
   const addStandardMutation = useMutation({
-    mutationFn: (standard: z.infer<typeof formSchema>) => createStandardCompliance(standard as Omit<StandardCompliance, "id">),
+    mutationFn: (standard: z.infer<typeof formSchema>) => createStandardCompliance(standard as Omit<StandardCompliance, "id">, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['standards'] });
       setIsFormOpen(false);
