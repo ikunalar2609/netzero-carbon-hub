@@ -7,7 +7,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnimatePresence } from "@/components/AnimatePresence";
 import { DarkModeProvider } from "@/context/DarkModeContext";
 import { AuthProvider } from "@/context/AuthContext";
-import { AppwriteProvider } from "@/context/AppwriteContext";
+
 import { ClimateProvider } from "@/context/ClimateContext";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 
