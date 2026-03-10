@@ -183,9 +183,6 @@ const Login = () => {
 
         <div className="relative z-10">
           <div className="flex items-center gap-2.5 mb-2">
-            <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center backdrop-blur-sm">
-              <Leaf className="h-5 w-5 text-white" />
-            </div>
             <span className="text-[22px] font-extrabold text-white tracking-tight">
               Farmly<span className="text-emerald-300">Carbon</span>
             </span>
