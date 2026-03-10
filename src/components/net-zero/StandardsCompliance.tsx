@@ -38,7 +38,24 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createStandardCompliance, getStandardsCompliance, deleteStandardCompliance } from "@/services/appwrite";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+
+const getStandardsCompliance = async (userId: string): Promise<StandardCompliance[]> => {
+  const { data, error } = await supabase.from("standards_compliance").select("*").eq("user_id", userId);
+  if (error) throw error;
+  return (data || []).map((d: any) => ({ id: d.id, title: d.standard, description: "", status: d.status }));
+};
+
+const createStandardCompliance = async (standard: Omit<StandardCompliance, "id">, userId: string) => {
+  const { error } = await supabase.from("standards_compliance").insert({ standard: standard.title, status: standard.status, user_id: userId });
+  if (error) throw error;
+};
+
+const deleteStandardCompliance = async (id: string) => {
+  const { error } = await supabase.from("standards_compliance").delete().eq("id", id);
+  if (error) throw error;
+};
 
 // Define the StandardCompliance type
 export interface StandardCompliance {
