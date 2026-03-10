@@ -19,7 +19,6 @@ import {
 import {
   Lock,
   Mail,
-  Leaf,
   ArrowRight,
   BarChart3,
   Globe,
