@@ -42,7 +42,6 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <AppwriteProvider>
             <ClimateProvider>
               <BrowserRouter>
                 <AuthProvider>
