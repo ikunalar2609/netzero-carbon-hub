@@ -88,7 +88,6 @@ function App() {
                 </AuthProvider>
               </BrowserRouter>
             </ClimateProvider>
-          </AppwriteProvider>
         </TooltipProvider>
       </DarkModeProvider>
     </QueryClientProvider>
