@@ -362,7 +362,7 @@ const Index = () => {
                 </div>
                 <div className="flex-1 flex justify-center">
                   <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/70 font-mono">
-                    app.farmlycarbon.in/calculator
+                    farmlycarbon.in/farmly
                   </div>
                 </div>
               </div>
@@ -462,7 +462,7 @@ const Index = () => {
                 </div>
                 <div className="flex-1 flex justify-center">
                   <div className="bg-background/80 border border-border rounded-md px-4 py-1 text-[11px] text-foreground/70 font-mono">
-                    app.farmlycarbon.in/maps
+                    farmlycarbon.in/maps
                   </div>
                 </div>
               </div>
