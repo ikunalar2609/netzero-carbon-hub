@@ -245,7 +245,7 @@ const Farmly = () => {
               className={`px-3 py-1.5 text-[11px] font-semibold tracking-wide rounded-md transition-all ${
                 (item === "BENCHMARK" && activeTab === "benchmark")
                   ? "text-white bg-white/20"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  : "text-white/70 hover:text-white hover:bg-white/,"
               }`}
             >
               {item}
